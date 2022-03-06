@@ -18,36 +18,13 @@ namespace ERP.Context
 
             modelBuilder.Entity<TransferItem>()
                 .HasKey(o => new { o.TransferId, o.ItemId });
+            
+            modelBuilder.Entity<PurchaseItem>()
+                .HasKey(o => new { o.PurchaseId, o.ItemId });
+            
+            modelBuilder.Entity<ReceiveItem>()
+                .HasKey(o => new { o.ReceiveId, o.ItemId });
 
-            modelBuilder.Entity<Transfer>()
-                    .HasOne(t => t.ReceiveStore)
-                    .WithMany()
-                    .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Transfer>()
-                    .HasOne(t => t.SendStore)
-                    .WithMany()
-                    .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Transfer>()
-                    .HasOne(t => t.RequestedBy)
-                    .WithMany()
-                    .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Transfer>()
-                    .HasOne(t => t.ReceivedBy)
-                    .WithMany()
-                    .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Transfer>()
-                    .HasOne(t => t.DeliveredBy)
-                    .WithMany()
-                    .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Transfer>()
-                    .HasOne(t => t.ApprovedBy)
-                    .WithMany()
-                    .OnDelete(DeleteBehavior.Restrict);
         }
 
 
@@ -57,9 +34,13 @@ namespace ERP.Context
 
         //public DbSet<IssuedItem> IssuedItems { get; set; }
 
-        //public DbSet<PurchasedItem> PurchasedItems { get; set; }
+        public DbSet<Purchase> Purchases { get; set; }
+        
+        public DbSet<PurchaseItem> PurchasedItems { get; set; }
 
-        //public DbSet<ReceivedItem> ReceivedItems { get; set; }
+        public DbSet<Receive> Receives { get; set; }
+        
+        public DbSet<ReceiveItem> ReceivedItems { get; set; }
 
         public DbSet<Transfer> Transfers { get; set; }
 
