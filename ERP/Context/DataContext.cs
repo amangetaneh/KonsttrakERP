@@ -19,6 +19,9 @@ namespace ERP.Context
             modelBuilder.Entity<TransferItem>()
                 .HasKey(o => new { o.TransferId, o.ItemId });
 
+            modelBuilder.Entity<IssueItem>()
+                .HasKey(o => new { o.IssueId, o.ItemId });
+
             modelBuilder.Entity<Transfer>()
                     .HasOne(t => t.ReceiveStore)
                     .WithMany()
@@ -48,6 +51,34 @@ namespace ERP.Context
                     .HasOne(t => t.ApprovedBy)
                     .WithMany()
                     .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Maintenance>()
+                   .HasOne(t => t.RequestedBy)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Maintenance>()
+                   .HasOne(t => t.ApprovedBy)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict);
+
+
+            modelBuilder.Entity<Issue>()
+                        .HasOne(i => i.HandedBy)
+                        .WithMany()
+                        .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Issue>()
+                        .HasOne(i => i.ReceivedBy)
+                        .WithMany()
+                        .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Issue>()
+                        .HasOne(i => i.ApprovedBy)
+                        .WithMany()
+                        .OnDelete(DeleteBehavior.Restrict);
+
+
         }
 
 
@@ -55,7 +86,11 @@ namespace ERP.Context
 
         public DbSet<NonConsumableItem> NonConsumableItems { get; set; }
 
-        //public DbSet<IssuedItem> IssuedItems { get; set; }
+        public DbSet<Issue> Issues { get; set; }
+
+        public DbSet<IssueItem> IssueItems { get; set; }
+
+        public DbSet<Maintenance> Maintenances { get; set; }
 
         //public DbSet<PurchasedItem> PurchasedItems { get; set; }
 
@@ -64,9 +99,7 @@ namespace ERP.Context
         public DbSet<Transfer> Transfers { get; set; }
 
         public DbSet<TransferItem> TransferItems { get; set; }
-        
-        //public DbSet<MaintenanceRequest> MaintenanceRequests { get; set; }
-
+      
         public DbSet<Employee> Employees { get; set; }
 
         public DbSet<UserAccount> UserAccounts { get; set; }
