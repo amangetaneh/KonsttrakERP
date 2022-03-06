@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace ERP.Models
 {
@@ -18,10 +19,11 @@ namespace ERP.Models
         public Double Cost { get; set; }
 
         public string Remark { get; set; }
+        [JsonIgnore]
 
         [ForeignKey("TransferId")]
         public Transfer Transfer { get; set; }
-
+        [JsonIgnore]
         [ForeignKey("ItemId")]
         public Item Item { get; set; }
 

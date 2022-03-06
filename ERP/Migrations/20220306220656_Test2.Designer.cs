@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220306171857_test6")]
-    partial class test6
+    [Migration("20220306220656_Test2")]
+    partial class Test2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,6 +28,9 @@ namespace ERP.Migrations
                 {
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Spec")
                         .IsRequired()
@@ -71,6 +74,65 @@ namespace ERP.Migrations
                     b.ToTable("Employees");
                 });
 
+            modelBuilder.Entity("ERP.Models.Issue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ApprovedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("Date");
+
+                    b.Property<int>("HandedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReceivedById")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedById");
+
+                    b.HasIndex("HandedById");
+
+                    b.HasIndex("ReceivedById");
+
+                    b.ToTable("Issues");
+                });
+
+            modelBuilder.Entity("ERP.Models.IssueItem", b =>
+                {
+                    b.Property<int>("IssueId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Cost")
+                        .HasColumnType("float");
+
+                    b.Property<int>("QtyRequested")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QtyTransfered")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Remark")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IssueId", "ItemId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("IssueItems");
+                });
+
             modelBuilder.Entity("ERP.Models.Item", b =>
                 {
                     b.Property<int>("Id")
@@ -81,9 +143,6 @@ namespace ERP.Migrations
 
                     b.Property<int>("Category")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("Cost")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -112,6 +171,46 @@ namespace ERP.Migrations
                     b.ToTable("ItemStoreQties");
                 });
 
+            modelBuilder.Entity("ERP.Models.Maintenance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ApprovedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("Date");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RequestedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SiteId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedById");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("RequestedById");
+
+                    b.HasIndex("SiteId");
+
+                    b.ToTable("Maintenances");
+                });
+
             modelBuilder.Entity("ERP.Models.NonConsumableItem", b =>
                 {
                     b.Property<int>("ItemId")
@@ -120,6 +219,9 @@ namespace ERP.Migrations
                     b.Property<string>("AssetNo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -326,19 +428,22 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ApprovedById")
+                    b.Property<int?>("ApprovedById")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("Date");
 
-                    b.Property<int>("DeliveredById")
+                    b.Property<int?>("DeliveredById")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int>("ReceiveStoreId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ReceivedById")
+                    b.Property<int?>("ReceivedById")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int>("RequestedById")
@@ -348,7 +453,6 @@ namespace ERP.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("VehiclePlateNo")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -466,6 +570,52 @@ namespace ERP.Migrations
                     b.Navigation("Item");
                 });
 
+            modelBuilder.Entity("ERP.Models.Issue", b =>
+                {
+                    b.HasOne("ERP.Models.Employee", "ApprovedBy")
+                        .WithMany()
+                        .HasForeignKey("ApprovedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Employee", "HandedBy")
+                        .WithMany()
+                        .HasForeignKey("HandedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Employee", "ReceivedBy")
+                        .WithMany()
+                        .HasForeignKey("ReceivedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApprovedBy");
+
+                    b.Navigation("HandedBy");
+
+                    b.Navigation("ReceivedBy");
+                });
+
+            modelBuilder.Entity("ERP.Models.IssueItem", b =>
+                {
+                    b.HasOne("ERP.Models.Issue", "Issue")
+                        .WithMany("IssueItems")
+                        .HasForeignKey("IssueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Issue");
+
+                    b.Navigation("Item");
+                });
+
             modelBuilder.Entity("ERP.Models.ItemStoreQty", b =>
                 {
                     b.HasOne("ERP.Models.Item", "Item")
@@ -485,6 +635,41 @@ namespace ERP.Migrations
                     b.Navigation("Store");
                 });
 
+            modelBuilder.Entity("ERP.Models.Maintenance", b =>
+                {
+                    b.HasOne("ERP.Models.Employee", "ApprovedBy")
+                        .WithMany()
+                        .HasForeignKey("ApprovedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Employee", "RequestedBy")
+                        .WithMany()
+                        .HasForeignKey("RequestedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Site", "Site")
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApprovedBy");
+
+                    b.Navigation("Item");
+
+                    b.Navigation("RequestedBy");
+
+                    b.Navigation("Site");
+                });
+
             modelBuilder.Entity("ERP.Models.NonConsumableItem", b =>
                 {
                     b.HasOne("ERP.Models.Item", "Item")
@@ -501,25 +686,25 @@ namespace ERP.Migrations
                     b.HasOne("ERP.Models.Employee", "ApprovedBy")
                         .WithMany()
                         .HasForeignKey("ApprovedById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ERP.Models.Employee", "CheckedBy")
                         .WithMany()
                         .HasForeignKey("CheckedById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ERP.Models.Store", "RequestStore")
                         .WithMany()
                         .HasForeignKey("RequestStoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ERP.Models.Employee", "RequestedBy")
                         .WithMany()
                         .HasForeignKey("RequestedById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("ApprovedBy");
@@ -555,31 +740,31 @@ namespace ERP.Migrations
                     b.HasOne("ERP.Models.Employee", "ApprovedBy")
                         .WithMany()
                         .HasForeignKey("ApprovedById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ERP.Models.Employee", "DeliveredBy")
                         .WithMany()
                         .HasForeignKey("DeliveredById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ERP.Models.Purchase", "Purchase")
                         .WithMany()
                         .HasForeignKey("PurchaseId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ERP.Models.Store", "ReceiveStore")
                         .WithMany()
                         .HasForeignKey("ReceiveStoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ERP.Models.Employee", "ReceivedBy")
                         .WithMany()
                         .HasForeignKey("ReceivedById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("ApprovedBy");
@@ -628,37 +813,37 @@ namespace ERP.Migrations
                     b.HasOne("ERP.Models.Employee", "ApprovedBy")
                         .WithMany()
                         .HasForeignKey("ApprovedById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ERP.Models.Employee", "DeliveredBy")
                         .WithMany()
                         .HasForeignKey("DeliveredById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ERP.Models.Store", "ReceiveStore")
                         .WithMany()
                         .HasForeignKey("ReceiveStoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ERP.Models.Employee", "ReceivedBy")
                         .WithMany()
                         .HasForeignKey("ReceivedById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ERP.Models.Employee", "RequestedBy")
                         .WithMany()
                         .HasForeignKey("RequestedById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ERP.Models.Store", "SendStore")
                         .WithMany()
                         .HasForeignKey("SendStoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("ApprovedBy");
@@ -710,6 +895,11 @@ namespace ERP.Migrations
                     b.Navigation("Employee");
 
                     b.Navigation("UserRole");
+                });
+
+            modelBuilder.Entity("ERP.Models.Issue", b =>
+                {
+                    b.Navigation("IssueItems");
                 });
 
             modelBuilder.Entity("ERP.Models.Item", b =>

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220306190729_Test7")]
-    partial class Test7
+    [Migration("20220306221003_Test3")]
+    partial class Test3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,6 +28,9 @@ namespace ERP.Migrations
                 {
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Spec")
                         .IsRequired()
@@ -141,9 +144,6 @@ namespace ERP.Migrations
                     b.Property<int>("Category")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Cost")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -219,6 +219,9 @@ namespace ERP.Migrations
                     b.Property<string>("AssetNo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -425,19 +428,22 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ApprovedById")
+                    b.Property<int?>("ApprovedById")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("Date");
 
-                    b.Property<int>("DeliveredById")
+                    b.Property<int?>("DeliveredById")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int>("ReceiveStoreId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ReceivedById")
+                    b.Property<int?>("ReceivedById")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int>("RequestedById")
@@ -447,7 +453,6 @@ namespace ERP.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("VehiclePlateNo")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

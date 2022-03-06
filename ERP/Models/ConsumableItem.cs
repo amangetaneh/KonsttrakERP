@@ -17,5 +17,8 @@ namespace ERP.Models
 
         public string Unit { get; set; } = string.Empty;
 
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal Cost { get; set; }
+
     }
 }

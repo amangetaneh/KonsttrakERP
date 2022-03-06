@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace ERP.Models
 {
@@ -10,32 +11,32 @@ namespace ERP.Models
 
         [Column(TypeName = "Date")]
         public DateTime Date { get; set; } = DateTime.Today;
-
+        [JsonIgnore]
         public Store SendStore { get; set; }
 
         public int SendStoreId { get; set; }
-
+        [JsonIgnore]
         public Store ReceiveStore { get; set; }
 
         public int ReceiveStoreId { get; set; }
-
+        [JsonIgnore]
         public Employee RequestedBy { get; set; }
 
         public int RequestedById { get; set; }
-
+        [JsonIgnore]
         public Employee ReceivedBy { get; set; }
 
-        public int ReceivedById { get; set; }
-
+        public int? ReceivedById { get; set; }
+        [JsonIgnore]
         public Employee DeliveredBy { get; set; }
 
-        public int DeliveredById { get; set; }
+        public int? DeliveredById { get; set; }
 
-        public string VehiclePlateNo { get; set; } = string.Empty;
+        public string? VehiclePlateNo { get; set; }
+        [JsonIgnore]
+        public virtual Employee ApprovedBy { get; set; }
 
-        public Employee ApprovedBy { get; set; }
-
-        public int ApprovedById { get; set; }
+        public int? ApprovedById { get; set; }
 
         public ICollection<TransferItem> TransferItems { get; set; }
     }

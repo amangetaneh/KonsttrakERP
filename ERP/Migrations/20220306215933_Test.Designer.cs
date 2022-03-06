@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220306173304_Test6")]
-    partial class Test6
+    [Migration("20220306215933_Test")]
+    partial class Test
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,6 +28,9 @@ namespace ERP.Migrations
                 {
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Spec")
                         .IsRequired()
@@ -141,9 +144,6 @@ namespace ERP.Migrations
                     b.Property<int>("Category")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Cost")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -220,6 +220,9 @@ namespace ERP.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -239,6 +242,139 @@ namespace ERP.Migrations
                     b.HasKey("ItemId");
 
                     b.ToTable("NonConsumableItems");
+                });
+
+            modelBuilder.Entity("ERP.Models.Purchase", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ApprovedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CheckedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("Date");
+
+                    b.Property<int>("RequestStoreId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RequestedById")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedById");
+
+                    b.HasIndex("CheckedById");
+
+                    b.HasIndex("RequestStoreId");
+
+                    b.HasIndex("RequestedById");
+
+                    b.ToTable("Purchases");
+                });
+
+            modelBuilder.Entity("ERP.Models.PurchaseItem", b =>
+                {
+                    b.Property<int>("PurchaseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Cost")
+                        .HasColumnType("float");
+
+                    b.Property<int>("QtyApproved")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QtyRequested")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Remark")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PurchaseId", "ItemId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("PurchasedItems");
+                });
+
+            modelBuilder.Entity("ERP.Models.Receive", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ApprovedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("Date");
+
+                    b.Property<int>("DeliveredById")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DeliveredFrom")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PurchaseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReceiveStoreId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReceivedById")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedById");
+
+                    b.HasIndex("DeliveredById");
+
+                    b.HasIndex("PurchaseId");
+
+                    b.HasIndex("ReceiveStoreId");
+
+                    b.HasIndex("ReceivedById");
+
+                    b.ToTable("Receives");
+                });
+
+            modelBuilder.Entity("ERP.Models.ReceiveItem", b =>
+                {
+                    b.Property<int>("ReceiveId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Cost")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Qty")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Remark")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ReceiveId", "ItemId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("ReceivedItems");
                 });
 
             modelBuilder.Entity("ERP.Models.Site", b =>
@@ -292,19 +428,22 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ApprovedById")
+                    b.Property<int?>("ApprovedById")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("Date");
 
-                    b.Property<int>("DeliveredById")
+                    b.Property<int?>("DeliveredById")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int>("ReceiveStoreId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ReceivedById")
+                    b.Property<int?>("ReceivedById")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int>("RequestedById")
@@ -314,7 +453,6 @@ namespace ERP.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("VehiclePlateNo")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -543,6 +681,122 @@ namespace ERP.Migrations
                     b.Navigation("Item");
                 });
 
+            modelBuilder.Entity("ERP.Models.Purchase", b =>
+                {
+                    b.HasOne("ERP.Models.Employee", "ApprovedBy")
+                        .WithMany()
+                        .HasForeignKey("ApprovedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Employee", "CheckedBy")
+                        .WithMany()
+                        .HasForeignKey("CheckedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Store", "RequestStore")
+                        .WithMany()
+                        .HasForeignKey("RequestStoreId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Employee", "RequestedBy")
+                        .WithMany()
+                        .HasForeignKey("RequestedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApprovedBy");
+
+                    b.Navigation("CheckedBy");
+
+                    b.Navigation("RequestStore");
+
+                    b.Navigation("RequestedBy");
+                });
+
+            modelBuilder.Entity("ERP.Models.PurchaseItem", b =>
+                {
+                    b.HasOne("ERP.Models.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Purchase", "Purchase")
+                        .WithMany("PurchaseItems")
+                        .HasForeignKey("PurchaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Purchase");
+                });
+
+            modelBuilder.Entity("ERP.Models.Receive", b =>
+                {
+                    b.HasOne("ERP.Models.Employee", "ApprovedBy")
+                        .WithMany()
+                        .HasForeignKey("ApprovedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Employee", "DeliveredBy")
+                        .WithMany()
+                        .HasForeignKey("DeliveredById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Purchase", "Purchase")
+                        .WithMany()
+                        .HasForeignKey("PurchaseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Store", "ReceiveStore")
+                        .WithMany()
+                        .HasForeignKey("ReceiveStoreId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Employee", "ReceivedBy")
+                        .WithMany()
+                        .HasForeignKey("ReceivedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApprovedBy");
+
+                    b.Navigation("DeliveredBy");
+
+                    b.Navigation("Purchase");
+
+                    b.Navigation("ReceiveStore");
+
+                    b.Navigation("ReceivedBy");
+                });
+
+            modelBuilder.Entity("ERP.Models.ReceiveItem", b =>
+                {
+                    b.HasOne("ERP.Models.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Receive", "Receive")
+                        .WithMany("ReceiveItems")
+                        .HasForeignKey("ReceiveId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Receive");
+                });
+
             modelBuilder.Entity("ERP.Models.Store", b =>
                 {
                     b.HasOne("ERP.Models.Site", "Site")
@@ -655,6 +909,16 @@ namespace ERP.Migrations
 
                     b.Navigation("NonConsumableItem")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ERP.Models.Purchase", b =>
+                {
+                    b.Navigation("PurchaseItems");
+                });
+
+            modelBuilder.Entity("ERP.Models.Receive", b =>
+                {
+                    b.Navigation("ReceiveItems");
                 });
 
             modelBuilder.Entity("ERP.Models.Transfer", b =>

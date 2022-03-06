@@ -85,18 +85,21 @@ namespace ERP.Context
             modelBuilder.Entity<Transfer>()
                     .HasOne(t => t.ReceivedBy)
                     .WithMany()
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false);
 
             modelBuilder.Entity<Transfer>()
                     .HasOne(t => t.DeliveredBy)
                     .WithMany()
-                    .OnDelete(DeleteBehavior.Restrict);
-
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false);
+            
             modelBuilder.Entity<Transfer>()
                     .HasOne(t => t.ApprovedBy)
                     .WithMany()
-                    .OnDelete(DeleteBehavior.Restrict);
-
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false);
+            
             //Maintenance
             modelBuilder.Entity<Maintenance>()
                    .HasOne(t => t.RequestedBy)
