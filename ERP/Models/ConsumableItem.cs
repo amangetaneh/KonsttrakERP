@@ -16,5 +16,6 @@ namespace ERP.Models
         public string Spec { get; set; } = string.Empty;
 
         public string Unit { get; set; } = string.Empty;
+
     }
 }

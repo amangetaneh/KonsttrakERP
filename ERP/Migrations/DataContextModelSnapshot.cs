@@ -80,6 +80,9 @@ namespace ERP.Migrations
                     b.Property<int>("Category")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -87,6 +90,24 @@ namespace ERP.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Items");
+                });
+
+            modelBuilder.Entity("ERP.Models.ItemStoreQty", b =>
+                {
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Qty")
+                        .HasColumnType("int");
+
+                    b.HasKey("ItemId", "StoreId");
+
+                    b.HasIndex("StoreId");
+
+                    b.ToTable("ItemStoreQties");
                 });
 
             modelBuilder.Entity("ERP.Models.NonConsumableItem", b =>
@@ -184,10 +205,6 @@ namespace ERP.Migrations
 
                     b.Property<int>("ReceivedById")
                         .HasColumnType("int");
-
-                    b.Property<string>("Remark")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RequestedById")
                         .HasColumnType("int");
@@ -312,6 +329,25 @@ namespace ERP.Migrations
                         .IsRequired();
 
                     b.Navigation("Item");
+                });
+
+            modelBuilder.Entity("ERP.Models.ItemStoreQty", b =>
+                {
+                    b.HasOne("ERP.Models.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Store", "Store")
+                        .WithMany()
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("ERP.Models.NonConsumableItem", b =>

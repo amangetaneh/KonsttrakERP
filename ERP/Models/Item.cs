@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERP.Models
 {
@@ -14,6 +15,9 @@ namespace ERP.Models
         public ConsumableItem ConsumableItem { get; set; }
          
         public NonConsumableItem NonConsumableItem { get; set; }
+
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal Cost { get; set; }
 
     }
 }

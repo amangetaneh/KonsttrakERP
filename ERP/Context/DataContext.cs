@@ -13,6 +13,8 @@ namespace ERP.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ItemStoreQty>()
+                .HasKey(o => new { o.ItemId, o.StoreId });
 
             modelBuilder.Entity<TransferItem>()
                 .HasKey(o => new { o.TransferId, o.ItemId });
@@ -76,5 +78,7 @@ namespace ERP.Context
         public DbSet<Site> Sites { get; set; }
 
         public DbSet<Store> Stores { get; set; }
+
+        public DbSet<ItemStoreQty> ItemStoreQties { get; set; }
     }
 }

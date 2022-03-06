@@ -37,8 +37,6 @@ namespace ERP.Models
 
         public int ApprovedById { get; set; }
 
-        public String Remark { get; set; } = String.Empty;
-
         public ICollection<TransferItem> TransferItems { get; set; }
     }
 }
