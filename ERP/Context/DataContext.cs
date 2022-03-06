@@ -11,76 +11,6 @@ namespace ERP.Context
             
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<ItemStoreQty>()
-                .HasKey(o => new { o.ItemId, o.StoreId });
-
-            modelBuilder.Entity<TransferItem>()
-                .HasKey(o => new { o.TransferId, o.ItemId });
-
-            modelBuilder.Entity<IssueItem>()
-                .HasKey(o => new { o.IssueId, o.ItemId });
-
-            modelBuilder.Entity<Transfer>()
-                    .HasOne(t => t.ReceiveStore)
-                    .WithMany()
-                    .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Transfer>()
-                    .HasOne(t => t.SendStore)
-                    .WithMany()
-                    .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Transfer>()
-                    .HasOne(t => t.RequestedBy)
-                    .WithMany()
-                    .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Transfer>()
-                    .HasOne(t => t.ReceivedBy)
-                    .WithMany()
-                    .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Transfer>()
-                    .HasOne(t => t.DeliveredBy)
-                    .WithMany()
-                    .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Transfer>()
-                    .HasOne(t => t.ApprovedBy)
-                    .WithMany()
-                    .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Maintenance>()
-                   .HasOne(t => t.RequestedBy)
-                   .WithMany()
-                   .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Maintenance>()
-                   .HasOne(t => t.ApprovedBy)
-                   .WithMany()
-                   .OnDelete(DeleteBehavior.Restrict);
-
-
-            modelBuilder.Entity<Issue>()
-                        .HasOne(i => i.HandedBy)
-                        .WithMany()
-                        .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Issue>()
-                        .HasOne(i => i.ReceivedBy)
-                        .WithMany()
-                        .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Issue>()
-                        .HasOne(i => i.ApprovedBy)
-                        .WithMany()
-                        .OnDelete(DeleteBehavior.Restrict);
-
-
-        }
-
 
         public DbSet<ConsumableItem> ConsumableItems { get; set; }
 
@@ -117,5 +47,129 @@ namespace ERP.Context
         public DbSet<Store> Stores { get; set; }
 
         public DbSet<ItemStoreQty> ItemStoreQties { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            //Set Composite Foreign keys
+            modelBuilder.Entity<ItemStoreQty>()
+                .HasKey(o => new { o.ItemId, o.StoreId });
+
+            modelBuilder.Entity<TransferItem>()
+                .HasKey(o => new { o.TransferId, o.ItemId });
+
+            modelBuilder.Entity<IssueItem>()
+                .HasKey(o => new { o.IssueId, o.ItemId });
+
+            modelBuilder.Entity<PurchaseItem>()
+                .HasKey(o => new { o.PurchaseId, o.ItemId });
+
+            modelBuilder.Entity<ReceiveItem>()
+                .HasKey(o => new { o.ReceiveId, o.ItemId });
+
+            //Transfer
+            modelBuilder.Entity<Transfer>()
+                    .HasOne(t => t.ReceiveStore)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Transfer>()
+                    .HasOne(t => t.SendStore)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Transfer>()
+                    .HasOne(t => t.RequestedBy)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Transfer>()
+                    .HasOne(t => t.ReceivedBy)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Transfer>()
+                    .HasOne(t => t.DeliveredBy)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Transfer>()
+                    .HasOne(t => t.ApprovedBy)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+            //Maintenance
+            modelBuilder.Entity<Maintenance>()
+                   .HasOne(t => t.RequestedBy)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Maintenance>()
+                   .HasOne(t => t.ApprovedBy)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            //Issue
+            modelBuilder.Entity<Issue>()
+                    .HasOne(i => i.HandedBy)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Issue>()
+                    .HasOne(i => i.ReceivedBy)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Issue>()
+                    .HasOne(i => i.ApprovedBy)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+            //Purchase
+            modelBuilder.Entity<Purchase>()
+                    .HasOne(i => i.RequestStore)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Purchase>()
+                   .HasOne(i => i.RequestedBy)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Purchase>()
+                   .HasOne(i => i.CheckedBy)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Purchase>()
+                   .HasOne(i => i.ApprovedBy)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            //Receive
+            modelBuilder.Entity<Receive>()
+                   .HasOne(i => i.ReceiveStore)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Receive>()
+                   .HasOne(i => i.Purchase)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Receive>()
+                   .HasOne(i => i.DeliveredBy)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Receive>()
+                   .HasOne(i => i.ReceivedBy)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Receive>()
+                   .HasOne(i => i.ApprovedBy)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }
