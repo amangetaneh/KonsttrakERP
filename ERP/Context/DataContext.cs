@@ -92,9 +92,13 @@ namespace ERP.Context
 
         public DbSet<Maintenance> Maintenances { get; set; }
 
-        //public DbSet<PurchasedItem> PurchasedItems { get; set; }
+        public DbSet<Purchase> Purchases { get; set; }
+        
+        public DbSet<PurchaseItem> PurchasedItems { get; set; }
 
-        //public DbSet<ReceivedItem> ReceivedItems { get; set; }
+        public DbSet<Receive> Receives { get; set; }
+        
+        public DbSet<ReceiveItem> ReceivedItems { get; set; }
 
         public DbSet<Transfer> Transfers { get; set; }
 
