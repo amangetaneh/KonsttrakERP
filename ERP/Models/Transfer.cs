@@ -11,7 +11,7 @@ namespace ERP.Models
 
         public int Status { get; set; } = 0;
         /*Status Values: 
-            0: Created
+            0: Requested
             1: Approved
             2: Sent
             3: Received

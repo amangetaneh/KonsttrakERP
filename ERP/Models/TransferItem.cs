@@ -16,9 +16,10 @@ namespace ERP.Models
 
         public int? QtyTransfered { get; set; }
 
-        public int? QtyReceived { get; set; }   
+        public int? QtyReceived { get; set; }
 
-        public Double Cost { get; set; }
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal Cost { get; set; }
 
         public string RequestRemark { get; set; } = string.Empty;
         

@@ -114,13 +114,13 @@ namespace ERP.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
 
-                    b.Property<double>("Cost")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("QtyIssued")
+                    b.Property<int?>("QtyHanded")
                         .HasColumnType("int");
 
-                    b.Property<int>("QtyRequested")
+                    b.Property<int>("QtyIssued")
                         .HasColumnType("int");
 
                     b.Property<string>("Remark")
@@ -486,8 +486,8 @@ namespace ERP.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
 
-                    b.Property<double>("Cost")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("QtyReceived")
                         .HasColumnType("int");

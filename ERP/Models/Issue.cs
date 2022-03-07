@@ -10,6 +10,11 @@ namespace ERP.Models
         public int Id { get; set; }
 
         public int Status { get; set; } = 0;
+        /*Status Values: 
+           0: Issued
+           1: Approved
+           2: Handed
+       */
 
         [Column(TypeName = "Date")]
         public DateTime Date { get; set; } = DateTime.Today;

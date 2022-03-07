@@ -1,4 +1,5 @@
 ﻿using ERP.Context;
+using ERP.DTOs;
 using ERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -43,13 +44,32 @@ namespace ERP.Controllers
         }
 
         [HttpPost("request")]
-        public async Task<ActionResult<List<Transfer>>> Post(Transfer transfer)
+        public async Task<ActionResult<List<Transfer>>> Post(CreateTransferDTO transferDTO)
         {
+            Transfer transfer = new();
+            transfer.Date = transferDTO.Date;
+            transfer.SendStoreId = transferDTO.SendStoreId;
+            transfer.ReceiveStoreId = transferDTO.ReceiveStoreId;
+            transfer.RequestedById = transferDTO.RequestedById;
+
+            ICollection<TransferItem> transferItems = new List<TransferItem>();
+
+            foreach (var requestItem in transferDTO.TransferItems)
+            {
+                TransferItem transferItem = new();
+                transferItem.ItemId = requestItem.ItemId;
+                transferItem.QtyRequested = requestItem.QtyRequested;
+                transferItem.RequestRemark = requestItem.RequestRemark;
+
+                transferItems.Add(transferItem);
+            }
+
+            transfer.TransferItems = transferItems;
 
             context.Transfers.Add(transfer);
             await context.SaveChangesAsync();
 
-            return Ok(context.Transfers.FindAsync(transfer.Id));
+            return Ok(transfer);
         }
 
         [HttpPost("approve")]
@@ -106,7 +126,7 @@ namespace ERP.Controllers
 
             transfer.ReceivedById = request.ReceivedById;
             transfer.DeliveredById = request.DeliveredById;
-            transfer.VehiclePlateNo = request.VehiclePlateNo;            
+            transfer.VehiclePlateNo = request.VehiclePlateNo;
 
 
             foreach (var requestItem in request.TransferItems)
