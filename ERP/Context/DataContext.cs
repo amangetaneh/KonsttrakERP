@@ -141,12 +141,14 @@ namespace ERP.Context
             modelBuilder.Entity<Purchase>()
                    .HasOne(i => i.CheckedBy)
                    .WithMany()
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .IsRequired(false);
 
             modelBuilder.Entity<Purchase>()
                    .HasOne(i => i.ApprovedBy)
                    .WithMany()
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .IsRequired(false);
 
             //Receive
             modelBuilder.Entity<Receive>()
@@ -172,7 +174,8 @@ namespace ERP.Context
             modelBuilder.Entity<Receive>()
                    .HasOne(i => i.ApprovedBy)
                    .WithMany()
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .IsRequired(false);
         }
     }
 }
