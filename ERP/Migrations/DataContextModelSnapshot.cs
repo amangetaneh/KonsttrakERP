@@ -701,14 +701,12 @@ namespace ERP.Migrations
                     b.HasOne("ERP.Models.Employee", "ApprovedBy")
                         .WithMany()
                         .HasForeignKey("ApprovedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERP.Models.Employee", "CheckedBy")
                         .WithMany()
                         .HasForeignKey("CheckedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERP.Models.Store", "RequestStore")
                         .WithMany()
@@ -755,8 +753,7 @@ namespace ERP.Migrations
                     b.HasOne("ERP.Models.Employee", "ApprovedBy")
                         .WithMany()
                         .HasForeignKey("ApprovedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERP.Models.Employee", "DeliveredBy")
                         .WithMany()
