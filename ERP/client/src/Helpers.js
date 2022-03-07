@@ -1,6 +1,6 @@
 import { Badge } from "react-bootstrap";
 
-export function transferStatusBadge(stat) {
+export function statusBadge(stat) {
     const color = ["info", "success", "primary", "secondary"];
     const text = ["Requested", "Approved", "Sent", "Recieved"];
 

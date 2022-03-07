@@ -9,7 +9,7 @@ function PurchaseNewItem() {
     const [date, setDate] = useState("");
     const [requestNo, setRequestNo] = useState("");
     // const [requestSite, setrequestSite] = useState("");
-    const [sendStore, setSendStore] = useState("");
+    const [requestStore, setRequestStore] = useState("");
     const [addedItems, setAddedItems] = useState([new Item()]);
 
     const allItems = useMemo(() => AllItems(), []);
@@ -17,6 +17,13 @@ function PurchaseNewItem() {
     var pageend = useRef(null);
     const [scroll, setScroll] = useState(false);
 
+    useEffect(() => {
+        axios.get("https://localhost:7067/api/item").then((res) => {
+            console.log(res.data);
+
+            setAllItems(res.data);
+        });
+    },[]);
     useEffect(() => {
         if (scroll) {
             pageend.scrollIntoView();
@@ -81,9 +88,9 @@ function PurchaseNewItem() {
                             <Form.Group className="mb-3">
                                 <Form.Label>Request Store</Form.Label>
                                 <Form.Select
-                                    value={sendStore}
+                                    value={requestStore}
                                     onChange={(e) =>
-                                        setSendStore(e.target.value)
+                                        setRequestStore(e.target.value)
                                     }
                                 >
                                     <option> Select Store </option>

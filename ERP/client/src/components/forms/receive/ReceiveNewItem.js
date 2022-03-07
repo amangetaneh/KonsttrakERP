@@ -17,6 +17,8 @@ function ReceiveNewItem() {
     var pageend = useRef(null);
     const [scroll, setScroll] = useState(false);
 
+    
+
     useEffect(() => {
         if (scroll) {
             pageend.scrollIntoView();
