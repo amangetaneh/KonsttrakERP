@@ -19,11 +19,11 @@ namespace ERP.Models
 
         [Column(TypeName = "Date")]
         public DateTime Date { get; set; } = DateTime.Today;
-        [JsonIgnore]
+        
         public Store SendStore { get; set; }
 
         public int SendStoreId { get; set; }
-        [JsonIgnore]
+        
         public Store ReceiveStore { get; set; }
 
         public int ReceiveStoreId { get; set; }

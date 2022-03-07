@@ -1,19 +1,30 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import { Form, Button, Container } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
-import AllItems from "../../../models/AllItems";
+import axios from "axios";
 import Item from "../../../models/Item";
-import TransferRequestItem from "../../fragments/TransferRequestItem";
+import TransferRequestConsumableItem from "../../fragments/TransferRequestConsumableItem";
 import Header from "../../layouts/Header";
 function NewTransfer() {
+    //const [recieveSite]
+
     const [date, setDate] = useState("");
     const [transferNo, setTransferNo] = useState("");
     const [sendSite, setSendSite] = useState("");
     const [sendStore, setSendStore] = useState("");
     const [addedItems, setAddedItems] = useState([new Item()]);
 
-    const allItems = useMemo(() => AllItems(), []);
+    const [allItems, setAllItems] = useState([]);
 
+    useEffect(() => {
+        axios.get("https://localhost:7067/api/item").then((res) => {
+            console.log(res.data);
+
+            setAllItems(res.data);
+        });
+    },[]);
+
+    //scroll when Item is added
     var pageend = useRef(null);
     const [scroll, setScroll] = useState(false);
 
@@ -35,7 +46,7 @@ function NewTransfer() {
 
             <Container className="my-3">
                 <Form>
-                    <div className="row mx-2">
+                    <div className="row mx-2 border-danger border">
                         <div className="col">
                             <Form.Group className="mb-3">
                                 <Form.Label>Date</Form.Label>
@@ -93,7 +104,7 @@ function NewTransfer() {
                     </div>
 
                     {addedItems.map((item, index) => (
-                        <TransferRequestItem
+                        <TransferRequestConsumableItem
                             key={index}
                             index={index}
                             allItems={allItems}

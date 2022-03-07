@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ERP.Controllers
 {
 
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class IssueController : Controller
     {
@@ -38,7 +38,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<List<Issue>>> Get()
         {
 
-            var issues = await context.IssueItems.ToListAsync();
+            var issues = await context.Issues.ToListAsync();
 
             return Ok(issues);
         }

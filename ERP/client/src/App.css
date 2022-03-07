@@ -8,6 +8,12 @@
     background-color: transparent !important;
 }
 
+.btn-teal:hover {
+    color: white !important;
+    border-color: #007a76 !important;
+    background-color: #007a76 !important;
+}
+
 .text-teal {
     color: #00b8b1 !important;
 }

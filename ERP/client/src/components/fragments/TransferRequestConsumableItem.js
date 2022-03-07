@@ -2,7 +2,12 @@ import { Form, Button, InputGroup } from "react-bootstrap";
 import { FaTrash } from "react-icons/fa";
 import PropTypes from "prop-types";
 
-function TransferRequestItem({ allItems, addedItems, setAddedItems, index }) {
+function TransferRequestConsumableItem({
+    allItems,
+    addedItems,
+    setAddedItems,
+    index,
+}) {
     function selectedItemChanged(e) {
         const selectedId = e.target.value;
 
@@ -142,11 +147,11 @@ function TransferRequestItem({ allItems, addedItems, setAddedItems, index }) {
     );
 }
 
-TransferRequestItem.propTypes = {
+TransferRequestConsumableItem.propTypes = {
     allItems: PropTypes.array.isRequired,
     addedItems: PropTypes.array.isRequired,
-    setAddedItems: PropTypes.array.isRequired,
+    setAddedItems: PropTypes.func.isRequired,
     index: PropTypes.number.isRequired,
 };
 
-export default TransferRequestItem;
+export default TransferRequestConsumableItem;

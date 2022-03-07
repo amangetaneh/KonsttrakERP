@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ERP.Controllers
 {
 
-    [Route("[controller]")]
+    [Route("/api/[controller]")]
     [ApiController]
     public class TransferController : Controller
     {
@@ -38,7 +38,10 @@ namespace ERP.Controllers
         public async Task<ActionResult<List<Transfer>>> Get()
         {
 
-            var transfers = await context.Transfers.ToListAsync();
+            var transfers = await context.Transfers
+                .Include(transfer => transfer.SendStore).ThenInclude(store => store.Site)
+                .Include(transfer => transfer.ReceiveStore).ThenInclude(store => store.Site)
+                .ToListAsync();
 
             return Ok(transfers);
         }

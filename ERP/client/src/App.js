@@ -3,11 +3,10 @@ import "./App.css"
 import "bootstrap/dist/css/bootstrap.min.css"
 import Sidebar from "./components/layouts/Sidebar"
 import NewTransfer from "./components/forms/transfer/NewTransfer"
-import TransferIn from "./components/forms/transfer/TransferIn"
+import ListTransfers from "./components/forms/transfer/ListTransfers"
 import PurchaseNewItem from "./components/forms/purchase/PurchaseNewItem"
 import SingleTransfer from "./components/forms/transfer/SingleTransfer"
 import ReceiveNewItem from "./components/forms/receive/ReceiveNewItem"
-import { Container } from "react-bootstrap"
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
@@ -27,7 +26,7 @@ export default class App extends Component {
           <div className="col p-0">
             <Routes>
               <Route path="transfer/new" element={<NewTransfer />} />
-              <Route path="transfer/in" element={<TransferIn />} />
+              <Route path="transfer/in" element={<ListTransfers title="Transfer In Requests" type="in" />} />
               <Route path="transfer/:id" element={<SingleTransfer />} />
 
               <Route path="purchase/new" element={<PurchaseNewItem />} />
