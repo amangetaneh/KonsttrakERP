@@ -13,11 +13,13 @@ namespace ERP.Models
 
         public int QtyRequested { get; set; }
 
-        public int QtyApproved { get; set; }
+        public int? QtyApproved { get; set; }
 
-        public Double Cost { get; set; }
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal Cost { get; set; }
 
-        public Double TotalCost => (QtyApproved * Cost);
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal? TotalCost => (QtyApproved * Cost);
 
         public string? Remark { get; set; }
 

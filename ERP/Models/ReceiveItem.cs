@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace ERP.Models
 {
@@ -13,12 +14,15 @@ namespace ERP.Models
 
         public int Qty { get; set; }
 
-        public Double Cost { get; set; }
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal Cost { get; set; }
 
-        public Double TotalCost => (Qty * Cost);
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal TotalCost => (Qty * Cost);
 
-        public string Remark { get; set; }
+        public string? Remark { get; set; }
 
+        [JsonIgnore]
         [ForeignKey("ReceiveId")]
         public Receive Receive { get; set; }
 
