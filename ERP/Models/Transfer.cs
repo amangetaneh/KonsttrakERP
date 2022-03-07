@@ -9,6 +9,14 @@ namespace ERP.Models
         [Key]
         public int Id { get; set; }
 
+        public int Status { get; set; } = 0;
+        /*Status Values: 
+            0: Created
+            1: Approved
+            2: Sent
+            3: Received
+        */
+
         [Column(TypeName = "Date")]
         public DateTime Date { get; set; } = DateTime.Today;
         [JsonIgnore]
@@ -31,6 +39,12 @@ namespace ERP.Models
         public Employee DeliveredBy { get; set; }
 
         public int? DeliveredById { get; set; }
+
+        [JsonIgnore]
+        public Employee SentBy { get; set; }
+
+        public int? SentById { get; set; }
+
 
         public string? VehiclePlateNo { get; set; }
         [JsonIgnore]

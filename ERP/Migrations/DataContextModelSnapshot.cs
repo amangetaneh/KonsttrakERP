@@ -80,16 +80,19 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ApprovedById")
+                    b.Property<int?>("ApprovedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("Date");
 
-                    b.Property<int>("HandedById")
+                    b.Property<int?>("HandedById")
                         .HasColumnType("int");
 
-                    b.Property<int>("ReceivedById")
+                    b.Property<int>("RequestedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -98,7 +101,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("HandedById");
 
-                    b.HasIndex("ReceivedById");
+                    b.HasIndex("RequestedById");
 
                     b.ToTable("Issues");
                 });
@@ -114,10 +117,10 @@ namespace ERP.Migrations
                     b.Property<double>("Cost")
                         .HasColumnType("float");
 
-                    b.Property<int>("QtyRequested")
+                    b.Property<int>("QtyIssued")
                         .HasColumnType("int");
 
-                    b.Property<int>("QtyTransfered")
+                    b.Property<int>("QtyRequested")
                         .HasColumnType("int");
 
                     b.Property<string>("Remark")
@@ -447,6 +450,12 @@ namespace ERP.Migrations
                     b.Property<int>("SendStoreId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("SentById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<string>("VehiclePlateNo")
                         .HasColumnType("nvarchar(max)");
 
@@ -464,6 +473,8 @@ namespace ERP.Migrations
 
                     b.HasIndex("SendStoreId");
 
+                    b.HasIndex("SentById");
+
                     b.ToTable("Transfers");
                 });
 
@@ -478,13 +489,24 @@ namespace ERP.Migrations
                     b.Property<double>("Cost")
                         .HasColumnType("float");
 
+                    b.Property<int?>("QtyReceived")
+                        .HasColumnType("int");
+
                     b.Property<int>("QtyRequested")
                         .HasColumnType("int");
 
-                    b.Property<int>("QtyTransfered")
+                    b.Property<int?>("QtyTransfered")
                         .HasColumnType("int");
 
-                    b.Property<string>("Remark")
+                    b.Property<string>("ReceiveRemark")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RequestRemark")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SendRemark")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -570,18 +592,16 @@ namespace ERP.Migrations
                     b.HasOne("ERP.Models.Employee", "ApprovedBy")
                         .WithMany()
                         .HasForeignKey("ApprovedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERP.Models.Employee", "HandedBy")
                         .WithMany()
                         .HasForeignKey("HandedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("ERP.Models.Employee", "ReceivedBy")
+                    b.HasOne("ERP.Models.Employee", "RequestedBy")
                         .WithMany()
-                        .HasForeignKey("ReceivedById")
+                        .HasForeignKey("RequestedById")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -589,7 +609,7 @@ namespace ERP.Migrations
 
                     b.Navigation("HandedBy");
 
-                    b.Navigation("ReceivedBy");
+                    b.Navigation("RequestedBy");
                 });
 
             modelBuilder.Entity("ERP.Models.IssueItem", b =>
@@ -838,6 +858,11 @@ namespace ERP.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("ERP.Models.Employee", "SentBy")
+                        .WithMany()
+                        .HasForeignKey("SentById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("ApprovedBy");
 
                     b.Navigation("DeliveredBy");
@@ -849,6 +874,8 @@ namespace ERP.Migrations
                     b.Navigation("RequestedBy");
 
                     b.Navigation("SendStore");
+
+                    b.Navigation("SentBy");
                 });
 
             modelBuilder.Entity("ERP.Models.TransferItem", b =>

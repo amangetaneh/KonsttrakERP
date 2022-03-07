@@ -50,6 +50,9 @@ namespace ERP.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            base.OnModelCreating(modelBuilder);
+
             //Set Composite Foreign keys
             modelBuilder.Entity<ItemStoreQty>()
                 .HasKey(o => new { o.ItemId, o.StoreId });
@@ -99,7 +102,13 @@ namespace ERP.Context
                     .WithMany()
                     .OnDelete(DeleteBehavior.Restrict)
                     .IsRequired(false);
-            
+
+            modelBuilder.Entity<Transfer>()
+                    .HasOne(t => t.SentBy)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false);
+
             //Maintenance
             modelBuilder.Entity<Maintenance>()
                    .HasOne(t => t.RequestedBy)
@@ -115,17 +124,19 @@ namespace ERP.Context
             modelBuilder.Entity<Issue>()
                     .HasOne(i => i.HandedBy)
                     .WithMany()
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false);
 
             modelBuilder.Entity<Issue>()
-                    .HasOne(i => i.ReceivedBy)
+                    .HasOne(i => i.RequestedBy)
                     .WithMany()
                     .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Issue>()
                     .HasOne(i => i.ApprovedBy)
                     .WithMany()
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false);
 
             //Purchase
             modelBuilder.Entity<Purchase>()

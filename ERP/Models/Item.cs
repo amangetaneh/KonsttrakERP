@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace ERP.Models
 {
@@ -11,12 +12,11 @@ namespace ERP.Models
         public string Name { get; set; } = string.Empty;
 
         public int Category { get; set; }
-
+        
         public ConsumableItem ConsumableItem { get; set; }
-         
+        
         public NonConsumableItem NonConsumableItem { get; set; }
 
-        
 
     }
 }

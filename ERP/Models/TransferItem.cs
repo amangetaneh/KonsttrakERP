@@ -14,16 +14,23 @@ namespace ERP.Models
 
         public int QtyRequested { get; set; }
 
-        public int QtyTransfered { get; set; }
+        public int? QtyTransfered { get; set; }
+
+        public int? QtyReceived { get; set; }   
 
         public Double Cost { get; set; }
 
-        public string Remark { get; set; }
+        public string RequestRemark { get; set; } = string.Empty;
+        
+        public string SendRemark { get; set; } = string.Empty;
+       
+        public string ReceiveRemark { get; set; } = string.Empty;
+       
         [JsonIgnore]
 
         [ForeignKey("TransferId")]
         public Transfer Transfer { get; set; }
-        [JsonIgnore]
+        
         [ForeignKey("ItemId")]
         public Item Item { get; set; }
 
