@@ -1,4 +1,5 @@
 ﻿using ERP.Context;
+using ERP.DTOs;
 using ERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,19 +22,38 @@ namespace ERP.Controllers
         public async Task<ActionResult<List<Receive>>> Get()
         {
 
-            var receives = await context.Receives.Include(t => t.ReceiveItems).ToListAsync();
+            var receives = await context.Receives.ToListAsync();
 
             return Ok(receives);
         }
 
         [HttpPost]
-        public async Task<ActionResult<List<Receive>>> Post(Receive singleReceive)
+        public async Task<ActionResult<List<Receive>>> Post(CreateReceiveDTO receiveDTO)
         {
+            Receive receive = new();
+            receive.Date = receiveDTO.Date;
+            receive.ReceiveStoreId = receiveDTO.ReceiveStoreId;
+            receive.PurchaseId = receiveDTO.PurchaseId;
+            receive.DeliveredById = receiveDTO.DeliveredById;
+            receive.ReceivedById = receiveDTO.ReceivedById;
 
-            context.Receives.Add(singleReceive);
+            ICollection<ReceiveItem> receiveItems = new List<ReceiveItem>();
+
+            foreach (var requestItem in receiveDTO.ReceiveItems)
+            {
+                ReceiveItem receiveItem = new();
+                receiveItem.ItemId = requestItem.ItemId;
+                receiveItem.Qty = requestItem.Qty;
+
+                receiveItems.Add(receiveItem);
+            }
+
+            receive.ReceiveItems = receiveItems;
+
+            context.Receives.Add(receive);
             await context.SaveChangesAsync();
 
-            return Ok(context.Receives.FindAsync(singleReceive.Id));
+            return Ok(receive);
         }
 
     }

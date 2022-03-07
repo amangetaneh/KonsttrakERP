@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace ERP.Models
 {
@@ -11,21 +12,25 @@ namespace ERP.Models
         [Column(TypeName = "Date")]
         public DateTime Date { get; set; } = DateTime.Today;
 
+        [JsonIgnore]
         public Store RequestStore { get; set; }
 
         public int RequestStoreId { get; set; }
 
+        [JsonIgnore]
         public Employee RequestedBy { get; set; }
 
         public int RequestedById { get; set; }
 
+        [JsonIgnore]
         public Employee CheckedBy { get; set; }
 
-        public int CheckedById { get; set; }
+        public int? CheckedById { get; set; }
 
+        [JsonIgnore]
         public Employee ApprovedBy { get; set; }
 
-        public int ApprovedById { get; set; }
+        public int? ApprovedById { get; set; }
 
         public ICollection<PurchaseItem> PurchaseItems { get; set; }
     }
