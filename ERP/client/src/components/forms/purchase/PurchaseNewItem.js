@@ -1,21 +1,32 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import { Form, Button, Container } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
+import axios from "axios";
 import AllItems from "../../../models/AllItems";
 import Item from "../../../models/Item";
 import PurchaseRequestItem from "./PurchaseRequestItem";
 import Header from "../../layouts/Header";
+
 function PurchaseNewItem() {
     const [date, setDate] = useState("");
     const [requestNo, setRequestNo] = useState("");
-    // const [requestSite, setrequestSite] = useState("");
-    const [sendStore, setSendStore] = useState("");
+    const [requestStore, setRequestStore] = useState("");
     const [addedItems, setAddedItems] = useState([new Item()]);
 
-    const allItems = useMemo(() => AllItems(), []);
+    const [allItems, setAllItems] = useState([]);
+
+    
+    useEffect(() => {
+        axios.get("https://localhost:7067/api/item").then((res) => {
+            console.log(res.data);
+
+            setAllItems(res.data);
+        });
+    },[]);
 
     var pageend = useRef(null);
     const [scroll, setScroll] = useState(false);
+
 
     useEffect(() => {
         if (scroll) {
@@ -81,9 +92,9 @@ function PurchaseNewItem() {
                             <Form.Group className="mb-3">
                                 <Form.Label>Request Store</Form.Label>
                                 <Form.Select
-                                    value={sendStore}
+                                    value={requestStore}
                                     onChange={(e) =>
-                                        setSendStore(e.target.value)
+                                        setRequestStore(e.target.value)
                                     }
                                 >
                                     <option> Select Store </option>

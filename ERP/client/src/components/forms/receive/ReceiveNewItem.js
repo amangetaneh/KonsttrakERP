@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import { Form, Button, Container } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
+import axios from "axios";
 import AllItems from "../../../models/AllItems";
 import Item from "../../../models/Item";
 import ReceiveRequestItem from "./RecieveItem";
@@ -12,8 +13,16 @@ function ReceiveNewItem() {
     const [deliveredFrom, setdeliveredFrom] = useState("");
     const [addedItems, setAddedItems] = useState([new Item()]);
 
-    const allItems = useMemo(() => AllItems(), []);
+    const [allItems, setAllItems] = useState([]);
 
+    useEffect(() => {
+        axios.get("https://localhost:7067/api/item").then((res) => {
+            console.log(res.data);
+
+            setAllItems(res.data);
+        });
+    },[]);
+    
     var pageend = useRef(null);
     const [scroll, setScroll] = useState(false);
 

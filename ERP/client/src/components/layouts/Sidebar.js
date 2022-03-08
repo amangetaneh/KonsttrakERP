@@ -46,12 +46,18 @@ function Sidebar() {
               <SubMenu title="Stock"></SubMenu>
               <SubMenu title="Purchase">
                 <MenuItem>
-                    Purchase Request <Link to="/purchase/new" />
+                    Purchase an Item <Link to="/purchase/new" />
+                </MenuItem>
+                <MenuItem>
+                    List Purchase Requests <Link to="/purchase/list" />
                 </MenuItem>
               </SubMenu>
               <SubMenu title="Receive">
-              <MenuItem>
-                    Receive  <Link to="/receive/new" />
+                <MenuItem>
+                    Receive an Item <Link to="/receive/new" />
+                </MenuItem>
+                <MenuItem>
+                    List Received Items <Link to="/receive/new" />
                 </MenuItem>
               </SubMenu>
               <SubMenu title="Transfer">

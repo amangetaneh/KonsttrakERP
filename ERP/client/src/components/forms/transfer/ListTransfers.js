@@ -5,7 +5,7 @@ import Table from "../../fragments/Table";
 import Header from "../../layouts/Header";
 import { Container, Spinner } from "react-bootstrap";
 import axios from "axios";
-import { transferStatusBadge } from "../../../Helpers";
+import { statusBadge } from "../../../Helpers";
 import PropTypes from "prop-types";
 
 function ListTransfers({ title, type }) {
@@ -21,7 +21,7 @@ function ListTransfers({ title, type }) {
                 data[key].date = new Date(data[key].date).toLocaleDateString();
 
                 //add status badge
-                data[key].status = transferStatusBadge(data[key].status);
+                data[key].status = statusBadge(data[key].status);
 
                 //add links to each row
                 data[key].open = (
