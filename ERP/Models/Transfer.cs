@@ -27,27 +27,27 @@ namespace ERP.Models
         public Store ReceiveStore { get; set; }
 
         public int ReceiveStoreId { get; set; }
-        [JsonIgnore]
+        //[JsonIgnore]
         public Employee RequestedBy { get; set; }
 
         public int RequestedById { get; set; }
-        [JsonIgnore]
+        //[JsonIgnore]
         public Employee ReceivedBy { get; set; }
 
         public int? ReceivedById { get; set; }
-        [JsonIgnore]
+        //[JsonIgnore]
         public Employee DeliveredBy { get; set; }
 
         public int? DeliveredById { get; set; }
 
-        [JsonIgnore]
+        //[JsonIgnore]
         public Employee SentBy { get; set; }
 
         public int? SentById { get; set; }
 
 
         public string? VehiclePlateNo { get; set; }
-        [JsonIgnore]
+        //[JsonIgnore]
         public virtual Employee ApprovedBy { get; set; }
 
         public int? ApprovedById { get; set; }

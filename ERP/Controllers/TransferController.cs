@@ -3,6 +3,7 @@ using ERP.DTOs;
 using ERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TransferItem = ERP.Models.TransferItem;
 
 namespace ERP.Controllers
 {
@@ -22,6 +23,14 @@ namespace ERP.Controllers
         public async Task<ActionResult<Transfer>> Get(int id)
         {
             var transfer = context.Transfers.Where(transfer => transfer.Id == id)
+                .Include(transfer => transfer.SendStore)
+                .ThenInclude(store => store.Site)
+                .Include(transfer => transfer.ReceiveStore)
+                .ThenInclude(store => store.Site)
+                .Include(transfer => transfer.RequestedBy)
+                .Include(transfer => transfer.SentBy)
+                .Include(transfer => transfer.ReceivedBy)
+                .Include(transfer => transfer.ApprovedBy)
                .Include(transfer => transfer.TransferItems)
                .ThenInclude(transferItem => transferItem.Item)
                .ThenInclude(item => item.ConsumableItem)
@@ -72,7 +81,7 @@ namespace ERP.Controllers
             context.Transfers.Add(transfer);
             await context.SaveChangesAsync();
 
-            return Ok(transfer);
+            return Ok(transfer.Id);
         }
 
         [HttpPost("approve")]

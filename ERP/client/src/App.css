@@ -52,6 +52,7 @@ input[type="color"]:focus,
     outline: 0 none !important;
 }
 
+textarea:read-only,
 input:read-only,
 input[type="text"]:read-only {
     background-color: transparent !important;

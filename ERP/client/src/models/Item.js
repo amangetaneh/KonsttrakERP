@@ -1,16 +1,19 @@
-class Item {
+class ConsumableItem {
     constructor() {
-        this.id = "0";
+        this.id = 0;
         this.name = "";
+        this.category = 1;
         this.spec = "";
         this.unit = 0;
         this.units = [];
-        this.qty = 0;
+        this.qtyRequested = 0;
+        this.qtyTransfered = 0;
+        this.qtyReceived = 0;
         this.qtyAvailable = 0;
         this.sendQty = 0;
         this.cost = 0;
         this.total = 0;
-        this.reqRemark = "";
+        this.requestRemark = "";
         this.sendRemark = "";
     }
 
@@ -27,4 +30,4 @@ class Item {
     }
 }
 
-export default Item;
+export default ConsumableItem;

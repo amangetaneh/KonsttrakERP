@@ -5,7 +5,7 @@ export function transferStatusBadge(stat) {
     const text = ["Requested", "Approved", "Sent", "Recieved"];
 
     return (
-        <Badge pill bg={color[stat]} style={{ width: "100px" }}>
+        <Badge pill bg={color[stat]} style={{ width: "90px" }}>
             {text[stat]}
         </Badge>
     );
