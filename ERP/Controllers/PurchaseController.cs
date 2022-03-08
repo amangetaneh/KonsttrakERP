@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ERP.Controllers
 {
 
-    [Route("[controller]")]
+    [Route("/api/[controller]")]
     [ApiController]
     public class PurchaseController : Controller
     {
@@ -64,6 +64,32 @@ namespace ERP.Controllers
             purchase.PurchaseItems = purchaseItems;
 
             context.Purchases.Add(purchase);
+            await context.SaveChangesAsync();
+
+            return Ok(purchase);
+        }
+
+        [HttpPost("approve")]
+        public async Task<ActionResult<Purchase>> Approve(Purchase request)
+        {
+            var purchase = context.Purchases
+                 .Where(t => t.Id == request.Id)
+                 .Include(t => t.PurchaseItems)
+                 .FirstOrDefault();
+            if (purchase == null) return NotFound("Request Not Found.");
+
+            purchase.ApprovedById = request.ApprovedById;
+
+            foreach (var requestItem in purchase.PurchaseItems)
+            {
+                var purchaseItem = purchase.PurchaseItems.Where(tItem => tItem.ItemId == requestItem.ItemId).FirstOrDefault();
+                if (purchaseItem == null) return NotFound($"Purchase Item with Id {requestItem.ItemId} Not Found");
+
+                purchaseItem.QtyApproved = requestItem.QtyApproved;
+            }
+
+            purchase.Status = 1;
+
             await context.SaveChangesAsync();
 
             return Ok(purchase);

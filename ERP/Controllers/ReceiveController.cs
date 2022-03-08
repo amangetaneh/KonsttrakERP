@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ERP.Controllers
 {
 
-    [Route("[controller]")]
+    [Route("/api/[controller]")]
     [ApiController]
     public class ReceiveController : Controller
     {

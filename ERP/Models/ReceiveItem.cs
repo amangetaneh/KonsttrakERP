@@ -23,6 +23,7 @@ namespace ERP.Models
         public string? Remark { get; set; }
 
         [JsonIgnore]
+
         [ForeignKey("ReceiveId")]
         public Receive Receive { get; set; }
 

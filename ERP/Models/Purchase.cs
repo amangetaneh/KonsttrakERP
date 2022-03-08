@@ -9,6 +9,13 @@ namespace ERP.Models
         [Key]
         public int Id { get; set; }
 
+        public int Status { get; set; } = 0;
+        /*Status Values: 
+           0: Requested
+           1: Approved
+           2: Checked
+       */
+
         [Column(TypeName = "Date")]
         public DateTime Date { get; set; } = DateTime.Today;
 

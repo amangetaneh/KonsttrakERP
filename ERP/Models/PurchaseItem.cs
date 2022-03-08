@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace ERP.Models
 {
@@ -22,6 +23,8 @@ namespace ERP.Models
         public decimal? TotalCost => (QtyApproved * Cost);
 
         public string? Remark { get; set; }
+
+        [JsonIgnore]
 
         [ForeignKey("PurchaseId")]
         public Purchase Purchase { get; set; }
