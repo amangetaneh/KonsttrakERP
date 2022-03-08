@@ -5,6 +5,7 @@ import Sidebar from "./components/layouts/Sidebar"
 import NewTransfer from "./components/forms/transfer/NewTransfer"
 import ListTransfers from "./components/forms/transfer/ListTransfers"
 import PurchaseNewItem from "./components/forms/purchase/PurchaseNewItem"
+import ListPurchases from "./components/forms/purchase/ListPurchases"
 import SingleTransfer from "./components/forms/transfer/SingleTransfer"
 import ReceiveNewItem from "./components/forms/receive/ReceiveNewItem"
 
@@ -30,6 +31,8 @@ export default class App extends Component {
               <Route path="transfer/:id" element={<SingleTransfer />} />
 
               <Route path="purchase/new" element={<PurchaseNewItem />} />
+              <Route path="purchase/list" element={<ListPurchases />} />
+
               <Route path="receive/new" element={<ReceiveNewItem />} />
             </Routes>
           </div>    
