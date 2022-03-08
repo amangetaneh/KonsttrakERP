@@ -72,6 +72,18 @@ namespace ERP.Controllers
                 transferItem.QtyRequested = requestItem.QtyRequested;
                 transferItem.RequestRemark = requestItem.RequestRemark;
 
+                var itemTemp = context.Items.Where(item => item.Id == requestItem.ItemId).
+                    Include(i => i.NonConsumableItem).
+                    Include(i => i.ConsumableItem).
+                    FirstOrDefault();
+
+                if (itemTemp == null) return NotFound($"Transfer Item with Id {requestItem.ItemId} Not Found");
+
+                if (itemTemp.Type == ItemType.Consumable)
+                    transferItem.Cost = itemTemp.ConsumableItem.Cost;
+                else
+                    transferItem.Cost = itemTemp.NonConsumableItem.Cost;
+
                 transferItems.Add(transferItem);
             }
 
@@ -84,13 +96,29 @@ namespace ERP.Controllers
         }
 
         [HttpPost("approve")]
-        public async Task<ActionResult<Transfer>> Approve(int id, int approvedById)
+        public async Task<ActionResult<Transfer>> Approve(ApproveTransferDTO request)
         {
-            var transfer = await context.Transfers.FindAsync(id);
+            var transfer = await context.Transfers.FindAsync(request.transferId);
             if (transfer == null) return NotFound("Transfer Not Found.");
 
-            transfer.ApprovedById = approvedById;
-            transfer.Status = 1;
+            transfer.ApproveDate = DateTime.Now;
+            transfer.ApprovedById = request.approvedById;
+            transfer.Status = TransferStatus.Approved;
+
+            await context.SaveChangesAsync();
+
+            return Ok(transfer);
+        }
+
+        [HttpPost("decline")]
+        public async Task<ActionResult<Transfer>> Decline(ApproveTransferDTO request)
+        {
+            var transfer = await context.Transfers.FindAsync(request.transferId);
+            if (transfer == null) return NotFound("Transfer Not Found.");
+
+            transfer.ApproveDate = DateTime.Now;
+            transfer.ApprovedById = request.approvedById;
+            transfer.Status = TransferStatus.Declined;
 
             await context.SaveChangesAsync();
 
@@ -106,6 +134,7 @@ namespace ERP.Controllers
                 .FirstOrDefault();
             if (transfer == null) return NotFound("Transfer Not Found.");
 
+            transfer.SendDate = DateTime.Now;
             transfer.SentById = request.SentById;
 
             foreach (var requestItem in request.TransferItems)
@@ -113,11 +142,11 @@ namespace ERP.Controllers
                 var transferItem = transfer.TransferItems.Where(tItem => tItem.ItemId == requestItem.ItemId).FirstOrDefault();
                 if (transferItem == null) return NotFound($"Transfer Item with Id {requestItem.ItemId} Not Found");
 
-                transferItem.QtyTransfered = requestItem.QtyTransfered;
+                transferItem.QtySent = requestItem.QtySent;
                 transferItem.SendRemark = requestItem.SendRemark;
             }
 
-            transfer.Status = 2;
+            transfer.Status = TransferStatus.Sent;
 
             await context.SaveChangesAsync();
 
@@ -135,6 +164,7 @@ namespace ERP.Controllers
                 .FirstOrDefault();
             if (transfer == null) return NotFound("Transfer Not Found.");
 
+            transfer.ReceiveDate = DateTime.Now;
             transfer.ReceivedById = request.ReceivedById;
             transfer.DeliveredById = request.DeliveredById;
             transfer.VehiclePlateNo = request.VehiclePlateNo;
@@ -149,7 +179,7 @@ namespace ERP.Controllers
                 transferItem.ReceiveRemark = requestItem.ReceiveRemark;
             }
 
-            transfer.Status = 2;
+            transfer.Status = TransferStatus.Received;
 
             await context.SaveChangesAsync();
 

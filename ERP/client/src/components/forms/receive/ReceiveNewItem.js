@@ -113,7 +113,7 @@ function ReceiveNewItem() {
 
                     <div className="row">
                         <div className="col-9 d-grid">
-                            <Button className="bg-teal">
+                            <Button className="btn-teal-dark">
                                 Request Receive
                             </Button>
                         </div>

@@ -148,12 +148,12 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("Category")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -512,7 +512,7 @@ namespace ERP.Migrations
                     b.Property<int>("QtyRequested")
                         .HasColumnType("int");
 
-                    b.Property<int?>("QtyTransfered")
+                    b.Property<int?>("QtySent")
                         .HasColumnType("int");
 
                     b.Property<string>("ReceiveRemark")

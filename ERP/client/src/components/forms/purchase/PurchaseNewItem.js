@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { Form, Button, Container } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
 import axios from "axios";
-import AllItems from "../../../models/AllItems";
 import Item from "../../../models/Item";
 import PurchaseRequestItem from "./PurchaseRequestItem";
 import Header from "../../layouts/Header";
@@ -117,7 +116,7 @@ function PurchaseNewItem() {
 
                     <div className="row">
                         <div className="col-9 d-grid">
-                            <Button className="bg-teal">
+                            <Button className="btn-teal-dark">
                                 Request Purchase
                             </Button>
                         </div>

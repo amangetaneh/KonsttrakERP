@@ -9,13 +9,7 @@ namespace ERP.Models
         [Key]
         public int Id { get; set; }
 
-        public int Status { get; set; } = 0;
-        /*Status Values: 
-            0: Requested
-            1: Approved
-            2: Sent
-            3: Received
-        */
+        public int Status { get; set; } = TransferStatus.Requested;
 
         public DateTime RequestDate { get; set; } = DateTime.Now;
 

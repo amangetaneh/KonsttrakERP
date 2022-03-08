@@ -14,7 +14,7 @@ namespace ERP.Models
 
         public int QtyRequested { get; set; }
 
-        public int? QtyTransfered { get; set; }
+        public int? QtySent { get; set; }
 
         public int? QtyReceived { get; set; }
 

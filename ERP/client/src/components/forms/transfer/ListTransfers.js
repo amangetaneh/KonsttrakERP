@@ -5,7 +5,7 @@ import Table from "../../fragments/Table";
 import Header from "../../layouts/Header";
 import { Container, Spinner } from "react-bootstrap";
 import axios from "axios";
-import { statusBadge } from "../../../Helpers";
+import TransferStatusBadge from "./fragments/TransferStatusBadge";
 import PropTypes from "prop-types";
 
 function ListTransfers({ title, type }) {
@@ -18,10 +18,10 @@ function ListTransfers({ title, type }) {
 
             Object.keys(data).map((key, index) => {
                 //fromat date
-                data[key].date = new Date(data[key].date).toLocaleDateString();
+                data[key].requestDate = new Date(data[key].requestDate).toLocaleString();
 
                 //add status badge
-                data[key].status = statusBadge(data[key].status);
+                data[key].status = TransferStatusBadge(data[key].status);
 
                 //add links to each row
                 data[key].open = (
@@ -50,8 +50,8 @@ function ListTransfers({ title, type }) {
                 accessor: "id", // accessor is the "key" in the data
             },
             {
-                Header: "Date",
-                accessor: "date", // accessor is the "key" in the data
+                Header: "Requested On",
+                accessor: "requestDate", // accessor is the "key" in the data
             },
             {
                 Header: "Sending Site",
@@ -79,7 +79,7 @@ function ListTransfers({ title, type }) {
 
             {isLoading ? (
                 <div className="d-flex justify-content-center align-content-center mt-4 pt-4">
-                    <Spinner animation="grow" className="bg-teal"/>
+                    <Spinner animation="grow" className="bg-teal" />
                 </div>
             ) : (
                 <Container className="my-3">

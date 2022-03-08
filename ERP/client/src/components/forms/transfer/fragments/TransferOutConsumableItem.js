@@ -1,5 +1,4 @@
-import { Form, Button, InputGroup } from "react-bootstrap";
-import { FaTrash } from "react-icons/fa";
+import { Form, InputGroup } from "react-bootstrap";
 
 function TransferOutConsumableItem({ addedItems, setAddedItems, index }) {
     console.log(addedItems);
@@ -97,8 +96,8 @@ function TransferOutConsumableItem({ addedItems, setAddedItems, index }) {
                                 <Form.Control
                                     min="0"
                                     type="number"
-                                    name="qtyTransfered"
-                                    value={addedItems[index].qtyTransfered}
+                                    name="qtySent"
+                                    value={addedItems[index].qtySent}
                                     onChange={valueChanged}
                                 />
                             </Form.Group>
@@ -111,7 +110,7 @@ function TransferOutConsumableItem({ addedItems, setAddedItems, index }) {
                                     name="total"
                                     readOnly
                                     value={
-                                        addedItems[index].qtyTransfered *
+                                        addedItems[index].qtySent *
                                         addedItems[index].cost
                                     }
                                 />

@@ -118,28 +118,28 @@ function Table({ columns, data }) {
                 </div>
                 <div className="col-auto">
                     <Button
-                        className="bg-teal me-2"
+                        className="btn-teal-dark me-2"
                         onClick={() => gotoPage(0)}
                         disabled={!canPreviousPage}
                     >
                         {"<<"}
                     </Button>
                     <Button
-                        className="bg-teal me-2"
+                        className="btn-teal-dark me-2"
                         onClick={() => previousPage()}
                         disabled={!canPreviousPage}
                     >
                         {"<"}
                     </Button>
                     <Button
-                        className="bg-teal me-2"
+                        className="btn-teal-dark me-2"
                         onClick={() => nextPage()}
                         disabled={!canNextPage}
                     >
                         {">"}
                     </Button>
                     <Button
-                        className="bg-teal me-2"
+                        className="btn-teal-dark me-2"
                         onClick={() => gotoPage(pageCount - 1)}
                         disabled={!canNextPage}
                     >

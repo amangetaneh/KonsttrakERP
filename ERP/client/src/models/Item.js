@@ -1,13 +1,13 @@
-class ConsumableItem {
+class Item {
     constructor() {
         this.id = 0;
         this.name = "";
-        this.category = 1;
+        this.type = 1;
         this.spec = "";
         this.unit = 0;
         this.units = [];
         this.qtyRequested = 0;
-        this.qtyTransfered = 0;
+        this.qtySent = 0;
         this.qtyReceived = 0;
         this.qtyAvailable = 0;
         this.sendQty = 0;
@@ -15,6 +15,7 @@ class ConsumableItem {
         this.total = 0;
         this.requestRemark = "";
         this.sendRemark = "";
+        this.receiveRemark = "";
     }
 
     load() {
@@ -30,4 +31,4 @@ class ConsumableItem {
     }
 }
 
-export default ConsumableItem;
+export default Item;

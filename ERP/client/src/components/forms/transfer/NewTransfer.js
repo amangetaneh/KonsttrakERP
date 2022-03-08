@@ -3,44 +3,63 @@ import { Form, Button, Container } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
 import axios from "axios";
 import Item from "../../../models/Item";
-import TransferRequestConsumableItem from "../../fragments/TransferRequestConsumableItem";
+import TransferRequestConsumableItem from "./fragments/TransferRequestConsumableItem";
 import Header from "../../layouts/Header";
 import { useNavigate } from "react-router-dom";
 function NewTransfer() {
     const navigate = useNavigate();
-    const [date, setDate] = useState("");
-    const [transferNo, setTransferNo] = useState("");
     const [sendSite, setSendSite] = useState(0);
     const [sendStore, setSendStore] = useState(0);
+    const [receiveSite, setReceiveSite] = useState(0);
+    const [receiveStore, setReceiveStore] = useState(0);
     const [addedItems, setAddedItems] = useState([new Item()]);
 
-    const [siteStores, setSiteStores] = useState([]);
+    const [sendSiteStores, setSendSiteStores] = useState([]);
+    const [receiveSiteStores, setReceiveSiteStores] = useState([]);
     const [allStores, setAllStores] = useState([]);
     const [allSites, setAllSites] = useState([]);
     const [allItems, setAllItems] = useState([]);
 
     useEffect(() => {
+        //get sites
         axios.get("https://localhost:7067/api/site").then((res) => {
             setAllSites(res.data);
         });
-
+        //get stores and select first ones
         axios.get("https://localhost:7067/api/store").then((res) => {
             setAllStores(res.data);
             setSendSite(res.data[0].id);
+            setReceiveSite(res.data[0].id);
         });
-
-        axios.get("https://localhost:7067/api/item").then((res) => {
+        //get items
+        axios.get("https://localhost:7067/api/item/consumable").then((res) => {
             setAllItems(res.data);
         });
     }, []);
 
     useEffect(() => {
-        setSiteStores(allStores.filter((store) => store.siteId == sendSite));
+        //update send stores when send site changes
+        setSendSiteStores(
+            allStores.filter((store) => store.siteId == sendSite)
+        );
     }, [sendSite]);
 
     useEffect(() => {
-        if (siteStores.length > 0) setSendStore(siteStores[0].id);
-    }, [siteStores]);
+        //select first store when send stores change
+        if (sendSiteStores.length > 0) setSendStore(sendSiteStores[0].id);
+    }, [sendSiteStores]);
+
+    useEffect(() => {
+        //update receive stores when receive site changes
+        setReceiveSiteStores(
+            allStores.filter((store) => store.siteId == receiveSite)
+        );
+    }, [receiveSite]);
+
+    useEffect(() => {
+        //select first store when receive stores change
+        if (sendSiteStores.length > 0) setReceiveStore(receiveSiteStores[0].id);
+    }, [receiveSiteStores]);
 
     function requestTransfer(e) {
         e.preventDefault();
@@ -91,32 +110,6 @@ function NewTransfer() {
 
             <Container className="my-3">
                 <Form onSubmit={requestTransfer}>
-                    <div className="row mx-2 border-danger border">
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Date</Form.Label>
-                                <Form.Control
-                                    type="date"
-                                    value={date}
-                                    onChange={(e) => {
-                                        setDate(e.target.value);
-                                    }}
-                                />
-                            </Form.Group>
-                        </div>
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Transfer Number</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    value={transferNo}
-                                    onChange={(e) => {
-                                        setTransferNo(e.target.value);
-                                    }}
-                                />
-                            </Form.Group>
-                        </div>
-                    </div>
                     <div className="row mx-2">
                         <div className="col">
                             <Form.Group className="mb-3">
@@ -144,7 +137,44 @@ function NewTransfer() {
                                         setSendStore(e.target.value)
                                     }
                                 >
-                                    {siteStores.map((store) => (
+                                    {sendSiteStores.map((store) => (
+                                        <option key={store.id} value={store.id}>
+                                            {store.name}
+                                        </option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
+                        </div>
+                    </div>
+
+                    <div className="row mx-2">
+                        <div className="col">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Receiving Site</Form.Label>
+                                <Form.Select
+                                    value={receiveSite}
+                                    onChange={(e) =>
+                                        setReceiveSite(e.target.value)
+                                    }
+                                >
+                                    {allSites.map((site) => (
+                                        <option key={site.id} value={site.id}>
+                                            {site.name}
+                                        </option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
+                        </div>
+                        <div className="col">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Receiving Store</Form.Label>
+                                <Form.Select
+                                    value={receiveStore}
+                                    onChange={(e) =>
+                                        setReceiveStore(e.target.value)
+                                    }
+                                >
+                                    {receiveSiteStores.map((store) => (
                                         <option key={store.id} value={store.id}>
                                             {store.name}
                                         </option>
@@ -166,7 +196,7 @@ function NewTransfer() {
 
                     <div className="row">
                         <div className="col-9 d-grid">
-                            <Button type="submit" className="bg-teal">
+                            <Button type="submit" className="btn-teal-dark">
                                 Request Transfer
                             </Button>
                         </div>
