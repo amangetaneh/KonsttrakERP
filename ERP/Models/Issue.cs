@@ -16,23 +16,24 @@ namespace ERP.Models
            2: Handed
        */
 
-        [Column(TypeName = "Date")]
-        public DateTime Date { get; set; } = DateTime.Today;
-        [JsonIgnore]
-        private Site Site { get; set; }
+        public DateTime RequestDate { get; set; } = DateTime.Now;
 
-        private int SiteId { get; set; }
+        public DateTime? ApproveDate { get; set; }
 
-        [JsonIgnore]
+        public DateTime? HandDate { get; set; }
+     
+        private Store Store { get; set; }
+
+        private int StoreId { get; set; }
+
         public Employee RequestedBy { get; set; }
 
         public int RequestedById { get; set; }
 
-        [JsonIgnore]
         public Employee HandedBy { get; set; }
 
         public int? HandedById { get; set; }
-       [JsonIgnore]
+
         public Employee ApprovedBy { get; set; }
 
         public int? ApprovedById { get; set; }

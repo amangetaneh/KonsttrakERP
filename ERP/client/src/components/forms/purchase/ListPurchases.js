@@ -5,7 +5,6 @@ import Table from "../../fragments/Table";
 import Header from "../../layouts/Header";
 import { Container } from "react-bootstrap";
 import axios from "axios";
-import { statusBadge } from "../../../Helpers";
 import PropTypes from "prop-types";
 
 function ListPurchases({ title, type }) {
@@ -20,8 +19,6 @@ function ListPurchases({ title, type }) {
                 //fromat date
                 data[key].date = new Date(data[key].date).toLocaleDateString();
 
-                //add status badge
-                data[key].status = statusBadge(data[key].status);
 
                 //add links to each row
                 data[key].open = (

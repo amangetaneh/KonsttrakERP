@@ -11,7 +11,7 @@ namespace ERP.Models
 
         public string Name { get; set; } = string.Empty;
 
-        public int Category { get; set; }
+        public int Type { get; set; }
         
         public ConsumableItem ConsumableItem { get; set; }
         

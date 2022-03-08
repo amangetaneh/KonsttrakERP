@@ -1,7 +1,7 @@
-import { Form, Button, InputGroup } from "react-bootstrap";
-import { FaTrash } from "react-icons/fa";
+import { Form, InputGroup } from "react-bootstrap";
 
-function TransferOutItem({ addedItems, setAddedItems, index }) {
+function TransferOutConsumableItem({ addedItems, setAddedItems, index }) {
+    console.log(addedItems);
     function valueChanged(e) {
         const addedItemsCpy = [...addedItems];
         addedItemsCpy[index][e.target.name] = e.target.value;
@@ -20,30 +20,29 @@ function TransferOutItem({ addedItems, setAddedItems, index }) {
                 <div className="col">
                     <Form.Group className="mb-3">
                         <Form.Label>Item</Form.Label>
-                        <Form.Control type="text" readOnly />
+                        <Form.Control
+                            type="text"
+                            readOnly
+                            value={addedItems[index].name}
+                        />
                     </Form.Group>
                 </div>
                 <div className="col">
                     <Form.Group className="mb-3">
-                        <Form.Label>Quantity</Form.Label>
+                        <Form.Label>Quantity Requested</Form.Label>
                         <InputGroup className="mb-3">
                             <Form.Control
-                                type="number"
+                                type="text"
                                 name="qty"
-                                value={addedItems[index].qty}
-                                onChange={valueChanged}
+                                readOnly
+                                value={addedItems[index].qtyRequested}
                             />
-                            <Form.Select
+                            <Form.Control
                                 name="unit"
-                                value={addedItems[index].unit}
-                                onChange={valueChanged}
-                            >
-                                {addedItems[index].units.map((unit, index) => (
-                                    <option key={index} value={index}>
-                                        {unit}
-                                    </option>
-                                ))}
-                            </Form.Select>
+                                type="text"
+                                readOnly
+                                value={addedItems[index].units[0]}
+                            />
                         </InputGroup>
                     </Form.Group>
                 </div>
@@ -58,7 +57,7 @@ function TransferOutItem({ addedItems, setAddedItems, index }) {
                             name="spec"
                             rows={5}
                             value={addedItems[index].spec}
-                            onChange={valueChanged}
+                            readOnly
                         />
                     </Form.Group>
                 </div>
@@ -68,9 +67,37 @@ function TransferOutItem({ addedItems, setAddedItems, index }) {
                             <Form.Group className="mb-3">
                                 <Form.Label>Unit Cost</Form.Label>
                                 <Form.Control
-                                    type="number"
+                                    type="text"
                                     name="cost"
                                     value={addedItems[index].cost}
+                                    readOnly
+                                />
+                            </Form.Group>
+                        </div>
+                        <div className="col">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Total Cost</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="total"
+                                    readOnly
+                                    value={
+                                        addedItems[index].qtyRequested *
+                                        addedItems[index].cost
+                                    }
+                                />
+                            </Form.Group>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Qty Transfered</Form.Label>
+                                <Form.Control
+                                    min="0"
+                                    type="number"
+                                    name="qtySent"
+                                    value={addedItems[index].qtySent}
                                     onChange={valueChanged}
                                 />
                             </Form.Group>
@@ -79,23 +106,17 @@ function TransferOutItem({ addedItems, setAddedItems, index }) {
                             <Form.Group className="mb-3">
                                 <Form.Label>Total Cost</Form.Label>
                                 <Form.Control
-                                    type="number"
+                                    type="text"
                                     name="total"
-                                    value={addedItems[index].total}
-                                    onChange={valueChanged}
+                                    readOnly
+                                    value={
+                                        addedItems[index].qtySent *
+                                        addedItems[index].cost
+                                    }
                                 />
                             </Form.Group>
                         </div>
                     </div>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Total Cost</Form.Label>
-                        <Form.Control
-                            type="number"
-                            name="total"
-                            value={addedItems[index].total}
-                            onChange={valueChanged}
-                        />
-                    </Form.Group>
                 </div>
             </div>
 
@@ -103,13 +124,22 @@ function TransferOutItem({ addedItems, setAddedItems, index }) {
                 <div className="col">
                     <Form.Group className="mb-3">
                         <Form.Label>Request Remark</Form.Label>
-                        <Form.Control type="text" readOnly />
+                        <Form.Control
+                            type="text"
+                            readOnly
+                            value={addedItems[index].requestRemark}
+                        />
                     </Form.Group>
                 </div>
                 <div className="col">
                     <Form.Group className="mb-3">
                         <Form.Label>Send Remark</Form.Label>
-                        <Form.Control type="text" />
+                        <Form.Control
+                            type="text"
+                            name="sendRemark"
+                            value={addedItems[index].sendRemark}
+                            onChange={valueChanged}
+                        />
                     </Form.Group>
                 </div>
             </div>
@@ -117,5 +147,4 @@ function TransferOutItem({ addedItems, setAddedItems, index }) {
     );
 }
 
-export default TransferOutItem;
-
+export default TransferOutConsumableItem;

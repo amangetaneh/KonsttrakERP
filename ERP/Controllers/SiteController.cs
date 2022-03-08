@@ -7,21 +7,21 @@ namespace ERP.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StoreController : Controller
+    public class SiteController : Controller
     {
         private readonly DataContext context;
 
-        public StoreController(DataContext context)
+        public SiteController(DataContext context)
         {
             this.context = context;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Store>>> Get()
+        public async Task<ActionResult<List<Site>>> Get()
         {
-            var stores = await context.Stores.Include(store => store.Site).ToListAsync();
+            var sites = await context.Sites.ToListAsync();
 
-            return Ok(stores);
+            return Ok(sites);
         }
     }
 }

@@ -8,8 +8,9 @@ namespace ERP.Models
         [Key]
         public int Id { get; set; }
 
-        [Column(TypeName = "Date")]
-        public DateTime Date { get; set; } = DateTime.Today;
+        public DateTime RequestDate { get; set; } = DateTime.Now;
+
+        public DateTime? ApproveDate { get; set; }
 
         public Site Site { get; set; }
 

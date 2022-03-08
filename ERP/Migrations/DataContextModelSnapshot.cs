@@ -80,14 +80,20 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<DateTime?>("ApproveDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("ApprovedById")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("Date");
+                    b.Property<DateTime?>("HandDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("HandedById")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("RequestedById")
                         .HasColumnType("int");
@@ -142,12 +148,12 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("Category")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -180,11 +186,11 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<DateTime?>("ApproveDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("ApprovedById")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("Date");
 
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
@@ -192,6 +198,9 @@ namespace ERP.Migrations
                     b.Property<string>("Reason")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("RequestedById")
                         .HasColumnType("int");
@@ -253,10 +262,10 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ApprovedById")
+                    b.Property<int?>("ApprovedById")
                         .HasColumnType("int");
 
-                    b.Property<int>("CheckedById")
+                    b.Property<int?>("CheckedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
@@ -289,10 +298,10 @@ namespace ERP.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
 
-                    b.Property<double>("Cost")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("QtyApproved")
+                    b.Property<int?>("QtyApproved")
                         .HasColumnType("int");
 
                     b.Property<int>("QtyRequested")
@@ -316,7 +325,7 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ApprovedById")
+                    b.Property<int?>("ApprovedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
@@ -361,14 +370,13 @@ namespace ERP.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
 
-                    b.Property<double>("Cost")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Qty")
                         .HasColumnType("int");
 
                     b.Property<string>("Remark")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ReceiveId", "ItemId");
@@ -429,14 +437,17 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<DateTime?>("ApproveDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("ApprovedById")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("Date");
-
                     b.Property<int?>("DeliveredById")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("ReceiveDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ReceiveStoreId")
                         .HasColumnType("int");
@@ -444,8 +455,14 @@ namespace ERP.Migrations
                     b.Property<int?>("ReceivedById")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("RequestedById")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("SendDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("SendStoreId")
                         .HasColumnType("int");
@@ -495,7 +512,7 @@ namespace ERP.Migrations
                     b.Property<int>("QtyRequested")
                         .HasColumnType("int");
 
-                    b.Property<int?>("QtyTransfered")
+                    b.Property<int?>("QtySent")
                         .HasColumnType("int");
 
                     b.Property<string>("ReceiveRemark")
