@@ -43,11 +43,10 @@ namespace ERP.Controllers
             return Ok(issues);
         }
 
-        [HttpPost("issue")]
+        [HttpPost("request")]
         public async Task<ActionResult<List<Issue>>> Post(CreateIssueDTO issueDTO)
         {
             Issue issue = new();
-            issue.Date = issueDTO.Date;
             issue.RequestedById = issueDTO.RequestedById;
 
             ICollection<IssueItem> issueItems = new List<IssueItem>();

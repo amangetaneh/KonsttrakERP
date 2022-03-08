@@ -2,9 +2,7 @@
 {
     public class CreateIssueDTO
     {
-        
-        public DateTime Date { get; set; } = DateTime.Today;
-        
+                
         public int RequestedById { get; set; }
 
         public ICollection<CreateIssueItem> IssueItems { get; set; }

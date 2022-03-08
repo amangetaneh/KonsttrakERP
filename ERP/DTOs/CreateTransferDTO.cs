@@ -2,7 +2,6 @@
 {
     public class CreateTransferDTO
     {
-        public DateTime Date { get; set; } = DateTime.Today;
 
         public int SendStoreId { get; set; }
 

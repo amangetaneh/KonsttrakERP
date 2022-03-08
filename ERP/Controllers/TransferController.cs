@@ -59,7 +59,6 @@ namespace ERP.Controllers
         public async Task<ActionResult<List<Transfer>>> Post(CreateTransferDTO transferDTO)
         {
             Transfer transfer = new();
-            transfer.Date = transferDTO.Date;
             transfer.SendStoreId = transferDTO.SendStoreId;
             transfer.ReceiveStoreId = transferDTO.ReceiveStoreId;
             transfer.RequestedById = transferDTO.RequestedById;
