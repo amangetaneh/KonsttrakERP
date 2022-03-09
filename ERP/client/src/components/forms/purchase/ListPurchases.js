@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 
 import Table from "../../fragments/Table";
 import Header from "../../layouts/Header";
-import { Container } from "react-bootstrap";
+import { Container, Spinner } from "react-bootstrap";
 import axios from "axios";
+import PurchaseStatusBadge from "./fragments/PurchaseStatusBadge";
 import PropTypes from "prop-types";
 
 function ListPurchases({ title, type }) {
@@ -16,9 +17,12 @@ function ListPurchases({ title, type }) {
             var data = res.data;
 
             Object.keys(data).map((key, index) => {
-                //fromat date
-                data[key].date = new Date(data[key].date).toLocaleDateString();
-
+                //format date
+                data[key].requestDate = new Date(data[key].requestDate).toLocaleDateString();
+                data[key].approveDate = new Date(data[key].approveDate).toLocaleDateString();
+                
+                //add status badge
+                data[key].status = PurchaseStatusBadge(data[key].status);
 
                 //add links to each row
                 data[key].open = (
@@ -36,9 +40,8 @@ function ListPurchases({ title, type }) {
             });
 
             setPurchases(data);
+            setIsLoading(false);
         });
-
-        setIsLoading(false);
     }, []);
 
     const columns = React.useMemo(
@@ -49,15 +52,19 @@ function ListPurchases({ title, type }) {
             },
             {
                 Header: "Date",
-                accessor: "date", // accessor is the "key" in the data
+                accessor: "requestDate", // accessor is the "key" in the data
             },
             {
                 Header: "Request Store",
-                accessor: "sendStore.site.name", // accessor is the "key" in the data
+                accessor: "site.name", // accessor is the "key" in the data
             },
             {
                 Header: "Status",
                 accessor: "status", // accessor is the "key" in the data
+            },
+            {
+                Header: "Last Status",
+                accessor: "approveDate", // accessor is the "key" in the data
             },
             {
                 Header: "",
@@ -71,9 +78,15 @@ function ListPurchases({ title, type }) {
         <>
             <Header title={title} />
 
-            <Container className="my-3">
-                <Table columns={columns} data={purchases} />
-            </Container>
+            {isLoading ? (
+                <div className="d-flex justify-content-center align-content-center mt-4 pt-4">
+                    <Spinner animation="grow" className="bg-teal" />
+                </div>
+            ) : (
+                <Container className="my-3">
+                    <Table columns={columns} data={purchases} />
+                </Container>
+            )}
         </>
     );
 }

@@ -8,6 +8,7 @@ import PurchaseNewItem from "./components/forms/purchase/PurchaseNewItem"
 import ListPurchases from "./components/forms/purchase/ListPurchases"
 import SingleTransfer from "./components/forms/transfer/SingleTransfer"
 import ReceiveNewItem from "./components/forms/receive/ReceiveNewItem"
+import ListReceives from "./components/forms/receive/ListReceives"
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
@@ -34,6 +35,7 @@ export default class App extends Component {
               <Route path="purchase/list" element={<ListPurchases />} />
 
               <Route path="receive/new" element={<ReceiveNewItem />} />
+              <Route path="receive/list" element={<ListReceives />} />
             </Routes>
           </div>    
         </div>

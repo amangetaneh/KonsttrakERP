@@ -57,7 +57,7 @@ function Sidebar() {
                     Receive an Item <Link to="/receive/new" />
                 </MenuItem>
                 <MenuItem>
-                    List Received Items <Link to="/receive/new" />
+                    List Received Items <Link to="/receive/list" />
                 </MenuItem>
               </SubMenu>
               <SubMenu title="Transfer">
