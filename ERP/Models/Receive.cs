@@ -16,7 +16,7 @@ namespace ERP.Models
        */
 
         [Column(TypeName = "Date")]
-        public DateTime Date { get; set; } = DateTime.Today;
+        public DateTime ReceeiveDate { get; set; } = DateTime.Now;
         
         [JsonIgnore]
         public Store ReceiveStore { get; set; }
@@ -40,6 +40,8 @@ namespace ERP.Models
 
         public int ReceivedById { get; set; }
 
+        public DateTime ApproveDate { get; set; }
+        
         [JsonIgnore]
         public Employee ApprovedBy { get; set; }
 

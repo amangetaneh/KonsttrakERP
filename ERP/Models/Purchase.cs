@@ -16,8 +16,7 @@ namespace ERP.Models
            2: Checked
        */
 
-        [Column(TypeName = "Date")]
-        public DateTime Date { get; set; } = DateTime.Today;
+        public DateTime RequestDate { get; set; } = DateTime.Now;
 
         [JsonIgnore]
         public Store RequestStore { get; set; }
@@ -29,11 +28,15 @@ namespace ERP.Models
 
         public int RequestedById { get; set; }
 
+        public DateTime? CheckDate { get; set; }
+        
         [JsonIgnore]
         public Employee CheckedBy { get; set; }
 
         public int? CheckedById { get; set; }
 
+        public DateTime? ApproveDate { get; set; }
+        
         [JsonIgnore]
         public Employee ApprovedBy { get; set; }
 

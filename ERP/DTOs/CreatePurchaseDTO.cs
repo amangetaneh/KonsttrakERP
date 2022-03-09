@@ -2,8 +2,6 @@
 {
     public class CreatePurchaseDTO
     {
-        public DateTime Date { get; set; } = DateTime.Today;
-
         public int RequestStoreId { get; set; }
 
         public int RequestedById { get; set; }
@@ -17,6 +15,8 @@
         public int ItemId { get; set; }
 
         public int QtyRequested { get; set; }
+
+        public string Remark { get; set; } = string.Empty;
 
     }
 }

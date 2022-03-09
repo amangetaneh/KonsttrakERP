@@ -2,8 +2,6 @@
 {
     public class CreateReceiveDTO
     {
-        public DateTime Date { get; set; } = DateTime.Today;
-
         public int ReceiveStoreId { get; set; }
 
         public int PurchaseId { get; set; }
@@ -21,6 +19,8 @@
         public int ItemId { get; set; }
 
         public int Qty { get; set; }
+
+        public string Remark { get; set; } = string.Empty;
 
     }
 }

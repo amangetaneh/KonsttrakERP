@@ -20,7 +20,7 @@ namespace ERP.Models
         public decimal Cost { get; set; }
 
         [Column(TypeName = "decimal(18, 2)")]
-        public decimal? TotalCost => (QtyApproved * Cost);
+        public decimal? TotalCost { get; set; }
 
         public string? Remark { get; set; }
 

@@ -3,6 +3,7 @@ using ERP.DTOs;
 using ERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ReceiveItem = ERP.Models.ReceiveItem;
 
 namespace ERP.Controllers
 {
@@ -27,11 +28,10 @@ namespace ERP.Controllers
             return Ok(receives);
         }
 
-        [HttpPost]
+        [HttpPost("receive")]
         public async Task<ActionResult<List<Receive>>> Post(CreateReceiveDTO receiveDTO)
         {
             Receive receive = new();
-            receive.Date = receiveDTO.Date;
             receive.ReceiveStoreId = receiveDTO.ReceiveStoreId;
             receive.PurchaseId = receiveDTO.PurchaseId;
             receive.DeliveredById = receiveDTO.DeliveredById;
@@ -44,6 +44,19 @@ namespace ERP.Controllers
                 ReceiveItem receiveItem = new();
                 receiveItem.ItemId = requestItem.ItemId;
                 receiveItem.Qty = requestItem.Qty;
+                receiveItem.Remark = requestItem.Remark;
+
+                var itemTemp = context.Items.Where(item => item.Id == requestItem.ItemId).
+                   Include(i => i.NonConsumableItem).
+                   Include(i => i.ConsumableItem).
+                   FirstOrDefault();
+
+                if (itemTemp == null) return NotFound($"Transfer Item with Id {requestItem.ItemId} Not Found");
+
+                if (itemTemp.Type == ItemType.Consumable)
+                    receiveItem.Cost = itemTemp.ConsumableItem.Cost;
+                else
+                    receiveItem.Cost = itemTemp.NonConsumableItem.Cost;
 
                 receiveItems.Add(receiveItem);
             }

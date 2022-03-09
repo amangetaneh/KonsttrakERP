@@ -262,19 +262,28 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<DateTime?>("ApproveDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("ApprovedById")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("CheckDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("CheckedById")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("Date");
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("RequestStoreId")
                         .HasColumnType("int");
 
                     b.Property<int>("RequestedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -310,6 +319,9 @@ namespace ERP.Migrations
                     b.Property<string>("Remark")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal?>("TotalCost")
+                        .HasColumnType("decimal(18,2)");
+
                     b.HasKey("PurchaseId", "ItemId");
 
                     b.HasIndex("ItemId");
@@ -325,11 +337,11 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<DateTime>("ApproveDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("ApprovedById")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("Date");
 
                     b.Property<int>("DeliveredById")
                         .HasColumnType("int");
@@ -341,10 +353,16 @@ namespace ERP.Migrations
                     b.Property<int>("PurchaseId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("ReceeiveDate")
+                        .HasColumnType("Date");
+
                     b.Property<int>("ReceiveStoreId")
                         .HasColumnType("int");
 
                     b.Property<int>("ReceivedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

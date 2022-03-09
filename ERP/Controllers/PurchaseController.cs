@@ -3,6 +3,7 @@ using ERP.DTOs;
 using ERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PurchaseItem = ERP.Models.PurchaseItem;
 
 namespace ERP.Controllers
 {
@@ -22,6 +23,11 @@ namespace ERP.Controllers
         public async Task<ActionResult<Purchase>> Get(int id)
         {
             var purchase = context.Purchases.Where(purchase => purchase.Id == id)
+               .Include(purchase => purchase.RequestStore)
+               .ThenInclude(store => store.Site)
+               .Include(purchase => purchase.RequestedBy)
+               .Include(purchase => purchase.CheckedBy)
+               .Include(purchase => purchase.ApprovedBy)
                .Include(purchase => purchase.PurchaseItems)
                .ThenInclude(purchaseItem => purchaseItem.Item)
                .ThenInclude(item => item.ConsumableItem)
@@ -46,7 +52,6 @@ namespace ERP.Controllers
         public async Task<ActionResult<List<Purchase>>> Post(CreatePurchaseDTO purchaseDTO)
         {
             Purchase purchase = new();
-            purchase.Date = purchaseDTO.Date;
             purchase.RequestStoreId = purchaseDTO.RequestStoreId;
             purchase.RequestedById = purchaseDTO.RequestedById;
 
@@ -57,6 +62,25 @@ namespace ERP.Controllers
                 PurchaseItem purchaseItem = new();
                 purchaseItem.ItemId = requestItem.ItemId;
                 purchaseItem.QtyRequested = requestItem.QtyRequested;
+                purchaseItem.Remark = requestItem.Remark;
+
+                var itemTemp = context.Items.Where(item => item.Id == requestItem.ItemId).
+                    Include(i => i.NonConsumableItem).
+                    Include(i => i.ConsumableItem).
+                    FirstOrDefault();
+
+                if (itemTemp == null) return NotFound($"Purchase Item with Id {requestItem.ItemId} Not Found");
+
+                if (itemTemp.Type == ItemType.Consumable)
+                {
+                    purchaseItem.Cost = itemTemp.ConsumableItem.Cost;
+                    purchaseItem.TotalCost = itemTemp.ConsumableItem.Cost * purchaseItem.QtyRequested;
+                }
+                else
+                {
+                    purchaseItem.Cost = itemTemp.NonConsumableItem.Cost;
+                    purchaseItem.TotalCost = itemTemp.NonConsumableItem.Cost * purchaseItem.QtyRequested;
+                }
 
                 purchaseItems.Add(purchaseItem);
             }
@@ -70,25 +94,45 @@ namespace ERP.Controllers
         }
 
         [HttpPost("approve")]
-        public async Task<ActionResult<Purchase>> Approve(Purchase request)
+        public async Task<ActionResult<Purchase>> Approve(ApprovePurchaseDTO request)
         {
             var purchase = context.Purchases
-                 .Where(t => t.Id == request.Id)
+                 .Where(t => t.Id == request.PurchaseId)
                  .Include(t => t.PurchaseItems)
                  .FirstOrDefault();
             if (purchase == null) return NotFound("Request Not Found.");
 
+            purchase.ApproveDate = DateTime.Now;
             purchase.ApprovedById = request.ApprovedById;
 
-            foreach (var requestItem in purchase.PurchaseItems)
+            foreach (var requestItem in request.PurchaseItems)
             {
                 var purchaseItem = purchase.PurchaseItems.Where(tItem => tItem.ItemId == requestItem.ItemId).FirstOrDefault();
+
                 if (purchaseItem == null) return NotFound($"Purchase Item with Id {requestItem.ItemId} Not Found");
 
                 purchaseItem.QtyApproved = requestItem.QtyApproved;
+
+                purchaseItem.TotalCost = purchaseItem.Cost * purchaseItem.QtyApproved;
             }
 
-            purchase.Status = 1;
+            purchase.Status = PurchaseStatus.Approved;
+
+            await context.SaveChangesAsync();
+
+            return Ok(purchase);
+        }
+        
+        [HttpPost("check")]
+        public async Task<ActionResult<Purchase>> Check(CheckPurchaseDTO request)
+        {
+            var purchase = await context.Purchases.FindAsync(request.PurchaseId);
+
+            if (purchase == null) return NotFound("Request Not Found.");
+
+            purchase.CheckDate = DateTime.Now;
+            purchase.CheckedById = request.CheckedById;
+            purchase.Status = PurchaseStatus.Checked;
 
             await context.SaveChangesAsync();
 
