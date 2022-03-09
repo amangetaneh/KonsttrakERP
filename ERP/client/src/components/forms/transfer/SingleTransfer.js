@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { Form, Container, Spinner } from "react-bootstrap";
 import Item from "../../../models/Item";
@@ -7,7 +7,10 @@ import axios from "axios";
 import TransferStatusBadge from "./fragments/TransferStatusBadge";
 import { ItemType, TransferStatus } from "../../../Constants";
 import ApproveTransfer from "./ApproveTransfer";
-import TransferApproveConsumableItem from "./fragments/TransferApproveConsumableItem";
+import SendTransfer from "./SendTransfer";
+import ReceiveTransfer from "./ReceiveTransfer";
+import ViewTransfer from "./ViewTransfer";
+import DeclinedTransfer from "./DeclinedTransfer";
 
 function SingleTransfer() {
     const { id } = useParams();
@@ -29,11 +32,15 @@ function SingleTransfer() {
                 itemObj.qtyRequested = transferItem.qtyRequested;
                 itemObj.requestRemark = transferItem.requestRemark;
 
-                itemObj.qtySent = transferItem.qtySent;
-                itemObj.sendRemark = transferItem.sendRemark;
+                if (res.data.status >= TransferStatus.Sent) {
+                    itemObj.qtySent = transferItem.qtySent;
+                    itemObj.sendRemark = transferItem.sendRemark;
+                }
 
-                itemObj.qtyReceived = transferItem.qtyReceived;
-                itemObj.receiveRemark = transferItem.receiveRemark;
+                if (res.data.status >= TransferStatus.Received) {
+                    itemObj.qtyReceived = transferItem.qtyReceived;
+                    itemObj.receiveRemark = transferItem.receiveRemark;
+                }
 
                 if (transferItem.item.type === ItemType.Consumable) {
                     itemObj.spec = transferItem.item.consumableItem.spec;
@@ -196,9 +203,15 @@ function SingleTransfer() {
         );
     }
 
+    const titles = useMemo(() => [
+        "Declined Transfer",
+        "Approve Transfer",
+        "Transfer Out",
+        "Transfer In",
+    ]);
     return (
         <>
-            <Header title="Transfer Request" />
+            <Header title={titles[transfer.status]} />
 
             <Container className="my-3">
                 {isLoading ? (
@@ -209,6 +222,14 @@ function SingleTransfer() {
                     <>
                         <TopForm />
 
+                        {transfer.status === TransferStatus.Declined && (
+                            <DeclinedTransfer
+                                addedItems={addedItems}
+                                FormRow={FormRow}
+                                transfer={transfer}
+                            />
+                        )}
+
                         {transfer.status === TransferStatus.Requested && (
                             <ApproveTransfer
                                 addedItems={addedItems}
@@ -216,37 +237,27 @@ function SingleTransfer() {
                             />
                         )}
 
-                        {transfer.status === TransferStatus.Declined && (
-                            <>
-                                <FormRow
-                                    labelL="Declined By"
-                                    valueL={
-                                        transfer.approvedBy
-                                            ? `${transfer.approvedBy.fName} ${transfer.approvedBy.mName}`
-                                            : ""
-                                    }
-                                    labelR="Declined On"
-                                    valueR={
-                                        transfer.approveDate
-                                            ? new Date(
-                                                  transfer.approveDate
-                                              ).toLocaleString()
-                                            : ""
-                                    }
-                                />
+                        {transfer.status === TransferStatus.Approved && (
+                            <SendTransfer
+                                addedItems={addedItems}
+                                setAddedItems={setAddedItems}
+                                transfer={transfer}
+                            />
+                        )}
 
-                                <h1 className="display-6 text-center mt-2 mb-4">
-                                    Transfer Request Has Been Declined
-                                </h1>
+                        {transfer.status === TransferStatus.Sent && (
+                            <ReceiveTransfer
+                                addedItems={addedItems}
+                                setAddedItems={setAddedItems}
+                                transfer={transfer}
+                            />
+                        )}
 
-                                {addedItems.map((item, index) => (
-                                    <TransferApproveConsumableItem
-                                        key={index}
-                                        addedItems={addedItems}
-                                        index={index}
-                                    />
-                                ))}
-                            </>
+                        {transfer.status === TransferStatus.Received && (
+                            <ViewTransfer
+                                addedItems={addedItems}
+                                transfer={transfer}
+                            />
                         )}
                     </>
                 )}

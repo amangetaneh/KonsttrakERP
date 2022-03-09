@@ -23,9 +23,9 @@ namespace ERP.Models
 
         public string RequestRemark { get; set; } = string.Empty;
         
-        public string SendRemark { get; set; } = string.Empty;
+        public string? SendRemark { get; set; }
        
-        public string ReceiveRemark { get; set; } = string.Empty;
+        public string? ReceiveRemark { get; set; }
        
         [JsonIgnore]
 

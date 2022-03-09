@@ -10,7 +10,6 @@ class Item {
         this.qtySent = 0;
         this.qtyReceived = 0;
         this.qtyAvailable = 0;
-        this.sendQty = 0;
         this.cost = 0;
         this.total = 0;
         this.requestRemark = "";

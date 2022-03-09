@@ -126,7 +126,7 @@ namespace ERP.Controllers
         }
 
         [HttpPost("send")]
-        public async Task<ActionResult<Transfer>> Send(Transfer request)
+        public async Task<ActionResult<Transfer>> Send(SendTransferDTO request)
         {
             var transfer = context.Transfers
                 .Where(t => t.Id == request.Id)
@@ -156,7 +156,7 @@ namespace ERP.Controllers
 
 
         [HttpPost("receive")]
-        public async Task<ActionResult<Transfer>> Receive(Transfer request)
+        public async Task<ActionResult<Transfer>> Receive(ReceiveTransferDTO request)
         {
             var transfer = context.Transfers
                 .Where(t => t.Id == request.Id)

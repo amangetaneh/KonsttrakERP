@@ -534,7 +534,6 @@ namespace ERP.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ReceiveRemark")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RequestRemark")
@@ -542,7 +541,6 @@ namespace ERP.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SendRemark")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TransferId", "ItemId");

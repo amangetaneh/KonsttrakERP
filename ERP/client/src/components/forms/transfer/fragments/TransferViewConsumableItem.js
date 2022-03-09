@@ -1,13 +1,7 @@
 import { Form, InputGroup } from "react-bootstrap";
+import PropTypes from "prop-types";
 
-function TransferOutConsumableItem({ addedItems, setAddedItems, index }) {
-    console.log(addedItems);
-    function valueChanged(e) {
-        const addedItemsCpy = [...addedItems];
-        addedItemsCpy[index][e.target.name] = e.target.value;
-        setAddedItems(addedItemsCpy);
-    }
-
+function TransferViewConsumableItem({ addedItems, index }) {
     return (
         <div className="shadow pt-3 px-4 mb-4 rounded">
             <div className=" row justify-content-between">
@@ -76,7 +70,7 @@ function TransferOutConsumableItem({ addedItems, setAddedItems, index }) {
                         </div>
                         <div className="col">
                             <Form.Group className="mb-3">
-                                <Form.Label>Total Cost</Form.Label>
+                                <Form.Label>Requested Total Cost</Form.Label>
                                 <Form.Control
                                     type="text"
                                     name="total"
@@ -92,19 +86,18 @@ function TransferOutConsumableItem({ addedItems, setAddedItems, index }) {
                     <div className="row">
                         <div className="col">
                             <Form.Group className="mb-3">
-                                <Form.Label>Qty Transfered</Form.Label>
+                                <Form.Label>Quantity Sent</Form.Label>
                                 <Form.Control
-                                    min="0"
-                                    type="number"
+                                    type="text"
                                     name="qtySent"
                                     value={addedItems[index].qtySent}
-                                    onChange={valueChanged}
+                                    readOnly
                                 />
                             </Form.Group>
                         </div>
                         <div className="col">
                             <Form.Group className="mb-3">
-                                <Form.Label>Total Cost</Form.Label>
+                                <Form.Label>Sent Total Cost</Form.Label>
                                 <Form.Control
                                     type="text"
                                     name="total"
@@ -132,13 +125,57 @@ function TransferOutConsumableItem({ addedItems, setAddedItems, index }) {
                     </Form.Group>
                 </div>
                 <div className="col">
+                    <div className="row">
+                        <div className="col">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Quantity Received</Form.Label>
+                                <Form.Control
+                                    min="0"
+                                    type="number"
+                                    name="qtyReceived"
+                                    value={addedItems[index].qtyReceived}
+                                    readOnly
+                                    required
+                                />
+                            </Form.Group>
+                        </div>
+                        <div className="col">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Received Total Cost</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="total"
+                                    readOnly
+                                    value={
+                                        addedItems[index].qtyReceived *
+                                        addedItems[index].cost
+                                    }
+                                />
+                            </Form.Group>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="row">
+                <div className="col">
                     <Form.Group className="mb-3">
                         <Form.Label>Send Remark</Form.Label>
                         <Form.Control
                             type="text"
-                            name="sendRemark"
+                            readOnly
                             value={addedItems[index].sendRemark}
-                            onChange={valueChanged}
+                        />
+                    </Form.Group>
+                </div>
+                <div className="col">
+                    <Form.Group className="mb-3">
+                        <Form.Label>Receive Remark</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="receiveRemark"
+                            value={addedItems[index].receiveRemark}
+                            readOnly
                         />
                     </Form.Group>
                 </div>
@@ -147,4 +184,9 @@ function TransferOutConsumableItem({ addedItems, setAddedItems, index }) {
     );
 }
 
-export default TransferOutConsumableItem;
+TransferViewConsumableItem.propTypes = {
+    addedItems: PropTypes.array.isRequired,
+    index: PropTypes.number.isRequired,
+};
+
+export default TransferViewConsumableItem;

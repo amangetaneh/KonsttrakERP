@@ -1,31 +1,33 @@
+:root {
+    --color-teal: #007a76;
+    --color-teal-dark: #006663;
+    --color-teal-light: #00a19c;
+}
+
 .bg-teal {
-    background-color: #007a76 !important;
+    background-color: var(--color-teal) !important;
 }
 
 .btn-teal {
-    color: #007a76 !important;
-    border-color: #007a76 !important;
+    color: var(--color-teal) !important;
+    border-color: var(--color-teal) !important;
     background-color: transparent !important;
 }
 
 .btn-teal:hover {
     color: white !important;
-    border-color: #007a76 !important;
-    background-color: #007a76 !important;
+    border-color: var(--color-teal) !important;
+    background-color: var(--color-teal) !important;
 }
 
 .btn-teal-dark {
-    background-color: #007a76 !important;
-    border-color: #007a76 !important;
+    background-color: var(--color-teal) !important;
+    border-color: var(--color-teal) !important;
 }
 
 .btn-teal-dark:hover {
-    background-color: #006663 !important;
-    border-color: #006663 !important;
-}
-
-.text-teal {
-    color: #00b8b1 !important;
+    background-color: var(--color-teal-dark) !important;
+    border-color: var(--color-teal-dark) !important;
 }
 
 .sidebar-decrease-padding * :not(.pro-arrow, .pro-sidebar-header) {
@@ -58,8 +60,8 @@ input[type="search"]:focus,
 input[type="tel"]:focus,
 input[type="color"]:focus,
 .uneditable-input:focus {
-    border-color: #00a19c !important;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px #00a19c !important;
+    border-color: var(--color-teal-light) !important;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px var(--color-teal-light) !important;
     outline: 0 none !important;
 }
 
@@ -67,5 +69,12 @@ textarea:read-only,
 input:read-only,
 input[type="text"]:read-only {
     background-color: transparent !important;
-    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.075) inset, 0 0 0px #00a19c !important;
+    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.075) inset, 0 0 0px var(--color-teal-light) !important;
+    border-color: rgb(236, 236, 236) !important;
+}
+
+textarea:read-only:focus,
+input:read-only:focus,
+input[type="text"]:read-only:focus {
+    border-color: var(--color-teal-light) !important;
 }
