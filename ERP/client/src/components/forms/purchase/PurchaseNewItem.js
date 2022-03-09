@@ -46,32 +46,6 @@ function PurchaseNewItem() {
             <Container className="my-3">
                 <Form>
                     <div className="row mx-2">
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Date</Form.Label>
-                                <Form.Control
-                                    type="date"
-                                    value={date}
-                                    onChange={(e) => {
-                                        setDate(e.target.value);
-                                    }}
-                                />
-                            </Form.Group>
-                        </div>
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Request Number</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    value={requestNo}
-                                    onChange={(e) => {
-                                        setRequestNo(e.target.value);
-                                    }}
-                                />
-                            </Form.Group>
-                        </div>
-                    </div>
-                    <div className="row mx-2">
 
                         {/* <div className="col">
                             <Form.Group className="mb-3">

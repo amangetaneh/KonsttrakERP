@@ -139,5 +139,31 @@ namespace ERP.Controllers
             return Ok(purchase);
         }
 
+        [HttpPost("decline")]
+        public async Task<ActionResult<Purchase>> Decline(ApprovePurchaseDTO request)
+        {
+            var purchase = context.Purchases
+                  .Where(t => t.Id == request.PurchaseId)
+                  .Include(t => t.PurchaseItems)
+                  .FirstOrDefault();
+
+            if (purchase == null) return NotFound("Purchase Not Found.");
+
+            purchase.ApproveDate = DateTime.Now;
+            purchase.ApprovedById = request.ApprovedById;
+
+            foreach (var purchaseItem in purchase.PurchaseItems)
+            {
+                purchaseItem.QtyApproved = 0;
+
+                purchaseItem.TotalCost = 0;
+            }
+
+            purchase.Status = TransferStatus.Declined;
+
+            await context.SaveChangesAsync();
+
+            return Ok(purchase);
+        }
     }
 }

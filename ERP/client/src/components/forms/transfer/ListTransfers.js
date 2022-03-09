@@ -17,7 +17,7 @@ function ListTransfers({ title, type }) {
             var data = res.data;
 
             Object.keys(data).map((key, index) => {
-                //fromat date
+                //format date
                 data[key].requestDate = new Date(data[key].requestDate).toLocaleString();
 
                 //add status badge

@@ -35,6 +35,7 @@ namespace ERP.Controllers
             receive.ReceiveStoreId = receiveDTO.ReceiveStoreId;
             receive.PurchaseId = receiveDTO.PurchaseId;
             receive.DeliveredById = receiveDTO.DeliveredById;
+            receive.DeliveredFrom = receiveDTO.DeliveredFrom;
             receive.ReceivedById = receiveDTO.ReceivedById;
 
             ICollection<ReceiveItem> receiveItems = new List<ReceiveItem>();
@@ -51,10 +52,11 @@ namespace ERP.Controllers
                    Include(i => i.ConsumableItem).
                    FirstOrDefault();
 
-                if (itemTemp == null) return NotFound($"Transfer Item with Id {requestItem.ItemId} Not Found");
+                if (itemTemp == null) return NotFound($"Item with Id {requestItem.ItemId} Not Found");
 
                 if (itemTemp.Type == ItemType.Consumable)
                     receiveItem.Cost = itemTemp.ConsumableItem.Cost;
+                
                 else
                     receiveItem.Cost = itemTemp.NonConsumableItem.Cost;
 
@@ -69,5 +71,20 @@ namespace ERP.Controllers
             return Ok(receive);
         }
 
+        [HttpPost("approve")]
+        public async Task<ActionResult<Receive>> Approve(ApproveReceiveDTO request)
+        {
+            var receive = await context.Receives.FindAsync(request.ReceieveId);
+
+            if (receive == null) return NotFound("Request Not Found.");
+
+            receive.ApproveDate = DateTime.Now;
+            receive.ApprovedById = request.ApprovedById;
+            receive.Status = ReceiveStatus.Approved;
+
+            await context.SaveChangesAsync();
+
+            return Ok(receive);
+        }
     }
 }

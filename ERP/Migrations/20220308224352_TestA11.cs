@@ -16,7 +16,7 @@ namespace ERP.Migrations
             migrationBuilder.RenameColumn(
                 name: "Date",
                 table: "Receives",
-                newName: "ReceeiveDate");
+                newName: "ReceiveDate");
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ApproveDate",
@@ -64,7 +64,7 @@ namespace ERP.Migrations
                 table: "Purchases");
 
             migrationBuilder.RenameColumn(
-                name: "ReceeiveDate",
+                name: "ReceiveDate",
                 table: "Receives",
                 newName: "Date");
 

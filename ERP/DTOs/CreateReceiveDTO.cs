@@ -8,6 +8,8 @@
 
         public int DeliveredById { get; set; }
         
+        public string DeliveredFrom { get; set; }
+        
         public int ReceivedById { get; set; }
 
         public ICollection<CreateReceiveItem> ReceiveItems { get; set; }

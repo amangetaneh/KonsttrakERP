@@ -6,6 +6,7 @@ import Item from "../../../models/Item";
 import TransferRequestConsumableItem from "./fragments/TransferRequestConsumableItem";
 import Header from "../../layouts/Header";
 import { useNavigate } from "react-router-dom";
+
 function NewTransfer() {
     const navigate = useNavigate();
     const [sendSite, setSendSite] = useState(0);
@@ -43,7 +44,7 @@ function NewTransfer() {
     useEffect(() => {
         //update send stores when send site changes
         setSendSiteStores(
-            allStores.filter((store) => store.siteId == sendSite)
+            allStores.filter((store) => store.siteId === sendSite)
         );
     }, [sendSite]);
 
