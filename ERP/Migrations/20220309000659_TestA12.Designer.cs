@@ -355,7 +355,7 @@ namespace ERP.Migrations
                     b.Property<int>("PurchaseId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ReceeiveDate")
+                    b.Property<DateTime>("ReceiveDate")
                         .HasColumnType("Date");
 
                     b.Property<int>("ReceiveStoreId")
