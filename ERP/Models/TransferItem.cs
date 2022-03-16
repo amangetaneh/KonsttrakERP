@@ -14,15 +14,15 @@ namespace ERP.Models
 
         public int QtyRequested { get; set; }
 
-        public int? QtySent { get; set; }
-
-        public int? QtyReceived { get; set; }
+        public int? QtyApproved { get; set; }
 
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Cost { get; set; }
 
         public string RequestRemark { get; set; } = string.Empty;
-        
+
+        public string? ApproveRemark { get; set; }
+
         public string? SendRemark { get; set; }
        
         public string? ReceiveRemark { get; set; }

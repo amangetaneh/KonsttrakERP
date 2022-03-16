@@ -21,7 +21,7 @@ namespace ERP.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Issue>> Get(int id)
         {
-            var issue = context.Issues.Where(issue => issue.Id == id)
+            var issue = context.Issues.Where(issue => issue.IssueId == id)
                .Include(issue => issue.IssueItems)
                .ThenInclude(issueItem => issueItem.Item)
                .ThenInclude(item => item.ConsumableItem)
@@ -87,7 +87,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<Transfer>> Hand(Issue request)
         {
             var issue = context.Issues
-                .Where(i => i.Id == request.Id)
+                .Where(i => i.IssueId == request.IssueId)
                 .Include(i => i.IssueItems)
                 .FirstOrDefault();
             if (issue == null) return NotFound("Issue Not Found.");

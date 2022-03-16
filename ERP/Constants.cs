@@ -1,13 +1,13 @@
 ﻿namespace ERP
 {
-    public class TransferStatus
+    public class TRANSFERSTATUS
     {
 
-        public const int Declined = 0;
-        public const int Requested = 1;
-        public const int Approved = 2;
-        public const int Sent = 3;
-        public const int Received = 4;
+        public const int DECLINED = 0;
+        public const int REQUESTED = 1;
+        public const int APPROVED = 2;
+        public const int SENT = 3;
+        public const int RECEIVED = 4;
     }
 
     public class PurchaseStatus

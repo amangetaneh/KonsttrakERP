@@ -47,7 +47,7 @@ namespace ERP.Controllers
                 receiveItem.Qty = requestItem.Qty;
                 receiveItem.Remark = requestItem.Remark;
 
-                var itemTemp = context.Items.Where(item => item.Id == requestItem.ItemId).
+                var itemTemp = context.Items.Where(item => item.ItemId == requestItem.ItemId).
                    Include(i => i.NonConsumableItem).
                    Include(i => i.ConsumableItem).
                    FirstOrDefault();

@@ -5,7 +5,7 @@ namespace ERP.Models
     public class Employee
     {
         [Key]
-        public int Id { get; set; }
+        public int EmployeeId { get; set; }
 
         public string FName { get; set; } = string.Empty;
 

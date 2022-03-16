@@ -15,9 +15,9 @@ function TransferRequestConsumableItem({
         if (selectedId === "") return;
 
         const addedItemsCpy = [...addedItems];
-        var item = allItems.filter((item) => item.id == selectedId)[0];
+        var item = allItems.filter((item) => item.itemId == selectedId)[0];
         
-        addedItemsCpy[index].id = selectedId;
+        addedItemsCpy[index].itemId = selectedId;
         addedItemsCpy[index].units = [item.consumableItem.unit];
         addedItemsCpy[index].spec = item.consumableItem.spec;
         addedItemsCpy[index].cost = item.consumableItem.cost;
@@ -62,13 +62,13 @@ function TransferRequestConsumableItem({
                     <Form.Group className="mb-3">
                         <Form.Label>Item</Form.Label>
                         <Form.Select
-                            value={addedItems[index].id}
+                            value={addedItems[index].itemId}
                             onChange={selectedItemChanged}
                             required
                         >
                             <option value="">Select Item</option>
                             {allItems.map((item) => (
-                                <option key={item.id} value={item.id}>
+                                <option key={item.itemId} value={item.itemId}>
                                     {item.name}
                                 </option>
                             ))}

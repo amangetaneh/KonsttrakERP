@@ -5,12 +5,13 @@ import Item from "../../../models/Item";
 import Header from "../../layouts/Header";
 import axios from "axios";
 import TransferStatusBadge from "./fragments/TransferStatusBadge";
-import { ItemType, TransferStatus } from "../../../Constants";
+import { ITEMTYPE, TRANSFERSTATUS } from "../../../Constants";
 import ApproveTransfer from "./ApproveTransfer";
 import SendTransfer from "./SendTransfer";
 import ReceiveTransfer from "./ReceiveTransfer";
 import ViewTransfer from "./ViewTransfer";
 import DeclinedTransfer from "./DeclinedTransfer";
+import Info from "../../fragments/Info";
 
 function SingleTransfer() {
     const { id } = useParams();
@@ -32,17 +33,17 @@ function SingleTransfer() {
                 itemObj.qtyRequested = transferItem.qtyRequested;
                 itemObj.requestRemark = transferItem.requestRemark;
 
-                if (res.data.status >= TransferStatus.Sent) {
+                if (res.data.status >= TRANSFERSTATUS.SENT) {
                     itemObj.qtySent = transferItem.qtySent;
                     itemObj.sendRemark = transferItem.sendRemark;
                 }
 
-                if (res.data.status >= TransferStatus.Received) {
+                if (res.data.status >= TRANSFERSTATUS.RECEIVED) {
                     itemObj.qtyReceived = transferItem.qtyReceived;
                     itemObj.receiveRemark = transferItem.receiveRemark;
                 }
 
-                if (transferItem.item.type === ItemType.Consumable) {
+                if (transferItem.item.type === ITEMTYPE.CONSUMABLE) {
                     itemObj.spec = transferItem.item.consumableItem.spec;
                     itemObj.units = [transferItem.item.consumableItem.unit];
                 }
@@ -126,7 +127,7 @@ function SingleTransfer() {
                     valueR={new Date(transfer.requestDate).toLocaleString()}
                 />
 
-                {transfer.status >= TransferStatus.Approved && (
+                {transfer.status >= TRANSFERSTATUS.APPROVED && (
                     <>
                         <FormRow
                             labelL="Approved By"
@@ -147,7 +148,7 @@ function SingleTransfer() {
                     </>
                 )}
 
-                {transfer.status >= TransferStatus.Sent && (
+                {transfer.status >= TRANSFERSTATUS.SENT && (
                     <>
                         <FormRow
                             labelL="Sent By"
@@ -168,7 +169,7 @@ function SingleTransfer() {
                     </>
                 )}
 
-                {transfer.status >= TransferStatus.Received && (
+                {transfer.status >= TRANSFERSTATUS.RECEIVED && (
                     <>
                         <FormRow
                             labelL="Received By"
@@ -212,7 +213,7 @@ function SingleTransfer() {
     return (
         <>
             <Header title={titles[transfer.status]} />
-
+            <Info />
             <Container className="my-3">
                 {isLoading ? (
                     <div className="d-flex justify-content-center align-content-center mt-4 pt-4">
@@ -222,7 +223,7 @@ function SingleTransfer() {
                     <>
                         <TopForm />
 
-                        {transfer.status === TransferStatus.Declined && (
+                        {transfer.status === TRANSFERSTATUS.DECLINED && (
                             <DeclinedTransfer
                                 addedItems={addedItems}
                                 FormRow={FormRow}
@@ -230,14 +231,14 @@ function SingleTransfer() {
                             />
                         )}
 
-                        {transfer.status === TransferStatus.Requested && (
+                        {transfer.status === TRANSFERSTATUS.REQUESTED && (
                             <ApproveTransfer
                                 addedItems={addedItems}
                                 transfer={transfer}
                             />
                         )}
 
-                        {transfer.status === TransferStatus.Approved && (
+                        {transfer.status === TRANSFERSTATUS.APPROVED && (
                             <SendTransfer
                                 addedItems={addedItems}
                                 setAddedItems={setAddedItems}
@@ -245,7 +246,7 @@ function SingleTransfer() {
                             />
                         )}
 
-                        {transfer.status === TransferStatus.Sent && (
+                        {transfer.status === TRANSFERSTATUS.SENT && (
                             <ReceiveTransfer
                                 addedItems={addedItems}
                                 setAddedItems={setAddedItems}
@@ -253,7 +254,7 @@ function SingleTransfer() {
                             />
                         )}
 
-                        {transfer.status === TransferStatus.Received && (
+                        {transfer.status === TRANSFERSTATUS.RECEIVED && (
                             <ViewTransfer
                                 addedItems={addedItems}
                                 transfer={transfer}

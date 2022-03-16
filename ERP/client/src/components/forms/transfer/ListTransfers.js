@@ -1,53 +1,55 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
+import { FaFolderOpen } from "react-icons/fa";
 import Table from "../../fragments/Table";
 import Header from "../../layouts/Header";
 import { Container, Spinner } from "react-bootstrap";
-import axios from "axios";
 import TransferStatusBadge from "./fragments/TransferStatusBadge";
 import PropTypes from "prop-types";
+import { useQuery } from "react-query";
+import { fetchTransfers } from "../../../api/transfer";
 
 function ListTransfers({ title, type }) {
     const [transfers, setTransfers] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+
+    var { data, isLoading } = useQuery("transfers", fetchTransfers);
 
     useEffect(() => {
-        axios.get("https://localhost:7067/api/transfer").then((res) => {
-            var data = res.data;
+        if (data === undefined) return;
 
-            Object.keys(data).map((key, index) => {
-                //format date
-                data[key].requestDate = new Date(data[key].requestDate).toLocaleString();
+        Object.keys(data).map((key, index) => {
+            //format date
+            data[key].requestDate = new Date(
+                data[key].requestDate
+            ).toLocaleString();
 
-                //add status badge
-                data[key].status = TransferStatusBadge(data[key].status);
+            //add status badge
+            data[key].statusBadge = TransferStatusBadge(data[key].status);
 
-                //add links to each row
-                data[key].open = (
-                    <>
-                        <Link
-                            className="btn btn-teal me-2"
-                            to={`/transfer/${data[key].id}`}
-                        >
-                            Open
-                        </Link>
-                    </>
-                );
+            //add links to each row
+            data[key].open = (
+                <>
+                    <Link
+                        className="btn btn-teal me-2"
+                        to={`/transfer/${data[key].id}`}
+                    >
+                        <FaFolderOpen className="me-1 mb-1"/>
+                        Open
+                    </Link>
+                </>
+            );
 
-                return null;
-            });
-
-            setTransfers(data);
-            setIsLoading(false);
+            return null;
         });
-    }, []);
+
+        setTransfers(data);
+    }, [data]);
 
     const columns = React.useMemo(
         () => [
             {
                 Header: "Transfer No.",
-                accessor: "id", // accessor is the "key" in the data
+                accessor: "transferId", // accessor is the "key" in the data
             },
             {
                 Header: "Requested On",
@@ -63,11 +65,14 @@ function ListTransfers({ title, type }) {
             },
             {
                 Header: "Status",
-                accessor: "status", // accessor is the "key" in the data
+                accessor: "statusBadge", // accessor is the "key" in the data
+                sortType: (rowA, rowB) =>
+                    rowA.original.status > rowB.original.status ? 1 : -1,
             },
             {
                 Header: "",
                 accessor: "open", // accessor is the "key" in the data
+                disableSortBy: true,
             },
         ],
         []

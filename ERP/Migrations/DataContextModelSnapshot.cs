@@ -45,11 +45,11 @@ namespace ERP.Migrations
 
             modelBuilder.Entity("ERP.Models.Employee", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("EmployeeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeId"), 1L, 1);
 
                     b.Property<string>("FName")
                         .IsRequired()
@@ -67,18 +67,18 @@ namespace ERP.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("EmployeeId");
 
                     b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("ERP.Models.Issue", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("IssueId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IssueId"), 1L, 1);
 
                     b.Property<DateTime?>("ApproveDate")
                         .HasColumnType("datetime2");
@@ -101,7 +101,7 @@ namespace ERP.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("IssueId");
 
                     b.HasIndex("ApprovedById");
 
@@ -142,11 +142,11 @@ namespace ERP.Migrations
 
             modelBuilder.Entity("ERP.Models.Item", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ItemId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ItemId"), 1L, 1);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -155,7 +155,7 @@ namespace ERP.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("ItemId");
 
                     b.ToTable("Items");
                 });
@@ -180,11 +180,11 @@ namespace ERP.Migrations
 
             modelBuilder.Entity("ERP.Models.Maintenance", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("MaintenanceId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaintenanceId"), 1L, 1);
 
                     b.Property<DateTime?>("ApproveDate")
                         .HasColumnType("datetime2");
@@ -208,7 +208,7 @@ namespace ERP.Migrations
                     b.Property<int>("SiteId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("MaintenanceId");
 
                     b.HasIndex("ApprovedById");
 
@@ -256,11 +256,11 @@ namespace ERP.Migrations
 
             modelBuilder.Entity("ERP.Models.Purchase", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("PurchaseId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PurchaseId"), 1L, 1);
 
                     b.Property<DateTime?>("ApproveDate")
                         .HasColumnType("datetime2");
@@ -286,7 +286,7 @@ namespace ERP.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("PurchaseId");
 
                     b.HasIndex("ApprovedById");
 
@@ -331,13 +331,13 @@ namespace ERP.Migrations
 
             modelBuilder.Entity("ERP.Models.Receive", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ReceiveId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReceiveId"), 1L, 1);
 
-                    b.Property<DateTime>("ApproveDate")
+                    b.Property<DateTime?>("ApproveDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("ApprovedById")
@@ -365,7 +365,7 @@ namespace ERP.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("ReceiveId");
 
                     b.HasIndex("ApprovedById");
 
@@ -406,11 +406,11 @@ namespace ERP.Migrations
 
             modelBuilder.Entity("ERP.Models.Site", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("SiteId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SiteId"), 1L, 1);
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -420,18 +420,18 @@ namespace ERP.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("SiteId");
 
                     b.ToTable("Sites");
                 });
 
             modelBuilder.Entity("ERP.Models.Store", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("StoreId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StoreId"), 1L, 1);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -440,7 +440,7 @@ namespace ERP.Migrations
                     b.Property<int>("SiteId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("StoreId");
 
                     b.HasIndex("SiteId");
 
@@ -449,11 +449,11 @@ namespace ERP.Migrations
 
             modelBuilder.Entity("ERP.Models.Transfer", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("TransferId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransferId"), 1L, 1);
 
                     b.Property<DateTime?>("ApproveDate")
                         .HasColumnType("datetime2");
@@ -494,7 +494,7 @@ namespace ERP.Migrations
                     b.Property<string>("VehiclePlateNo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("TransferId");
 
                     b.HasIndex("ApprovedById");
 
@@ -521,16 +521,16 @@ namespace ERP.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ApproveRemark")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Cost")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("QtyReceived")
+                    b.Property<int?>("QtyApproved")
                         .HasColumnType("int");
 
                     b.Property<int>("QtyRequested")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("QtySent")
                         .HasColumnType("int");
 
                     b.Property<string>("ReceiveRemark")
@@ -576,11 +576,11 @@ namespace ERP.Migrations
 
             modelBuilder.Entity("ERP.Models.UserRole", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("RoleId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"), 1L, 1);
 
                     b.Property<int>("CanFixedAsset")
                         .HasColumnType("int");
@@ -604,7 +604,7 @@ namespace ERP.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("RoleId");
 
                     b.ToTable("UserRoles");
                 });

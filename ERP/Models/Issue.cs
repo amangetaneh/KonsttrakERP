@@ -7,7 +7,7 @@ namespace ERP.Models
     public class Issue
     {
         [Key]
-        public int Id { get; set; }
+        public int IssueId { get; set; }
 
         public int Status { get; set; } = 0;
         /*Status Values: 

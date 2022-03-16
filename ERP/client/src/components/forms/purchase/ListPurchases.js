@@ -18,9 +18,13 @@ function ListPurchases({ title, type }) {
 
             Object.keys(data).map((key, index) => {
                 //format date
-                data[key].requestDate = new Date(data[key].requestDate).toLocaleDateString();
-                data[key].approveDate = new Date(data[key].approveDate).toLocaleDateString();
-                
+                data[key].requestDate = new Date(
+                    data[key].requestDate
+                ).toLocaleDateString();
+                data[key].approveDate = new Date(
+                    data[key].approveDate
+                ).toLocaleDateString();
+
                 //add status badge
                 data[key].status = PurchaseStatusBadge(data[key].status);
 
@@ -90,10 +94,11 @@ function ListPurchases({ title, type }) {
         </>
     );
 }
-
+/*
 ListPurchases.propTypes = {
     title: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
 };
+*/
 
 export default ListPurchases;

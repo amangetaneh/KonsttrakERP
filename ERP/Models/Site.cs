@@ -5,7 +5,7 @@ namespace ERP.Models
     public class Site
     {
         [Key]
-        public int Id { get; set; }
+        public int SiteId { get; set; }
 
         public string Name { get; set; } = string.Empty;
 

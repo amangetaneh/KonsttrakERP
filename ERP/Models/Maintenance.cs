@@ -6,7 +6,7 @@ namespace ERP.Models
     public class Maintenance
     {
         [Key]
-        public int Id { get; set; }
+        public int MaintenanceId { get; set; }
 
         public DateTime RequestDate { get; set; } = DateTime.Now;
 

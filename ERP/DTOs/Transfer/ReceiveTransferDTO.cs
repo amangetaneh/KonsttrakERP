@@ -2,7 +2,7 @@
 {
     public class ReceiveTransferDTO
     {
-        public int Id { get; set; }
+        public int TransferId { get; set; }
 
         public int ReceivedById { get; set; }
 
@@ -16,8 +16,6 @@
     public class ReceiveTransferItems
     {
         public int ItemId { get; set; }
-
-        public int QtyReceived { get; set; }
 
         public string ReceiveRemark { get; set; }
     }

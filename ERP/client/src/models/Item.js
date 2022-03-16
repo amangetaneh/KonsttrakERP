@@ -1,6 +1,6 @@
 class Item {
     constructor() {
-        this.id = 0;
+        this.itemId = 0;
         this.name = "";
         this.type = 1;
         this.spec = "";

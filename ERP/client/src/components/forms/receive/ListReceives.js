@@ -90,10 +90,10 @@ function ListPurchases({ title, type }) {
         </>
     );
 }
-
+/*
 ListPurchases.propTypes = {
     title: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
 };
-
+*/
 export default ListPurchases;

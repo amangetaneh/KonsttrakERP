@@ -1,9 +1,9 @@
-export var TransferStatus = {
-    Declined: 0,
-    Requested: 1,
-    Approved: 2,
-    Sent: 3,
-    Received: 4,
+export var TRANSFERSTATUS = {
+    DECLINED: 0,
+    REQUESTED: 1,
+    APPROVED: 2,
+    SENT: 3,
+    RECEIVED: 4,
     0: "Declined",
     1: "Requested",
     2: "Approved",
@@ -29,7 +29,7 @@ export var ReceiveStatus = {
     1: "Approved",
 };
 
-export var ItemType = {
-    Consumable: 1,
-    NonConsumable: 2,
+export var ITEMTYPE = {
+    CONSUMABLE: 1,
+    NONCONSUMABLE: 2,
 };

@@ -7,7 +7,7 @@ namespace ERP.Models
     public class Purchase
     {
         [Key]
-        public int Id { get; set; }
+        public int PurchaseId { get; set; }
 
         public int Status { get; set; } = 0;
         /*Status Values: 

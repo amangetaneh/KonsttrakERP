@@ -5,7 +5,7 @@ namespace ERP.Models
     public class Store
     {
         [Key]
-        public int Id { get; set; }
+        public int StoreId { get; set; }
 
         public string Name { get; set; } = string.Empty;
 

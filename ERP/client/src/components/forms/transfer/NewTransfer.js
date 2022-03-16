@@ -6,6 +6,11 @@ import Item from "../../../models/Item";
 import TransferRequestConsumableItem from "./fragments/TransferRequestConsumableItem";
 import Header from "../../layouts/Header";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useMutation } from "react-query";
+import { fetchSites } from "../../../api/site";
+import { fetchStores } from "../../../api/store";
+import { fetchConsumableItems } from "../../../api/item";
+import { requestTransfer } from "../../../api/transfer";
 
 function NewTransfer() {
     const navigate = useNavigate();
@@ -22,35 +27,36 @@ function NewTransfer() {
     const [allItems, setAllItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        //get sites
-        axios.get("https://localhost:7067/api/site").then((res) => {
-            setAllSites(res.data);
-        });
-        //get stores and select first ones
-        axios.get("https://localhost:7067/api/store").then((res) => {
-            setAllStores(res.data);
-            setSendSite(res.data[0].id);
-            setReceiveSite(res.data[0].id);
-        });
-        //get items
-        axios.get("https://localhost:7067/api/item/consumable").then((res) => {
-            setAllItems(res.data);
+    const sitesQuery = useQuery("sites", fetchSites, {
+        onSuccess: (data) => setAllSites(data),
+    });
+    const storesQuery = useQuery("stores", fetchStores, {
+        onSuccess: (data) => {
+            setAllStores(data);
+            setSendSite(data[0].storeId);
+            setReceiveSite(data[0].siteId);
+        },
+    });
+    const itemQuery = useQuery("consumableItems", fetchConsumableItems, {
+        onSuccess: (data) => setAllItems(data),
+    });
 
-            setIsLoading(false);
-        });
-    }, []);
+    useEffect(() => {
+        setIsLoading(
+            sitesQuery.isLoading || storesQuery.isLoading || itemQuery.isLoading
+        );
+    }, [sitesQuery.isLoading, storesQuery.isLoading, itemQuery.isLoading]);
 
     useEffect(() => {
         //update send stores when send site changes
         setSendSiteStores(
-            allStores.filter((store) => store.siteId === sendSite)
+            allStores.filter((store) => store.siteId == sendSite)
         );
     }, [sendSite]);
 
     useEffect(() => {
         //select first store when send stores change
-        if (sendSiteStores.length > 0) setSendStore(sendSiteStores[0].id);
+        if (sendSiteStores.length > 0) setSendStore(sendSiteStores[0].storeId);
     }, [sendSiteStores]);
 
     useEffect(() => {
@@ -62,22 +68,28 @@ function NewTransfer() {
 
     useEffect(() => {
         //select first store when receive stores change
-        if (sendSiteStores.length > 0) setReceiveStore(receiveSiteStores[0].id);
+        if (receiveSiteStores.length > 0)
+            setReceiveStore(receiveSiteStores[0].storeId);
     }, [receiveSiteStores]);
 
-    function requestTransfer(e) {
+    const { isLoading: isSubmitting, mutate: submitTransferRequest } =
+        useMutation(requestTransfer, {
+            onSuccess: (res) => navigate(`/transfer/${res.data}`),
+        });
+    let data;
+    function submitTransferRequestForm(e) {
         e.preventDefault();
 
-        let data = {
+        data = {
             sendStoreId: Number(sendStore),
-            receiveStoreId: 1, ////////////////////////////////////////////////////////////////////////////////
-            requestedById: 1,
+            receiveStoreId: Number(receiveStore),
+            requestedById: 1, ////////////////////////////////////////////////////////////////////////////////
             transferItems: [],
         };
 
         for (let item of addedItems) {
             let tempItem = {
-                itemId: Number(item.id),
+                itemId: Number(item.itemId),
                 qtyRequested: Number(item.qtyRequested),
                 requestRemark: item.requestRemark,
             };
@@ -85,11 +97,7 @@ function NewTransfer() {
             data.transferItems.push(tempItem);
         }
 
-        axios
-            .post("https://localhost:7067/api/transfer/request", data)
-            .then((res) => {
-                navigate(`/transfer/${res.data}`);
-            });
+        submitTransferRequest(data);
     }
 
     //scroll when Item is added
@@ -110,7 +118,7 @@ function NewTransfer() {
 
     function InputForm() {
         return (
-            <Form onSubmit={requestTransfer}>
+            <Form onSubmit={submitTransferRequestForm}>
                 <div className="row mx-2">
                     <div className="col">
                         <Form.Group className="mb-3">
@@ -120,7 +128,10 @@ function NewTransfer() {
                                 onChange={(e) => setSendSite(e.target.value)}
                             >
                                 {allSites.map((site) => (
-                                    <option key={site.id} value={site.id}>
+                                    <option
+                                        key={site.siteId}
+                                        value={site.siteId}
+                                    >
                                         {site.name}
                                     </option>
                                 ))}
@@ -135,7 +146,10 @@ function NewTransfer() {
                                 onChange={(e) => setSendStore(e.target.value)}
                             >
                                 {sendSiteStores.map((store) => (
-                                    <option key={store.id} value={store.id}>
+                                    <option
+                                        key={store.storeId}
+                                        value={store.storeId}
+                                    >
                                         {store.name}
                                     </option>
                                 ))}
@@ -153,7 +167,10 @@ function NewTransfer() {
                                 onChange={(e) => setReceiveSite(e.target.value)}
                             >
                                 {allSites.map((site) => (
-                                    <option key={site.id} value={site.id}>
+                                    <option
+                                        key={site.siteId}
+                                        value={site.siteId}
+                                    >
                                         {site.name}
                                     </option>
                                 ))}
@@ -170,7 +187,10 @@ function NewTransfer() {
                                 }
                             >
                                 {receiveSiteStores.map((store) => (
-                                    <option key={store.id} value={store.id}>
+                                    <option
+                                        key={store.storeId}
+                                        value={store.storeId}
+                                    >
                                         {store.name}
                                     </option>
                                 ))}

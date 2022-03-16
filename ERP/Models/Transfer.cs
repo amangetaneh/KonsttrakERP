@@ -7,9 +7,9 @@ namespace ERP.Models
     public class Transfer
     {
         [Key]
-        public int Id { get; set; }
+        public int TransferId { get; set; }
 
-        public int Status { get; set; } = TransferStatus.Requested;
+        public int Status { get; set; } = TRANSFERSTATUS.REQUESTED;
 
         public DateTime RequestDate { get; set; } = DateTime.Now;
 

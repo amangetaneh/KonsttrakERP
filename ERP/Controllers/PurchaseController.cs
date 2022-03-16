@@ -22,7 +22,7 @@ namespace ERP.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Purchase>> Get(int id)
         {
-            var purchase = context.Purchases.Where(purchase => purchase.Id == id)
+            var purchase = context.Purchases.Where(purchase => purchase.PurchaseId == id)
                .Include(purchase => purchase.RequestStore)
                .ThenInclude(store => store.Site)
                .Include(purchase => purchase.RequestedBy)
@@ -64,7 +64,7 @@ namespace ERP.Controllers
                 purchaseItem.QtyRequested = requestItem.QtyRequested;
                 purchaseItem.Remark = requestItem.Remark;
 
-                var itemTemp = context.Items.Where(item => item.Id == requestItem.ItemId).
+                var itemTemp = context.Items.Where(item => item.ItemId == requestItem.ItemId).
                     Include(i => i.NonConsumableItem).
                     Include(i => i.ConsumableItem).
                     FirstOrDefault();
@@ -97,7 +97,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<Purchase>> Approve(ApprovePurchaseDTO request)
         {
             var purchase = context.Purchases
-                 .Where(t => t.Id == request.PurchaseId)
+                 .Where(t => t.PurchaseId == request.PurchaseId)
                  .Include(t => t.PurchaseItems)
                  .FirstOrDefault();
             if (purchase == null) return NotFound("Request Not Found.");
@@ -143,7 +143,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<Purchase>> Decline(ApprovePurchaseDTO request)
         {
             var purchase = context.Purchases
-                  .Where(t => t.Id == request.PurchaseId)
+                  .Where(t => t.PurchaseId == request.PurchaseId)
                   .Include(t => t.PurchaseItems)
                   .FirstOrDefault();
 
@@ -159,7 +159,7 @@ namespace ERP.Controllers
                 purchaseItem.TotalCost = 0;
             }
 
-            purchase.Status = TransferStatus.Declined;
+            purchase.Status = TRANSFERSTATUS.DECLINED;
 
             await context.SaveChangesAsync();
 

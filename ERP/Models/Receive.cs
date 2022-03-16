@@ -7,7 +7,7 @@ namespace ERP.Models
     public class Receive
     {
         [Key]
-        public int Id { get; set; }
+        public int ReceiveId { get; set; }
 
         public int Status { get; set; } = 0;
         /*Status Values: 
