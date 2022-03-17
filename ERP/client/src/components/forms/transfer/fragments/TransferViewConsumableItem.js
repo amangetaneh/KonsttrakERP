@@ -86,24 +86,24 @@ function TransferViewConsumableItem({ addedItems, index }) {
                     <div className="row">
                         <div className="col">
                             <Form.Group className="mb-3">
-                                <Form.Label>Quantity Sent</Form.Label>
+                                <Form.Label>Quantity Approved</Form.Label>
                                 <Form.Control
                                     type="text"
                                     name="qtySent"
-                                    value={addedItems[index].qtySent}
+                                    value={addedItems[index].qtyApproved}
                                     readOnly
                                 />
                             </Form.Group>
                         </div>
                         <div className="col">
                             <Form.Group className="mb-3">
-                                <Form.Label>Sent Total Cost</Form.Label>
+                                <Form.Label>Approved Total Cost</Form.Label>
                                 <Form.Control
                                     type="text"
                                     name="total"
                                     readOnly
                                     value={
-                                        addedItems[index].qtySent *
+                                        addedItems[index].qtyApproved *
                                         addedItems[index].cost
                                     }
                                 />
@@ -125,35 +125,15 @@ function TransferViewConsumableItem({ addedItems, index }) {
                     </Form.Group>
                 </div>
                 <div className="col">
-                    <div className="row">
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Quantity Received</Form.Label>
-                                <Form.Control
-                                    min="0"
-                                    type="number"
-                                    name="qtyReceived"
-                                    value={addedItems[index].qtyReceived}
-                                    readOnly
-                                    required
-                                />
-                            </Form.Group>
-                        </div>
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Received Total Cost</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    name="total"
-                                    readOnly
-                                    value={
-                                        addedItems[index].qtyReceived *
-                                        addedItems[index].cost
-                                    }
-                                />
-                            </Form.Group>
-                        </div>
-                    </div>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Approve Remark</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="approveRemark"
+                            value={addedItems[index].approveRemark}
+                            readOnly
+                        />
+                    </Form.Group>
                 </div>
             </div>
 

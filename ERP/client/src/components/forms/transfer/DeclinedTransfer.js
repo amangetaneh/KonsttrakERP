@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import TransferApproveConsumableItem from "./fragments/TransferApproveConsumableItem";
-
+import TransferDecliendConsumableItem from "./fragments/TransferDeclinedConsumableItem";
 
 function DeclinedTransfer({ transfer, addedItems, FormRow }) {
     return (
@@ -26,7 +25,7 @@ function DeclinedTransfer({ transfer, addedItems, FormRow }) {
             </h1>
 
             {addedItems.map((item, index) => (
-                <TransferApproveConsumableItem
+                <TransferDecliendConsumableItem
                     key={index}
                     addedItems={addedItems}
                     index={index}

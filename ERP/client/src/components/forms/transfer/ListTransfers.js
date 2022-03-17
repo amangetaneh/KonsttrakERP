@@ -3,16 +3,18 @@ import { Link } from "react-router-dom";
 import { FaFolderOpen } from "react-icons/fa";
 import Table from "../../fragments/Table";
 import Header from "../../layouts/Header";
-import { Container, Spinner } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import TransferStatusBadge from "./fragments/TransferStatusBadge";
 import PropTypes from "prop-types";
 import { useQuery } from "react-query";
 import { fetchTransfers } from "../../../api/transfer";
+import ConnectionError from "../../fragments/ConnectionError";
+import LoadingSpinner from "../../fragments/LoadingSpinner";
 
 function ListTransfers({ title, type }) {
     const [transfers, setTransfers] = useState([]);
 
-    var { data, isLoading } = useQuery("transfers", fetchTransfers);
+    var { data, isLoading, isError } = useQuery("transfers", fetchTransfers);
 
     useEffect(() => {
         if (data === undefined) return;
@@ -31,9 +33,9 @@ function ListTransfers({ title, type }) {
                 <>
                     <Link
                         className="btn btn-teal me-2"
-                        to={`/transfer/${data[key].id}`}
+                        to={`/transfer/${data[key].transferId}`}
                     >
-                        <FaFolderOpen className="me-1 mb-1"/>
+                        <FaFolderOpen className="me-1 mb-1" />
                         Open
                     </Link>
                 </>
@@ -53,21 +55,23 @@ function ListTransfers({ title, type }) {
             },
             {
                 Header: "Requested On",
-                accessor: "requestDate", // accessor is the "key" in the data
+                accessor: "requestDate",
             },
             {
                 Header: "Sending Site",
-                accessor: "sendStore.site.name", // accessor is the "key" in the data
+                accessor: "sendStore.site.name",
             },
             {
                 Header: "Receiving Site",
-                accessor: "receiveStore.site.name", // accessor is the "key" in the data
+                accessor: "receiveStore.site.name",
             },
             {
                 Header: "Status",
-                accessor: "statusBadge", // accessor is the "key" in the data
-                sortType: (rowA, rowB) =>
-                    rowA.original.status > rowB.original.status ? 1 : -1,
+                accessor: "statusBadge",
+                sortType: (
+                    rowA,
+                    rowB //get original data of row and compare status
+                ) => (rowA.original.status > rowB.original.status ? 1 : -1),
             },
             {
                 Header: "",
@@ -78,19 +82,17 @@ function ListTransfers({ title, type }) {
         []
     );
 
+    if (isLoading) return <LoadingSpinner />;
+
+    if (isError) return <ConnectionError />;
+
     return (
         <>
             <Header title={title} />
 
-            {isLoading ? (
-                <div className="d-flex justify-content-center align-content-center mt-4 pt-4">
-                    <Spinner animation="grow" className="bg-teal" />
-                </div>
-            ) : (
-                <Container className="my-3">
-                    <Table columns={columns} data={transfers} />
-                </Container>
-            )}
+            <Container className="my-3">
+                <Table columns={columns} data={transfers} />
+            </Container>
         </>
     );
 }

@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState, useMemo } from "react";
-import { Form, Button, Container, Spinner } from "react-bootstrap";
+import { useEffect, useRef, useState } from "react";
+import { Form, Button, Container } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
-import axios from "axios";
 import Item from "../../../models/Item";
 import TransferRequestConsumableItem from "./fragments/TransferRequestConsumableItem";
 import Header from "../../layouts/Header";
@@ -11,6 +10,8 @@ import { fetchSites } from "../../../api/site";
 import { fetchStores } from "../../../api/store";
 import { fetchConsumableItems } from "../../../api/item";
 import { requestTransfer } from "../../../api/transfer";
+import LoadingSpinner from "../../fragments/LoadingSpinner";
+import ConnectionError from "../../fragments/ConnectionError";
 
 function NewTransfer() {
     const navigate = useNavigate();
@@ -26,6 +27,7 @@ function NewTransfer() {
     const [allSites, setAllSites] = useState([]);
     const [allItems, setAllItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isError, setIsError] = useState(false);
 
     const sitesQuery = useQuery("sites", fetchSites, {
         onSuccess: (data) => setAllSites(data),
@@ -48,11 +50,19 @@ function NewTransfer() {
     }, [sitesQuery.isLoading, storesQuery.isLoading, itemQuery.isLoading]);
 
     useEffect(() => {
+        setIsError(
+            sitesQuery.isError || storesQuery.isError || itemQuery.isError
+        );
+    }, [sitesQuery.isError, storesQuery.isError, itemQuery.isError]);
+
+    useEffect(() => {
         //update send stores when send site changes
         setSendSiteStores(
-            allStores.filter((store) => store.siteId == sendSite)
+            allStores.filter(
+                (store) => store.siteId.toString() === sendSite.toString()
+            )
         );
-    }, [sendSite]);
+    }, [sendSite, allStores]);
 
     useEffect(() => {
         //select first store when send stores change
@@ -62,9 +72,11 @@ function NewTransfer() {
     useEffect(() => {
         //update receive stores when receive site changes
         setReceiveSiteStores(
-            allStores.filter((store) => store.siteId == receiveSite)
+            allStores.filter(
+                (store) => store.siteId.toString() === receiveSite.toString()
+            )
         );
-    }, [receiveSite]);
+    }, [receiveSite, allStores]);
 
     useEffect(() => {
         //select first store when receive stores change
@@ -72,15 +84,19 @@ function NewTransfer() {
             setReceiveStore(receiveSiteStores[0].storeId);
     }, [receiveSiteStores]);
 
-    const { isLoading: isSubmitting, mutate: submitTransferRequest } =
-        useMutation(requestTransfer, {
-            onSuccess: (res) => navigate(`/transfer/${res.data}`),
-        });
-    let data;
-    function submitTransferRequestForm(e) {
-        e.preventDefault();
+    const {
+        isError: isSubmitError,
+        isLoading: isSubmitLoading,
+        mutate: submitTransferRequest,
+    } = useMutation(requestTransfer, {
+        onSuccess: (res) => navigate(`/transfer/in`),
+    });
 
-        data = {
+    function submit(e) {
+        e.preventDefault();
+        if (isSubmitLoading) return;
+
+        var data = {
             sendStoreId: Number(sendStore),
             receiveStoreId: Number(receiveStore),
             requestedById: 1, ////////////////////////////////////////////////////////////////////////////////
@@ -116,134 +132,132 @@ function NewTransfer() {
         setScroll(true);
     }
 
-    function InputForm() {
-        return (
-            <Form onSubmit={submitTransferRequestForm}>
-                <div className="row mx-2">
-                    <div className="col">
-                        <Form.Group className="mb-3">
-                            <Form.Label>Sending Site</Form.Label>
-                            <Form.Select
-                                value={sendSite}
-                                onChange={(e) => setSendSite(e.target.value)}
-                            >
-                                {allSites.map((site) => (
-                                    <option
-                                        key={site.siteId}
-                                        value={site.siteId}
-                                    >
-                                        {site.name}
-                                    </option>
-                                ))}
-                            </Form.Select>
-                        </Form.Group>
-                    </div>
-                    <div className="col">
-                        <Form.Group className="mb-3">
-                            <Form.Label>Sending Store</Form.Label>
-                            <Form.Select
-                                value={sendStore}
-                                onChange={(e) => setSendStore(e.target.value)}
-                            >
-                                {sendSiteStores.map((store) => (
-                                    <option
-                                        key={store.storeId}
-                                        value={store.storeId}
-                                    >
-                                        {store.name}
-                                    </option>
-                                ))}
-                            </Form.Select>
-                        </Form.Group>
-                    </div>
-                </div>
+    if (isLoading) return <LoadingSpinner />;
 
-                <div className="row mx-2">
-                    <div className="col">
-                        <Form.Group className="mb-3">
-                            <Form.Label>Receiving Site</Form.Label>
-                            <Form.Select
-                                value={receiveSite}
-                                onChange={(e) => setReceiveSite(e.target.value)}
-                            >
-                                {allSites.map((site) => (
-                                    <option
-                                        key={site.siteId}
-                                        value={site.siteId}
-                                    >
-                                        {site.name}
-                                    </option>
-                                ))}
-                            </Form.Select>
-                        </Form.Group>
-                    </div>
-                    <div className="col">
-                        <Form.Group className="mb-3">
-                            <Form.Label>Receiving Store</Form.Label>
-                            <Form.Select
-                                value={receiveStore}
-                                onChange={(e) =>
-                                    setReceiveStore(e.target.value)
-                                }
-                            >
-                                {receiveSiteStores.map((store) => (
-                                    <option
-                                        key={store.storeId}
-                                        value={store.storeId}
-                                    >
-                                        {store.name}
-                                    </option>
-                                ))}
-                            </Form.Select>
-                        </Form.Group>
-                    </div>
-                </div>
-
-                {addedItems.map((item, index) => (
-                    <TransferRequestConsumableItem
-                        key={index}
-                        index={index}
-                        allItems={allItems}
-                        addedItems={addedItems}
-                        setAddedItems={setAddedItems}
-                    />
-                ))}
-
-                <div className="row">
-                    <div className="col-9 d-grid">
-                        <Button type="submit" className="btn-teal-dark">
-                            Request Transfer
-                        </Button>
-                    </div>
-                    <div className="col-3 d-grid">
-                        <Button className="btn-teal" onClick={addItem}>
-                            <FaPlus className="me-2 mb-1" /> Add Item
-                        </Button>
-                    </div>
-                </div>
-            </Form>
-        );
-    }
+    if (isError || isSubmitError) return <ConnectionError />;
 
     return (
         <>
             <Header title="New Transfer Request" />
 
-            {isLoading ? (
-                <div className="d-flex justify-content-center align-content-center mt-4 pt-4">
-                    <Spinner animation="grow" className="bg-teal" />
-                </div>
-            ) : (
-                <Container className="my-3">
-                    <InputForm />
-                    <div
-                        style={{ float: "left", clear: "both" }}
-                        ref={(el) => {
-                            pageend = el;
-                        }}
-                    ></div>
-                </Container>
-            )}
+            <Container className="my-3">
+                <Form onSubmit={submit}>
+                    <div className="row mx-2">
+                        <div className="col">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Sending Site</Form.Label>
+                                <Form.Select
+                                    value={sendSite}
+                                    onChange={(e) =>
+                                        setSendSite(e.target.value)
+                                    }
+                                >
+                                    {allSites.map((site) => (
+                                        <option
+                                            key={site.siteId}
+                                            value={site.siteId}
+                                        >
+                                            {site.name}
+                                        </option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
+                        </div>
+                        <div className="col">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Sending Store</Form.Label>
+                                <Form.Select
+                                    value={sendStore}
+                                    onChange={(e) =>
+                                        setSendStore(e.target.value)
+                                    }
+                                >
+                                    {sendSiteStores.map((store) => (
+                                        <option
+                                            key={store.storeId}
+                                            value={store.storeId}
+                                        >
+                                            {store.name}
+                                        </option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
+                        </div>
+                    </div>
+
+                    <div className="row mx-2">
+                        <div className="col">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Receiving Site</Form.Label>
+                                <Form.Select
+                                    value={receiveSite}
+                                    onChange={(e) =>
+                                        setReceiveSite(e.target.value)
+                                    }
+                                >
+                                    {allSites.map((site) => (
+                                        <option
+                                            key={site.siteId}
+                                            value={site.siteId}
+                                        >
+                                            {site.name}
+                                        </option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
+                        </div>
+                        <div className="col">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Receiving Store</Form.Label>
+                                <Form.Select
+                                    value={receiveStore}
+                                    onChange={(e) =>
+                                        setReceiveStore(e.target.value)
+                                    }
+                                >
+                                    {receiveSiteStores.map((store) => (
+                                        <option
+                                            key={store.storeId}
+                                            value={store.storeId}
+                                        >
+                                            {store.name}
+                                        </option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
+                        </div>
+                    </div>
+
+                    {addedItems.map((item, index) => (
+                        <TransferRequestConsumableItem
+                            key={index}
+                            index={index}
+                            allItems={allItems}
+                            addedItems={addedItems}
+                            setAddedItems={setAddedItems}
+                        />
+                    ))}
+
+                    <div className="row">
+                        <div className="col-9 d-grid">
+                            <Button type="submit" className="btn-teal-dark">
+                                Request Transfer
+                            </Button>
+                        </div>
+                        <div className="col-3 d-grid">
+                            <Button className="btn-teal" onClick={addItem}>
+                                <FaPlus className="me-2 mb-1" /> Add Item
+                            </Button>
+                        </div>
+                    </div>
+                </Form>
+                <div
+                    style={{ float: "left", clear: "both" }}
+                    ref={(el) => {
+                        pageend = el;
+                    }}
+                ></div>
+            </Container>
         </>
     );
 }

@@ -1,39 +1,45 @@
 import React from "react";
 import PropTypes from "prop-types";
 import TransferSendConsumableItem from "./fragments/TransferSendConsumableItem";
-import { Button, Form } from "react-bootstrap";
-import axios from "axios";
+import { Button, Form, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import Info from "../../fragments/Info";
+import { sendTransfer } from "../../../api/transfer";
+import { useMutation } from "react-query";
+import ConnectionError from "../../fragments/ConnectionError";
 
 function SendTransfer({ addedItems, setAddedItems, transfer }) {
     const navigate = useNavigate();
 
+    const {
+        isLoading: isSendLoading,
+        isError: isSendError,
+        mutate: submitSendTransfer,
+    } = useMutation(sendTransfer, {
+        onSuccess: (res) => navigate(-1),
+    });
+
     function submit(e) {
         e.preventDefault();
+        if (isSendLoading) return;
 
         const data = {
-            id: transfer.id,
+            transferId: transfer.transferId,
             sentById: 1,
             transferItems: [],
         };
 
         for (let item of addedItems) {
             let tempItem = {
-                itemId: Number(item.id),
-                qtySent: Number(item.qtySent),
+                itemId: Number(item.itemId),
                 sendRemark: item.sendRemark,
             };
             data.transferItems.push(tempItem);
         }
 
-        axios
-            .post("https://localhost:7067/api/transfer/send", data)
-            .then((res) => {
-                navigate(-1);
-            });
+        submitSendTransfer(data);
     }
 
+    if (isSendError) return <ConnectionError />;
 
     return (
         <>
@@ -49,6 +55,13 @@ function SendTransfer({ addedItems, setAddedItems, transfer }) {
 
                 <div className="d-grid">
                     <Button className="btn-teal-dark" type="submit">
+                        {isSendLoading && (
+                            <Spinner
+                                className="me-2"
+                                animation="grow"
+                                size="sm"
+                            />
+                        )}
                         Transfer Out
                     </Button>
                 </div>

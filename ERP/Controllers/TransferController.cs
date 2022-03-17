@@ -124,13 +124,25 @@ namespace ERP.Controllers
         }
 
         [HttpPost("decline")]
-        public async Task<ActionResult<Transfer>> Decline(DeclineTransferDTO request)
+        public async Task<ActionResult<Transfer>> Decline(DeclineTransferDTO declineDTO)
         {
-            var transfer = await context.Transfers.FindAsync(request.TransferId);
+            var transfer = await context.Transfers
+               .Where(t => t.TransferId == declineDTO.TransferId)
+               .Include(t => t.TransferItems)
+               .FirstOrDefaultAsync();
             if (transfer == null) return NotFound("Transfer Not Found.");
 
             transfer.ApproveDate = DateTime.Now;
-            transfer.ApprovedById = request.ApprovedById;
+            transfer.ApprovedById = declineDTO.ApprovedById;
+
+            foreach (var requestItem in declineDTO.TransferItems)
+            {
+                var transferItem = transfer.TransferItems.Where(tItem => tItem.ItemId == requestItem.ItemId).FirstOrDefault();
+                if (transferItem == null) return NotFound($"Transfer Item with Id {requestItem.ItemId} Not Found");
+
+                transferItem.ApproveRemark = requestItem.ApproveRemark;
+            }
+
             transfer.Status = TRANSFERSTATUS.DECLINED;
 
             await context.SaveChangesAsync();

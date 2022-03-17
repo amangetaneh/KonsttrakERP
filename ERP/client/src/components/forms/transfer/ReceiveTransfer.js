@@ -1,20 +1,31 @@
 import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import TransferReceiveConsumableItem from "./fragments/TransferReceiveConsumableItem";
-import { Button, Form } from "react-bootstrap";
-import axios from "axios";
+import { Button, Form, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { receiveTransfer } from "../../../api/transfer";
+import { useMutation } from "react-query";
+import ConnectionError from "../../fragments/ConnectionError";
 
 function ReceiveTransfer({ addedItems, setAddedItems, transfer }) {
     const navigate = useNavigate();
     const vehiclePlateRef = useRef();
 
+    const {
+        isLoading: isReceiveLoading,
+        isError: isReceiveError,
+        mutate: submitReceiveTransfer,
+    } = useMutation(receiveTransfer, {
+        onSuccess: (res) => navigate(-1),
+    });
+
     function submit(e) {
         e.preventDefault();
+        if (isReceiveLoading) return;
 
         const data = {
-            id: transfer.id,
-            receivedById: 1,//////////////////////////
+            transferId: transfer.transferId,
+            receivedById: 1, //////////////////////////
             deliveredById: 1,
             vehiclePlateNo: vehiclePlateRef.current.value,
             transferItems: [],
@@ -22,18 +33,13 @@ function ReceiveTransfer({ addedItems, setAddedItems, transfer }) {
 
         for (let item of addedItems) {
             let tempItem = {
-                itemId: Number(item.id),
-                qtyReceived: Number(item.qtyReceived),
+                itemId: Number(item.itemId),
                 receiveRemark: item.receiveRemark,
             };
             data.transferItems.push(tempItem);
         }
 
-        axios
-            .post("https://localhost:7067/api/transfer/receive", data)
-            .then((res) => {
-                navigate(-1);
-            });
+        submitReceiveTransfer(data);
     }
 
     function DeliveredByForm() {
@@ -46,7 +52,7 @@ function ReceiveTransfer({ addedItems, setAddedItems, transfer }) {
                                 <Form.Label>Delivered By</Form.Label>
                             </div>
                             <div className="col">
-                                <Form.Select >
+                                <Form.Select>
                                     <option value="">Select Driver</option>
                                 </Form.Select>
                             </div>
@@ -73,6 +79,8 @@ function ReceiveTransfer({ addedItems, setAddedItems, transfer }) {
         );
     }
 
+    if (isReceiveError) return <ConnectionError />;
+
     return (
         <>
             <Form onSubmit={submit}>
@@ -89,6 +97,13 @@ function ReceiveTransfer({ addedItems, setAddedItems, transfer }) {
 
                 <div className="d-grid">
                     <Button className="btn-teal-dark" type="submit">
+                        {isReceiveLoading && (
+                            <Spinner
+                                className="me-2"
+                                animation="grow"
+                                size="sm"
+                            />
+                        )}
                         Transfer In
                     </Button>
                 </div>

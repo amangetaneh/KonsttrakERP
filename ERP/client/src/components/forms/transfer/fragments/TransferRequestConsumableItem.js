@@ -11,12 +11,11 @@ function TransferRequestConsumableItem({
     function selectedItemChanged(e) {
         const selectedId = e.target.value;
 
-
         if (selectedId === "") return;
 
         const addedItemsCpy = [...addedItems];
-        var item = allItems.filter((item) => item.itemId == selectedId)[0];
-        
+        var item = allItems.filter((item) => item.itemId.toString() === selectedId)[0];
+
         addedItemsCpy[index].itemId = selectedId;
         addedItemsCpy[index].units = [item.consumableItem.unit];
         addedItemsCpy[index].spec = item.consumableItem.spec;
@@ -67,11 +66,28 @@ function TransferRequestConsumableItem({
                             required
                         >
                             <option value="">Select Item</option>
-                            {allItems.map((item) => (
-                                <option key={item.itemId} value={item.itemId}>
-                                    {item.name}
-                                </option>
-                            ))}
+                            {
+                                // remove an item if it is selected on another item to keep it from being added multiple times
+                                allItems
+                                    .filter(
+                                        (currentItem) =>
+                                            addedItems.filter(
+                                                (addedItem) =>
+                                                    addedItem.itemId ===
+                                                        currentItem.itemId.toString() &&
+                                                    addedItem.itemId !==
+                                                        addedItems[index].itemId
+                                            ).length === 0
+                                    )
+                                    .map((item) => (
+                                        <option
+                                            key={item.itemId}
+                                            value={item.itemId}
+                                        >
+                                            {item.name}
+                                        </option>
+                                    ))
+                            }
                         </Form.Select>
                     </Form.Group>
                 </div>

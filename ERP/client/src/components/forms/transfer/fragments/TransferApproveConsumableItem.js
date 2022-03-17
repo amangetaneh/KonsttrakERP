@@ -1,6 +1,20 @@
+import { useEffect } from "react";
 import { Form, InputGroup } from "react-bootstrap";
 
-function TransferApproveConsumableItem({ addedItems, index }) {
+function TransferApproveConsumableItem({ addedItems, setAddedItems, index }) {
+    //set approved qty to requested as default
+    useEffect(() => {
+        const addedItemsCpy = [...addedItems];
+        addedItemsCpy[index].qtyApproved = addedItemsCpy[index].qtyRequested;
+        setAddedItems(addedItemsCpy);
+    }, []);
+
+    function valueChanged(e) {
+        const addedItemsCpy = [...addedItems];
+        addedItemsCpy[index][e.target.name] = e.target.value;
+        setAddedItems(addedItemsCpy);
+    }
+
     return (
         <div className="shadow pt-3 px-4 mb-4 rounded">
             <div className=" row justify-content-between">
@@ -69,7 +83,7 @@ function TransferApproveConsumableItem({ addedItems, index }) {
                         </div>
                         <div className="col">
                             <Form.Group className="mb-3">
-                                <Form.Label>Total Cost</Form.Label>
+                                <Form.Label>Requested Total Cost</Form.Label>
                                 <Form.Control
                                     type="text"
                                     name="total"
@@ -85,15 +99,55 @@ function TransferApproveConsumableItem({ addedItems, index }) {
                     <div className="row">
                         <div className="col">
                             <Form.Group className="mb-3">
-                                <Form.Label>Request Remark</Form.Label>
+                                <Form.Label>Quantity Approved</Form.Label>
+                                <Form.Control
+                                    min="0"
+                                    type="number"
+                                    name="qtyApproved"
+                                    value={addedItems[index].qtyApproved}
+                                    onChange={valueChanged}
+                                    required
+                                />
+                            </Form.Group>
+                        </div>
+                        <div className="col">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Approved Total Cost</Form.Label>
                                 <Form.Control
                                     type="text"
+                                    name="total"
                                     readOnly
-                                    value={addedItems[index].requestRemark}
+                                    value={
+                                        addedItems[index].qtyApproved *
+                                        addedItems[index].cost
+                                    }
                                 />
                             </Form.Group>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div className="row">
+                <div className="col">
+                    <Form.Group className="mb-3">
+                        <Form.Label>Request Remark</Form.Label>
+                        <Form.Control
+                            type="text"
+                            readOnly
+                            value={addedItems[index].requestRemark}
+                        />
+                    </Form.Group>
+                </div>
+                <div className="col">
+                    <Form.Group className="mb-3">
+                        <Form.Label>Approve Remark</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="approveRemark"
+                            value={addedItems[index].approveRemark}
+                            onChange={valueChanged}
+                        />
+                    </Form.Group>
                 </div>
             </div>
         </div>

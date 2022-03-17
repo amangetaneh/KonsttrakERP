@@ -29,13 +29,13 @@ function TransferSendConsumableItem({ addedItems, setAddedItems, index }) {
                 </div>
                 <div className="col">
                     <Form.Group className="mb-3">
-                        <Form.Label>Quantity Requested</Form.Label>
+                        <Form.Label>Quantity Approved</Form.Label>
                         <InputGroup className="mb-3">
                             <Form.Control
                                 type="text"
                                 name="qty"
                                 readOnly
-                                value={addedItems[index].qtyRequested}
+                                value={addedItems[index].qtyApproved}
                             />
                             <Form.Control
                                 name="unit"
@@ -82,42 +82,24 @@ function TransferSendConsumableItem({ addedItems, setAddedItems, index }) {
                                     name="total"
                                     readOnly
                                     value={
-                                        addedItems[index].qtyRequested *
+                                        addedItems[index].qtyApproved *
                                         addedItems[index].cost
                                     }
                                 />
                             </Form.Group>
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Quantity Transfered</Form.Label>
-                                <Form.Control
-                                    min="0"
-                                    type="number"
-                                    name="qtySent"
-                                    value={addedItems[index].qtySent}
-                                    onChange={valueChanged}
-                                    required
-                                />
-                            </Form.Group>
-                        </div>
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Total Cost</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    name="total"
-                                    readOnly
-                                    value={
-                                        addedItems[index].qtySent *
-                                        addedItems[index].cost
-                                    }
-                                />
-                            </Form.Group>
-                        </div>
-                    </div>
+                    <div className="col">
+                    <Form.Group className="mb-3">
+                        <Form.Label>Approve Remark</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="approveRemark"
+                            value={addedItems[index].approveRemark}
+                            readOnly
+                        />
+                    </Form.Group>
+                </div>
                 </div>
             </div>
 
