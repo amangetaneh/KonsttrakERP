@@ -69,11 +69,18 @@ input:read-only,
 input[type="text"]:read-only {
     background-color: transparent !important;
     box-shadow: 0 0px 0px rgba(0, 0, 0, 0.075) inset, 0 0 0px var(--color-teal-light) !important;
-    border-color: rgb(233, 233, 233) !important;
+    border-color: rgb(235, 235, 235) !important;
 }
 
 textarea:read-only:focus,
 input:read-only:focus,
 input[type="text"]:read-only:focus {
     border-color: var(--color-teal-light) !important;
+}
+
+textarea:read-write,
+input:read-write,
+input[type="text"]:read-write,
+select{
+    border-color: var(--color-teal) !important;
 }

@@ -1,7 +1,7 @@
 import { Form, InputGroup } from "react-bootstrap";
 import PropTypes from "prop-types";
 
-function TransferSendConsumableItem({ addedItems, setAddedItems, index }) {
+function IssueHandMaterial({ addedItems, setAddedItems, index }) {
     function valueChanged(e) {
         const addedItemsCpy = [...addedItems];
         addedItemsCpy[index][e.target.name] = e.target.value;
@@ -106,7 +106,7 @@ function TransferSendConsumableItem({ addedItems, setAddedItems, index }) {
             <div className="row">
                 <div className="col">
                     <Form.Group className="mb-3">
-                        <Form.Label>Request Remark</Form.Label>
+                        <Form.Label>Issue Request Remark</Form.Label>
                         <Form.Control
                             type="text"
                             readOnly
@@ -116,11 +116,11 @@ function TransferSendConsumableItem({ addedItems, setAddedItems, index }) {
                 </div>
                 <div className="col">
                     <Form.Group className="mb-3">
-                        <Form.Label>Send Remark</Form.Label>
+                        <Form.Label>Hand Remark</Form.Label>
                         <Form.Control
                             type="text"
-                            name="sendRemark"
-                            value={addedItems[index].sendRemark}
+                            name="handRemark"
+                            value={addedItems[index].handRemark}
                             onChange={valueChanged}
                         />
                     </Form.Group>
@@ -130,10 +130,10 @@ function TransferSendConsumableItem({ addedItems, setAddedItems, index }) {
     );
 }
 
-TransferSendConsumableItem.propTypes = {
+IssueHandMaterial.propTypes = {
     addedItems: PropTypes.array.isRequired,
     setAddedItems: PropTypes.func.isRequired,
     index: PropTypes.number.isRequired,
 };
 
-export default TransferSendConsumableItem;
+export default IssueHandMaterial;

@@ -12,14 +12,18 @@ namespace ERP.Models
         [Key]
         public int ItemId { get; set; }
 
-        public int QtyIssued { get; set; }
+        public int QtyRequested { get; set; }
 
-        public int? QtyHanded { get; set; }
+        public int? QtyApproved { get; set; }
 
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Cost { get; set; }
 
-        public string Remark { get; set; } = string.Empty;
+        public string RequestRemark { get; set; } = string.Empty;
+
+        public string? ApproveRemark { get; set; } = string.Empty;
+
+        public string? HandRemark { get; set; } = string.Empty;
 
         [JsonIgnore]
         [ForeignKey("IssueId")]

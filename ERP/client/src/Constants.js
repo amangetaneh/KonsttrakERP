@@ -1,4 +1,4 @@
-export var TRANSFERSTATUS = {
+export const TRANSFERSTATUS = {
     DECLINED: 0,
     REQUESTED: 1,
     APPROVED: 2,
@@ -11,7 +11,18 @@ export var TRANSFERSTATUS = {
     4: "Received",
 };
 
-export var PurchaseStatus = {
+export const ISSUESTATUS = {
+    DECLINED: 0,
+    REQUESTED: 1,
+    APPROVED: 2,
+    HANDED: 3,
+    0: "Declined",
+    1: "Requested",
+    2: "Approved",
+    3: "Handed",
+};
+
+export const PurchaseStatus = {
     Declined: 0,
     Requested: 1,
     Approved: 2,
@@ -22,14 +33,14 @@ export var PurchaseStatus = {
     3: "Checked",
 };
 
-export var ReceiveStatus = {
+export const ReceiveStatus = {
     Received: 0,
     Approved: 1,
     0: "Received",
     1: "Approved",
 };
 
-export var ITEMTYPE = {
-    CONSUMABLE: 1,
-    NONCONSUMABLE: 2,
+export const ITEMTYPE = {
+    MATERIAL: 1,
+    EQUIPMENT: 2,
 };

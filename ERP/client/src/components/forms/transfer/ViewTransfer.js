@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import { Button, Form } from "react-bootstrap";
-import TransferViewConsumableItem from "./fragments/TransferViewConsumableItem";
+import TransferViewMaterial from "./fragments/TransferViewMaterial";
 import { useNavigate } from "react-router-dom";
 
 function ViewTransfer({ addedItems }) {
@@ -15,7 +15,7 @@ function ViewTransfer({ addedItems }) {
         <>
             <>
                 {addedItems.map((item, index) => (
-                    <TransferViewConsumableItem
+                    <TransferViewMaterial
                         key={index}
                         addedItems={addedItems}
                         index={index}

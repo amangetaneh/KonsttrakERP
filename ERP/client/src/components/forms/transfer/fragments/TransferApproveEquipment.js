@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Form, InputGroup } from "react-bootstrap";
 
-function TransferApproveConsumableItem({ addedItems, setAddedItems, index }) {
+function TransferApproveMaterial({ addedItems, setAddedItems, index }) {
     //set approved qty to requested as default
     useEffect(() => {
         const addedItemsCpy = [...addedItems];
@@ -154,4 +154,4 @@ function TransferApproveConsumableItem({ addedItems, setAddedItems, index }) {
     );
 }
 
-export default TransferApproveConsumableItem;
+export default TransferApproveMaterial;

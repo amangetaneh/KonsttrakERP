@@ -33,9 +33,9 @@ namespace ERP.Controllers
                 .Include(transfer => transfer.ApprovedBy)
                .Include(transfer => transfer.TransferItems)
                .ThenInclude(transferItem => transferItem.Item)
-               .ThenInclude(item => item.ConsumableItem)
+               .ThenInclude(item => item.Material)
                .Include(transfer => transfer.TransferItems)
-               .ThenInclude(transferItem => transferItem.Item.NonConsumableItem)
+               .ThenInclude(transferItem => transferItem.Item.Equipment)
                .FirstOrDefault();
 
             if (transfer == null) return NotFound("Transfer Not Found.");
@@ -48,8 +48,10 @@ namespace ERP.Controllers
         {
 
             var transfers = await context.Transfers
-                .Include(transfer => transfer.SendStore).ThenInclude(store => store.Site)
-                .Include(transfer => transfer.ReceiveStore).ThenInclude(store => store.Site)
+                .Include(transfer => transfer.SendStore)
+                .ThenInclude(store => store.Site)
+                .Include(transfer => transfer.ReceiveStore)
+                .ThenInclude(store => store.Site)
                 .ToListAsync();
 
             return Ok(transfers);
@@ -73,16 +75,21 @@ namespace ERP.Controllers
                 transferItem.RequestRemark = requestItem.RequestRemark;
 
                 var itemTemp = context.Items.Where(item => item.ItemId == requestItem.ItemId).
-                    Include(i => i.NonConsumableItem).
-                    Include(i => i.ConsumableItem).
+                    Include(i => i.Equipment).
+                    Include(i => i.Material).
                     FirstOrDefault();
 
                 if (itemTemp == null) return NotFound($"Transfer Item with Id {requestItem.ItemId} Not Found");
 
-                if (itemTemp.Type == ItemType.Consumable)
-                    transferItem.Cost = itemTemp.ConsumableItem.Cost;
+                if (itemTemp.Type == ITEMTYPE.MATERIAL)
+                    transferItem.Cost = itemTemp.Material.Cost;
                 else
-                    transferItem.Cost = itemTemp.NonConsumableItem.Cost;
+                {
+                    transferItem.Cost = itemTemp.Equipment.Cost;
+                    transferItem.Model = requestItem.Model;
+                    transferItem.AssetNo = requestItem.AssetNo;
+                    transferItem.SerialNo = requestItem.SerialNo;
+                }
 
                 transferItems.Add(transferItem);
             }
@@ -151,18 +158,18 @@ namespace ERP.Controllers
         }
 
         [HttpPost("send")]
-        public async Task<ActionResult<Transfer>> Send(SendTransferDTO request)
+        public async Task<ActionResult<Transfer>> Send(SendTransferDTO sendDTO)
         {
             var transfer = context.Transfers
-                .Where(t => t.TransferId == request.TransferId)
+                .Where(t => t.TransferId == sendDTO.TransferId)
                 .Include(t => t.TransferItems)
                 .FirstOrDefault();
             if (transfer == null) return NotFound("Transfer Not Found.");
 
             transfer.SendDate = DateTime.Now;
-            transfer.SentById = request.SentById;
+            transfer.SentById = sendDTO.SentById;
 
-            foreach (var requestItem in request.TransferItems)
+            foreach (var requestItem in sendDTO.TransferItems)
             {
                 var transferItem = transfer.TransferItems.Where(tItem => tItem.ItemId == requestItem.ItemId).FirstOrDefault();
                 if (transferItem == null) return NotFound($"Transfer Item with Id {requestItem.ItemId} Not Found");
@@ -180,21 +187,21 @@ namespace ERP.Controllers
 
 
         [HttpPost("receive")]
-        public async Task<ActionResult<Transfer>> Receive(ReceiveTransferDTO request)
+        public async Task<ActionResult<Transfer>> Receive(ReceiveTransferDTO receiveDTO)
         {
             var transfer = context.Transfers
-                .Where(t => t.TransferId == request.TransferId)
+                .Where(t => t.TransferId == receiveDTO.TransferId)
                 .Include(t => t.TransferItems)
                 .FirstOrDefault();
             if (transfer == null) return NotFound("Transfer Not Found.");
 
             transfer.ReceiveDate = DateTime.Now;
-            transfer.ReceivedById = request.ReceivedById;
-            transfer.DeliveredById = request.DeliveredById;
-            transfer.VehiclePlateNo = request.VehiclePlateNo;
+            transfer.ReceivedById = receiveDTO.ReceivedById;
+            transfer.DeliveredById = receiveDTO.DeliveredById;
+            transfer.VehiclePlateNo = receiveDTO.VehiclePlateNo;
 
 
-            foreach (var requestItem in request.TransferItems)
+            foreach (var requestItem in receiveDTO.TransferItems)
             {
                 var transferItem = transfer.TransferItems.Where(tItem => tItem.ItemId == requestItem.ItemId).FirstOrDefault();
                 if (transferItem == null) return NotFound($"Transfer Item with Id {requestItem.ItemId} Not Found");

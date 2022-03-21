@@ -48,17 +48,17 @@ namespace ERP.Controllers
                 receiveItem.Remark = requestItem.Remark;
 
                 var itemTemp = context.Items.Where(item => item.ItemId == requestItem.ItemId).
-                   Include(i => i.NonConsumableItem).
-                   Include(i => i.ConsumableItem).
+                   Include(i => i.Equipment).
+                   Include(i => i.Material).
                    FirstOrDefault();
 
                 if (itemTemp == null) return NotFound($"Item with Id {requestItem.ItemId} Not Found");
 
-                if (itemTemp.Type == ItemType.Consumable)
-                    receiveItem.Cost = itemTemp.ConsumableItem.Cost;
+                if (itemTemp.Type == ITEMTYPE.MATERIAL)
+                    receiveItem.Cost = itemTemp.Material.Cost;
                 
                 else
-                    receiveItem.Cost = itemTemp.NonConsumableItem.Cost;
+                    receiveItem.Cost = itemTemp.Equipment.Cost;
 
                 receiveItems.Add(receiveItem);
             }

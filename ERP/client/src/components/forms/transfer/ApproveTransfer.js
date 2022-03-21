@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import TransferApproveConsumableItem from "./fragments/TransferApproveConsumableItem";
+import TransferApproveMaterial from "./fragments/TransferApproveMaterial";
 import { Button, Spinner } from "react-bootstrap";
 import { approveTransfer, declineTransfer } from "../../../api/transfer";
 import { useNavigate } from "react-router-dom";
@@ -55,7 +55,7 @@ function ApproveTransfer({ addedItems, setAddedItems, transfer }) {
     return (
         <>
             {addedItems.map((item, index) => (
-                <TransferApproveConsumableItem
+                <TransferApproveMaterial
                     key={index}
                     addedItems={addedItems}
                     setAddedItems={setAddedItems}

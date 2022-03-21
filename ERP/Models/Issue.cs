@@ -9,22 +9,17 @@ namespace ERP.Models
         [Key]
         public int IssueId { get; set; }
 
-        public int Status { get; set; } = 0;
-        /*Status Values: 
-           0: Issued
-           1: Approved
-           2: Handed
-       */
-
+        public int Status { get; set; } = ISSUESTATUS.REQUESTED;
+        
         public DateTime RequestDate { get; set; } = DateTime.Now;
 
         public DateTime? ApproveDate { get; set; }
 
         public DateTime? HandDate { get; set; }
-     
-        private Store Store { get; set; }
 
-        private int StoreId { get; set; }
+        public Store Store { get; set; }
+
+        public int StoreId { get; set; }
 
         public Employee RequestedBy { get; set; }
 

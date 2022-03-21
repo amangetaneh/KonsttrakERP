@@ -8,11 +8,21 @@ namespace ERP.Models
         [Key]
         public int MaintenanceId { get; set; }
 
+        public int Status { get; set; } = MAINTENANCESTATUS.REQUESTED;
+
         public DateTime RequestDate { get; set; } = DateTime.Now;
 
-        public Site Site { get; set; }
+        public DateTime? ApproveDate { get; set; }
+
+        public DateTime? FixDate { get; set; }
+
+        public Store Store { get; set; }
+
+        public int StoreId { get; set; }
 
         public Item Item { get; set; }
+
+        public int ItemId   { get; set; }
 
         public string Reason { get; set; }
 
@@ -20,10 +30,16 @@ namespace ERP.Models
 
         public int RequestedById { get; set; }
         
-        public DateTime? ApproveDate { get; set; }
-
         public Employee ApprovedBy { get; set; }
 
-        public int ApprovedById { get; set; }
+        public int? ApprovedById { get; set; }
+
+        public Employee FixedBy { get; set; }
+
+        public int? FixedById { get; set; }
+
+        public string? ApproveRemark { get; set; }
+
+        public string? FixRemark { get; set; }
     }
 }

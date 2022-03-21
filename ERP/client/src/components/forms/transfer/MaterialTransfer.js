@@ -2,18 +2,18 @@ import { useEffect, useRef, useState } from "react";
 import { Form, Button, Container } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
 import Item from "../../../models/Item";
-import TransferRequestConsumableItem from "./fragments/TransferRequestConsumableItem";
+import TransferRequestMaterial from "./fragments/TransferRequestMaterial";
 import Header from "../../layouts/Header";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { fetchSites } from "../../../api/site";
 import { fetchStores } from "../../../api/store";
-import { fetchConsumableItems } from "../../../api/item";
+import { fetchMaterials } from "../../../api/item";
 import { requestTransfer } from "../../../api/transfer";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
 
-function NewTransfer() {
+function MaterialTransfer() {
     const navigate = useNavigate();
     const [sendSite, setSendSite] = useState(0);
     const [sendStore, setSendStore] = useState(0);
@@ -39,28 +39,22 @@ function NewTransfer() {
             setReceiveSite(data[0].siteId);
         },
     });
-    const itemQuery = useQuery("consumableItems", fetchConsumableItems, {
+    const itemQuery = useQuery("materials", fetchMaterials, {
         onSuccess: (data) => setAllItems(data),
     });
 
     useEffect(() => {
-        setIsLoading(
-            sitesQuery.isLoading || storesQuery.isLoading || itemQuery.isLoading
-        );
+        setIsLoading(sitesQuery.isLoading || storesQuery.isLoading || itemQuery.isLoading);
     }, [sitesQuery.isLoading, storesQuery.isLoading, itemQuery.isLoading]);
 
     useEffect(() => {
-        setIsError(
-            sitesQuery.isError || storesQuery.isError || itemQuery.isError
-        );
+        setIsError(sitesQuery.isError || storesQuery.isError || itemQuery.isError);
     }, [sitesQuery.isError, storesQuery.isError, itemQuery.isError]);
 
     useEffect(() => {
         //update send stores when send site changes
         setSendSiteStores(
-            allStores.filter(
-                (store) => store.siteId.toString() === sendSite.toString()
-            )
+            allStores.filter((store) => store.siteId.toString() === sendSite.toString())
         );
     }, [sendSite, allStores]);
 
@@ -72,16 +66,13 @@ function NewTransfer() {
     useEffect(() => {
         //update receive stores when receive site changes
         setReceiveSiteStores(
-            allStores.filter(
-                (store) => store.siteId.toString() === receiveSite.toString()
-            )
+            allStores.filter((store) => store.siteId.toString() === receiveSite.toString())
         );
     }, [receiveSite, allStores]);
 
     useEffect(() => {
         //select first store when receive stores change
-        if (receiveSiteStores.length > 0)
-            setReceiveStore(receiveSiteStores[0].storeId);
+        if (receiveSiteStores.length > 0) setReceiveStore(receiveSiteStores[0].storeId);
     }, [receiveSiteStores]);
 
     const {
@@ -89,7 +80,7 @@ function NewTransfer() {
         isLoading: isSubmitLoading,
         mutate: submitTransferRequest,
     } = useMutation(requestTransfer, {
-        onSuccess: (res) => navigate(`/transfer/in`),
+        onSuccess: (res) => navigate(`/transfer/`),
     });
 
     function submit(e) {
@@ -138,7 +129,7 @@ function NewTransfer() {
 
     return (
         <>
-            <Header title="New Transfer Request" />
+            <Header title="New Material Transfer Request" />
 
             <Container className="my-3">
                 <Form onSubmit={submit}>
@@ -148,15 +139,10 @@ function NewTransfer() {
                                 <Form.Label>Sending Site</Form.Label>
                                 <Form.Select
                                     value={sendSite}
-                                    onChange={(e) =>
-                                        setSendSite(e.target.value)
-                                    }
+                                    onChange={(e) => setSendSite(e.target.value)}
                                 >
                                     {allSites.map((site) => (
-                                        <option
-                                            key={site.siteId}
-                                            value={site.siteId}
-                                        >
+                                        <option key={site.siteId} value={site.siteId}>
                                             {site.name}
                                         </option>
                                     ))}
@@ -168,15 +154,10 @@ function NewTransfer() {
                                 <Form.Label>Sending Store</Form.Label>
                                 <Form.Select
                                     value={sendStore}
-                                    onChange={(e) =>
-                                        setSendStore(e.target.value)
-                                    }
+                                    onChange={(e) => setSendStore(e.target.value)}
                                 >
                                     {sendSiteStores.map((store) => (
-                                        <option
-                                            key={store.storeId}
-                                            value={store.storeId}
-                                        >
+                                        <option key={store.storeId} value={store.storeId}>
                                             {store.name}
                                         </option>
                                     ))}
@@ -191,15 +172,10 @@ function NewTransfer() {
                                 <Form.Label>Receiving Site</Form.Label>
                                 <Form.Select
                                     value={receiveSite}
-                                    onChange={(e) =>
-                                        setReceiveSite(e.target.value)
-                                    }
+                                    onChange={(e) => setReceiveSite(e.target.value)}
                                 >
                                     {allSites.map((site) => (
-                                        <option
-                                            key={site.siteId}
-                                            value={site.siteId}
-                                        >
+                                        <option key={site.siteId} value={site.siteId}>
                                             {site.name}
                                         </option>
                                     ))}
@@ -211,15 +187,10 @@ function NewTransfer() {
                                 <Form.Label>Receiving Store</Form.Label>
                                 <Form.Select
                                     value={receiveStore}
-                                    onChange={(e) =>
-                                        setReceiveStore(e.target.value)
-                                    }
+                                    onChange={(e) => setReceiveStore(e.target.value)}
                                 >
                                     {receiveSiteStores.map((store) => (
-                                        <option
-                                            key={store.storeId}
-                                            value={store.storeId}
-                                        >
+                                        <option key={store.storeId} value={store.storeId}>
                                             {store.name}
                                         </option>
                                     ))}
@@ -229,7 +200,7 @@ function NewTransfer() {
                     </div>
 
                     {addedItems.map((item, index) => (
-                        <TransferRequestConsumableItem
+                        <TransferRequestMaterial
                             key={index}
                             index={index}
                             allItems={allItems}
@@ -262,4 +233,4 @@ function NewTransfer() {
     );
 }
 
-export default NewTransfer;
+export default MaterialTransfer;

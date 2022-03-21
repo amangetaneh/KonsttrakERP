@@ -12,9 +12,9 @@ namespace ERP.Context
         }
 
 
-        public DbSet<ConsumableItem> ConsumableItems { get; set; }
+        public DbSet<Material> Materials { get; set; }
 
-        public DbSet<NonConsumableItem> NonConsumableItems { get; set; }
+        public DbSet<Equipment> Equipments { get; set; }
 
         public DbSet<Issue> Issues { get; set; }
 
@@ -118,7 +118,14 @@ namespace ERP.Context
             modelBuilder.Entity<Maintenance>()
                    .HasOne(t => t.ApprovedBy)
                    .WithMany()
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .IsRequired(false);
+
+            modelBuilder.Entity<Maintenance>()
+                   .HasOne(t => t.FixedBy)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .IsRequired(false);
 
             //Issue
             modelBuilder.Entity<Issue>()

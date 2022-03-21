@@ -28,13 +28,17 @@ namespace ERP.Models
         public string? ReceiveRemark { get; set; }
        
         [JsonIgnore]
-
         [ForeignKey("TransferId")]
         public Transfer Transfer { get; set; }
         
         [ForeignKey("ItemId")]
         public Item Item { get; set; }
 
+        public string? Model { get; set; } 
+
+        public string? SerialNo { get; set; } 
+
+        public string? AssetNo { get; set; } 
 
     }
 }

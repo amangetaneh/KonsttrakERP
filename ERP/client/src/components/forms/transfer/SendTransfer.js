@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import TransferSendConsumableItem from "./fragments/TransferSendConsumableItem";
+import TransferSendMaterial from "./fragments/TransferSendMaterial";
 import { Button, Form, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { sendTransfer } from "../../../api/transfer";
@@ -45,7 +45,7 @@ function SendTransfer({ addedItems, setAddedItems, transfer }) {
         <>
             <Form onSubmit={submit}>
                 {addedItems.map((item, index) => (
-                    <TransferSendConsumableItem
+                    <TransferSendMaterial
                         key={index}
                         addedItems={addedItems}
                         setAddedItems={setAddedItems}

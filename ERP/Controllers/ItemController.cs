@@ -19,25 +19,25 @@ namespace ERP.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Item>>> Get()
         {
-            var stores = await context.Items.Include(i => i.ConsumableItem).Include(i => i.NonConsumableItem).ToListAsync();
+            var stores = await context.Items.Include(i => i.Material).Include(i => i.Equipment).ToListAsync();
 
             return Ok(stores);
         }
 
-        [HttpGet("consumable")]
-        public async Task<ActionResult<List<Item>>> GetConsumable()
+        [HttpGet("material")]
+        public async Task<ActionResult<List<Item>>> GetMaterial()
         {
-            var stores = await context.Items.Where(item => item.Type == 1)
-                .Include(i => i.ConsumableItem).ToListAsync();
+            var stores = await context.Items.Where(item => item.Type == ITEMTYPE.MATERIAL)
+                .Include(i => i.Material).ToListAsync();
 
             return Ok(stores);
         }
 
-        [HttpGet("nonconsumable")]
-        public async Task<ActionResult<List<Item>>> GetNonConsumable()
+        [HttpGet("equipment")]
+        public async Task<ActionResult<List<Item>>> GetEquipment()
         {
-            var stores = await context.Items.Where(item=> item.Type == 2)
-                .Include(i => i.NonConsumableItem).ToListAsync();
+            var stores = await context.Items.Where(item=> item.Type == ITEMTYPE.EQUIPMENT)
+                .Include(i => i.Equipment).ToListAsync();
 
             return Ok(stores);
         }

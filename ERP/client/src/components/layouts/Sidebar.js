@@ -20,7 +20,7 @@ function Sidebar() {
             <ProSidebar
                 className="text-light sidebar-decrease-padding"
                 collapsed={collapsed}
-                width="250px"
+                width="255px"
                 style={{ height: "100vh", position: "sticky", top: 0 }}
             >
                 <SidebarHeader className="p-1 text-nowrap">
@@ -34,25 +34,18 @@ function Sidebar() {
                 </SidebarHeader>
                 <SidebarContent>
                     <Menu>
-                        <MenuItem
-                            className=""
-                            icon={<FaHome className="fs-5" />}
-                        >
+                        <MenuItem className="" icon={<FaHome className="fs-5" />}>
                             Home
                         </MenuItem>
 
-                        <SubMenu
-                            title="Inventory"
-                            icon={<FaList className="fs-5" />}
-                        >
+                        <SubMenu title="Inventory" icon={<FaList className="fs-5" />}>
                             <SubMenu title="Stock"></SubMenu>
                             <SubMenu title="Purchase">
                                 <MenuItem>
                                     Purchase an Item <Link to="/purchase/new" />
                                 </MenuItem>
                                 <MenuItem>
-                                    List Purchase Requests{" "}
-                                    <Link to="/purchase/list" />
+                                    List Purchase Requests <Link to="/purchase/list" />
                                 </MenuItem>
                             </SubMenu>
                             <SubMenu title="Receive">
@@ -60,13 +53,15 @@ function Sidebar() {
                                     Receive an Item <Link to="/receive/new" />
                                 </MenuItem>
                                 <MenuItem>
-                                    List Received Items{" "}
-                                    <Link to="/receive/list" />
+                                    List Received Items <Link to="/receive/list" />
                                 </MenuItem>
                             </SubMenu>
                             <SubMenu title="Transfer">
                                 <MenuItem>
-                                    New Transfer <Link to="/transfer/new" />
+                                    New Material Transfer<Link to="/transfer/material" />
+                                </MenuItem>
+                                <MenuItem>
+                                    New Equipment Transfer<Link to="/transfer/equipment" />
                                 </MenuItem>
                                 <MenuItem>
                                     Transfer In <Link to="/transfer/in" />
@@ -76,17 +71,22 @@ function Sidebar() {
                                     <Link to="/transfer/out" />
                                 </MenuItem>
                             </SubMenu>
-                            <SubMenu title="Issue"></SubMenu>
+                            <SubMenu title="Issue">
+                            <MenuItem>
+                                    New Issue <Link to="/issue/new" />
+                                </MenuItem>
+                                <MenuItem>
+                                    Issues <Link to="/issue" />
+                                </MenuItem>
+                                
+                            </SubMenu>
                             <SubMenu title="Maintainance"></SubMenu>
                         </SubMenu>
                     </Menu>
                 </SidebarContent>
                 <SidebarFooter>
                     <Menu subMenuBullets={true}>
-                        <SubMenu
-                            title="User Name"
-                            icon={<FaUser className="fs-5" />}
-                        >
+                        <SubMenu title="User Name" icon={<FaUser className="fs-5" />}>
                             <MenuItem>Manage Account</MenuItem>
                             <MenuItem>Logout</MenuItem>
                         </SubMenu>

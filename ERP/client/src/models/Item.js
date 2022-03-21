@@ -17,6 +17,7 @@ class Item {
         this.requestRemark = "";
         this.sendRemark = "";
         this.receiveRemark = "";
+        this.handRemark = "";
     }
 
     load() {

@@ -13,9 +13,9 @@ namespace ERP.Models
 
         public int Type { get; set; }
         
-        public ConsumableItem ConsumableItem { get; set; }
+        public Material Material { get; set; }
         
-        public NonConsumableItem NonConsumableItem { get; set; }
+        public Equipment Equipment { get; set; }
 
 
     }

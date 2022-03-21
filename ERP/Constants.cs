@@ -10,6 +10,22 @@
         public const int RECEIVED = 4;
     }
 
+    public class ISSUESTATUS
+    {
+        public const int DECLINED = 0;
+        public const int REQUESTED = 1;
+        public const int APPROVED = 2;
+        public const int HANDED = 3;
+    }
+
+    public class MAINTENANCESTATUS
+    {
+        public const int DECLINED = 0;
+        public const int REQUESTED = 1;
+        public const int APPROVED = 2;
+        public const int FIXED = 3;
+    }
+
     public class PurchaseStatus
     {
         public const int Declined = 0;
@@ -24,10 +40,10 @@
         public const int Approved = 1;
     }
 
-    public class ItemType
+    public class ITEMTYPE
     {
-        public const int Consumable = 1;
-        public const int NonConsumable = 2;
+        public const int MATERIAL = 1;
+        public const int EQUIPMENT = 2;
     }
 
 }

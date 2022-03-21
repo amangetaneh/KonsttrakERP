@@ -2,7 +2,7 @@ import { Form, Button, InputGroup } from "react-bootstrap";
 import { FaTrash } from "react-icons/fa";
 import PropTypes from "prop-types";
 
-function TransferRequestConsumableItem({
+function IssueRequestMaterial({
     allItems,
     addedItems,
     setAddedItems,
@@ -17,9 +17,9 @@ function TransferRequestConsumableItem({
         var item = allItems.filter((item) => item.itemId.toString() === selectedId)[0];
 
         addedItemsCpy[index].itemId = selectedId;
-        addedItemsCpy[index].units = [item.consumableItem.unit];
-        addedItemsCpy[index].spec = item.consumableItem.spec;
-        addedItemsCpy[index].cost = item.consumableItem.cost;
+        addedItemsCpy[index].units = [item.material.unit];
+        addedItemsCpy[index].spec = item.material.spec;
+        addedItemsCpy[index].cost = item.material.cost;
 
         setAddedItems(addedItemsCpy);
     }
@@ -174,11 +174,11 @@ function TransferRequestConsumableItem({
     );
 }
 
-TransferRequestConsumableItem.propTypes = {
+IssueRequestMaterial.propTypes = {
     allItems: PropTypes.array.isRequired,
     addedItems: PropTypes.array.isRequired,
     setAddedItems: PropTypes.func.isRequired,
     index: PropTypes.number.isRequired,
 };
 
-export default TransferRequestConsumableItem;
+export default IssueRequestMaterial;

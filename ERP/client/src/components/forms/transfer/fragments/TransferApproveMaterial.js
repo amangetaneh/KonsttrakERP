@@ -1,7 +1,20 @@
+import { useEffect } from "react";
 import { Form, InputGroup } from "react-bootstrap";
-import PropTypes from "prop-types";
 
-function TransferViewConsumableItem({ addedItems, index }) {
+function TransferApproveMaterial({ addedItems, setAddedItems, index }) {
+    //set approved qty to requested as default
+    useEffect(() => {
+        const addedItemsCpy = [...addedItems];
+        addedItemsCpy[index].qtyApproved = addedItemsCpy[index].qtyRequested;
+        setAddedItems(addedItemsCpy);
+    }, []);
+
+    function valueChanged(e) {
+        const addedItemsCpy = [...addedItems];
+        addedItemsCpy[index][e.target.name] = e.target.value;
+        setAddedItems(addedItemsCpy);
+    }
+
     return (
         <div className="shadow pt-3 px-4 mb-4 rounded">
             <div className=" row justify-content-between">
@@ -88,10 +101,12 @@ function TransferViewConsumableItem({ addedItems, index }) {
                             <Form.Group className="mb-3">
                                 <Form.Label>Quantity Approved</Form.Label>
                                 <Form.Control
-                                    type="text"
-                                    name="qtySent"
+                                    min="0"
+                                    type="number"
+                                    name="qtyApproved"
                                     value={addedItems[index].qtyApproved}
-                                    readOnly
+                                    onChange={valueChanged}
+                                    required
                                 />
                             </Form.Group>
                         </div>
@@ -112,7 +127,6 @@ function TransferViewConsumableItem({ addedItems, index }) {
                     </div>
                 </div>
             </div>
-
             <div className="row">
                 <div className="col">
                     <Form.Group className="mb-3">
@@ -131,31 +145,7 @@ function TransferViewConsumableItem({ addedItems, index }) {
                             type="text"
                             name="approveRemark"
                             value={addedItems[index].approveRemark}
-                            readOnly
-                        />
-                    </Form.Group>
-                </div>
-            </div>
-
-            <div className="row">
-                <div className="col">
-                    <Form.Group className="mb-3">
-                        <Form.Label>Send Remark</Form.Label>
-                        <Form.Control
-                            type="text"
-                            readOnly
-                            value={addedItems[index].sendRemark}
-                        />
-                    </Form.Group>
-                </div>
-                <div className="col">
-                    <Form.Group className="mb-3">
-                        <Form.Label>Receive Remark</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="receiveRemark"
-                            value={addedItems[index].receiveRemark}
-                            readOnly
+                            onChange={valueChanged}
                         />
                     </Form.Group>
                 </div>
@@ -164,9 +154,4 @@ function TransferViewConsumableItem({ addedItems, index }) {
     );
 }
 
-TransferViewConsumableItem.propTypes = {
-    addedItems: PropTypes.array.isRequired,
-    index: PropTypes.number.isRequired,
-};
-
-export default TransferViewConsumableItem;
+export default TransferApproveMaterial;

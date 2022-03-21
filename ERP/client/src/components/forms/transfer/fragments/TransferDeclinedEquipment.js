@@ -1,13 +1,6 @@
 import { Form, InputGroup } from "react-bootstrap";
-import PropTypes from "prop-types";
 
-function TransferReceiveConsumableItem({ addedItems, setAddedItems, index }) {
-    function valueChanged(e) {
-        const addedItemsCpy = [...addedItems];
-        addedItemsCpy[index][e.target.name] = e.target.value;
-        setAddedItems(addedItemsCpy);
-    }
-
+function TransferDeclinedMaterial({ addedItems, index }) {
     return (
         <div className="shadow pt-3 px-4 mb-4 rounded">
             <div className=" row justify-content-between">
@@ -89,50 +82,22 @@ function TransferReceiveConsumableItem({ addedItems, setAddedItems, index }) {
                             </Form.Group>
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Quantity Approved</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    name="qtySent"
-                                    value={addedItems[index].qtyApproved}
-                                    readOnly
-                                />
-                            </Form.Group>
-                        </div>
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Approved Total Cost</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    name="total"
-                                    readOnly
-                                    value={
-                                        addedItems[index].qtyApproved *
-                                        addedItems[index].cost
-                                    }
-                                />
-                            </Form.Group>
-                        </div>
+                    <div className="col">
+                        <Form.Group className="mb-3">
+                            <Form.Label>Request Remark</Form.Label>
+                            <Form.Control
+                                type="text"
+                                readOnly
+                                value={addedItems[index].requestRemark}
+                            />
+                        </Form.Group>
                     </div>
                 </div>
             </div>
-
             <div className="row">
                 <div className="col">
                     <Form.Group className="mb-3">
-                        <Form.Label>Request Remark</Form.Label>
-                        <Form.Control
-                            type="text"
-                            readOnly
-                            value={addedItems[index].requestRemark}
-                        />
-                    </Form.Group>
-                </div>
-                <div className="col">
-                    <Form.Group className="mb-3">
-                        <Form.Label>Approve Remark</Form.Label>
+                        <Form.Label>Decline Remark</Form.Label>
                         <Form.Control
                             type="text"
                             name="approveRemark"
@@ -142,38 +107,8 @@ function TransferReceiveConsumableItem({ addedItems, setAddedItems, index }) {
                     </Form.Group>
                 </div>
             </div>
-
-            <div className="row">
-                <div className="col">
-                    <Form.Group className="mb-3">
-                        <Form.Label>Send Remark</Form.Label>
-                        <Form.Control
-                            type="text"
-                            readOnly
-                            value={addedItems[index].sendRemark}
-                        />
-                    </Form.Group>
-                </div>
-                <div className="col">
-                    <Form.Group className="mb-3">
-                        <Form.Label>Receive Remark</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="receiveRemark"
-                            value={addedItems[index].receiveRemark}
-                            onChange={valueChanged}
-                        />
-                    </Form.Group>
-                </div>
-            </div>
         </div>
     );
 }
 
-TransferReceiveConsumableItem.propTypes = {
-    addedItems: PropTypes.array.isRequired,
-    setAddedItems: PropTypes.func.isRequired,
-    index: PropTypes.number.isRequired,
-};
-
-export default TransferReceiveConsumableItem;
+export default TransferDeclinedMaterial;

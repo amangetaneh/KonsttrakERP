@@ -19,6 +19,12 @@
         
         public int QtyRequested { get; set; }
 
+        public string Model { get; set; }
+
+        public string SerialNo { get; set; }
+
+        public string AssetNo { get; set; }
+
         public string RequestRemark { get; set; } = string.Empty;
 
     }

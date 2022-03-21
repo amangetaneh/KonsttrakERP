@@ -5,6 +5,8 @@
                 
         public int RequestedById { get; set; }
 
+        public int StoreId { get; set; }
+
         public ICollection<CreateIssueItem> IssueItems { get; set; }
     }
 
@@ -12,9 +14,9 @@
     {
         public int ItemId { get; set; }
 
-        public int QtyIssued { get; set; }
+        public int QtyRequested { get; set; }
 
-        public string Remark { get; set; } = string.Empty;
+        public string RequestRemark { get; set; } = string.Empty;
 
 
     }

@@ -30,9 +30,9 @@ namespace ERP.Controllers
                .Include(purchase => purchase.ApprovedBy)
                .Include(purchase => purchase.PurchaseItems)
                .ThenInclude(purchaseItem => purchaseItem.Item)
-               .ThenInclude(item => item.ConsumableItem)
+               .ThenInclude(item => item.Material)
                .Include(purchase => purchase.PurchaseItems)
-               .ThenInclude(purchaseItem => purchaseItem.Item.NonConsumableItem)
+               .ThenInclude(purchaseItem => purchaseItem.Item.Equipment)
                .FirstOrDefault();
 
             if (purchase == null) return NotFound("Purchase Not Found.");
@@ -65,21 +65,21 @@ namespace ERP.Controllers
                 purchaseItem.Remark = requestItem.Remark;
 
                 var itemTemp = context.Items.Where(item => item.ItemId == requestItem.ItemId).
-                    Include(i => i.NonConsumableItem).
-                    Include(i => i.ConsumableItem).
+                    Include(i => i.Equipment).
+                    Include(i => i.Material).
                     FirstOrDefault();
 
                 if (itemTemp == null) return NotFound($"Purchase Item with Id {requestItem.ItemId} Not Found");
 
-                if (itemTemp.Type == ItemType.Consumable)
+                if (itemTemp.Type == ITEMTYPE.MATERIAL)
                 {
-                    purchaseItem.Cost = itemTemp.ConsumableItem.Cost;
-                    purchaseItem.TotalCost = itemTemp.ConsumableItem.Cost * purchaseItem.QtyRequested;
+                    purchaseItem.Cost = itemTemp.Material.Cost;
+                    purchaseItem.TotalCost = itemTemp.Material.Cost * purchaseItem.QtyRequested;
                 }
                 else
                 {
-                    purchaseItem.Cost = itemTemp.NonConsumableItem.Cost;
-                    purchaseItem.TotalCost = itemTemp.NonConsumableItem.Cost * purchaseItem.QtyRequested;
+                    purchaseItem.Cost = itemTemp.Equipment.Cost;
+                    purchaseItem.TotalCost = itemTemp.Equipment.Cost * purchaseItem.QtyRequested;
                 }
 
                 purchaseItems.Add(purchaseItem);

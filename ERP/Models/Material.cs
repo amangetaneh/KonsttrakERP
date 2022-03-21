@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 namespace ERP.Models
 {
     
-    public class ConsumableItem
+    public class Material
     {
         [Key]
         public int ItemId { get; set; }

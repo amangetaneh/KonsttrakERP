@@ -1,6 +1,6 @@
 import { Form, InputGroup } from "react-bootstrap";
 
-function TransferDeclinedConsumableItem({ addedItems, index }) {
+function IssueDeclinedMaterial({ addedItems, index }) {
     return (
         <div className="shadow pt-3 px-4 mb-4 rounded">
             <div className=" row justify-content-between">
@@ -111,4 +111,4 @@ function TransferDeclinedConsumableItem({ addedItems, index }) {
     );
 }
 
-export default TransferDeclinedConsumableItem;
+export default IssueDeclinedMaterial;

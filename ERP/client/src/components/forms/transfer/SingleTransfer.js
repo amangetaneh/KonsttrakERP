@@ -53,9 +53,9 @@ function SingleTransfer() {
                 itemObj.receiveRemark = transferItem.receiveRemark;
             }
 
-            if (transferItem.item.type === ITEMTYPE.CONSUMABLE) {
-                itemObj.spec = transferItem.item.consumableItem.spec;
-                itemObj.units = [transferItem.item.consumableItem.unit];
+            if (transferItem.item.type === ITEMTYPE.MATERIAL) {
+                itemObj.spec = transferItem.item.material.spec;
+                itemObj.units = [transferItem.item.material.unit];
             }
 
             items.push(itemObj);
@@ -219,6 +219,7 @@ function SingleTransfer() {
             "Approve Transfer",
             "Transfer Out",
             "Transfer In",
+            "Completed Transfer"
         ],
         []
     );

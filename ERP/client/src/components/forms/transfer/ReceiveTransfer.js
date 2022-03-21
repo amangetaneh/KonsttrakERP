@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import PropTypes from "prop-types";
-import TransferReceiveConsumableItem from "./fragments/TransferReceiveConsumableItem";
+import TransferReceiveMaterial from "./fragments/TransferReceiveMaterial";
 import { Button, Form, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { receiveTransfer } from "../../../api/transfer";
@@ -85,7 +85,7 @@ function ReceiveTransfer({ addedItems, setAddedItems, transfer }) {
         <>
             <Form onSubmit={submit}>
                 {addedItems.map((item, index) => (
-                    <TransferReceiveConsumableItem
+                    <TransferReceiveMaterial
                         key={index}
                         addedItems={addedItems}
                         setAddedItems={setAddedItems}
