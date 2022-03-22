@@ -69,8 +69,6 @@ function EquipmentTransfer() {
                 requestRemark: item.requestRemark,
             };
 
-            if (item.isSetAssets) tempItem["equipmentAssets"] = item.equipmentAssets;
-
             data.transferItems.push(tempItem);
         }
 

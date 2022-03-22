@@ -176,12 +176,12 @@ function TransferReceiveMaterial({ addedItems, setAddedItems, index }) {
                 </div>
             </div>
 
-            {addedItems[index].equipmentAssets.length && (
-                <div className="pb-3">
+            {addedItems[index].equipmentAssets.length ? (
+                <div className="pb-1">
                 <Table striped  size="sm" >
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>Asset</th>
                             <th>Asset Number</th>
                             <th>Serial Number</th>
                         </tr>
@@ -199,7 +199,7 @@ function TransferReceiveMaterial({ addedItems, setAddedItems, index }) {
                     </tbody>
                 </Table>
                 </div>
-            )}
+            ) : ""}
         </div>
     );
 }

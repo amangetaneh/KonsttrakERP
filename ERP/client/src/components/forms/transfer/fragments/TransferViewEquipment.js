@@ -1,8 +1,7 @@
-import { Form, InputGroup, Table} from "react-bootstrap";
+import { Form, InputGroup, Table } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { useQuery } from "react-query";
 import { fetchEquipmentModel } from "../../../../api/item";
-
 
 function TransferViewMaterial({ addedItems, index }) {
     var modelQuery = useQuery(
@@ -171,32 +170,35 @@ function TransferViewMaterial({ addedItems, index }) {
                 </div>
             </div>
 
-            {addedItems[index].equipmentAssets.length && (
-                <div className="pb-3">
-                <Table striped  size="sm" >
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Asset Number</th>
-                            <th>Serial Number</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {addedItems[index].equipmentAssets.map((asset, assetIndex) => {
-                            return (
-                                <tr>
-                                    <td>{assetIndex + 1}</td>
-                                    <td>{asset.equipmentAsset.assetNo}</td>
-                                    <td>{asset.equipmentAsset.serialNo}</td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </Table>
+            {addedItems[index].equipmentAssets.length ? (
+                <div className="pb-1">
+                    <Table striped size="sm">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Asset Number</th>
+                                <th>Serial Number</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {addedItems[index].equipmentAssets.map((asset, assetIndex) => {
+                                return (
+                                    <tr>
+                                        <td>{assetIndex + 1}</td>
+                                        <td>{asset.equipmentAsset.assetNo}</td>
+                                        <td>{asset.equipmentAsset.serialNo}</td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </Table>
                 </div>
+            ) : (
+                ""
             )}
         </div>
-    );}
+    );
+}
 
 TransferViewMaterial.propTypes = {
     addedItems: PropTypes.array.isRequired,
