@@ -6,7 +6,7 @@
 
         public int ApprovedById { get; set; }
 
-       public ICollection<ApproveIssueItems> IssueItems { get; set; }
+        public ICollection<ApproveIssueItems> IssueItems { get; set; }
     }
 
     public class ApproveIssueItems

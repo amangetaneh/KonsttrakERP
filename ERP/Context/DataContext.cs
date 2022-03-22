@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERP.Context
 {
-    public class DataContext: DbContext
+    public class DataContext : DbContext
     {
         public DataContext(DbContextOptions<DataContext> options)
             : base(options)
         {
-            
+
         }
 
 
@@ -23,17 +23,17 @@ namespace ERP.Context
         public DbSet<Maintenance> Maintenances { get; set; }
 
         public DbSet<Purchase> Purchases { get; set; }
-        
+
         public DbSet<PurchaseItem> PurchasedItems { get; set; }
 
         public DbSet<Receive> Receives { get; set; }
-        
+
         public DbSet<ReceiveItem> ReceivedItems { get; set; }
 
         public DbSet<Transfer> Transfers { get; set; }
 
         public DbSet<TransferItem> TransferItems { get; set; }
-      
+
         public DbSet<Employee> Employees { get; set; }
 
         public DbSet<UserAccount> UserAccounts { get; set; }
@@ -46,19 +46,30 @@ namespace ERP.Context
 
         public DbSet<Store> Stores { get; set; }
 
-        public DbSet<ItemStoreQty> ItemStoreQties { get; set; }
+        public DbSet<ItemSiteQty> ItemSiteQties { get; set; }
+
+        public DbSet<EquipmentCategory> EquipmentCategories { get; set; }
+
+        public DbSet<EquipmentModel> EquipmentModels { get; set; }
+
+        public DbSet<EquipmentAsset> EquipmentAssets { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
             base.OnModelCreating(modelBuilder);
 
-            //Set Composite Foreign keys
-            modelBuilder.Entity<ItemStoreQty>()
-                .HasKey(o => new { o.ItemId, o.StoreId });
+            //Set Composite keys
+            modelBuilder.Entity<ItemSiteQty>()
+                .HasKey(o => new { o.ItemId, o.SiteId });
 
             modelBuilder.Entity<TransferItem>()
-                .HasKey(o => new { o.TransferId, o.ItemId });
+                .HasKey(o => new { o.TransferId, o.ItemId, o.EquipmentModelId });
+
+            modelBuilder.Entity<TransferItemEquipmentAsset>()
+                .HasKey(o => new { o.TransferId, o.ItemId, o.EquipmentModelId, o.EquipmentAssetId });
 
             modelBuilder.Entity<IssueItem>()
                 .HasKey(o => new { o.IssueId, o.ItemId });
@@ -71,12 +82,12 @@ namespace ERP.Context
 
             //Transfer
             modelBuilder.Entity<Transfer>()
-                    .HasOne(t => t.ReceiveStore)
+                    .HasOne(t => t.ReceiveSite)
                     .WithMany()
                     .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Transfer>()
-                    .HasOne(t => t.SendStore)
+                    .HasOne(t => t.SendSite)
                     .WithMany()
                     .OnDelete(DeleteBehavior.Restrict);
 
@@ -96,7 +107,7 @@ namespace ERP.Context
                     .WithMany()
                     .OnDelete(DeleteBehavior.Restrict)
                     .IsRequired(false);
-            
+
             modelBuilder.Entity<Transfer>()
                     .HasOne(t => t.ApprovedBy)
                     .WithMany()
@@ -108,6 +119,8 @@ namespace ERP.Context
                     .WithMany()
                     .OnDelete(DeleteBehavior.Restrict)
                     .IsRequired(false);
+
+
 
             //Maintenance
             modelBuilder.Entity<Maintenance>()
@@ -194,6 +207,13 @@ namespace ERP.Context
                    .WithMany()
                    .OnDelete(DeleteBehavior.Restrict)
                    .IsRequired(false);
+
+            //TransferItem-EquipmentAsset
+            modelBuilder.Entity<TransferItemEquipmentAsset>()
+                .HasOne(o => o.TransferItem)
+                .WithMany(o => o.TransferEquipmentAssets)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

@@ -76,11 +76,10 @@ namespace ERP.Controllers
                     purchaseItem.Cost = itemTemp.Material.Cost;
                     purchaseItem.TotalCost = itemTemp.Material.Cost * purchaseItem.QtyRequested;
                 }
-                else
-                {
-                    purchaseItem.Cost = itemTemp.Equipment.Cost;
-                    purchaseItem.TotalCost = itemTemp.Equipment.Cost * purchaseItem.QtyRequested;
-                }
+                //else
+
+                /////////////////////////////////////////////////
+
 
                 purchaseItems.Add(purchaseItem);
             }
@@ -122,7 +121,7 @@ namespace ERP.Controllers
 
             return Ok(purchase);
         }
-        
+
         [HttpPost("check")]
         public async Task<ActionResult<Purchase>> Check(CheckPurchaseDTO request)
         {

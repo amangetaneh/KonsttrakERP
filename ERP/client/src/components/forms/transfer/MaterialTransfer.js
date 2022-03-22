@@ -7,80 +7,48 @@ import Header from "../../layouts/Header";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { fetchSites } from "../../../api/site";
-import { fetchStores } from "../../../api/store";
 import { fetchMaterials } from "../../../api/item";
-import { requestTransfer } from "../../../api/transfer";
+import { requestMaterialTransfer } from "../../../api/transfer";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
 
 function MaterialTransfer() {
     const navigate = useNavigate();
     const [sendSite, setSendSite] = useState(0);
-    const [sendStore, setSendStore] = useState(0);
     const [receiveSite, setReceiveSite] = useState(0);
-    const [receiveStore, setReceiveStore] = useState(0);
     const [addedItems, setAddedItems] = useState([new Item()]);
 
-    const [sendSiteStores, setSendSiteStores] = useState([]);
-    const [receiveSiteStores, setReceiveSiteStores] = useState([]);
-    const [allStores, setAllStores] = useState([]);
     const [allSites, setAllSites] = useState([]);
     const [allItems, setAllItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
 
     const sitesQuery = useQuery("sites", fetchSites, {
-        onSuccess: (data) => setAllSites(data),
-    });
-    const storesQuery = useQuery("stores", fetchStores, {
         onSuccess: (data) => {
-            setAllStores(data);
-            setSendSite(data[0].storeId);
-            setReceiveSite(data[0].siteId);
+            setAllSites(data);
+            setSendSite(data[0].siteId);
+            setReceiveSite(data[0].siteId); // Select Defalut Sites
         },
     });
+
     const itemQuery = useQuery("materials", fetchMaterials, {
         onSuccess: (data) => setAllItems(data),
     });
 
     useEffect(() => {
-        setIsLoading(sitesQuery.isLoading || storesQuery.isLoading || itemQuery.isLoading);
-    }, [sitesQuery.isLoading, storesQuery.isLoading, itemQuery.isLoading]);
+        setIsLoading(sitesQuery.isLoading || itemQuery.isLoading);
+    }, [sitesQuery.isLoading, itemQuery.isLoading]);
 
     useEffect(() => {
-        setIsError(sitesQuery.isError || storesQuery.isError || itemQuery.isError);
-    }, [sitesQuery.isError, storesQuery.isError, itemQuery.isError]);
-
-    useEffect(() => {
-        //update send stores when send site changes
-        setSendSiteStores(
-            allStores.filter((store) => store.siteId.toString() === sendSite.toString())
-        );
-    }, [sendSite, allStores]);
-
-    useEffect(() => {
-        //select first store when send stores change
-        if (sendSiteStores.length > 0) setSendStore(sendSiteStores[0].storeId);
-    }, [sendSiteStores]);
-
-    useEffect(() => {
-        //update receive stores when receive site changes
-        setReceiveSiteStores(
-            allStores.filter((store) => store.siteId.toString() === receiveSite.toString())
-        );
-    }, [receiveSite, allStores]);
-
-    useEffect(() => {
-        //select first store when receive stores change
-        if (receiveSiteStores.length > 0) setReceiveStore(receiveSiteStores[0].storeId);
-    }, [receiveSiteStores]);
+        setIsError(sitesQuery.isError || itemQuery.isError);
+    }, [sitesQuery.isError, itemQuery.isError]);
 
     const {
         isError: isSubmitError,
         isLoading: isSubmitLoading,
         mutate: submitTransferRequest,
-    } = useMutation(requestTransfer, {
-        onSuccess: (res) => navigate(`/transfer/`),
+    } = useMutation(requestMaterialTransfer, {
+        onSuccess: (res) => navigate(`/transfer/${res.data}`),
     });
 
     function submit(e) {
@@ -88,8 +56,8 @@ function MaterialTransfer() {
         if (isSubmitLoading) return;
 
         var data = {
-            sendStoreId: Number(sendStore),
-            receiveStoreId: Number(receiveStore),
+            sendSiteId: Number(sendSite),
+            receiveSiteId: Number(receiveSite),
             requestedById: 1, ////////////////////////////////////////////////////////////////////////////////
             transferItems: [],
         };
@@ -151,24 +119,6 @@ function MaterialTransfer() {
                         </div>
                         <div className="col">
                             <Form.Group className="mb-3">
-                                <Form.Label>Sending Store</Form.Label>
-                                <Form.Select
-                                    value={sendStore}
-                                    onChange={(e) => setSendStore(e.target.value)}
-                                >
-                                    {sendSiteStores.map((store) => (
-                                        <option key={store.storeId} value={store.storeId}>
-                                            {store.name}
-                                        </option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
-                        </div>
-                    </div>
-
-                    <div className="row mx-2">
-                        <div className="col">
-                            <Form.Group className="mb-3">
                                 <Form.Label>Receiving Site</Form.Label>
                                 <Form.Select
                                     value={receiveSite}
@@ -182,26 +132,11 @@ function MaterialTransfer() {
                                 </Form.Select>
                             </Form.Group>
                         </div>
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Receiving Store</Form.Label>
-                                <Form.Select
-                                    value={receiveStore}
-                                    onChange={(e) => setReceiveStore(e.target.value)}
-                                >
-                                    {receiveSiteStores.map((store) => (
-                                        <option key={store.storeId} value={store.storeId}>
-                                            {store.name}
-                                        </option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
-                        </div>
                     </div>
 
                     {addedItems.map((item, index) => (
                         <TransferRequestMaterial
-                            key={index}
+                            key={item.key}
                             index={index}
                             allItems={allItems}
                             addedItems={addedItems}

@@ -33,6 +33,7 @@ function SingleTransfer() {
             itemObj.itemId = transferItem.itemId;
             itemObj.name = transferItem.item.name;
             itemObj.cost = transferItem.cost;
+            itemObj.type = transferItem.item.type
 
             itemObj.qtyRequested = transferItem.qtyRequested;
             itemObj.requestRemark = transferItem.requestRemark;
@@ -58,6 +59,13 @@ function SingleTransfer() {
                 itemObj.units = [transferItem.item.material.unit];
             }
 
+            if (transferItem.item.type === ITEMTYPE.EQUIPMENT) {
+                itemObj.description = transferItem.item.equipment.description;
+                itemObj.units = [transferItem.item.equipment.unit];
+                itemObj.equipmentModelId = transferItem.equipmentModelId;
+                itemObj.equipmentAssets = transferItem.transferEquipmentAssets;
+            }
+
             items.push(itemObj);
         }
 
@@ -79,7 +87,7 @@ function SingleTransfer() {
                                 {typeof valueL === "object" ? (
                                     valueL
                                 ) : (
-                                    <Form.Control readOnly value={valueL} />
+                                    <Form.Control type="text" readOnly value={valueL} />
                                 )}
                             </div>
                         </div>
@@ -95,7 +103,7 @@ function SingleTransfer() {
                                 {typeof valueR === "object" ? (
                                     valueR
                                 ) : (
-                                    <Form.Control readOnly value={valueR} />
+                                    <Form.Control type="text" readOnly value={valueR} />
                                 )}
                             </div>
                         </div>
@@ -117,16 +125,9 @@ function SingleTransfer() {
 
                 <FormRow
                     labelL="Sending Site"
-                    valueL={transfer.sendStore.site.name}
-                    labelR="Sending Store"
-                    valueR={transfer.sendStore.name}
-                />
-
-                <FormRow
-                    labelL="Receiving Site"
-                    valueL={transfer.receiveStore.site.name}
-                    labelR="Receiving Store"
-                    valueR={transfer.receiveStore.name}
+                    valueL={transfer.sendSite.name}
+                    labelR="Receiving Site"
+                    valueR={transfer.receiveSite.name}
                 />
 
                 <FormRow
@@ -148,9 +149,7 @@ function SingleTransfer() {
                             labelR="Approved On"
                             valueR={
                                 transfer.approveDate
-                                    ? new Date(
-                                          transfer.approveDate
-                                      ).toLocaleString()
+                                    ? new Date(transfer.approveDate).toLocaleString()
                                     : ""
                             }
                         />
@@ -169,9 +168,7 @@ function SingleTransfer() {
                             labelR="Sent On"
                             valueR={
                                 transfer.sendDate
-                                    ? new Date(
-                                          transfer.sendDate
-                                      ).toLocaleString()
+                                    ? new Date(transfer.sendDate).toLocaleString()
                                     : ""
                             }
                         />
@@ -190,9 +187,7 @@ function SingleTransfer() {
                             labelR="Received On"
                             valueR={
                                 transfer.receiveDate
-                                    ? new Date(
-                                          transfer.receiveDate
-                                      ).toLocaleString()
+                                    ? new Date(transfer.receiveDate).toLocaleString()
                                     : ""
                             }
                         />
@@ -219,7 +214,7 @@ function SingleTransfer() {
             "Approve Transfer",
             "Transfer Out",
             "Transfer In",
-            "Completed Transfer"
+            "Completed Transfer",
         ],
         []
     );
@@ -269,10 +264,7 @@ function SingleTransfer() {
                     )}
 
                     {transfer.status === TRANSFERSTATUS.RECEIVED && (
-                        <ViewTransfer
-                            addedItems={addedItems}
-                            transfer={transfer}
-                        />
+                        <ViewTransfer addedItems={addedItems} transfer={transfer} />
                     )}
                 </>
             </Container>

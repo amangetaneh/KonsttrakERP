@@ -12,13 +12,13 @@ namespace ERP.Models
         public int CanPurchase { get; set; }
 
         public int CanRecieve { get; set; }
-        
+
         public int CanIssue { get; set; }
-        
+
         public int CanTransfer { get; set; }
-        
-        public int CanFixedAsset { get; set; } 
-        
+
+        public int CanFixedAsset { get; set; }
+
         public int CanMaintainance { get; set; }
 
     }

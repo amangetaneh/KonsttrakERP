@@ -1,21 +1,24 @@
 import React from "react";
 import PropTypes from "prop-types";
 import TransferSendMaterial from "./fragments/TransferSendMaterial";
+import TransferSendEquipment from "./fragments/TransferSendEquipment";
 import { Button, Form, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { sendTransfer } from "../../../api/transfer";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import ConnectionError from "../../fragments/ConnectionError";
+import { ITEMTYPE } from "../../../Constants";
 
 function SendTransfer({ addedItems, setAddedItems, transfer }) {
-    const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     const {
         isLoading: isSendLoading,
         isError: isSendError,
         mutate: submitSendTransfer,
     } = useMutation(sendTransfer, {
-        onSuccess: (res) => navigate(-1),
+        onSuccess: (res) =>
+            queryClient.invalidateQueries(["transfer", transfer.transferId.toString()]),
     });
 
     function submit(e) {
@@ -24,7 +27,7 @@ function SendTransfer({ addedItems, setAddedItems, transfer }) {
 
         const data = {
             transferId: transfer.transferId,
-            sentById: 1,
+            sentById: 1, ////////////////////////////
             transferItems: [],
         };
 
@@ -33,6 +36,12 @@ function SendTransfer({ addedItems, setAddedItems, transfer }) {
                 itemId: Number(item.itemId),
                 sendRemark: item.sendRemark,
             };
+
+            if (item.type === ITEMTYPE.EQUIPMENT) {
+                tempItem.equipmentModelId = item.equipmentModelId;
+                if (item.isSetAssets) tempItem["equipmentAssets"] = item.equipmentAssets;
+            }
+
             data.transferItems.push(tempItem);
         }
 
@@ -44,24 +53,27 @@ function SendTransfer({ addedItems, setAddedItems, transfer }) {
     return (
         <>
             <Form onSubmit={submit}>
-                {addedItems.map((item, index) => (
-                    <TransferSendMaterial
-                        key={index}
-                        addedItems={addedItems}
-                        setAddedItems={setAddedItems}
-                        index={index}
-                    />
-                ))}
+                {addedItems.map((item, index) =>
+                    item.type === ITEMTYPE.MATERIAL ? (
+                        <TransferSendMaterial
+                            key={index}
+                            addedItems={addedItems}
+                            setAddedItems={setAddedItems}
+                            index={index}
+                        />
+                    ) : (
+                        <TransferSendEquipment
+                            key={index}
+                            addedItems={addedItems}
+                            setAddedItems={setAddedItems}
+                            index={index}
+                        />
+                    )
+                )}
 
                 <div className="d-grid">
                     <Button className="btn-teal-dark" type="submit">
-                        {isSendLoading && (
-                            <Spinner
-                                className="me-2"
-                                animation="grow"
-                                size="sm"
-                            />
-                        )}
+                        {isSendLoading && <Spinner className="me-2" animation="grow" size="sm" />}
                         Transfer Out
                     </Button>
                 </div>

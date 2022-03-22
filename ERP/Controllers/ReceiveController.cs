@@ -56,9 +56,9 @@ namespace ERP.Controllers
 
                 if (itemTemp.Type == ITEMTYPE.MATERIAL)
                     receiveItem.Cost = itemTemp.Material.Cost;
-                
-                else
-                    receiveItem.Cost = itemTemp.Equipment.Cost;
+
+                //else
+                //////////////////////////////////////////////////////
 
                 receiveItems.Add(receiveItem);
             }

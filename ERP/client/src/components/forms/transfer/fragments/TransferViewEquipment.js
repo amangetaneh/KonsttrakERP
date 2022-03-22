@@ -1,12 +1,22 @@
-import { Form, InputGroup } from "react-bootstrap";
+import { Form, InputGroup, Table} from "react-bootstrap";
 import PropTypes from "prop-types";
+import { useQuery } from "react-query";
+import { fetchEquipmentModel } from "../../../../api/item";
+
 
 function TransferViewMaterial({ addedItems, index }) {
+    var modelQuery = useQuery(
+        ["model", addedItems[index].equipmentModelId],
+        () =>
+            addedItems[index].equipmentModelId &&
+            fetchEquipmentModel(addedItems[index].equipmentModelId)
+    );
+
     return (
         <div className="shadow pt-3 px-4 mb-4 rounded">
             <div className=" row justify-content-between">
                 <div className="col-auto">
-                    <h1 className="display-6 fs-4">Item {index + 1}</h1>
+                    <h1 className="display-6 fs-4">Equipment {index + 1}</h1>
                 </div>
             </div>
 
@@ -14,11 +24,7 @@ function TransferViewMaterial({ addedItems, index }) {
                 <div className="col">
                     <Form.Group className="mb-3">
                         <Form.Label>Item</Form.Label>
-                        <Form.Control
-                            type="text"
-                            readOnly
-                            value={addedItems[index].name}
-                        />
+                        <Form.Control type="text" readOnly value={addedItems[index].name} />
                     </Form.Group>
                 </div>
                 <div className="col">
@@ -41,16 +47,14 @@ function TransferViewMaterial({ addedItems, index }) {
                     </Form.Group>
                 </div>
             </div>
-
             <div className="row">
                 <div className="col">
                     <Form.Group className="mb-3">
-                        <Form.Label>Specification</Form.Label>
+                        <Form.Label>Model</Form.Label>
                         <Form.Control
-                            as="textarea"
-                            name="spec"
-                            rows={5}
-                            value={addedItems[index].spec}
+                            type="text"
+                            name="cost"
+                            value={modelQuery?.data?.name || ""}
                             readOnly
                         />
                     </Form.Group>
@@ -75,14 +79,27 @@ function TransferViewMaterial({ addedItems, index }) {
                                     type="text"
                                     name="total"
                                     readOnly
-                                    value={
-                                        addedItems[index].qtyRequested *
-                                        addedItems[index].cost
-                                    }
+                                    value={addedItems[index].qtyRequested * addedItems[index].cost}
                                 />
                             </Form.Group>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div className="row">
+                <div className="col">
+                    <Form.Group className="mb-3">
+                        <Form.Label>Description</Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            name="spec"
+                            rows={1}
+                            value={addedItems[index].description}
+                            readOnly
+                        />
+                    </Form.Group>
+                </div>
+                <div className="col">
                     <div className="row">
                         <div className="col">
                             <Form.Group className="mb-3">
@@ -102,10 +119,7 @@ function TransferViewMaterial({ addedItems, index }) {
                                     type="text"
                                     name="total"
                                     readOnly
-                                    value={
-                                        addedItems[index].qtyApproved *
-                                        addedItems[index].cost
-                                    }
+                                    value={addedItems[index].qtyApproved * addedItems[index].cost}
                                 />
                             </Form.Group>
                         </div>
@@ -141,11 +155,7 @@ function TransferViewMaterial({ addedItems, index }) {
                 <div className="col">
                     <Form.Group className="mb-3">
                         <Form.Label>Send Remark</Form.Label>
-                        <Form.Control
-                            type="text"
-                            readOnly
-                            value={addedItems[index].sendRemark}
-                        />
+                        <Form.Control type="text" readOnly value={addedItems[index].sendRemark} />
                     </Form.Group>
                 </div>
                 <div className="col">
@@ -160,9 +170,33 @@ function TransferViewMaterial({ addedItems, index }) {
                     </Form.Group>
                 </div>
             </div>
+
+            {addedItems[index].equipmentAssets.length && (
+                <div className="pb-3">
+                <Table striped  size="sm" >
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Asset Number</th>
+                            <th>Serial Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {addedItems[index].equipmentAssets.map((asset, assetIndex) => {
+                            return (
+                                <tr>
+                                    <td>{assetIndex + 1}</td>
+                                    <td>{asset.equipmentAsset.assetNo}</td>
+                                    <td>{asset.equipmentAsset.serialNo}</td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </Table>
+                </div>
+            )}
         </div>
-    );
-}
+    );}
 
 TransferViewMaterial.propTypes = {
     addedItems: PropTypes.array.isRequired,

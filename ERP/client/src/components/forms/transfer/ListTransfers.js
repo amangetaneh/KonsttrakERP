@@ -59,11 +59,11 @@ function ListTransfers({ title, type }) {
             },
             {
                 Header: "Sending Site",
-                accessor: "sendStore.site.name",
+                accessor: "sendSite.name",
             },
             {
                 Header: "Receiving Site",
-                accessor: "receiveStore.site.name",
+                accessor: "receiveSite.name",
             },
             {
                 Header: "Status",

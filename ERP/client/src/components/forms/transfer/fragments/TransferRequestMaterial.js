@@ -40,7 +40,7 @@ function TransferRequestMaterial({
         <div className="shadow pt-3 px-3 mb-4 rounded">
             <div className=" row justify-content-between">
                 <div className="col-auto">
-                    <h1 className="display-6 fs-4">Item {index + 1}</h1>
+                    <h1 className="display-6 fs-4">Material {index + 1}</h1>
                 </div>
                 <div className="col-auto">
                     {!(index === 0 && addedItems.length === 1) && (

@@ -6,7 +6,9 @@ export const fetchTransfers = () =>
 export const fetchTransfer = (id) =>
     api.get(`/transfer/${id}`).then((res) => res.data);
 
-export const requestTransfer = (data) => api.post("/transfer/request", data);
+export const requestMaterialTransfer = (data) => api.post("/transfer/request/material", data);
+
+export const requestEquipmentTransfer = (data) => api.post("/transfer/request/equipment", data);
 
 export const approveTransfer = (data) => api.post("/transfer/approve", data);
 

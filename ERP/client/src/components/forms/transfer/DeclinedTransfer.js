@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import TransferDecliendMaterial from "./fragments/TransferDeclinedMaterial";
+import TransferDecliendEquipment from "./fragments/TransferDeclinedEquipment";
+import { ITEMTYPE } from "../../../Constants";
 
 function DeclinedTransfer({ transfer, addedItems, FormRow }) {
     return (
@@ -13,24 +15,18 @@ function DeclinedTransfer({ transfer, addedItems, FormRow }) {
                         : ""
                 }
                 labelR="Declined On"
-                valueR={
-                    transfer.approveDate
-                        ? new Date(transfer.approveDate).toLocaleString()
-                        : ""
-                }
+                valueR={transfer.approveDate ? new Date(transfer.approveDate).toLocaleString() : ""}
             />
 
-            <h1 className="display-6 text-center mt-2 mb-4">
-                Transfer Request Has Been Declined
-            </h1>
+            <h1 className="display-6 text-center mt-2 mb-4">Transfer Request Has Been Declined</h1>
 
-            {addedItems.map((item, index) => (
-                <TransferDecliendMaterial
-                    key={index}
-                    addedItems={addedItems}
-                    index={index}
-                />
-            ))}
+            {addedItems.map((item, index) =>
+                item.type === ITEMTYPE.MATERIAL ? (
+                    <TransferDecliendMaterial key={index} addedItems={addedItems} index={index} />
+                ) : (
+                    <TransferDecliendEquipment key={index} addedItems={addedItems} index={index} />
+                )
+            )}
         </>
     );
 }

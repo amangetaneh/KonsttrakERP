@@ -22,8 +22,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<Maintenance>> Get(int id)
         {
             var maintenance = context.Maintenances.Where(maintenance => maintenance.MaintenanceId == id)
-                .Include(maintenance => maintenance.Store)
-                .ThenInclude(store => store.Site)
+                .Include(maintenance => maintenance.Site)
                 .Include(maintenance => maintenance.RequestedBy)
                 .Include(maintenance => maintenance.ApprovedBy)
                 .Include(maintenance => maintenance.FixedBy)
@@ -41,8 +40,7 @@ namespace ERP.Controllers
         {
 
             var maintenance = await context.Maintenances
-                .Include(maintenance => maintenance.Store)
-                .ThenInclude(store => store.Site)
+                .Include(maintenance => maintenance.Site)
                 .ToListAsync();
 
             return Ok(maintenance);
@@ -53,7 +51,7 @@ namespace ERP.Controllers
         {
             Maintenance maintenance = new();
             maintenance.RequestedById = maintenanceDTO.RequestedById;
-            maintenance.StoreId = maintenanceDTO.StoreId;
+            maintenance.SiteId = maintenanceDTO.StoreId;
             maintenance.Reason = maintenanceDTO.Reason;
 
             var itemTemp = context.Items.Where(item => item.ItemId == maintenanceDTO.ItemId).FirstOrDefault();

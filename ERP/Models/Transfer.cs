@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace ERP.Models
 {
@@ -19,13 +17,13 @@ namespace ERP.Models
 
         public DateTime? ReceiveDate { get; set; }
 
-        public Store SendStore { get; set; }
+        public Site SendSite { get; set; }
 
-        public int SendStoreId { get; set; }
-        
-        public Store ReceiveStore { get; set; }
+        public int SendSiteId { get; set; }
 
-        public int ReceiveStoreId { get; set; }
+        public Site ReceiveSite { get; set; }
+
+        public int ReceiveSiteId { get; set; }
 
         public Employee RequestedBy { get; set; }
 

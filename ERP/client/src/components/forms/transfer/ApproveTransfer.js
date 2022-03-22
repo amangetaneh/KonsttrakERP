@@ -1,21 +1,23 @@
 import React from "react";
 import PropTypes from "prop-types";
 import TransferApproveMaterial from "./fragments/TransferApproveMaterial";
+import TransferApproveEquipment from "./fragments/TransferApproveEquipment";
 import { Button, Spinner } from "react-bootstrap";
 import { approveTransfer, declineTransfer } from "../../../api/transfer";
-import { useNavigate } from "react-router-dom";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import ConnectionError from "../../fragments/ConnectionError";
+import { ITEMTYPE } from "../../../Constants";
 
 function ApproveTransfer({ addedItems, setAddedItems, transfer }) {
-    const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     const {
         isLoading: isApproveLoading,
         isError: isApproveError,
         mutate: submitApproveTransfer,
     } = useMutation(approveTransfer, {
-        onSuccess: (res) => navigate(-1),
+        onSuccess: (res) =>
+            queryClient.invalidateQueries(["transfer", transfer.transferId.toString()]),
     });
 
     const {
@@ -23,7 +25,8 @@ function ApproveTransfer({ addedItems, setAddedItems, transfer }) {
         isError: isDeclineError,
         mutate: submitDeclineTransfer,
     } = useMutation(declineTransfer, {
-        onSuccess: (res) => navigate(-1),
+        onSuccess: (res) =>
+            queryClient.invalidateQueries(["transfer", transfer.transferId.toString()]),
     });
 
     function submit(type, e) {
@@ -43,6 +46,8 @@ function ApproveTransfer({ addedItems, setAddedItems, transfer }) {
                 approveRemark: item.approveRemark,
             };
 
+            if (item.type === ITEMTYPE.EQUIPMENT) tempItem.equipmentModelId = item.equipmentModelId;
+
             data.transferItems.push(tempItem);
         }
 
@@ -54,42 +59,37 @@ function ApproveTransfer({ addedItems, setAddedItems, transfer }) {
 
     return (
         <>
-            {addedItems.map((item, index) => (
-                <TransferApproveMaterial
-                    key={index}
-                    addedItems={addedItems}
-                    setAddedItems={setAddedItems}
-                    index={index}
-                />
-            ))}
+            {addedItems.map((item, index) =>
+                item.type == ITEMTYPE.MATERIAL ? (
+                    <TransferApproveMaterial
+                        key={index}
+                        addedItems={addedItems}
+                        setAddedItems={setAddedItems}
+                        index={index}
+                    />
+                ) : (
+                    <TransferApproveEquipment
+                        key={index}
+                        addedItems={addedItems}
+                        setAddedItems={setAddedItems}
+                        index={index}
+                    />
+                )
+            )}
 
             <div className="row">
                 <div className="col-8 d-grid">
-                    <Button
-                        className="btn-teal-dark"
-                        onClick={submit.bind(this, "approve")}
-                    >
+                    <Button className="btn-teal-dark" onClick={submit.bind(this, "approve")}>
                         {isApproveLoading && (
-                            <Spinner
-                                className="me-2"
-                                animation="grow"
-                                size="sm"
-                            />
+                            <Spinner className="me-2" animation="grow" size="sm" />
                         )}
                         Approve
                     </Button>
                 </div>
                 <div className="col-4 d-grid">
-                    <Button
-                        variant="danger"
-                        onClick={submit.bind(this, "decline")}
-                    >
+                    <Button variant="danger" onClick={submit.bind(this, "decline")}>
                         {isDeclineLoading && (
-                            <Spinner
-                                className="me-2"
-                                animation="grow"
-                                size="sm"
-                            />
+                            <Spinner className="me-2" animation="grow" size="sm" />
                         )}
                         Decline
                     </Button>

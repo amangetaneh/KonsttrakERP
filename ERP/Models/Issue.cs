@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace ERP.Models
 {
@@ -10,16 +8,16 @@ namespace ERP.Models
         public int IssueId { get; set; }
 
         public int Status { get; set; } = ISSUESTATUS.REQUESTED;
-        
+
         public DateTime RequestDate { get; set; } = DateTime.Now;
 
         public DateTime? ApproveDate { get; set; }
 
         public DateTime? HandDate { get; set; }
 
-        public Store Store { get; set; }
+        public Site Site { get; set; }
 
-        public int StoreId { get; set; }
+        public int SiteId { get; set; }
 
         public Employee RequestedBy { get; set; }
 

@@ -17,6 +17,8 @@
     {
         public int ItemId { get; set; }
 
+        public int EquipmentModelId { get; set; } = 0;
+
         public string ReceiveRemark { get; set; }
     }
 }

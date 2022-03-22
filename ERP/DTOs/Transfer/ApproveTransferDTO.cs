@@ -6,12 +6,14 @@
 
         public int ApprovedById { get; set; }
 
-       public ICollection<ApproveTransferItems> TransferItems { get; set; }
+        public ICollection<ApproveTransferItems> TransferItems { get; set; }
     }
 
     public class ApproveTransferItems
     {
         public int ItemId { get; set; }
+
+        public int EquipmentModelId { get; set; } = 0;
 
         public int QtyApproved { get; set; }
 

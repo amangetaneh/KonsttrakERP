@@ -4,6 +4,7 @@ class Item {
         this.name = "";
         this.type = 1;
         this.spec = "";
+        this.description = "";
         this.unit = 0;
         this.units = [];
         this.qtyRequested = 0;
@@ -18,6 +19,13 @@ class Item {
         this.sendRemark = "";
         this.receiveRemark = "";
         this.handRemark = "";
+
+        this.equipmentModelId = 0;
+
+        this.isSetAssets = false;
+        this.equipmentAssets = [];
+
+        this.key = Math.random();
     }
 
     load() {

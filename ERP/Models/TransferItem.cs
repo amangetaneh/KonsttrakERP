@@ -12,6 +12,9 @@ namespace ERP.Models
         [Key]
         public int ItemId { get; set; }
 
+        [Key]
+        public int EquipmentModelId { get; set; } = 0;
+
         public int QtyRequested { get; set; }
 
         public int? QtyApproved { get; set; }
@@ -24,21 +27,18 @@ namespace ERP.Models
         public string? ApproveRemark { get; set; }
 
         public string? SendRemark { get; set; }
-       
+
         public string? ReceiveRemark { get; set; }
-       
+
         [JsonIgnore]
         [ForeignKey("TransferId")]
         public Transfer Transfer { get; set; }
-        
+
         [ForeignKey("ItemId")]
         public Item Item { get; set; }
 
-        public string? Model { get; set; } 
+        public ICollection<TransferItemEquipmentAsset> TransferEquipmentAssets { get; set; }
 
-        public string? SerialNo { get; set; } 
-
-        public string? AssetNo { get; set; } 
 
     }
 }

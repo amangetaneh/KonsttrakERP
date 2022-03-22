@@ -22,8 +22,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<Issue>> Get(int id)
         {
             var issue = context.Issues.Where(issue => issue.IssueId == id)
-                .Include(issue => issue.Store)
-                .ThenInclude(store => store.Site)
+                .Include(issue => issue.Site)
                 .Include(issue => issue.RequestedBy)
                 .Include(issue => issue.ApprovedBy)
                 .Include(issue => issue.HandedBy)
@@ -44,8 +43,7 @@ namespace ERP.Controllers
         {
 
             var issues = await context.Issues
-                .Include(issue => issue.Store)
-                .ThenInclude(store => store.Site)
+                .Include(issue => issue.Site)
                 .ToListAsync();
 
             return Ok(issues);
@@ -56,7 +54,7 @@ namespace ERP.Controllers
         {
             Issue issue = new();
             issue.RequestedById = issueDTO.RequestedById;
-            issue.StoreId = issueDTO.StoreId;
+            issue.SiteId = issueDTO.SiteId;
 
             ICollection<IssueItem> issueItems = new List<IssueItem>();
 
@@ -76,8 +74,10 @@ namespace ERP.Controllers
 
                 if (itemTemp.Type == ITEMTYPE.MATERIAL)
                     issueItem.Cost = itemTemp.Material.Cost;
-                else
-                    issueItem.Cost = itemTemp.Equipment.Cost;
+                // else
+
+                /////////////////////////////////////
+
 
 
                 issueItems.Add(issueItem);

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace ERP.Models
@@ -29,14 +28,14 @@ namespace ERP.Models
         public int RequestedById { get; set; }
 
         public DateTime? CheckDate { get; set; }
-        
+
         [JsonIgnore]
         public Employee CheckedBy { get; set; }
 
         public int? CheckedById { get; set; }
 
         public DateTime? ApproveDate { get; set; }
-        
+
         [JsonIgnore]
         public Employee ApprovedBy { get; set; }
 

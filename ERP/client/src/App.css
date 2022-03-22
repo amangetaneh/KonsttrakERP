@@ -65,9 +65,8 @@ input[type="color"]:focus,
 }
 
 textarea:read-only,
-input:read-only,
 input[type="text"]:read-only {
-    background-color: transparent !important;
+    background-color: rgb(250, 250, 250) !important;
     box-shadow: 0 0px 0px rgba(0, 0, 0, 0.075) inset, 0 0 0px var(--color-teal-light) !important;
     border-color: rgb(235, 235, 235) !important;
 }
@@ -81,6 +80,15 @@ input[type="text"]:read-only:focus {
 textarea:read-write,
 input:read-write,
 input[type="text"]:read-write,
-select{
+select {
     border-color: var(--color-teal) !important;
+}
+
+input[type="checkbox"]:checked {
+    background-color: var(--color-teal);
+}
+
+input[type="checkbox"],
+input[type="checkbox"]:checked {
+    border-color: var(--color-teal);
 }

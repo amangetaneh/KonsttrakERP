@@ -11,5 +11,7 @@ namespace ERP.Models
 
         public string Location { get; set; } = string.Empty;
 
+        public ICollection<Store> Stores { get; set; }
+
     }
 }

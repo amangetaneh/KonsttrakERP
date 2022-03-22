@@ -28,7 +28,7 @@ namespace ERP.Models
         [JsonIgnore]
         [ForeignKey("IssueId")]
         public Issue Issue { get; set; }
-        
+
         [ForeignKey("ItemId")]
         public Item Item { get; set; }
 

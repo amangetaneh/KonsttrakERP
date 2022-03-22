@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace ERP.Models
 {
@@ -12,9 +10,9 @@ namespace ERP.Models
         public string Name { get; set; } = string.Empty;
 
         public int Type { get; set; }
-        
+
         public Material Material { get; set; }
-        
+
         public Equipment Equipment { get; set; }
 
 

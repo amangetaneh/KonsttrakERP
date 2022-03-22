@@ -2,10 +2,10 @@
 {
     public class CreateIssueDTO
     {
-                
+
         public int RequestedById { get; set; }
 
-        public int StoreId { get; set; }
+        public int SiteId { get; set; }
 
         public ICollection<CreateIssueItem> IssueItems { get; set; }
     }

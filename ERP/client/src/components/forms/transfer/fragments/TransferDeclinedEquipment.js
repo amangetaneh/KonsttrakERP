@@ -1,11 +1,20 @@
 import { Form, InputGroup } from "react-bootstrap";
+import { useQuery } from "react-query";
+import { fetchEquipmentModel } from "../../../../api/item";
 
-function TransferDeclinedMaterial({ addedItems, index }) {
+function TransferDeclinedEquipment({ addedItems, index }) {
+    var modelQuery = useQuery(
+        ["model", addedItems[index].equipmentModelId],
+        () =>
+            addedItems[index].equipmentModelId &&
+            fetchEquipmentModel(addedItems[index].equipmentModelId)
+    );
+
     return (
         <div className="shadow pt-3 px-4 mb-4 rounded">
             <div className=" row justify-content-between">
                 <div className="col-auto">
-                    <h1 className="display-6 fs-4">Item {index + 1}</h1>
+                    <h1 className="display-6 fs-4">Equipment {index + 1}</h1>
                 </div>
             </div>
 
@@ -13,11 +22,7 @@ function TransferDeclinedMaterial({ addedItems, index }) {
                 <div className="col">
                     <Form.Group className="mb-3">
                         <Form.Label>Item</Form.Label>
-                        <Form.Control
-                            type="text"
-                            readOnly
-                            value={addedItems[index].name}
-                        />
+                        <Form.Control type="text" readOnly value={addedItems[index].name} />
                     </Form.Group>
                 </div>
                 <div className="col">
@@ -40,16 +45,14 @@ function TransferDeclinedMaterial({ addedItems, index }) {
                     </Form.Group>
                 </div>
             </div>
-
             <div className="row">
                 <div className="col">
                     <Form.Group className="mb-3">
-                        <Form.Label>Specification</Form.Label>
+                        <Form.Label>Model</Form.Label>
                         <Form.Control
-                            as="textarea"
-                            name="spec"
-                            rows={5}
-                            value={addedItems[index].spec}
+                            type="text"
+                            name="cost"
+                            value={modelQuery?.data?.name || ""}
                             readOnly
                         />
                     </Form.Group>
@@ -74,14 +77,27 @@ function TransferDeclinedMaterial({ addedItems, index }) {
                                     type="text"
                                     name="total"
                                     readOnly
-                                    value={
-                                        addedItems[index].qtyRequested *
-                                        addedItems[index].cost
-                                    }
+                                    value={addedItems[index].qtyRequested * addedItems[index].cost}
                                 />
                             </Form.Group>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div className="row">
+                <div className="col">
+                    <Form.Group className="mb-3">
+                        <Form.Label>Description</Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            name="spec"
+                            rows={1}
+                            value={addedItems[index].description}
+                            readOnly
+                        />
+                    </Form.Group>
+                </div>
+                <div className="col">
                     <div className="col">
                         <Form.Group className="mb-3">
                             <Form.Label>Request Remark</Form.Label>
@@ -111,4 +127,4 @@ function TransferDeclinedMaterial({ addedItems, index }) {
     );
 }
 
-export default TransferDeclinedMaterial;
+export default TransferDeclinedEquipment;
