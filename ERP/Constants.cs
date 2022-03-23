@@ -1,5 +1,15 @@
 ﻿namespace ERP
 {
+    public class NOTIFICATIONTYPE
+    {
+        public const string TRANSFER = "transferNotification";
+        public const string ISSUE = "issueNotification";
+        public const string PURCHASE = "purchaseNotification";
+        public const string BORROW = "borrowNotification";
+        public const string RECEIVE = "receiveNotification";
+        public const string MAINTAINANCE = "maintainanceNotification";
+    }
+
     public class TRANSFERSTATUS
     {
 

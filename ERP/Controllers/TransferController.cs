@@ -13,10 +13,12 @@ namespace ERP.Controllers
     public class TransferController : Controller
     {
         private readonly DataContext context;
+        private readonly NotificationManager notificationManager;
 
-        public TransferController(DataContext context)
+        public TransferController(DataContext context, NotificationManager notificationManager)
         {
             this.context = context;
+            this.notificationManager = notificationManager;
         }
 
         [HttpGet("{id}")]
@@ -91,7 +93,7 @@ namespace ERP.Controllers
                 if (transferEquipmentModel == null) return NotFound($"Transfer Item Model with Id {requestItem.EquipmentModelId} Not Found");
 
                 transferItem.Cost = transferEquipmentModel.Cost;
-                
+
                 transferItems.Add(transferItem);
             }
 
@@ -99,6 +101,12 @@ namespace ERP.Controllers
 
             context.Transfers.Add(transfer);
             await context.SaveChangesAsync();
+
+            _ = notificationManager.Add(type: NOTIFICATIONTYPE.TRANSFER,
+                status: transfer.Status,
+                actionId: transfer.TransferId,
+                siteId: transfer.SendSiteId,
+                employeeId: transfer.RequestedById);
 
             return Ok(transfer.TransferId);
         }
@@ -139,6 +147,11 @@ namespace ERP.Controllers
             context.Transfers.Add(transfer);
             await context.SaveChangesAsync();
 
+            _ = notificationManager.Add(type: NOTIFICATIONTYPE.TRANSFER,
+                 status: transfer.Status,
+                 actionId: transfer.TransferId,
+                 siteId: transfer.SendSiteId,
+                 employeeId: transfer.RequestedById);
             return Ok(transfer.TransferId);
         }
 
@@ -156,7 +169,7 @@ namespace ERP.Controllers
             transfer.ApprovedById = approveDTO.ApprovedById;
 
             foreach (var requestItem in approveDTO.TransferItems)
-            {                
+            {
                 var transferItem = transfer.TransferItems
                     .Where(ti => ti.ItemId == requestItem.ItemId && ti.EquipmentModelId == requestItem.EquipmentModelId)
                     .FirstOrDefault();
@@ -171,6 +184,11 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
+            _ = notificationManager.Add(type: NOTIFICATIONTYPE.TRANSFER,
+                 status: transfer.Status,
+                 actionId: transfer.TransferId,
+                 siteId: transfer.SendSiteId,
+                 employeeId: transfer.RequestedById);
             return Ok(transfer);
         }
 
@@ -200,6 +218,11 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
+            _ = notificationManager.Add(type: NOTIFICATIONTYPE.TRANSFER,
+                status: transfer.Status,
+                actionId: transfer.TransferId,
+                siteId: transfer.SendSiteId,
+                employeeId: transfer.RequestedById);
             return Ok(transfer);
         }
 
@@ -242,6 +265,12 @@ namespace ERP.Controllers
             transfer.Status = TRANSFERSTATUS.SENT;
 
             await context.SaveChangesAsync();
+
+            _ = notificationManager.Add(type: NOTIFICATIONTYPE.TRANSFER,
+                status: transfer.Status,
+                actionId: transfer.TransferId,
+                siteId: transfer.SendSiteId,
+                employeeId: transfer.RequestedById);
 
             return Ok(transfer);
         }

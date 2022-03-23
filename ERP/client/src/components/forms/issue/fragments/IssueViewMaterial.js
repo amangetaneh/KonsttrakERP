@@ -140,7 +140,7 @@ function TransferViewMaterial({ addedItems, index }) {
             <div className="row">
                 <div className="col">
                     <Form.Group className="mb-3">
-                        <Form.Label>Hand Remark</Form.Label>
+                        <Form.Label>Hand Over Remark</Form.Label>
                         <Form.Control
                             type="text"
                             readOnly

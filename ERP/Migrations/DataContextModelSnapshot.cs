@@ -86,6 +86,9 @@ namespace ERP.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CurrentSiteId")
+                        .HasColumnType("int");
+
                     b.Property<int>("EquipmentModelId")
                         .HasColumnType("int");
 
@@ -94,6 +97,8 @@ namespace ERP.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("EquipmentAssetId");
+
+                    b.HasIndex("CurrentSiteId");
 
                     b.HasIndex("EquipmentModelId");
 
@@ -338,6 +343,53 @@ namespace ERP.Migrations
                     b.HasKey("ItemId");
 
                     b.ToTable("Materials");
+                });
+
+            modelBuilder.Entity("ERP.Models.Notification", b =>
+                {
+                    b.Property<int>("NotificationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationId"), 1L, 1);
+
+                    b.Property<int>("ActionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCleared")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("SiteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("NotificationId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("SiteId");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("ERP.Models.Purchase", b =>
@@ -740,11 +792,17 @@ namespace ERP.Migrations
 
             modelBuilder.Entity("ERP.Models.EquipmentAsset", b =>
                 {
+                    b.HasOne("ERP.Models.Site", "CurrentSite")
+                        .WithMany()
+                        .HasForeignKey("CurrentSiteId");
+
                     b.HasOne("ERP.Models.EquipmentModel", "EquipmentModel")
-                        .WithMany("EquipmentAssests")
+                        .WithMany("EquipmentAssets")
                         .HasForeignKey("EquipmentModelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CurrentSite");
 
                     b.Navigation("EquipmentModel");
                 });
@@ -881,6 +939,25 @@ namespace ERP.Migrations
                         .IsRequired();
 
                     b.Navigation("Item");
+                });
+
+            modelBuilder.Entity("ERP.Models.Notification", b =>
+                {
+                    b.HasOne("ERP.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Site", "Site")
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Site");
                 });
 
             modelBuilder.Entity("ERP.Models.Purchase", b =>
@@ -1131,7 +1208,7 @@ namespace ERP.Migrations
 
             modelBuilder.Entity("ERP.Models.EquipmentModel", b =>
                 {
-                    b.Navigation("EquipmentAssests");
+                    b.Navigation("EquipmentAssets");
                 });
 
             modelBuilder.Entity("ERP.Models.Issue", b =>

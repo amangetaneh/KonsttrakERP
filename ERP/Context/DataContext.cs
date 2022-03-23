@@ -54,6 +54,8 @@ namespace ERP.Context
 
         public DbSet<EquipmentAsset> EquipmentAssets { get; set; }
 
+        public DbSet<Notification> Notifications { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

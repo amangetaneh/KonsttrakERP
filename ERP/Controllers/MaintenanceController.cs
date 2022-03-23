@@ -12,10 +12,12 @@ namespace ERP.Controllers
     public class MaintenanceController : Controller
     {
         private readonly DataContext context;
+        private readonly NotificationManager notificationManager;
 
-        public MaintenanceController(DataContext context)
+        public MaintenanceController(DataContext context, NotificationManager notificationManager)
         {
             this.context = context;
+            this.notificationManager = notificationManager;
         }
 
         [HttpGet("{id}")]
@@ -62,6 +64,12 @@ namespace ERP.Controllers
             context.Maintenances.Add(maintenance);
             await context.SaveChangesAsync();
 
+            _ = notificationManager.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
+                status: maintenance.Status,
+                actionId: maintenance.MaintenanceId,
+                siteId: maintenance.SiteId,
+                employeeId: maintenance.RequestedById);
+
             return Ok(maintenance.MaintenanceId);
         }
 
@@ -81,6 +89,12 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
+            _ = notificationManager.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
+                status: maintenance.Status,
+                actionId: maintenance.MaintenanceId,
+                siteId: maintenance.SiteId,
+                employeeId: maintenance.RequestedById);
+
             return Ok(maintenance);
         }
 
@@ -99,6 +113,12 @@ namespace ERP.Controllers
             maintenance.Status = MAINTENANCESTATUS.DECLINED;
 
             await context.SaveChangesAsync();
+
+            _ = notificationManager.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
+                status: maintenance.Status,
+                actionId: maintenance.MaintenanceId,
+                siteId: maintenance.SiteId,
+                employeeId: maintenance.RequestedById);
 
             return Ok(maintenance);
         }
@@ -120,6 +140,11 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
+            _ = notificationManager.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
+                status: maintenance.Status,
+                actionId: maintenance.MaintenanceId,
+                siteId: maintenance.SiteId,
+                employeeId: maintenance.RequestedById);
 
             return Ok(maintenance);
         }

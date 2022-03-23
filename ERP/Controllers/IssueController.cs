@@ -12,10 +12,12 @@ namespace ERP.Controllers
     public class IssueController : Controller
     {
         private readonly DataContext context;
+        private readonly NotificationManager notificationManager;
 
-        public IssueController(DataContext context)
+        public IssueController(DataContext context, NotificationManager notificationManager)
         {
             this.context = context;
+            this.notificationManager = notificationManager;
         }
 
         [HttpGet("{id}")]
@@ -88,6 +90,12 @@ namespace ERP.Controllers
             context.Issues.Add(issue);
             await context.SaveChangesAsync();
 
+            _ = notificationManager.Add(type: NOTIFICATIONTYPE.ISSUE,
+                status: issue.Status,
+                actionId: issue.IssueId,
+                siteId: issue.SiteId,
+                employeeId: issue.RequestedById);
+
             return Ok(issue.IssueId);
         }
 
@@ -119,6 +127,12 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
+            _ = notificationManager.Add(type: NOTIFICATIONTYPE.ISSUE,
+                status: issue.Status,
+                actionId: issue.IssueId,
+                siteId: issue.SiteId,
+                employeeId: issue.RequestedById);
+
             return Ok(issue);
         }
 
@@ -145,6 +159,12 @@ namespace ERP.Controllers
             issue.Status = ISSUESTATUS.DECLINED;
 
             await context.SaveChangesAsync();
+
+            _ = notificationManager.Add(type: NOTIFICATIONTYPE.ISSUE,
+                status: issue.Status,
+                actionId: issue.IssueId,
+                siteId: issue.SiteId,
+                employeeId: issue.RequestedById);
 
             return Ok(issue);
         }
@@ -173,6 +193,11 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
+            _ = notificationManager.Add(type: NOTIFICATIONTYPE.ISSUE,
+                status: issue.Status,
+                actionId: issue.IssueId,
+                siteId: issue.SiteId,
+                employeeId: issue.RequestedById);
 
             return Ok(issue);
         }

@@ -58,7 +58,7 @@ function ListIssues() {
             },
             {
                 Header: "Site",
-                accessor: "store.site.name",
+                accessor: "site.name",
             },
             {
                 Header: "Status",
