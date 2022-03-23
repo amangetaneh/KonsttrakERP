@@ -1,6 +1,7 @@
 ﻿using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PurchaseItem = ERP.Models.PurchaseItem;
@@ -10,6 +11,7 @@ namespace ERP.Controllers
 
     [Route("/api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PurchaseController : Controller
     {
         private readonly DataContext context;
@@ -79,7 +81,6 @@ namespace ERP.Controllers
                 //else
 
                 /////////////////////////////////////////////////
-
 
                 purchaseItems.Add(purchaseItem);
             }

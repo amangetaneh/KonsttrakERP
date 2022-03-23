@@ -662,20 +662,24 @@ namespace ERP.Migrations
 
             modelBuilder.Entity("ERP.Models.UserAccount", b =>
                 {
-                    b.Property<string>("UserName")
+                    b.Property<string>("Username")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Password")
+                    b.Property<byte[]>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int>("UserRoleId")
                         .HasColumnType("int");
 
-                    b.HasKey("UserName");
+                    b.HasKey("Username");
 
                     b.HasIndex("EmployeeId");
 
@@ -741,7 +745,7 @@ namespace ERP.Migrations
             modelBuilder.Entity("ERP.Models.EquipmentAsset", b =>
                 {
                     b.HasOne("ERP.Models.EquipmentModel", "EquipmentModel")
-                        .WithMany("EquipmentAssests")
+                        .WithMany("EquipmentAssets")
                         .HasForeignKey("EquipmentModelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1131,7 +1135,7 @@ namespace ERP.Migrations
 
             modelBuilder.Entity("ERP.Models.EquipmentModel", b =>
                 {
-                    b.Navigation("EquipmentAssests");
+                    b.Navigation("EquipmentAssets");
                 });
 
             modelBuilder.Entity("ERP.Models.Issue", b =>

@@ -5,10 +5,12 @@ namespace ERP.Models
     public class UserAccount
     {
         [Key]
-        public string UserName { get; set; }
+        public string Username { get; set; }
 
-        public string Password { get; set; } = string.Empty;
+        public byte[] PasswordHash { get; set; }
 
+        public byte[] PasswordSalt { get; set; }
+        
         public Employee Employee { get; set; }
 
         public int EmployeeId { get; set; }
