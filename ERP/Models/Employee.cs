@@ -7,6 +7,12 @@ namespace ERP.Models
         [Key]
         public int EmployeeId { get; set; }
 
+        public int Status { get; set; } = 0;
+        /*Status Values: 
+           0: Registered
+           1: Approved
+           2: Deleted/Fired
+       */
         public string FName { get; set; } = string.Empty;
 
         public string MName { get; set; } = string.Empty;

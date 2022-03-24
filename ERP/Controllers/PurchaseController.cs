@@ -1,9 +1,11 @@
 ﻿using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
+using ERP.Services.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using PurchaseItem = ERP.Models.PurchaseItem;
 
 namespace ERP.Controllers
@@ -11,14 +13,26 @@ namespace ERP.Controllers
 
     [Route("/api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Employee")]
     public class PurchaseController : Controller
     {
         private readonly DataContext context;
+        private readonly IUserService _userService;
 
-        public PurchaseController(DataContext context)
+        public UserAccount? UserAccount { get; }
+
+        public PurchaseController(DataContext context, IUserService userService)
         {
             this.context = context;
+
+            _userService = userService;
+
+          
+            UserAccount = context.UserAccounts
+                .Where(u => u.Username == _userService.GetMyName())
+                .Include(u => u.UserRole)
+                .Include(u => u.Employee)
+                .FirstOrDefault();
         }
 
         [HttpGet("{id}")]
