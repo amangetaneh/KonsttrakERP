@@ -4,7 +4,7 @@ import { Form, Container } from "react-bootstrap";
 import Item from "../../../models/Item";
 import Header from "../../layouts/Header";
 import IssueStatusBadge from "./fragments/IssueStatusBadge";
-import { ISSUESTATUS, ITEMTYPE} from "../../../Constants";
+import { ISSUESTATUS, ITEMTYPE } from "../../../Constants";
 import ApproveIssue from "./ApproveIssue";
 import HandIssue from "./HandIssue";
 import ViewIssue from "./ViewIssue";
@@ -47,7 +47,6 @@ function SingleIssue() {
             if (query.data.status >= ISSUESTATUS.HANDED) {
                 itemObj.handRemark = issueItem.handRemark;
             }
-
 
             if (issueItem.item.type === ITEMTYPE.MATERIAL) {
                 itemObj.spec = issueItem.item.material.spec;
@@ -111,14 +110,20 @@ function SingleIssue() {
                     valueR={IssueStatusBadge(issue.status)}
                 />
 
-                <FormRow
-                    labelL="Issue Site"
-                    valueL={issue.store.site.name}
-                    labelR="Issue Store"
-                    valueR={issue.store.name}
-                />
-
-               
+                <div className="row mx-2">
+                    <div className="col">
+                        <Form.Group className="mb-3">
+                            <div className="row">
+                                <div className="col-1 mt-1" style={{ width: "12.499999995%" }}>
+                                    <Form.Label>Issue Site</Form.Label>
+                                </div>
+                                <div className="col">
+                                    <Form.Control readOnly value={issue.site.name} />
+                                </div>
+                            </div>
+                        </Form.Group>
+                    </div>
+                </div>
 
                 <FormRow
                     labelL="Issued By"
@@ -139,9 +144,7 @@ function SingleIssue() {
                             labelR="Approved On"
                             valueR={
                                 issue.approveDate
-                                    ? new Date(
-                                          issue.approveDate
-                                      ).toLocaleString()
+                                    ? new Date(issue.approveDate).toLocaleString()
                                     : ""
                             }
                         />
@@ -151,35 +154,23 @@ function SingleIssue() {
                 {issue.status >= ISSUESTATUS.HANDED && (
                     <>
                         <FormRow
-                            labelL="Sent By"
+                            labelL="Handed Over By"
                             valueL={
                                 issue.handedBy
                                     ? `${issue.handedBy.fName} ${issue.handedBy.mName}`
                                     : ""
                             }
-                            labelR="Sent On"
-                            valueR={
-                                issue.handDate
-                                    ? new Date(
-                                          issue.handDate
-                                      ).toLocaleString()
-                                    : ""
-                            }
+                            labelR="Handed Over On"
+                            valueR={issue.handDate ? new Date(issue.handDate).toLocaleString() : ""}
                         />
                     </>
                 )}
-
             </Form>
         );
     }
 
     const titles = useMemo(
-        () => [
-            "Declined Issue",
-            "Approve Issue",
-            "Hand Issue",
-            "Completed Issue"
-        ],
+        () => ["Declined Issue", "Approve Issue", "Hand Issue", "Completed Issue"],
         []
     );
 
@@ -196,11 +187,7 @@ function SingleIssue() {
                     <TopForm />
 
                     {issue.status === ISSUESTATUS.DECLINED && (
-                        <DeclinedIssue
-                            addedItems={addedItems}
-                            FormRow={FormRow}
-                            issue={issue}
-                        />
+                        <DeclinedIssue addedItems={addedItems} FormRow={FormRow} issue={issue} />
                     )}
 
                     {issue.status === ISSUESTATUS.REQUESTED && (
@@ -226,8 +213,6 @@ function SingleIssue() {
                             issue={issue}
                         />
                     )}
-
-                   
                 </>
             </Container>
         </>

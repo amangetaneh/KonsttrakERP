@@ -62,7 +62,7 @@ function HandIssue({ addedItems, setAddedItems, issue }) {
                                 size="sm"
                             />
                         )}
-                        Hand Issued Items
+                        Hand Over Issued Items
                     </Button>
                 </div>
             </Form>

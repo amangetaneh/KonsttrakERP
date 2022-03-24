@@ -15,5 +15,10 @@ namespace ERP.Models
 
         public string SerialNo { get; set; }
 
+        public int? CurrentSiteId { get; set; }
+
+        public Site CurrentSite { get; set; }
+
+
     }
 }

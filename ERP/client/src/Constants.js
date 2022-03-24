@@ -1,3 +1,21 @@
+export const NOTIFICATIONTYPE = {
+    TRANSFER: "transferNotification",
+    ISSUE: "issueNotification",
+    PURCHASE: "purchaseNotification",
+    BORROW: "borrowNotification",
+    RECEIVE: "receiveNotification",
+    MAINTAINANCE: "maintainanceNotification",
+};
+
+export const NOTIFICATIONROUTE={
+    [NOTIFICATIONTYPE.TRANSFER]: "/transfer",
+    [NOTIFICATIONTYPE.ISSUE]: "/issue",
+    [NOTIFICATIONTYPE.PURCHASE]: "/purchase",
+    [NOTIFICATIONTYPE.BORROW]: "/borrow",
+    [NOTIFICATIONTYPE.RECEIVE]: "/receive",
+    [NOTIFICATIONTYPE.MAINTAINANCE]: "/maintainance",     
+}
+
 export const TRANSFERSTATUS = {
     DECLINED: 0,
     REQUESTED: 1,

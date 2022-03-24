@@ -4,6 +4,10 @@
     --color-teal-light: #00a19c;
 }
 
+.text-teal {
+    color: var(--color-teal-dark)
+}
+
 .bg-teal {
     background-color: var(--color-teal) !important;
 }
@@ -92,3 +96,4 @@ input[type="checkbox"],
 input[type="checkbox"]:checked {
     border-color: var(--color-teal);
 }
+

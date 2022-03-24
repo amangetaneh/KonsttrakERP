@@ -2,6 +2,7 @@ import { Navbar, Container, Nav, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { FaArrowLeft } from "react-icons/fa";
+import NotificationCanvas from "../notification/NotificationCanvas";
 
 function Header({ title }) {
     const navigate = useNavigate();
@@ -13,15 +14,13 @@ function Header({ title }) {
     return (
         <Navbar className="navbar-dark bg-teal" expand="sm">
             <Container>
-                <Button
-                    className="text-white"
-                    variant="transparent"
-                    onClick={goBack}
-                >
+                <Button className="text-white" variant="transparent" onClick={goBack}>
                     <FaArrowLeft />
                 </Button>
                 <Navbar.Brand>{title}</Navbar.Brand>
-                <Nav className="me-auto"></Nav>
+                <Nav className="ms-auto">
+                    <NotificationCanvas />
+                </Nav>
             </Container>
         </Navbar>
     );
