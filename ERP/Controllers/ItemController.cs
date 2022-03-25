@@ -1,7 +1,9 @@
 ﻿using ERP.Context;
 using ERP.Models;
+using ERP.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ERP.DTOs.Item;
 
 namespace ERP.Controllers
 {
@@ -54,7 +56,7 @@ namespace ERP.Controllers
 
         }
 
-        [HttpGet("material")]
+        [HttpGet("getmaterials")]
         public async Task<ActionResult<List<Item>>> GetMaterial()
         {
             var items = await context.Items.Where(item => item.Type == ITEMTYPE.MATERIAL)
@@ -63,7 +65,7 @@ namespace ERP.Controllers
             return Ok(items);
         }
 
-        [HttpGet("equipment")]
+        [HttpGet("getequipments")]
         public async Task<ActionResult<List<Item>>> GetEquipment()
         {
             var items = await context.Items.Where(item => item.Type == ITEMTYPE.EQUIPMENT)
@@ -71,5 +73,54 @@ namespace ERP.Controllers
 
             return Ok(items);
         }
+
+        [HttpPost("material")]
+        public async Task<ActionResult<List<Item>>> CreateMaterialItem(CreateMaterialItemDTO materialItemDTO)
+        {
+            Item item = new();
+            item.Type = ITEMTYPE.MATERIAL;
+            item.Name = materialItemDTO.Name;
+
+            context.Items.Add(item);
+
+            await context.SaveChangesAsync();
+
+            Material material = new();
+            material.ItemId = item.ItemId;
+            material.Spec = materialItemDTO.Spec;
+            material.Unit = materialItemDTO.Unit;
+            material.Cost = materialItemDTO.Cost;
+
+            context.Materials.Add(material);
+
+            await context.SaveChangesAsync();
+
+            return Ok(item);
+        }
+
+        [HttpPost("equipment")]
+        public async Task<ActionResult<List<Item>>> CreateEquipmentItem(CreateEquipmentItemDTO equipmentItemDTO)
+        {
+            Item item = new();
+            item.Type = ITEMTYPE.EQUIPMENT;
+            item.Name = equipmentItemDTO.Name;
+
+            context.Items.Add(item);
+
+            await context.SaveChangesAsync();
+
+            Equipment equipment = new();
+            equipment.ItemId = item.ItemId;
+            equipment.Unit = equipmentItemDTO.Unit;
+            equipment.Description = equipmentItemDTO.Description;
+            equipment.EquipmentCategoryId = equipmentItemDTO.EquipmentCategoryId;
+
+            context.Equipments.Add(equipment);
+
+            await context.SaveChangesAsync();
+
+            return Ok(item);
+        }
+
     }
 }

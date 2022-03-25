@@ -720,7 +720,7 @@ namespace ERP.Migrations
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("EmployeeId")
+                    b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<byte[]>("PasswordHash")
@@ -751,7 +751,22 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"), 1L, 1);
 
-                    b.Property<int>("CanFixedAsset")
+                    b.Property<int>("CanApproveIssue")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CanApproveMaintainance")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CanApprovePurchase")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CanApproveTransfer")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CanCheckPurchase")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CanCheckRecieve")
                         .HasColumnType("int");
 
                     b.Property<int>("CanIssue")
@@ -766,7 +781,10 @@ namespace ERP.Migrations
                     b.Property<int>("CanRecieve")
                         .HasColumnType("int");
 
-                    b.Property<int>("CanTransfer")
+                    b.Property<int>("CanTransferEquipment")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CanTransferMaterial")
                         .HasColumnType("int");
 
                     b.Property<string>("Role")
@@ -1188,9 +1206,7 @@ namespace ERP.Migrations
                 {
                     b.HasOne("ERP.Models.Employee", "Employee")
                         .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployeeId");
 
                     b.HasOne("ERP.Models.UserRole", "UserRole")
                         .WithMany()

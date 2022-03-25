@@ -10,6 +10,8 @@ namespace ERP.Controllers
 
     [Route("/api/[controller]")]
     [ApiController]
+    //Uncomment the line below to enable authorization
+    //[Authorize(Roles = "Employee")]
     public class TransferController : Controller
     {
         private readonly DataContext context;
