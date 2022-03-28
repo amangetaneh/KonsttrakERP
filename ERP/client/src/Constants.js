@@ -5,16 +5,29 @@ export const NOTIFICATIONTYPE = {
     BORROW: "borrowNotification",
     RECEIVE: "receiveNotification",
     MAINTAINANCE: "maintainanceNotification",
+    RETURN: "returnNotification",
 };
 
-export const NOTIFICATIONROUTE={
+export const NOTIFICATIONROUTE = {
     [NOTIFICATIONTYPE.TRANSFER]: "/transfer",
     [NOTIFICATIONTYPE.ISSUE]: "/issue",
     [NOTIFICATIONTYPE.PURCHASE]: "/purchase",
     [NOTIFICATIONTYPE.BORROW]: "/borrow",
     [NOTIFICATIONTYPE.RECEIVE]: "/receive",
-    [NOTIFICATIONTYPE.MAINTAINANCE]: "/maintainance",     
-}
+    [NOTIFICATIONTYPE.MAINTAINANCE]: "/maintainance",
+    [NOTIFICATIONTYPE.RETURN]: "/return",
+};
+
+export const MAINTENANCESTATUS = {
+    DECLINED: 0,
+    REQUESTED: 1,
+    APPROVED: 2,
+    FIXED: 3,
+    0: "Declined",
+    1: "Requested",
+    2: "Approved",
+    3: "Fixed",
+};
 
 export const TRANSFERSTATUS = {
     DECLINED: 0,
@@ -30,6 +43,17 @@ export const TRANSFERSTATUS = {
 };
 
 export const ISSUESTATUS = {
+    DECLINED: 0,
+    REQUESTED: 1,
+    APPROVED: 2,
+    HANDED: 3,
+    0: "Declined",
+    1: "Requested",
+    2: "Approved",
+    3: "Handed",
+};
+
+export const BORROWSTATUS = {
     DECLINED: 0,
     REQUESTED: 1,
     APPROVED: 2,

@@ -6,11 +6,11 @@
 
         public int SentById { get; set; }
 
-        public ICollection<SendMaterialTransferItems> TransferItems { get; set; }
+        public ICollection<SendTransferItems> TransferItems { get; set; }
 
     }
 
-    public class SendMaterialTransferItems
+    public class SendTransferItems
     {
         public int ItemId { get; set; }
 

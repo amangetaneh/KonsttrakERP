@@ -3,14 +3,20 @@ import { useEffect, useState } from "react";
 import { FaBell } from "react-icons/fa";
 import SingleNotification from "./SingleNotification";
 import { useQuery } from "react-query";
-import { fetchNotifications } from "../../api/notification";
+import { fetchNotifications, fetchNow } from "../../api/notification";
 import { NOTIFICATIONROUTE } from "../../Constants";
 
 function NotificationCanvas() {
     const [notificationCount, setNotificationCount] = useState(0);
+    const [now, setNow] = useState("");
     const [showCanvas, setShowCanvas] = useState(false);
 
     var notificationQuery = useQuery(["notifications"], fetchNotifications);
+    var nowQuery = useQuery(["now"], fetchNow);
+
+    useEffect(() => {
+        setNow(nowQuery.data?.data);
+    });
 
     useEffect(() => {
         setNotificationCount(notificationQuery?.data?.length);
@@ -60,9 +66,11 @@ function NotificationCanvas() {
                     {notificationQuery.data?.map((notification) => (
                         <SingleNotification
                             key={notification.notificationId}
+                            title={notification.title}
                             notificationId={notification.notificationId}
                             content={notification.content}
                             date={notification.date}
+                            now={now || ""}
                             target={`${NOTIFICATIONROUTE[notification.type]}/${
                                 notification.actionId
                             }`}

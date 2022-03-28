@@ -64,8 +64,8 @@ function MaterialTransfer() {
 
         for (let item of addedItems) {
             let tempItem = {
-                itemId: Number(item.itemId),
-                qtyRequested: Number(item.qtyRequested),
+                itemId: item.itemId,
+                qtyRequested: item.qtyRequested,
                 requestRemark: item.requestRemark,
             };
 

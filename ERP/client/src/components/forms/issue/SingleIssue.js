@@ -74,7 +74,7 @@ function SingleIssue() {
                                 {typeof valueL === "object" ? (
                                     valueL
                                 ) : (
-                                    <Form.Control readOnly value={valueL} />
+                                    <Form.Control type="text" readOnly value={valueL} />
                                 )}
                             </div>
                         </div>
@@ -90,7 +90,7 @@ function SingleIssue() {
                                 {typeof valueR === "object" ? (
                                     valueR
                                 ) : (
-                                    <Form.Control readOnly value={valueR} />
+                                    <Form.Control type="text" readOnly value={valueR} />
                                 )}
                             </div>
                         </div>
@@ -118,7 +118,7 @@ function SingleIssue() {
                                     <Form.Label>Issue Site</Form.Label>
                                 </div>
                                 <div className="col">
-                                    <Form.Control readOnly value={issue.site.name} />
+                                    <Form.Control type="text" readOnly value={issue.site.name} />
                                 </div>
                             </div>
                         </Form.Group>

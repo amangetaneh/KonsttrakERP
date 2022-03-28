@@ -183,7 +183,7 @@ function TransferViewMaterial({ addedItems, index }) {
                         <tbody>
                             {addedItems[index].equipmentAssets.map((asset, assetIndex) => {
                                 return (
-                                    <tr>
+                                    <tr key={assetIndex}>
                                         <td>{assetIndex + 1}</td>
                                         <td>{asset.equipmentAsset.assetNo}</td>
                                         <td>{asset.equipmentAsset.serialNo}</td>

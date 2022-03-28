@@ -22,6 +22,142 @@ namespace ERP.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("ERP.Models.AssetDamage", b =>
+                {
+                    b.Property<int>("AssetDamageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AssetDamageId"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("PenalityPercentage")
+                        .HasColumnType("decimal(2,2)");
+
+                    b.HasKey("AssetDamageId");
+
+                    b.ToTable("AssetDamages");
+                });
+
+            modelBuilder.Entity("ERP.Models.Borrow", b =>
+                {
+                    b.Property<int>("BorrowId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BorrowId"), 1L, 1);
+
+                    b.Property<DateTime?>("ApproveDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ApprovedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("HandDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("HandedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RequestedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SiteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("BorrowId");
+
+                    b.HasIndex("ApprovedById");
+
+                    b.HasIndex("HandedById");
+
+                    b.HasIndex("RequestedById");
+
+                    b.HasIndex("SiteId");
+
+                    b.ToTable("Borrows");
+                });
+
+            modelBuilder.Entity("ERP.Models.BorrowItem", b =>
+                {
+                    b.Property<int>("BorrowId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EquipmentModelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ApproveRemark")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("HandRemark")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("QtyApproved")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QtyRequested")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RequestRemark")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("BorrowId", "ItemId", "EquipmentModelId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("BorrowItems");
+                });
+
+            modelBuilder.Entity("ERP.Models.BorrowItemEquipmentAsset", b =>
+                {
+                    b.Property<int>("BorrowId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EquipmentModelId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EquipmentAssetId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AssetDamageId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ReturnId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReturnRemark")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("BorrowId", "ItemId", "EquipmentModelId", "EquipmentAssetId");
+
+                    b.HasIndex("AssetDamageId");
+
+                    b.HasIndex("EquipmentAssetId");
+
+                    b.HasIndex("ReturnId");
+
+                    b.ToTable("BorrowItemEquipmentAssets");
+                });
+
             modelBuilder.Entity("ERP.Models.Employee", b =>
                 {
                     b.Property<int>("EmployeeId")
@@ -133,7 +269,7 @@ namespace ERP.Migrations
                     b.Property<decimal>("Cost")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("EquipmentId")
+                    b.Property<int>("ItemId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -142,7 +278,7 @@ namespace ERP.Migrations
 
                     b.HasKey("EquipmentModelId");
 
-                    b.HasIndex("EquipmentId");
+                    b.HasIndex("ItemId");
 
                     b.ToTable("EquipmentModels");
                 });
@@ -281,6 +417,15 @@ namespace ERP.Migrations
                     b.Property<int?>("ApprovedById")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("EquipmentAssetId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EquipmentModelId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("FixDate")
                         .HasColumnType("datetime2");
 
@@ -312,6 +457,10 @@ namespace ERP.Migrations
                     b.HasKey("MaintenanceId");
 
                     b.HasIndex("ApprovedById");
+
+                    b.HasIndex("EquipmentAssetId");
+
+                    b.HasIndex("EquipmentModelId");
 
                     b.HasIndex("FixedById");
 
@@ -542,6 +691,32 @@ namespace ERP.Migrations
                     b.ToTable("ReceivedItems");
                 });
 
+            modelBuilder.Entity("ERP.Models.Return", b =>
+                {
+                    b.Property<int>("ReturnId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReturnId"), 1L, 1);
+
+                    b.Property<DateTime>("ReturnDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ReturnedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SiteId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ReturnId");
+
+                    b.HasIndex("ReturnedById");
+
+                    b.HasIndex("SiteId");
+
+                    b.ToTable("Returns");
+                });
+
             modelBuilder.Entity("ERP.Models.Site", b =>
                 {
                     b.Property<int>("SiteId")
@@ -709,7 +884,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("EquipmentAssetId");
 
-                    b.ToTable("TransferItemEquipmentAsset");
+                    b.ToTable("TransferItemEquipmentAssets");
                 });
 
             modelBuilder.Entity("ERP.Models.UserAccount", b =>
@@ -771,6 +946,97 @@ namespace ERP.Migrations
                     b.ToTable("UserRoles");
                 });
 
+            modelBuilder.Entity("ERP.Models.Borrow", b =>
+                {
+                    b.HasOne("ERP.Models.Employee", "ApprovedBy")
+                        .WithMany()
+                        .HasForeignKey("ApprovedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ERP.Models.Employee", "HandedBy")
+                        .WithMany()
+                        .HasForeignKey("HandedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ERP.Models.Employee", "RequestedBy")
+                        .WithMany()
+                        .HasForeignKey("RequestedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Site", "Site")
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApprovedBy");
+
+                    b.Navigation("HandedBy");
+
+                    b.Navigation("RequestedBy");
+
+                    b.Navigation("Site");
+                });
+
+            modelBuilder.Entity("ERP.Models.BorrowItem", b =>
+                {
+                    b.HasOne("ERP.Models.Borrow", "Borrow")
+                        .WithMany("BorrowItems")
+                        .HasForeignKey("BorrowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Borrow");
+
+                    b.Navigation("Item");
+                });
+
+            modelBuilder.Entity("ERP.Models.BorrowItemEquipmentAsset", b =>
+                {
+                    b.HasOne("ERP.Models.AssetDamage", "AssetDamage")
+                        .WithMany()
+                        .HasForeignKey("AssetDamageId");
+
+                    b.HasOne("ERP.Models.Borrow", "Borrow")
+                        .WithMany()
+                        .HasForeignKey("BorrowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.EquipmentAsset", "EquipmentAsset")
+                        .WithMany()
+                        .HasForeignKey("EquipmentAssetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Return", "Return")
+                        .WithMany("ReturnEquipmentAssets")
+                        .HasForeignKey("ReturnId");
+
+                    b.HasOne("ERP.Models.BorrowItem", "BorrowItem")
+                        .WithMany("BorrowEquipmentAssets")
+                        .HasForeignKey("BorrowId", "ItemId", "EquipmentModelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AssetDamage");
+
+                    b.Navigation("Borrow");
+
+                    b.Navigation("BorrowItem");
+
+                    b.Navigation("EquipmentAsset");
+
+                    b.Navigation("Return");
+                });
+
             modelBuilder.Entity("ERP.Models.Equipment", b =>
                 {
                     b.HasOne("ERP.Models.EquipmentCategory", "EquipmentCategory")
@@ -811,7 +1077,7 @@ namespace ERP.Migrations
                 {
                     b.HasOne("ERP.Models.Equipment", "Equipment")
                         .WithMany("EquipmentModels")
-                        .HasForeignKey("EquipmentId")
+                        .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -896,6 +1162,17 @@ namespace ERP.Migrations
                         .HasForeignKey("ApprovedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("ERP.Models.EquipmentAsset", "EquipmentAsset")
+                        .WithMany()
+                        .HasForeignKey("EquipmentAssetId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ERP.Models.EquipmentModel", "EquipmentModel")
+                        .WithMany()
+                        .HasForeignKey("EquipmentModelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("ERP.Models.Employee", "FixedBy")
                         .WithMany()
                         .HasForeignKey("FixedById")
@@ -920,6 +1197,10 @@ namespace ERP.Migrations
                         .IsRequired();
 
                     b.Navigation("ApprovedBy");
+
+                    b.Navigation("EquipmentAsset");
+
+                    b.Navigation("EquipmentModel");
 
                     b.Navigation("FixedBy");
 
@@ -1073,6 +1354,25 @@ namespace ERP.Migrations
                     b.Navigation("Receive");
                 });
 
+            modelBuilder.Entity("ERP.Models.Return", b =>
+                {
+                    b.HasOne("ERP.Models.Employee", "ReturnedBy")
+                        .WithMany()
+                        .HasForeignKey("ReturnedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Site", "Site")
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ReturnedBy");
+
+                    b.Navigation("Site");
+                });
+
             modelBuilder.Entity("ERP.Models.Store", b =>
                 {
                     b.HasOne("ERP.Models.Site", "Site")
@@ -1196,6 +1496,16 @@ namespace ERP.Migrations
                     b.Navigation("UserRole");
                 });
 
+            modelBuilder.Entity("ERP.Models.Borrow", b =>
+                {
+                    b.Navigation("BorrowItems");
+                });
+
+            modelBuilder.Entity("ERP.Models.BorrowItem", b =>
+                {
+                    b.Navigation("BorrowEquipmentAssets");
+                });
+
             modelBuilder.Entity("ERP.Models.Equipment", b =>
                 {
                     b.Navigation("EquipmentModels");
@@ -1233,6 +1543,11 @@ namespace ERP.Migrations
             modelBuilder.Entity("ERP.Models.Receive", b =>
                 {
                     b.Navigation("ReceiveItems");
+                });
+
+            modelBuilder.Entity("ERP.Models.Return", b =>
+                {
+                    b.Navigation("ReturnEquipmentAssets");
                 });
 
             modelBuilder.Entity("ERP.Models.Site", b =>

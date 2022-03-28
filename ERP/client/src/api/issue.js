@@ -14,4 +14,3 @@ export const declineIssue = (data) => api.post("/issue/decline", data);
 
 export const handIssue = (data) => api.post("/issue/hand", data);
 
-export const receiveTransfer = (data) => api.post("/transfer/receive", data);

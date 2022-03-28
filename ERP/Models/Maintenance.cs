@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERP.Models
 {
@@ -23,6 +24,14 @@ namespace ERP.Models
 
         public int ItemId { get; set; }
 
+        public int EquipmentModelId { get; set; }
+
+        public EquipmentModel EquipmentModel { get; set; }
+
+        public int? EquipmentAssetId { get; set; }
+
+        public EquipmentAsset EquipmentAsset { get; set; }
+
         public string Reason { get; set; }
 
         public Employee RequestedBy { get; set; }
@@ -40,5 +49,8 @@ namespace ERP.Models
         public string? ApproveRemark { get; set; }
 
         public string? FixRemark { get; set; }
+
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal Cost { get; set; }
     }
 }

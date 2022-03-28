@@ -90,7 +90,7 @@ namespace ERP.Controllers
             context.Issues.Add(issue);
             await context.SaveChangesAsync();
 
-            _ = notificationManager.Add(type: NOTIFICATIONTYPE.ISSUE,
+            await notificationManager.Add(type: NOTIFICATIONTYPE.ISSUE,
                 status: issue.Status,
                 actionId: issue.IssueId,
                 siteId: issue.SiteId,
@@ -127,7 +127,7 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
-            _ = notificationManager.Add(type: NOTIFICATIONTYPE.ISSUE,
+            await notificationManager.Add(type: NOTIFICATIONTYPE.ISSUE,
                 status: issue.Status,
                 actionId: issue.IssueId,
                 siteId: issue.SiteId,
@@ -160,7 +160,7 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
-            _ = notificationManager.Add(type: NOTIFICATIONTYPE.ISSUE,
+            await notificationManager.Add(type: NOTIFICATIONTYPE.ISSUE,
                 status: issue.Status,
                 actionId: issue.IssueId,
                 siteId: issue.SiteId,
@@ -193,7 +193,7 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
-            _ = notificationManager.Add(type: NOTIFICATIONTYPE.ISSUE,
+            await notificationManager.Add(type: NOTIFICATIONTYPE.ISSUE,
                 status: issue.Status,
                 actionId: issue.IssueId,
                 siteId: issue.SiteId,

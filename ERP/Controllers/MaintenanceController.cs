@@ -28,9 +28,10 @@ namespace ERP.Controllers
                 .Include(maintenance => maintenance.RequestedBy)
                 .Include(maintenance => maintenance.ApprovedBy)
                 .Include(maintenance => maintenance.FixedBy)
-               .Include(maintenance => maintenance.Item)
-               .ThenInclude(item => item.Equipment)
-               .FirstOrDefault();
+                .Include(maintenance => maintenance.Item)
+                .ThenInclude(item => item.Equipment)
+                .Include(maintenance => maintenance.EquipmentAsset)
+                .FirstOrDefault();
 
             if (maintenance == null) return NotFound("Maintenance Request Not Found.");
 
@@ -53,18 +54,44 @@ namespace ERP.Controllers
         {
             Maintenance maintenance = new();
             maintenance.RequestedById = maintenanceDTO.RequestedById;
-            maintenance.SiteId = maintenanceDTO.StoreId;
+            maintenance.SiteId = maintenanceDTO.SiteId;
             maintenance.Reason = maintenanceDTO.Reason;
 
             var itemTemp = context.Items.Where(item => item.ItemId == maintenanceDTO.ItemId).FirstOrDefault();
+
             if (itemTemp == null) return NotFound($"Maintenance Item with Id {maintenanceDTO.ItemId} Not Found");
 
+            if (itemTemp.Type != ITEMTYPE.EQUIPMENT) 
+                return BadRequest($"Maintenance Item with Id {maintenanceDTO.ItemId} Is Not Type of Equipment");
+
+            var maintenanceEquipmentModel = await context.EquipmentModels
+                .Where(em => em.EquipmentModelId == maintenanceDTO.EquipmentModelId && em.ItemId == maintenanceDTO.ItemId)
+                .FirstOrDefaultAsync();
+
+            if (maintenanceEquipmentModel == null) 
+                return NotFound($"Maitenance Item with Id {maintenanceDTO.ItemId} and Model Id {maintenanceDTO.EquipmentModelId} Not Found");
+
+            if (maintenanceDTO.EquipmentAssetId != null)
+            {
+                var maintenanceEquipmentAsset = await context.EquipmentAssets
+                    .Where(ea => ea.EquipmentAssetId == maintenanceDTO.EquipmentAssetId && ea.EquipmentModelId == maintenanceDTO.EquipmentModelId)
+                    .FirstOrDefaultAsync();
+
+                if (maintenanceEquipmentAsset == null)
+                    return NotFound($"Maitenance Item with Model Id {maintenanceDTO.EquipmentModelId} and Asset Id {maintenanceDTO.EquipmentAssetId} Not Found");
+
+                maintenance.EquipmentAssetId = maintenanceDTO.EquipmentAssetId;
+            }
+
+            maintenance.Cost = maintenanceEquipmentModel.Cost;
+
             maintenance.ItemId = maintenanceDTO.ItemId;
+            maintenance.EquipmentModelId = maintenanceDTO.EquipmentModelId;
 
             context.Maintenances.Add(maintenance);
             await context.SaveChangesAsync();
 
-            _ = notificationManager.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
+            await notificationManager.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
                 status: maintenance.Status,
                 actionId: maintenance.MaintenanceId,
                 siteId: maintenance.SiteId,
@@ -89,7 +116,7 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
-            _ = notificationManager.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
+            await notificationManager.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
                 status: maintenance.Status,
                 actionId: maintenance.MaintenanceId,
                 siteId: maintenance.SiteId,
@@ -114,7 +141,7 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
-            _ = notificationManager.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
+            await notificationManager.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
                 status: maintenance.Status,
                 actionId: maintenance.MaintenanceId,
                 siteId: maintenance.SiteId,
@@ -140,7 +167,7 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
-            _ = notificationManager.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
+            await notificationManager.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
                 status: maintenance.Status,
                 actionId: maintenance.MaintenanceId,
                 siteId: maintenance.SiteId,

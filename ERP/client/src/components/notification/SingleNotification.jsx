@@ -7,7 +7,7 @@ import { FaMinus } from "react-icons/fa";
 import { useMutation, useQueryClient } from "react-query";
 import { clearNotification } from "../../api/notification";
 
-function SingleNotification({ notificationId, content, target, date }) {
+function SingleNotification({ title, notificationId, content, target, date, now }) {
     const queryClient = useQueryClient();
 
     const { mutate } = useMutation(clearNotification, {
@@ -21,7 +21,7 @@ function SingleNotification({ notificationId, content, target, date }) {
     return (
         <Card className="mb-2 pb-2 border-0 border-bottom">
             <span>
-                <strong className="text-teal">Transfer In</strong>
+                <strong className="text-teal">{title}</strong>
                 <Button
                     variant="transparent"
                     className="float-end py-0 px-1"
@@ -33,7 +33,7 @@ function SingleNotification({ notificationId, content, target, date }) {
             </span>
             {content}
             <div className="text-secondary fw-light">
-                {formatRelative(new Date(date), new Date())} ago
+                {formatRelative(new Date(date), new Date(now))} ago
             </div>
 
             <Link className="stretched-link" to={target} />
@@ -42,10 +42,12 @@ function SingleNotification({ notificationId, content, target, date }) {
 }
 
 SingleNotification.propTypes = {
+    title: PropTypes.string.isRequired,
     notificationId: PropTypes.number.isRequired,
     content: PropTypes.string.isRequired,
     target: PropTypes.string.isRequired,
     date: PropTypes.string.isRequired,
+    now: PropTypes.string.isRequired,
 };
 
 export default SingleNotification;
