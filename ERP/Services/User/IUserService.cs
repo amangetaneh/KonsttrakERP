@@ -5,5 +5,7 @@
         string GetMyName();
 
         int GetMyId();
+
+        int GetMySiteId();
     }
 }
