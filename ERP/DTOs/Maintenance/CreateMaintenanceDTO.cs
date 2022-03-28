@@ -5,7 +5,11 @@
 
         public int RequestedById { get; set; }
 
-        public int StoreId { get; set; }
+        public int EquipmentModelId { get; set; }
+
+        public int? EquipmentAssetId { get; set; }
+
+        public int SiteId { get; set; }
 
         public string Reason { get; set; }
 

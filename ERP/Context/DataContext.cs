@@ -37,6 +37,8 @@ namespace ERP.Context
 
         public DbSet<TransferItem> TransferItems { get; set; }
 
+        public DbSet<TransferItemEquipmentAsset> TransferItemEquipmentAssets { get; set; }
+
         public DbSet<Employee> Employees { get; set; }
 
         public DbSet<UserAccount> UserAccounts { get; set; }
@@ -59,6 +61,15 @@ namespace ERP.Context
 
         public DbSet<Notification> Notifications { get; set; }
 
+        public DbSet<Borrow> Borrows { get; set; }
+
+        public DbSet<Return> Returns { get; set; }
+
+        public DbSet<BorrowItem> BorrowItems { get; set; }
+
+        public DbSet<BorrowItemEquipmentAsset> BorrowItemEquipmentAssets { get; set; }
+
+        public DbSet<AssetDamage> AssetDamages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -74,6 +85,12 @@ namespace ERP.Context
 
             modelBuilder.Entity<TransferItemEquipmentAsset>()
                 .HasKey(o => new { o.TransferId, o.ItemId, o.EquipmentModelId, o.EquipmentAssetId });
+
+            modelBuilder.Entity<BorrowItem>()
+                .HasKey(o => new { o.BorrowId, o.ItemId, o.EquipmentModelId });
+
+            modelBuilder.Entity<BorrowItemEquipmentAsset>()
+                .HasKey(o => new { o.BorrowId, o.ItemId, o.EquipmentModelId, o.EquipmentAssetId });
 
             modelBuilder.Entity<IssueItem>()
                 .HasKey(o => new { o.IssueId, o.ItemId });
@@ -147,6 +164,17 @@ namespace ERP.Context
                    .OnDelete(DeleteBehavior.Restrict)
                    .IsRequired(false);
 
+            modelBuilder.Entity<Maintenance>()
+                .HasOne(m => m.EquipmentAsset)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
+
+            modelBuilder.Entity<Maintenance>()
+                .HasOne(m => m.EquipmentModel)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
+
             //Issue
             modelBuilder.Entity<Issue>()
                     .HasOne(i => i.HandedBy)
@@ -160,6 +188,24 @@ namespace ERP.Context
                     .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Issue>()
+                    .HasOne(i => i.ApprovedBy)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false);
+
+            //Borrow
+            modelBuilder.Entity<Borrow>()
+                    .HasOne(i => i.HandedBy)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false);
+
+            modelBuilder.Entity<Borrow>()
+                    .HasOne(i => i.RequestedBy)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Borrow>()
                     .HasOne(i => i.ApprovedBy)
                     .WithMany()
                     .OnDelete(DeleteBehavior.Restrict)
@@ -239,6 +285,12 @@ namespace ERP.Context
             modelBuilder.Entity<TransferItemEquipmentAsset>()
                 .HasOne(o => o.TransferItem)
                 .WithMany(o => o.TransferEquipmentAssets)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            //BorrowItem-EquipmentAsset
+            modelBuilder.Entity<BorrowItemEquipmentAsset>()
+                .HasOne(o => o.BorrowItem)
+                .WithMany(o => o.BorrowEquipmentAssets)
                 .OnDelete(DeleteBehavior.Restrict);
 
         }

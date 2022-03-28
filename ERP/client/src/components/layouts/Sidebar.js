@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     ProSidebar,
     Menu,
@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 
 function Sidebar() {
     const [collapsed, setCollapsed] = useState(false);
+    
 
     return (
         <>
@@ -39,8 +40,13 @@ function Sidebar() {
                         </MenuItem>
 
                         <SubMenu title="Inventory" icon={<FaList className="fs-5" />}>
-                            <SubMenu title="Stock"></SubMenu>
-                            <SubMenu title="Purchase">
+                            <SubMenu
+                                title="Stock"
+                                                            ></SubMenu>
+                            <SubMenu
+                                title="Purchase"
+                               
+                            >
                                 <MenuItem>
                                     Purchase an Item <Link to="/purchase/new" />
                                 </MenuItem>
@@ -48,7 +54,10 @@ function Sidebar() {
                                     List Purchase Requests <Link to="/purchase/list" />
                                 </MenuItem>
                             </SubMenu>
-                            <SubMenu title="Receive">
+                            <SubMenu
+                                title="Receive"
+                               
+                            >
                                 <MenuItem>
                                     Receive an Item <Link to="/receive/new" />
                                 </MenuItem>
@@ -56,12 +65,17 @@ function Sidebar() {
                                     List Received Items <Link to="/receive/list" />
                                 </MenuItem>
                             </SubMenu>
-                            <SubMenu title="Transfer">
+                            <SubMenu
+                                title="Transfer"
+                               
+                            >
                                 <MenuItem>
-                                    New Material Transfer<Link to="/transfer/material" />
+                                    New Material Transfer
+                                    <Link to="/transfer/material" />
                                 </MenuItem>
                                 <MenuItem>
-                                    New Equipment Transfer<Link to="/transfer/equipment" />
+                                    New Equipment Transfer
+                                    <Link to="/transfer/equipment" />
                                 </MenuItem>
                                 <MenuItem>
                                     Transfer In <Link to="/transfer/in" />
@@ -71,16 +85,48 @@ function Sidebar() {
                                     <Link to="/transfer/out" />
                                 </MenuItem>
                             </SubMenu>
-                            <SubMenu title="Issue">
-                            <MenuItem>
-                                    New Issue <Link to="/issue/new" />
+                            <SubMenu
+                                title="Issue"
+                               
+                            >
+                                <MenuItem>
+                                    New Issue Request
+                                    <Link to="/issue/new" />
                                 </MenuItem>
                                 <MenuItem>
-                                    Issues <Link to="/issue" />
+                                    Issue Requests
+                                    <Link to="/issue" />
                                 </MenuItem>
-                                
                             </SubMenu>
-                            <SubMenu title="Maintainance"></SubMenu>
+                            <SubMenu
+                                title="Borrow"
+                               
+                            >
+                                <MenuItem>
+                                    New Borrow Request <Link to="/borrow/new" />
+                                </MenuItem>
+                                <MenuItem>
+                                    Borrow Requests <Link to="/borrow" />
+                                </MenuItem>
+                                <MenuItem>
+                                    Retrun Assets <Link to="/return/new" />
+                                </MenuItem>
+                                <MenuItem>
+                                    Returned Assets <Link to="/return" />
+                                </MenuItem>
+                            </SubMenu>
+
+                            <SubMenu
+                                title="Maintenance"
+                              
+                            >
+                                <MenuItem>
+                                    New Maintenance Request <Link to="/maintenance/new" />
+                                </MenuItem>
+                                <MenuItem>
+                                    Maintenance Requests <Link to="/maintenance" />
+                                </MenuItem>
+                            </SubMenu>
                         </SubMenu>
                     </Menu>
                 </SidebarContent>

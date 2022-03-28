@@ -21,7 +21,9 @@ namespace ERP.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Notification>>> Get()
         {
-            var notifications = await context.Notifications.Where(n => n.IsCleared == false).ToListAsync();
+            List<Notification> notifications = await context.Notifications.Where(n => n.IsCleared == false).ToListAsync();
+
+            notifications = notifications.OrderByDescending(n => n.Date).ToList();
 
             return Ok(notifications);
         }
@@ -31,6 +33,12 @@ namespace ERP.Controllers
         {
             var res = await notificationManager.Clear(notificationId);
             return Ok(res);
+        }
+
+        [HttpGet("now")]
+        public async Task<ActionResult<string>> Now()
+        {
+            return Ok(DateTime.Now.ToString());
         }
     }
 }

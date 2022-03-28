@@ -19,6 +19,10 @@ class Item {
         this.sendRemark = "";
         this.receiveRemark = "";
         this.handRemark = "";
+        this.fixRemark = "";
+        this.reason = "";
+        this.returnRemark = "";
+        this.assetDamageId = "";
 
         this.equipmentModelId = 0;
 

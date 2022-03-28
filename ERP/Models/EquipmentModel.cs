@@ -8,13 +8,14 @@ namespace ERP.Models
         [Key]
         public int EquipmentModelId { get; set; }
 
-        public int EquipmentId { get; set; }
+        public int ItemId { get; set; }
 
         public string Name { get; set; }
 
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Cost { get; set; }
 
+        [ForeignKey("ItemId")]
         public Equipment Equipment { get; set; }
 
         public ICollection<EquipmentAsset> EquipmentAssets { get; set; }

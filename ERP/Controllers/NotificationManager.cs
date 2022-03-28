@@ -17,7 +17,7 @@ namespace ERP.Controllers
         public async Task<bool> Add(string type, int status, int actionId, int siteId, int employeeId)
         {
             //If there are previous notifications for the same transfer/issue/receive
-            Clear(type, actionId);
+            await Clear(type, actionId);
 
             notification = new();
             notification.Type = type;
@@ -25,26 +25,30 @@ namespace ERP.Controllers
             notification.ActionId = actionId;
             notification.SiteId = siteId;
             notification.EmployeeId = employeeId;
-            MakeContent(type, status, actionId);
+            await MakeContent(type, status, actionId);
 
-            await context.Notifications.AddAsync(notification);
+            context.Notifications.Add(notification);
             await context.SaveChangesAsync();
 
             return true;
 
         }
 
-        private async void Clear(string type, int actionId)
+        private async Task Clear(string type, int actionId)
         {
-            var notification = await context.Notifications
+            List<Notification> notifications = await context.Notifications
                 .Where(n => n.Type == type && n.ActionId == actionId)
-                .FirstOrDefaultAsync();
+                .ToListAsync();
 
-            if (notification != null)
+           if (notifications.Count == 0) return;
+
+            foreach (var notification in notifications)
             {
                 notification.IsCleared = true;
-                await context.SaveChangesAsync();
             }
+
+            await context.SaveChangesAsync();
+
         }
 
         public async Task<bool> Clear(int notificationId)
@@ -73,32 +77,32 @@ namespace ERP.Controllers
             return notifications;
         }
 
-        private void MakeContent(string type, int status, int actionId)
+        private async Task MakeContent(string type, int status, int actionId)
         {
             switch (type)
             {
                 case NOTIFICATIONTYPE.TRANSFER:
-                    MakeContentTransfer(status, actionId);
+                    await MakeContentTransfer(status, actionId);
                     break;
 
                 case NOTIFICATIONTYPE.ISSUE:
-                    MakeContentIssue(status, actionId);
+                    await MakeContentIssue(status, actionId);
                     break;
 
                 case NOTIFICATIONTYPE.PURCHASE:
-                    MakeContentPurchase(status, actionId);
+                    await MakeContentPurchase(status, actionId);
                     break;
 
                 case NOTIFICATIONTYPE.BORROW:
-                    MakeContentBorrow(status, actionId);
+                    await MakeContentBorrow(status, actionId);
                     break;
 
                 case NOTIFICATIONTYPE.RECEIVE:
-                    MakeContentReceive(status, actionId);
+                    await MakeContentReceive(status, actionId);
                     break;
 
                 case NOTIFICATIONTYPE.MAINTAINANCE:
-                    MakeContentMaintainance(status, actionId);
+                    await MakeContentMaintainance(status, actionId);
                     break;
 
 
@@ -106,13 +110,13 @@ namespace ERP.Controllers
             }
         }
 
-        private void MakeContentTransfer(int status, int actionId)
+        private async Task MakeContentTransfer(int status, int actionId)
         {
             switch (status)
             {
                 case TRANSFERSTATUS.REQUESTED:
                     notification.Title = "Approve Transfer Request";
-                    notification.Content = $"New Transfer Request With Transfer Number: {actionId}";
+                    notification.Content = $"New Transfer Request With Transfer No: {actionId}";
                     break;
 
                 case TRANSFERSTATUS.DECLINED:
@@ -133,13 +137,13 @@ namespace ERP.Controllers
             }
         }
 
-        private void MakeContentIssue(int status, int actionId)
+        private async Task MakeContentIssue(int status, int actionId)
         {
             switch (status)
             {
                 case ISSUESTATUS.REQUESTED:
                     notification.Title = "Approve Issue";
-                    notification.Content = $"New Issue Request With Issue Number: {actionId}";
+                    notification.Content = $"New Issue Request With Issue No: {actionId}";
                     break;
 
                 case ISSUESTATUS.APPROVED:
@@ -160,13 +164,13 @@ namespace ERP.Controllers
             }
         }
 
-        private void MakeContentPurchase(int status, int actionId)
+        private async Task MakeContentPurchase(int status, int actionId)
         {
             switch (status)
             {
                 case PURCHASESTATUS.REQUESTED:
                     notification.Title = "Approve Purchase Request";
-                    notification.Content = $"New Purchase Request With Request Number: {actionId}";
+                    notification.Content = $"New Purchase Request With Request No: {actionId}";
                     break;
 
                 case PURCHASESTATUS.APPROVED:
@@ -182,30 +186,52 @@ namespace ERP.Controllers
             }
         }
 
-        private void MakeContentReceive(int status, int actionId)
+        private async Task MakeContentReceive(int status, int actionId)
         {
             switch (status)
             {
                 case RECEIVESTATUS.RECEIVED:
                     notification.Title = "Check Received Items";
-                    notification.Content = $"Items of Receive Number {actionId} Has Been Received";
+                    notification.Content = $"Items of Receive No. {actionId} Has Been Received";
                     break;
 
             }
         }
 
-        private void MakeContentBorrow(int status, int actionId)
+        private async Task MakeContentBorrow(int status, int actionId)
         {
+            switch (status)
+            {
+                case BORROWSTATUS.REQUESTED:
+                    notification.Title = "Approve Borrow Request";
+                    notification.Content = $"New Borrow Request With Borrow No: {actionId}";
+                    break;
 
+                case BORROWSTATUS.APPROVED:
+                    notification.Title = "Hand Over Borrow Request Items";
+                    notification.Content = $"Borrow Request {actionId} Has Been Approved";
+                    break;
+
+                case BORROWSTATUS.HANDED:
+                    notification.Title = "Borrowed Items Handed Over";
+                    notification.Content = $"Borrow Request {actionId} Items Has Been Handed Over";
+                    break;
+
+                case BORROWSTATUS.DECLINED:
+                    notification.Title = "Declined Borrow Request";
+                    notification.Content = $"Borrow Request {actionId} Has Been Declined";
+                    break;
+
+            }
         }
 
-        private void MakeContentMaintainance(int status, int actionId)
+        private async Task MakeContentMaintainance(int status, int actionId)
         {
             switch (status)
             {
                 case MAINTENANCESTATUS.REQUESTED:
                     notification.Title = "Approve Maintenance Request";
-                    notification.Content = $"New Maintainance Request With Request Number: {actionId}";
+                    notification.Content = $"New Maintainance Request With Request No: {actionId}";
                     break;
 
                 case MAINTENANCESTATUS.APPROVED:

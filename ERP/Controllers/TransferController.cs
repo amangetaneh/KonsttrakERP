@@ -120,7 +120,7 @@ namespace ERP.Controllers
             context.Transfers.Add(transfer);
             await context.SaveChangesAsync();
 
-            _ = notificationManager.Add(type: NOTIFICATIONTYPE.TRANSFER,
+            await notificationManager.Add(type: NOTIFICATIONTYPE.TRANSFER,
                 status: transfer.Status,
                 actionId: transfer.TransferId,
                 siteId: transfer.SendSiteId,
@@ -165,7 +165,7 @@ namespace ERP.Controllers
             context.Transfers.Add(transfer);
             await context.SaveChangesAsync();
 
-            _ = notificationManager.Add(type: NOTIFICATIONTYPE.TRANSFER,
+            await  notificationManager.Add(type: NOTIFICATIONTYPE.TRANSFER,
                  status: transfer.Status,
                  actionId: transfer.TransferId,
                  siteId: transfer.SendSiteId,
@@ -202,7 +202,7 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
-            _ = notificationManager.Add(type: NOTIFICATIONTYPE.TRANSFER,
+            await notificationManager.Add(type: NOTIFICATIONTYPE.TRANSFER,
                  status: transfer.Status,
                  actionId: transfer.TransferId,
                  siteId: transfer.SendSiteId,
@@ -236,7 +236,7 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
-            _ = notificationManager.Add(type: NOTIFICATIONTYPE.TRANSFER,
+            await notificationManager.Add(type: NOTIFICATIONTYPE.TRANSFER,
                 status: transfer.Status,
                 actionId: transfer.TransferId,
                 siteId: transfer.SendSiteId,
@@ -262,7 +262,8 @@ namespace ERP.Controllers
                 var transferItem = transfer.TransferItems
                     .Where(ti => ti.ItemId == requestItem.ItemId && ti.EquipmentModelId == requestItem.EquipmentModelId)
                     .FirstOrDefault();
-                if (transferItem == null) return NotFound($"Transfer Item with Item Id {requestItem.ItemId} and Model Id {requestItem.EquipmentModelId} Not Found");
+                if (transferItem == null) 
+                    return NotFound($"Transfer Item with Item Id {requestItem.ItemId} and Model Id {requestItem.EquipmentModelId} Not Found");
 
                 transferItem.SendRemark = requestItem.SendRemark;
 
@@ -284,7 +285,7 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
-            _ = notificationManager.Add(type: NOTIFICATIONTYPE.TRANSFER,
+            await notificationManager.Add(type: NOTIFICATIONTYPE.TRANSFER,
                 status: transfer.Status,
                 actionId: transfer.TransferId,
                 siteId: transfer.SendSiteId,
@@ -314,7 +315,7 @@ namespace ERP.Controllers
                 var transferItem = transfer.TransferItems
                     .Where(ti => ti.ItemId == requestItem.ItemId && ti.EquipmentModelId == requestItem.EquipmentModelId)
                     .FirstOrDefault();
-                if (transferItem == null) return NotFound($"Transfer Item with Id {requestItem.ItemId} Not Found");
+                if (transferItem == null) return NotFound($"Transfer Item with Id {requestItem.ItemId} and Model Id {requestItem.EquipmentModelId} Not Found");
 
                 transferItem.ReceiveRemark = requestItem.ReceiveRemark;
             }
