@@ -164,17 +164,17 @@ namespace ERP.Controllers
         {
             switch (status)
             {
-                case PurchaseStatus.Requested:
+                case PURCHASESTATUS.REQUESTED:
                     notification.Title = "Approve Purchase Request";
                     notification.Content = $"New Purchase Request With Request Number: {actionId}";
                     break;
 
-                case PurchaseStatus.Approved:
+                case PURCHASESTATUS.APPROVED:
                     notification.Title = "Check Purchased Items";
                     notification.Content = $"Check Purchase Request {actionId} Items";
                     break;
 
-                case PurchaseStatus.Declined:
+                case PURCHASESTATUS.DECLINED:
                     notification.Title = "Declined Purchase Request";
                     notification.Content = $"Purchase Request {actionId} Has Been Declined";
                     break;
@@ -186,7 +186,7 @@ namespace ERP.Controllers
         {
             switch (status)
             {
-                case ReceiveStatus.Received:
+                case RECEIVESTATUS.RECEIVED:
                     notification.Title = "Check Received Items";
                     notification.Content = $"Items of Receive Number {actionId} Has Been Received";
                     break;

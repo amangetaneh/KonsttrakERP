@@ -21,5 +21,9 @@ namespace ERP.Models
 
         public string Position { get; set; } = string.Empty;
 
+        public Site EmployeeSite { get; set; }
+
+        public int? EmployeeSiteId { get; set; }
+
     }
 }

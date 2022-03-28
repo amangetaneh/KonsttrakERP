@@ -16,7 +16,7 @@
 
         public int QtyRequested { get; set; }
 
-        public string Remark { get; set; } = string.Empty;
+        public string RequestRemark { get; set; } = string.Empty;
 
     }
 }

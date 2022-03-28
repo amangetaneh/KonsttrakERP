@@ -36,18 +36,30 @@
         public const int FIXED = 3;
     }
 
-    public class PurchaseStatus
+    public class PURCHASESTATUS
     {
-        public const int Declined = 0;
-        public const int Requested = 1;
-        public const int Approved = 2;
-        public const int Checked = 3;
+        public const int DECLINED = 0;
+        public const int REQUESTED = 1;
+        public const int CHECKED = 2;
+        public const int APPROVED = 3;
+        public const int PURCHASED = 4;
+        public const int QUEUED = 5;
     }
 
-    public class ReceiveStatus
+    public class BUYSTATUS
     {
-        public const int Received = 0;
-        public const int Approved = 1;
+        public const int DECLINED = 0;
+        public const int REQUESTED = 1;
+        public const int CHECKED = 2;
+        public const int APPROVED = 3;
+        public const int BOUGHT = 4;
+        public const int QUEUED = 5;
+    }
+
+    public class RECEIVESTATUS
+    {
+        public const int RECEIVED = 0;
+        public const int APPROVED = 1;
     }
 
     public class ITEMTYPE

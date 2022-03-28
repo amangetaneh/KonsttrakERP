@@ -11,7 +11,6 @@ namespace ERP.Context
 
         }
 
-
         public DbSet<Material> Materials { get; set; }
 
         public DbSet<Equipment> Equipments { get; set; }
@@ -22,13 +21,17 @@ namespace ERP.Context
 
         public DbSet<Maintenance> Maintenances { get; set; }
 
+        public DbSet<Buy> Buys { get; set; }
+
+        public DbSet<BuyItem> BuyItems { get; set; }
+        
         public DbSet<Purchase> Purchases { get; set; }
 
-        public DbSet<PurchaseItem> PurchasedItems { get; set; }
+        public DbSet<PurchaseItem> PurchaseItems { get; set; }
 
         public DbSet<Receive> Receives { get; set; }
 
-        public DbSet<ReceiveItem> ReceivedItems { get; set; }
+        public DbSet<ReceiveItem> ReceiveItems { get; set; }
 
         public DbSet<Transfer> Transfers { get; set; }
 
@@ -57,7 +60,6 @@ namespace ERP.Context
         public DbSet<Notification> Notifications { get; set; }
 
 
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -77,10 +79,13 @@ namespace ERP.Context
                 .HasKey(o => new { o.IssueId, o.ItemId });
 
             modelBuilder.Entity<PurchaseItem>()
-                .HasKey(o => new { o.PurchaseId, o.ItemId });
+                .HasKey(o => new { o.PurchaseId, o.ItemId, o.BuyId });
 
             modelBuilder.Entity<ReceiveItem>()
                 .HasKey(o => new { o.ReceiveId, o.ItemId });
+
+            modelBuilder.Entity<BuyItem>()
+                .HasKey(o => new { o.BuyId, o.ItemId });
 
             //Transfer
             modelBuilder.Entity<Transfer>()
@@ -162,11 +167,6 @@ namespace ERP.Context
 
             //Purchase
             modelBuilder.Entity<Purchase>()
-                    .HasOne(i => i.RequestStore)
-                    .WithMany()
-                    .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Purchase>()
                    .HasOne(i => i.RequestedBy)
                    .WithMany()
                    .OnDelete(DeleteBehavior.Restrict);
@@ -183,12 +183,12 @@ namespace ERP.Context
                    .OnDelete(DeleteBehavior.Restrict)
                    .IsRequired(false);
 
-            //Receive
-            modelBuilder.Entity<Receive>()
-                   .HasOne(i => i.ReceiveStore)
+            modelBuilder.Entity<Purchase>()
+                   .HasOne(i => i.ReceivingSite)
                    .WithMany()
                    .OnDelete(DeleteBehavior.Restrict);
 
+            //Receive
             modelBuilder.Entity<Receive>()
                    .HasOne(i => i.Purchase)
                    .WithMany()
@@ -197,7 +197,8 @@ namespace ERP.Context
             modelBuilder.Entity<Receive>()
                    .HasOne(i => i.DeliveredBy)
                    .WithMany()
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .IsRequired(false);
 
             modelBuilder.Entity<Receive>()
                    .HasOne(i => i.ReceivedBy)
@@ -206,6 +207,30 @@ namespace ERP.Context
 
             modelBuilder.Entity<Receive>()
                    .HasOne(i => i.ApprovedBy)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .IsRequired(false);
+
+            //Buy
+            modelBuilder.Entity<Buy>()
+                   .HasOne(i => i.RequestedBy)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Buy>()
+                   .HasOne(i => i.CheckedBy)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .IsRequired(false);
+
+            modelBuilder.Entity<Buy>()
+                   .HasOne(i => i.ApprovedBy)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .IsRequired(false);
+
+            modelBuilder.Entity<Buy>()
+                   .HasOne(i => i.Purchase)
                    .WithMany()
                    .OnDelete(DeleteBehavior.Restrict)
                    .IsRequired(false);

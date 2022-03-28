@@ -11,6 +11,8 @@ namespace ERP.Models
 
         public string Location { get; set; } = string.Empty;
 
+        public int? PettyCashLimit { get; set; }
+
         public ICollection<Store> Stores { get; set; }
 
     }

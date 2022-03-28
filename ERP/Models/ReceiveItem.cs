@@ -12,23 +12,17 @@ namespace ERP.Models
         [Key]
         public int ItemId { get; set; }
 
-        public int Qty { get; set; }
+        public int QtyReceived { get; set; }
 
-        [Column(TypeName = "decimal(18, 2)")]
-        public decimal Cost { get; set; }
+        public string ReceiveRemark { get; set; }
 
-        [Column(TypeName = "decimal(18, 2)")]
-        public decimal TotalCost => (Qty * Cost);
-
-        public string? Remark { get; set; }
+        public string? ApproveRemark { get; set; }
 
         [JsonIgnore]
-
         [ForeignKey("ReceiveId")]
         public Receive Receive { get; set; }
 
         [ForeignKey("ItemId")]
         public Item Item { get; set; }
-
     }
 }

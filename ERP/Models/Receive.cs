@@ -9,40 +9,26 @@ namespace ERP.Models
         [Key]
         public int ReceiveId { get; set; }
 
-        public int Status { get; set; } = 0;
-        /*Status Values: 
-           0: Received
-           1: Approved
-       */
+        public int Status { get; set; } = RECEIVESTATUS.RECEIVED;
 
-        [Column(TypeName = "Date")]
         public DateTime ReceiveDate { get; set; } = DateTime.Now;
-
-        [JsonIgnore]
-        public Store ReceiveStore { get; set; }
-
-        public int ReceiveStoreId { get; set; }
 
         public string DeliveredFrom { get; set; }
 
-        [JsonIgnore]
         public Purchase Purchase { get; set; }
 
         public int PurchaseId { get; set; }
 
-        [JsonIgnore]
         public Employee DeliveredBy { get; set; }
 
-        public int DeliveredById { get; set; }
+        public int? DeliveredById { get; set; }
 
-        [JsonIgnore]
         public Employee ReceivedBy { get; set; }
 
         public int ReceivedById { get; set; }
 
         public DateTime? ApproveDate { get; set; }
 
-        [JsonIgnore]
         public Employee ApprovedBy { get; set; }
 
         public int? ApprovedById { get; set; }
