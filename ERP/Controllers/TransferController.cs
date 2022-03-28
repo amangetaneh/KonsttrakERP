@@ -1,6 +1,8 @@
 ﻿using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
+using ERP.Services.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TransferItem = ERP.Models.TransferItem;
@@ -10,20 +12,36 @@ namespace ERP.Controllers
 
     [Route("/api/[controller]")]
     [ApiController]
+    //comment out the line below to disable the authorization
+    [Authorize(Roles = "Employee")]
     public class TransferController : Controller
     {
         private readonly DataContext context;
         private readonly NotificationManager notificationManager;
 
-        public TransferController(DataContext context, NotificationManager notificationManager)
+        private readonly IUserService _userService;
+
+        public UserAccount? UserAccount { get; }
+
+        public TransferController(DataContext context, IUserService userService, NotificationManager notificationManager)
         {
             this.context = context;
             this.notificationManager = notificationManager;
+
+            _userService = userService;
+
+            UserAccount = context.UserAccounts
+                .Where(u => u.Username == _userService.GetMyName())
+                .Include(u => u.UserRole)
+                .Include(u => u.Employee)
+                .FirstOrDefault();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Transfer>> Get(int id)
         {
+            //if (UserAccount != null && UserAccount.UserRole.CanViewTransfer != 1) return Forbid();
+
             var transfer = context.Transfers.Where(transfer => transfer.TransferId == id)
                 .Include(transfer => transfer.SendSite)
                 .Include(transfer => transfer.ReceiveSite)

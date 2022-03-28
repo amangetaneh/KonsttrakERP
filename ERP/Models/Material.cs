@@ -9,6 +9,7 @@ namespace ERP.Models
     {
         [Key]
         public int ItemId { get; set; }
+        
         [JsonIgnore]
         [ForeignKey("ItemId")]
         public Item Item { get; set; }
