@@ -13,8 +13,6 @@ namespace ERP.Models
 
         public DateTime ReceiveDate { get; set; } = DateTime.Now;
 
-        public string DeliveredFrom { get; set; }
-
         public Purchase Purchase { get; set; }
 
         public int PurchaseId { get; set; }
@@ -32,6 +30,8 @@ namespace ERP.Models
         public Employee ApprovedBy { get; set; }
 
         public int? ApprovedById { get; set; }
+
+        public string? ApproveRemark { get; set; }
 
         public ICollection<ReceiveItem> ReceiveItems { get; set; }
     }

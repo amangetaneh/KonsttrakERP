@@ -4,6 +4,7 @@
     {
         public const string TRANSFER = "transferNotification";
         public const string ISSUE = "issueNotification";
+        public const string Buy = "buyNotification";
         public const string PURCHASE = "purchaseNotification";
         public const string BORROW = "borrowNotification";
         public const string RECEIVE = "receiveNotification";
@@ -67,8 +68,8 @@
 
     public class RECEIVESTATUS
     {
-        public const int RECEIVED = 0;
-        public const int APPROVED = 1;
+        public const int RECEIVED = 1;
+        public const int APPROVED = 2;
     }
 
     public class ITEMTYPE

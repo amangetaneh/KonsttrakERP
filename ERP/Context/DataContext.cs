@@ -96,7 +96,7 @@ namespace ERP.Context
                 .HasKey(o => new { o.IssueId, o.ItemId });
 
             modelBuilder.Entity<PurchaseItem>()
-                .HasKey(o => new { o.PurchaseId, o.ItemId, o.BuyId });
+                .HasKey(o => new { o.PurchaseId, o.ItemId, o.RequestedById });
 
             modelBuilder.Entity<ReceiveItem>()
                 .HasKey(o => new { o.ReceiveId, o.ItemId });
@@ -143,8 +143,6 @@ namespace ERP.Context
                     .WithMany()
                     .OnDelete(DeleteBehavior.Restrict)
                     .IsRequired(false);
-
-
 
             //Maintenance
             modelBuilder.Entity<Maintenance>()

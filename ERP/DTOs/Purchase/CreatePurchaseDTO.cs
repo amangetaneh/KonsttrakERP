@@ -2,9 +2,7 @@
 {
     public class CreatePurchaseDTO
     {
-        public int RequestStoreId { get; set; }
-
-        public int RequestedById { get; set; }
+        public int ReceivingSiteId { get; set; }
 
         public ICollection<CreatePurchaseItem> PurchaseItems { get; set; }
 

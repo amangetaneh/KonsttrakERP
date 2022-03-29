@@ -4,7 +4,7 @@
     {
         public int ReceieveId { get; set; }
 
-        public int ApprovedById { get; set; }
+        public string ApproveRemark { get; set; }
 
     }
 

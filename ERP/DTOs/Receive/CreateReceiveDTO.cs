@@ -6,8 +6,12 @@
 
         public int DeliveredById { get; set; }
 
-        public string DeliveredFrom { get; set; }
+        public ICollection<CreateReceiveItem> ReceiveItems { get; set; }
 
+    }
+
+    public class CreateReceiveItem
+    {
         public int ItemId { get; set; }
 
         public int QtyReceived { get; set; }

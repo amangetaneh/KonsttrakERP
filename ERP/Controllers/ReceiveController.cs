@@ -12,8 +12,7 @@ namespace ERP.Controllers
 
     [Route("/api/[controller]")]
     [ApiController]
-    //Uncomment the line below to enable authorization
-    //[Authorize(Roles = "Employee")]
+    [Authorize(Roles = "Employee")]
     public class ReceiveController : Controller
     {
         private readonly DataContext context;
@@ -48,7 +47,7 @@ namespace ERP.Controllers
             return Ok(receives);
         }
 
-        [HttpPost("receive")]
+        [HttpPost]
         public async Task<ActionResult<List<Receive>>> Post(CreateReceiveDTO receiveDTO)
         {
             var purchase = context.Purchases.Where(purchase => purchase.PurchaseId == receiveDTO.PurchaseId)
@@ -59,55 +58,56 @@ namespace ERP.Controllers
               .ThenInclude(purchaseItem => purchaseItem.Item.Equipment)
               .FirstOrDefault();
 
-            var purchaseItem = context.PurchaseItems
-                .Where(pItem => pItem.PurchaseId == receiveDTO.PurchaseId && pItem.ItemId == receiveDTO.ItemId);
-
             if (purchase == null) return NotFound("Purchase Not Found.");
+
+            if (purchase.Status != PURCHASESTATUS.PURCHASED) return BadRequest("Items are not purchased.");
 
             Receive receive = new();
             receive.PurchaseId = purchase.PurchaseId;
             receive.DeliveredById = receiveDTO.DeliveredById;
-            receive.DeliveredFrom = receiveDTO.DeliveredFrom;
             receive.ReceivedById = Employee.EmployeeId;
+
+            ICollection<ReceiveItem> receiveItems = new List<ReceiveItem>();
+
+            foreach (var requestItem in receiveDTO.ReceiveItems)
+            {
+                ReceiveItem receiveItem = new();
+                receiveItem.ItemId = requestItem.ItemId;
+                receiveItem.QtyReceived = requestItem.QtyReceived;
+                receiveItem.ReceiveRemark = requestItem.ReceiveRemark;
+
+                receiveItems.Add(receiveItem);
+            }
+
+            receive.ReceiveItems = receiveItems;
+            receive.Status = RECEIVESTATUS.RECEIVED;
 
             context.Receives.Add(receive);
 
+            var buy = context.Buys.Where(buy => buy.PurchaseId == purchase.PurchaseId && buy.Status == 5)
+                            .Include(buy => buy.BuyItems)
+                            .FirstOrDefault();
+
+            if (buy != null) buy.Status = BUYSTATUS.BOUGHT;
+
+            //Notify employees who requested the purchase here
+
             await context.SaveChangesAsync();
-
-            ReceiveItem receiveItem = new();
-            receiveItem.ReceiveId = receive.ReceiveId;
-            receiveItem.ItemId = receiveDTO.ItemId;
-            receiveItem.QtyReceived = receiveDTO.QtyReceived;
-            receiveItem.ReceiveRemark = receiveDTO.ReceiveRemark;
-
-
-            //if (itemTemp == null) return NotFound($"Item with Id {requestItem.ItemId} Not Found");
-
-            //if (itemTemp.Type == ITEMTYPE.MATERIAL)
-               // receiveItem.Cost = itemTemp.Material.Cost;
-
-            //else
-            //////////////////////////////////////////////////////
-
-            //receiveItems.Add(receiveItem);
-            
-
-            //receive.ReceiveItems = receiveItems;
-
-            
+                        
             return Ok(receive);
         }
 
         [HttpPost("approve")]
-        public async Task<ActionResult<Receive>> Approve(ApproveReceiveDTO request)
+        public async Task<ActionResult<Receive>> Approve(ApproveReceiveDTO approveDTO)
         {
-            var receive = await context.Receives.FindAsync(request.ReceieveId);
+            var receive = await context.Receives.FindAsync(approveDTO.ReceieveId);
 
             if (receive == null) return NotFound("Request Not Found.");
 
             receive.ApproveDate = DateTime.Now;
-            receive.ApprovedById = request.ApprovedById;
+            receive.ApprovedById = Employee.EmployeeId;
             receive.Status = RECEIVESTATUS.APPROVED;
+            receive.ApproveRemark = approveDTO.ApproveRemark;
 
             await context.SaveChangesAsync();
 

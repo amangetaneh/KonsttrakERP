@@ -141,7 +141,10 @@ namespace ERP.Controllers
 
             var purchase = context.Purchases
                .Where(purchase => purchase.Status == PURCHASESTATUS.QUEUED && purchase.ReceivingSiteId == Employee.EmployeeSiteId)
+               .Include(purchase => purchase.PurchaseItems)
                .FirstOrDefault();
+
+            ICollection<PurchaseItem>? purchaseItems;
 
             if (purchase == null)
             {
@@ -151,35 +154,56 @@ namespace ERP.Controllers
                     RequestedById = Employee.EmployeeId,
                     ReceivingSiteId = (int)Employee.EmployeeSiteId
                 };
-            }
 
-            ICollection<PurchaseItem> purchaseItems = new List<PurchaseItem>();
+                purchaseItems = new List<PurchaseItem>();
+            }
+            else
+            {
+                purchaseItems = purchase.PurchaseItems;
+            }
 
             foreach (var buyItem in buy.BuyItems)
             {
-                PurchaseItem purchaseItem = new();
-                purchaseItem.ItemId = buyItem.ItemId;
-                purchaseItem.BuyId = buy.BuyId;
-                purchaseItem.QtyRequested = buyItem.QtyRequested;
-                purchaseItem.RequestRemark = buyItem.RequestRemark;
+                var purchaseItem = purchase.PurchaseItems
+                    .Where(purchaseItem => purchaseItem.PurchaseId == purchase.PurchaseId && purchaseItem.ItemId == buyItem.ItemId && purchaseItem.RequestedById == buy.RequestedById)
+                    .FirstOrDefault();
 
-                var itemTemp = context.Items.Where(item => item.ItemId == buyItem.ItemId).
-                    Include(i => i.Equipment).
-                    Include(i => i.Material).
-                    FirstOrDefault();
-
-                if (itemTemp == null) return NotFound($"Item with Id {buyItem.ItemId} Not Found");
-
-                if (itemTemp.Type == ITEMTYPE.MATERIAL)
+                if (purchaseItem != null)
                 {
-                    purchaseItem.Cost = itemTemp.Material.Cost;
-                    purchaseItem.TotalCost = itemTemp.Material.Cost * purchaseItem.QtyRequested;
+                    purchaseItem.QtyRequested += buyItem.QtyRequested;
                 }
+                else
+                {
+                    purchaseItem = new PurchaseItem
+                    {
+                        ItemId = buyItem.ItemId,
+                        RequestedById = buy.RequestedById,
+                        QtyRequested = buyItem.QtyRequested,
+                        RequestRemark = buyItem.RequestRemark
+                    };
 
-                purchaseItems.Add(purchaseItem);
+                    var itemTemp = context.Items.Where(item => item.ItemId == buyItem.ItemId).
+                        Include(i => i.Equipment).
+                        Include(i => i.Material).
+                        FirstOrDefault();
 
-                purchase.TotalPurchaseCost += purchaseItem.TotalCost;
+                    if (itemTemp == null) return NotFound($"Item with Id {buyItem.ItemId} Not Found");
+
+                    if (itemTemp.Type == ITEMTYPE.MATERIAL)
+                    {
+                        purchaseItem.Cost = itemTemp.Material.Cost;
+                    }
+                }
+                purchaseItem.TotalCost = purchaseItem.Cost * purchaseItem.QtyRequested;
+
+                if (purchaseItem.QtyRequested == buyItem.QtyRequested)
+                {
+                    purchaseItems.Add(purchaseItem);
+
+                }
             }
+
+            purchase.PurchaseItems = purchaseItems;
 
             buy.CheckDate = DateTime.Now;
             buy.CheckedById = Employee.EmployeeId;
@@ -188,6 +212,12 @@ namespace ERP.Controllers
             if (purchase.PurchaseId == 0)
             {
                 context.Purchases.Add(purchase);
+            }
+
+            purchase.TotalPurchaseCost = 0;
+            foreach (var purchaseItem in purchase.PurchaseItems)
+            {
+                purchase.TotalPurchaseCost += purchaseItem.TotalCost;
             }
 
             await context.SaveChangesAsync();

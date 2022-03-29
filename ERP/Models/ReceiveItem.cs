@@ -16,8 +16,6 @@ namespace ERP.Models
 
         public string ReceiveRemark { get; set; }
 
-        public string? ApproveRemark { get; set; }
-
         [JsonIgnore]
         [ForeignKey("ReceiveId")]
         public Receive Receive { get; set; }

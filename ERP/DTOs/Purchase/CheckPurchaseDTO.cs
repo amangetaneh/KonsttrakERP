@@ -4,9 +4,6 @@
     {
         public int PurchaseId { get; set; }
 
-        public int CheckedById { get; set; }
-
-
     }
 
 }

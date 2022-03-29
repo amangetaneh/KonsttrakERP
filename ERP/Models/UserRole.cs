@@ -17,6 +17,14 @@ namespace ERP.Models
         
         public int CanViewPurchase { get; set; } = 0;
 
+        public int CanRequestBuy { get; set; } = 0;
+
+        public int CanApproveBuy { get; set; } = 0;
+
+        public int CanCheckBuy { get; set; } = 0;
+
+        public int CanViewBuy { get; set; } = 0;
+
         public int CanRecieve { get; set; } = 0;
 
         public int CanCheckRecieve { get; set; } = 0;
@@ -38,6 +46,8 @@ namespace ERP.Models
         public int CanHandBorrow { get; set; } = 0;
         
         public int CanViewBorrow { get; set; } = 0;
+
+        public int CanReturnBorrow { get; set; } = 0;
 
         public int CanRequestEquipmentTransfer { get; set; } = 0;
 

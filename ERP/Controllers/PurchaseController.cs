@@ -1,5 +1,6 @@
 ﻿using ERP.Context;
 using ERP.DTOs;
+using ERP.DTOs.Purchase;
 using ERP.Models;
 using ERP.Services.User;
 using Microsoft.AspNetCore.Authorization;
@@ -75,7 +76,8 @@ namespace ERP.Controllers
             if (UserAccount != null && UserAccount.UserRole.CanRequestPurchase != 1) return Forbid();
 
             Purchase purchase = new();
-            purchase.RequestedById = purchaseDTO.RequestedById;
+            purchase.RequestedById = Employee.EmployeeId;
+            purchase.ReceivingSiteId = purchaseDTO.ReceivingSiteId;
 
             ICollection<PurchaseItem> purchaseItems = new List<PurchaseItem>();
 
@@ -83,8 +85,9 @@ namespace ERP.Controllers
             {
                 PurchaseItem purchaseItem = new();
                 purchaseItem.ItemId = requestItem.ItemId;
+                purchaseItem.RequestedById = Employee.EmployeeId;
                 purchaseItem.QtyRequested = requestItem.QtyRequested;
-                //purchaseItem.PurchaseRemark = requestItem.PurchaseRemark;
+                purchaseItem.RequestRemark = requestItem.RequestRemark;
 
                 var itemTemp = context.Items.Where(item => item.ItemId == requestItem.ItemId).
                     Include(i => i.Equipment).
@@ -100,39 +103,52 @@ namespace ERP.Controllers
                 }
                
                 purchaseItems.Add(purchaseItem);
+
+                purchase.TotalPurchaseCost += purchaseItem.TotalCost;
             }
 
             purchase.PurchaseItems = purchaseItems;
 
             context.Purchases.Add(purchase);
+
             await context.SaveChangesAsync();
 
             return Ok(purchase);
         }
 
         [HttpPost("approve")]
-        public async Task<ActionResult<Purchase>> Approve(ApprovePurchaseDTO request)
+        public async Task<ActionResult<Purchase>> Approve(ApprovePurchaseDTO approveDTO)
         {
             if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
 
             var purchase = context.Purchases
-                 .Where(t => t.PurchaseId == request.PurchaseId)
+                 .Where(t => t.PurchaseId == approveDTO.PurchaseId)
                  .Include(t => t.PurchaseItems)
                  .FirstOrDefault();
             if (purchase == null) return NotFound("Request Not Found.");
 
             purchase.ApproveDate = DateTime.Now;
-            purchase.ApprovedById = request.ApprovedById;
+            purchase.ApprovedById = Employee.EmployeeId;
 
-            foreach (var requestItem in request.PurchaseItems)
+            foreach (var requestItem in approveDTO.PurchaseItems)
             {
-                var purchaseItem = purchase.PurchaseItems.Where(tItem => tItem.ItemId == requestItem.ItemId).FirstOrDefault();
+                var purchaseItem = purchase.PurchaseItems
+                    .Where(purchaseItem => purchaseItem.ItemId == requestItem.ItemId)
+                    .FirstOrDefault();
 
                 if (purchaseItem == null) return NotFound($"Purchase Item with Id {requestItem.ItemId} Not Found");
 
                 purchaseItem.QtyApproved = requestItem.QtyApproved;
-
                 purchaseItem.TotalCost = purchaseItem.Cost * purchaseItem.QtyApproved;
+                purchaseItem.ApproveRemark = requestItem.ApproveRemark;
+
+            }
+
+            purchase.TotalPurchaseCost = 0;
+            
+            foreach (var purchaseItem in purchase.PurchaseItems)
+            {
+                purchase.TotalPurchaseCost += purchaseItem.TotalCost;
             }
 
             purchase.Status = PURCHASESTATUS.APPROVED;
@@ -143,16 +159,16 @@ namespace ERP.Controllers
         }
 
         [HttpPost("check")]
-        public async Task<ActionResult<Purchase>> Check(CheckPurchaseDTO request)
+        public async Task<ActionResult<Purchase>> Check(CheckPurchaseDTO checkDTO)
         {
             if (UserAccount != null && UserAccount.UserRole.CanCheckPurchase != 1) return Forbid();
 
-            var purchase = await context.Purchases.FindAsync(request.PurchaseId);
+            var purchase = await context.Purchases.FindAsync(checkDTO.PurchaseId);
 
             if (purchase == null) return NotFound("Request Not Found.");
 
             purchase.CheckDate = DateTime.Now;
-            purchase.CheckedById = request.CheckedById;
+            purchase.CheckedById = Employee.EmployeeId;
             purchase.Status = PURCHASESTATUS.CHECKED;
 
             await context.SaveChangesAsync();
@@ -161,19 +177,20 @@ namespace ERP.Controllers
         }
 
         [HttpPost("decline")]
-        public async Task<ActionResult<Purchase>> Decline(ApprovePurchaseDTO request)
+        public async Task<ActionResult<Purchase>> Decline(ApprovePurchaseDTO approveDTO)
         {
             if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
 
             var purchase = context.Purchases
-                  .Where(t => t.PurchaseId == request.PurchaseId)
+                  .Where(t => t.PurchaseId == approveDTO.PurchaseId)
                   .Include(t => t.PurchaseItems)
                   .FirstOrDefault();
 
             if (purchase == null) return NotFound("Purchase Not Found.");
 
             purchase.ApproveDate = DateTime.Now;
-            purchase.ApprovedById = request.ApprovedById;
+            purchase.ApprovedById = Employee.EmployeeId;
+            purchase.TotalPurchaseCost = 0;
 
             foreach (var purchaseItem in purchase.PurchaseItems)
             {
@@ -182,7 +199,47 @@ namespace ERP.Controllers
                 purchaseItem.TotalCost = 0;
             }
 
-            purchase.Status = TRANSFERSTATUS.DECLINED;
+            purchase.Status = PURCHASESTATUS.DECLINED;
+
+            await context.SaveChangesAsync();
+
+            return Ok(purchase);
+        }
+
+        [HttpPost("confirm")]
+        public async Task<ActionResult<Purchase>> Confirm(ConfirmPurchaseDTO confirmDTO)
+        {
+            if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
+
+            var purchase = context.Purchases
+                 .Where(t => t.PurchaseId == confirmDTO.PurchaseId)
+                 .Include(t => t.PurchaseItems)
+                 .FirstOrDefault();
+
+            if (purchase == null) return NotFound("Request Not Found.");
+
+            foreach (var requestItem in confirmDTO.PurchaseItems)
+            {
+                var purchaseItem = purchase.PurchaseItems
+                    .Where(purchaseItem => purchaseItem.ItemId == requestItem.ItemId)
+                    .FirstOrDefault();
+
+                if (purchaseItem == null) return NotFound($"Purchase Item with Id {requestItem.ItemId} Not Found");
+
+                purchaseItem.QtyPurchased = requestItem.QtyPurchased;
+                purchaseItem.PurchaseRemark = requestItem.PurchaseRemark;
+                purchaseItem.TotalCost = purchaseItem.Cost * purchaseItem.QtyPurchased;
+
+                
+            }
+
+            purchase.TotalPurchaseCost = 0;
+            foreach (var purchaseItem in purchase.PurchaseItems)
+            {
+                purchase.TotalPurchaseCost += purchaseItem.TotalCost;
+            }
+
+            purchase.Status = PURCHASESTATUS.PURCHASED;
 
             await context.SaveChangesAsync();
 
