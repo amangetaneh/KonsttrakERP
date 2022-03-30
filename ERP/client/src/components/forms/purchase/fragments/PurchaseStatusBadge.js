@@ -1,8 +1,8 @@
 import { Badge } from "react-bootstrap";
-import { PurchaseStatus } from "../../../../Constants";
+import { PURCHASESTATUS } from "../../../../Constants";
 
 function PurchaseStatusBadge(status) {
-    const color = ["danger", "info", "success", "primary"];
+    const color = ["danger", "warning", "secondary", "primary", "success", "info"];
 
     return (
         <Badge
@@ -10,7 +10,7 @@ function PurchaseStatusBadge(status) {
             bg={color[status]}
             style={{ width: "90px", fontSize: "14px" }}
         >
-            {PurchaseStatus[status]}
+            {PURCHASESTATUS[status]}
         </Badge>
     );
 }

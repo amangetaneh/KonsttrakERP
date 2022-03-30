@@ -41,17 +41,15 @@ function Sidebar() {
 
                         <SubMenu title="Inventory" icon={<FaList className="fs-5" />}>
                             <SubMenu
-                                title="Stock"
-                                                            ></SubMenu>
+                                title="Stock">
+                            </SubMenu>
                             <SubMenu
-                                title="Purchase"
-                               
-                            >
+                                title="Purchase">
                                 <MenuItem>
-                                    Purchase an Item <Link to="/purchase/new" />
+                                    New Purchase <Link to="/purchase/material" />
                                 </MenuItem>
                                 <MenuItem>
-                                    List Purchase Requests <Link to="/purchase/list" />
+                                    Purchase Requests <Link to="/purchase" />
                                 </MenuItem>
                             </SubMenu>
                             <SubMenu

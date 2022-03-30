@@ -47,7 +47,7 @@ namespace ERP.Controllers
             return Ok(receives);
         }
 
-        [HttpPost]
+        [HttpPost("request")]
         public async Task<ActionResult<List<Receive>>> Post(CreateReceiveDTO receiveDTO)
         {
             var purchase = context.Purchases.Where(purchase => purchase.PurchaseId == receiveDTO.PurchaseId)

@@ -64,20 +64,41 @@ export const BORROWSTATUS = {
     3: "Handed",
 };
 
-export const PurchaseStatus = {
-    Declined: 0,
-    Requested: 1,
-    Approved: 2,
-    Checked: 3,
+export const PURCHASESTATUS = {
+    DECLINED: 0,
+    QUEUED: 1,
+    REQUESTED: 2,
+    CHECKED: 3,
+    APPROVED: 4,
+    PURCHASED: 5,
+    
     0: "Declined",
-    1: "Requested",
-    2: "Approved",
+    1: "Queued",
+    2: "Requested",
     3: "Checked",
+    4: "Approved",
+    5: "Purchased",
 };
 
-export const ReceiveStatus = {
-    Received: 0,
-    Approved: 1,
+export const BUYSTATUS = {
+    DECLINED: 0,
+    REQUESTED: 1,
+    QUEUED: 2,
+    CHECKED: 3,
+    APPROVED: 4,
+    BOUGHT: 5,
+    0: "Declined",
+    1: "Requested",
+    2: "Queued",
+    3: "Checked",
+    4: "Approved",
+    5: "Bought",
+    
+};
+
+export const RECEIVESTATUS = {
+    RECEIVED: 1,
+    APPROVED: 2,
     0: "Received",
     1: "Approved",
 };
