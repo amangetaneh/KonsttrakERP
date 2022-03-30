@@ -42,7 +42,7 @@ namespace ERP.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Purchase>> Get(int id)
         {
-            if (UserAccount != null && UserAccount.UserRole.CanViewPurchase != 1) return Forbid();
+            //if (UserAccount != null && UserAccount.UserRole.CanViewPurchase != 1) return Forbid();
 
             var purchase = context.Purchases.Where(purchase => purchase.PurchaseId == id)
                .Include(purchase => purchase.RequestedBy)
@@ -63,17 +63,17 @@ namespace ERP.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Purchase>>> Get()
         {
-            if (UserAccount != null && UserAccount.UserRole.CanViewPurchase != 1) return Forbid();
+            //if (UserAccount != null && UserAccount.UserRole.CanViewPurchase != 1) return Forbid();
 
             var purchases = await context.Purchases.ToListAsync();
 
             return Ok(purchases);
         }
 
-        [HttpPost]
+        [HttpPost("request")]
         public async Task<ActionResult<List<Purchase>>> Post(CreatePurchaseDTO purchaseDTO)
         {
-            if (UserAccount != null && UserAccount.UserRole.CanRequestPurchase != 1) return Forbid();
+            //if (UserAccount != null && UserAccount.UserRole.CanRequestPurchase != 1) return Forbid();
 
             Purchase purchase = new();
             purchase.RequestedById = Employee.EmployeeId;
@@ -119,7 +119,7 @@ namespace ERP.Controllers
         [HttpPost("approve")]
         public async Task<ActionResult<Purchase>> Approve(ApprovePurchaseDTO approveDTO)
         {
-            if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
+            //if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
 
             var purchase = context.Purchases
                  .Where(t => t.PurchaseId == approveDTO.PurchaseId)
@@ -161,7 +161,7 @@ namespace ERP.Controllers
         [HttpPost("check")]
         public async Task<ActionResult<Purchase>> Check(CheckPurchaseDTO checkDTO)
         {
-            if (UserAccount != null && UserAccount.UserRole.CanCheckPurchase != 1) return Forbid();
+            //if (UserAccount != null && UserAccount.UserRole.CanCheckPurchase != 1) return Forbid();
 
             var purchase = await context.Purchases.FindAsync(checkDTO.PurchaseId);
 
@@ -179,7 +179,7 @@ namespace ERP.Controllers
         [HttpPost("decline")]
         public async Task<ActionResult<Purchase>> Decline(ApprovePurchaseDTO approveDTO)
         {
-            if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
+            //if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
 
             var purchase = context.Purchases
                   .Where(t => t.PurchaseId == approveDTO.PurchaseId)
@@ -209,7 +209,7 @@ namespace ERP.Controllers
         [HttpPost("confirm")]
         public async Task<ActionResult<Purchase>> Confirm(ConfirmPurchaseDTO confirmDTO)
         {
-            if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
+            //if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
 
             var purchase = context.Purchases
                  .Where(t => t.PurchaseId == confirmDTO.PurchaseId)

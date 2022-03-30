@@ -1,5 +1,5 @@
 import { Badge } from "react-bootstrap";
-import { ReceiveStatus } from "../../../../Constants";
+import { RECEIVESTATUS } from "../../../../Constants";
 
 function ReceiveStatusBadge(status) {
     const color = ["danger", "info", "success", "primary"];
@@ -10,7 +10,7 @@ function ReceiveStatusBadge(status) {
             bg={color[status]}
             style={{ width: "90px", fontSize: "14px" }}
         >
-            {ReceiveStatus[status]}
+            {RECEIVESTATUS[status]}
         </Badge>
     );
 }

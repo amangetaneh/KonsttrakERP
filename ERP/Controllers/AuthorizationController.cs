@@ -40,7 +40,7 @@ namespace ERP.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<Employee>> Register(RegisterUserDTO registerDTO)
+        public async Task<ActionResult<UserAccount>> Register(RegisterUserDTO registerDTO)
         {
             
             Employee employee = new();
@@ -48,6 +48,7 @@ namespace ERP.Controllers
             employee.MName = registerDTO.MName;
             employee.LName = registerDTO.LName;
             employee.Position = registerDTO.Position;
+            employee.EmployeeSiteId = registerDTO.EmployeeSiteId;
             employee.Status = 0;
 
             context.Employees.Add(employee);
@@ -58,7 +59,7 @@ namespace ERP.Controllers
 
             CreatePasswordHash(registerDTO.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-            userAccount.Username = registerDTO.Username;
+            userAccount.Username = registerDTO.FName + employee.EmployeeId;
             userAccount.UserRoleId = registerDTO.UserRoleId;
             userAccount.PasswordHash = passwordHash;
             userAccount.PasswordSalt = passwordSalt;
@@ -68,7 +69,7 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
-            return Ok(employee);
+            return Ok(userAccount);
         }
 
         [HttpPost("approve")]
@@ -92,7 +93,7 @@ namespace ERP.Controllers
         }
         
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(LoginUserDTO loginDTO)
+        public async Task<ActionResult<object>> Login(LoginUserDTO loginDTO)
         {
             var userAccount = context.UserAccounts.Where(u => u.Username == loginDTO.Username)
                 .Include(u => u.Employee)
@@ -111,7 +112,14 @@ namespace ERP.Controllers
 
             string token = CreateToken(userAccount, employee);
 
-            return Ok(token);
+            List<object> result = new List<object>();
+
+            result.Add(token);
+            result.Add(employee);
+            result.Add(userRole);
+            result.Add(userAccount.Username);
+
+            return Ok(result);
         }
 
         private string CreateToken(UserAccount userAccount, Employee employee)
@@ -140,7 +148,6 @@ namespace ERP.Controllers
 
             return jwt;
         }
-
 
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {

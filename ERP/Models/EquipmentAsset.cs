@@ -19,6 +19,5 @@ namespace ERP.Models
 
         public Site CurrentSite { get; set; }
 
-
     }
 }

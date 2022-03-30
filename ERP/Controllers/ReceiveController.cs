@@ -12,7 +12,7 @@ namespace ERP.Controllers
 
     [Route("/api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Employee")]
+    //[Authorize(Roles = "Employee")]
     public class ReceiveController : Controller
     {
         private readonly DataContext context;
@@ -47,7 +47,7 @@ namespace ERP.Controllers
             return Ok(receives);
         }
 
-        [HttpPost]
+        [HttpPost("request")]
         public async Task<ActionResult<List<Receive>>> Post(CreateReceiveDTO receiveDTO)
         {
             var purchase = context.Purchases.Where(purchase => purchase.PurchaseId == receiveDTO.PurchaseId)

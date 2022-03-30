@@ -66,7 +66,7 @@ namespace ERP.Controllers
             return Ok(buys);
         }
 
-        [HttpPost]
+        [HttpPost("request")]
         public async Task<ActionResult<List<Buy>>> Post(CreateBuyDTO buyDTO)
         {
             //if (UserAccount != null && UserAccount.UserRole.CanRequestBuy != 1) return Forbid();
