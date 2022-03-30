@@ -25,6 +25,7 @@ import NewMaintenance from "./components/forms/maintenance/NewMaintenance";
 import ListReturns from "./components/forms/return/ListReturns";
 import NewReturn from "./components/forms/return/NewReturn";
 import SingleReturn from "./components/forms/return/SingleReturn";
+import TransferReport from "./components/forms/report/TransferReport";
 
 export default class App extends Component {
     static displayName = App.name;
@@ -34,7 +35,7 @@ export default class App extends Component {
             <ContextProviders>
                 <Router>
                     <div
-                        className="row m-0"
+                        className="row m-0 flex-nowrap"
                         style={{
                             minHeight: "100vh",
                             maxWidth: "100vw",
@@ -46,6 +47,8 @@ export default class App extends Component {
                         </div>
                         <div className="col p-0">
                             <Routes>
+                                <Route path="report/transfer" element={<TransferReport />} />
+
                                 <Route path="issue" element={<ListIssues />} />
                                 <Route path="issue/:id" element={<SingleIssue />} />
                                 <Route path="issue/new" element={<NewIssue />} />

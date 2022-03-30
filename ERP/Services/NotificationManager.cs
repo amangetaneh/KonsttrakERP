@@ -105,6 +105,10 @@ namespace ERP.Controllers
                     await MakeContentMaintainance(status, actionId);
                     break;
 
+                case NOTIFICATIONTYPE.RETURN:
+                    await MakeContentReturn(status, actionId);
+                    break;
+
 
 
             }
@@ -250,6 +254,12 @@ namespace ERP.Controllers
                     break;
 
             }
+        }
+
+        private async Task MakeContentReturn(int status, int actionId)
+        {
+            notification.Title = "Borrowed Items Returned";
+            notification.Content = $"Borrowed Equipments Are Returned With Return No: {actionId}";
         }
     }
 }
