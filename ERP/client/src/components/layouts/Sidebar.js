@@ -46,10 +46,10 @@ function Sidebar() {
                             <SubMenu
                                 title="Purchase">
                                 <MenuItem>
-                                    Purchase an Item <Link to="/purchase/material" />
+                                    New Purchase <Link to="/purchase/material" />
                                 </MenuItem>
                                 <MenuItem>
-                                    List Purchase Requests <Link to="/purchase/list" />
+                                    Purchase Requests <Link to="/purchase" />
                                 </MenuItem>
                             </SubMenu>
                             <SubMenu

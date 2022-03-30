@@ -10,7 +10,7 @@ import { fetchPurchases } from "../../../api/purchase";
 import ConnectionError from "../../fragments/ConnectionError";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 
-function ListPurchases({ title, type }) {
+function ListPurchases() {
     const [purchases, setPurchases] = useState([]);
 
     var { data, isLoading, isError } = useQuery("purchases", fetchPurchases);
@@ -83,7 +83,7 @@ function ListPurchases({ title, type }) {
 
     return (
         <>
-            <Header title={title} />
+            <Header title="Purchases" />
 
             <Container className="my-3">
                 <Table columns={columns} data={purchases} />
@@ -91,11 +91,5 @@ function ListPurchases({ title, type }) {
         </>
     );
 }
-/*
-ListPurchases.propTypes = {
-    title: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-};
-*/
 
 export default ListPurchases;

@@ -56,7 +56,7 @@ namespace ERP.Controllers
 
         }
 
-        [HttpGet("getmaterials")]
+        [HttpGet("material")]
         public async Task<ActionResult<List<Item>>> GetMaterial()
         {
             var items = await context.Items.Where(item => item.Type == ITEMTYPE.MATERIAL)
@@ -65,7 +65,7 @@ namespace ERP.Controllers
             return Ok(items);
         }
 
-        [HttpGet("getequipments")]
+        [HttpGet("equipment")]
         public async Task<ActionResult<List<Item>>> GetEquipment()
         {
             var items = await context.Items.Where(item => item.Type == ITEMTYPE.EQUIPMENT)
@@ -74,7 +74,7 @@ namespace ERP.Controllers
             return Ok(items);
         }
 
-        [HttpPost("material")]
+        [HttpPost("material/add")]
         public async Task<ActionResult<List<Item>>> CreateMaterialItem(CreateMaterialItemDTO materialItemDTO)
         {
             Item item = new();
@@ -98,7 +98,7 @@ namespace ERP.Controllers
             return Ok(item);
         }
 
-        [HttpPost("equipment")]
+        [HttpPost("equipment/add")]
         public async Task<ActionResult<List<Item>>> CreateEquipmentItem(CreateEquipmentItemDTO equipmentItemDTO)
         {
             Item item = new();

@@ -6,6 +6,8 @@ import api from '../../../api/api'
 import { loginAction } from '../../../redux/auth'
 import {ToastContainer,toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
+import axios from "axios";
+
 
 const Login = () => {
     const token=useSelector(state=>state.auth.token)
@@ -41,9 +43,11 @@ const Login = () => {
         }
      try{
         const res = await api.post('Authorization/login',value)
-       dispatch(loginAction(res.data))
-       localStorage.setItem("token",res.data)
-     console.log("rrrrrrrrrrrr",res)
+        dispatch(loginAction(res.data[0]))
+        localStorage.setItem("token",res.data[0])
+        console.log("loged in","bearer " + res.data[0])
+        //axios.defaults.headers.common["Authorization"] = "bearer " + res.data[0]
+
      }catch(err){
         
      }
