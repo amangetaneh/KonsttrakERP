@@ -48,6 +48,7 @@ namespace ERP.Controllers
                .Include(purchase => purchase.RequestedBy)
                .Include(purchase => purchase.CheckedBy)
                .Include(purchase => purchase.ApprovedBy)
+               .Include(purchase => purchase.ReceivingSite)
                .Include(purchase => purchase.PurchaseItems)
                .ThenInclude(purchaseItem => purchaseItem.Item)
                .ThenInclude(item => item.Material)
@@ -65,7 +66,9 @@ namespace ERP.Controllers
         {
             //if (UserAccount != null && UserAccount.UserRole.CanViewPurchase != 1) return Forbid();
 
-            var purchases = await context.Purchases.ToListAsync();
+            var purchases = await context.Purchases
+                .Include(purchase => purchase.ReceivingSite)
+                .ToListAsync();
 
             return Ok(purchases);
         }
@@ -113,7 +116,7 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
-            return Ok(purchase);
+            return Ok(purchase.PurchaseId);
         }
 
         [HttpPost("approve")]

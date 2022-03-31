@@ -47,23 +47,52 @@ namespace ERP.Controllers
             return Ok(receives);
         }
 
-        [HttpPost("request")]
-        public async Task<ActionResult<List<Receive>>> Post(CreateReceiveDTO receiveDTO)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Receive>> Get(int id)
         {
-            var purchase = context.Purchases.Where(purchase => purchase.PurchaseId == receiveDTO.PurchaseId)
+            //if (UserAccount != null && UserAccount.UserRole.CanViewPurchase != 1) return Forbid();
+
+            var receive = context.Receives.Where(receive => receive.ReceiveId == id)
+               .Include(receive => receive.ReceivedBy)
+               .Include(receive => receive.ApprovedBy)
+               .Include(receive => receive.DeliveredBy)
+               .Include(receive => receive.ReceiveItems)
+               .ThenInclude(receiveItem => receiveItem.Item)
+               .ThenInclude(item => item.Material)
+               .Include(receive => receive.ReceiveItems)
+               .ThenInclude(receiveItem => receiveItem.Item.Equipment)
+               .FirstOrDefault();
+
+            if (receive == null) return NotFound("Receive Not Found.");
+
+            return Ok(receive);
+        }
+
+        [HttpGet("purchase")]
+        public async Task<ActionResult<List<Purchase>>> GetPurchase()
+        {
+            //if (UserAccount != null && UserAccount.UserRole.CanViewPurchase != 1) return Forbid();
+
+            var purchases = await context.Purchases
+              .Where(purchase => purchase.ReceivingSiteId == Employee.EmployeeSiteId && purchase.Status == PURCHASESTATUS.PURCHASED)
               .Include(purchase => purchase.PurchaseItems)
               .ThenInclude(purchaseItem => purchaseItem.Item)
               .ThenInclude(item => item.Material)
               .Include(purchase => purchase.PurchaseItems)
               .ThenInclude(purchaseItem => purchaseItem.Item.Equipment)
-              .FirstOrDefault();
+              .ToListAsync();
 
-            if (purchase == null) return NotFound("Purchase Not Found.");
+            if (purchases == null) return NotFound("Not Found.");
 
-            if (purchase.Status != PURCHASESTATUS.PURCHASED) return BadRequest("Items are not purchased.");
+            return Ok(purchases);
+        }
 
+        [HttpPost("request")]
+        public async Task<ActionResult<List<Receive>>> Post(CreateReceiveDTO receiveDTO)
+        {
+            
             Receive receive = new();
-            receive.PurchaseId = purchase.PurchaseId;
+            receive.PurchaseId = receiveDTO.PurchaseId;
             receive.DeliveredById = receiveDTO.DeliveredById;
             receive.ReceivedById = Employee.EmployeeId;
 
@@ -84,7 +113,7 @@ namespace ERP.Controllers
 
             context.Receives.Add(receive);
 
-            var buy = context.Buys.Where(buy => buy.PurchaseId == purchase.PurchaseId && buy.Status == 5)
+            var buy = context.Buys.Where(buy => buy.PurchaseId == receiveDTO.PurchaseId && buy.Status == 5)
                             .Include(buy => buy.BuyItems)
                             .FirstOrDefault();
 
@@ -94,7 +123,7 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
                         
-            return Ok(receive);
+            return Ok(receive.ReceiveId);
         }
 
         [HttpPost("approve")]

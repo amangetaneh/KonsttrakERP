@@ -13,7 +13,7 @@ namespace ERP.Controllers
     [Route("/api/[controller]")]
     [ApiController]
     //comment out the line below to disable the authorization
-    //[Authorize(Roles = "Employee")]
+    [Authorize(Roles = "Employee")]
     public class TransferController : Controller
     {
         private readonly DataContext context;
@@ -80,8 +80,8 @@ namespace ERP.Controllers
         public async Task<ActionResult<List<Transfer>>> GetByParams(GetTransfersDTO getTransfersDTO)
         {
 
-            var transfers = await context.Transfers.
-                Where()
+            var transfers = await context.Transfers
+
                 .Include(transfer => transfer.SendSite)
                 .Include(transfer => transfer.ReceiveSite)
                 .ToListAsync();

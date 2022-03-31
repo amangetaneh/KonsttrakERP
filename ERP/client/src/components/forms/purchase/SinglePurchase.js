@@ -6,6 +6,8 @@ import Header from "../../layouts/Header";
 import PurchaseStatusBadge from "./fragments/PurchaseStatusBadge";
 import { ITEMTYPE, PURCHASESTATUS } from "../../../Constants";
 import ApprovePurchase from "./ApprovePurchase";
+import ConfirmPurchase from "./ConfirmPurchase";
+import CheckPurchase from "./CheckPurchase";
 import ViewPurchase from "./ViewPurchase";
 import DeclinedPurchase from "./DeclinedPurchase";
 import { useQuery } from "react-query";
@@ -44,16 +46,16 @@ function SinglePurchase() {
                 itemObj.approveRemark = purchaseItem.approveRemark;
             }
 
+            if (
+                query.data.status >= PURCHASESTATUS.PURCHASED
+            ) {
+                itemObj.qtyPurchased = purchaseItem.qtyPurchased;
+                itemObj.purchaseRemark = purchaseItem.purchaseRemark;
+            }
+
             if (purchaseItem.item.type === ITEMTYPE.MATERIAL) {
                 itemObj.spec = purchaseItem.item.material.spec;
                 itemObj.units = [purchaseItem.item.material.unit];
-            }
-
-            if (purchaseItem.item.type === ITEMTYPE.EQUIPMENT) {
-                itemObj.description = purchaseItem.item.equipment.description;
-                itemObj.units = [purchaseItem.item.equipment.unit];
-                itemObj.equipmentModelId = purchaseItem.equipmentModelId;
-                itemObj.equipmentAssets = purchaseItem.transferEquipmentAssets;
             }
 
             items.push(itemObj);
@@ -114,7 +116,7 @@ function SinglePurchase() {
                 />
 
                 <FormRow
-                    labelL="Sending Site"
+                    labelL="Receiving Site"
                     valueL={purchase.receivingSite.name}
                 />
 
@@ -143,6 +145,24 @@ function SinglePurchase() {
                     </>
                 )}
                 {purchase.status >= PURCHASESTATUS.APPROVED && (
+                    <>
+                        <FormRow
+                            labelL="Approved By"
+                            valueL={
+                                purchase.approvedBy
+                                    ? `${purchase.approvedBy.fName} ${purchase.approvedBy.mName}`
+                                    : ""
+                            }
+                            labelR="Approved On"
+                            valueR={
+                                purchase.approveDate
+                                    ? new Date(purchase.approveDate).toLocaleString()
+                                    : ""
+                            }
+                        />
+                    </>
+                )}
+                {purchase.status >= PURCHASESTATUS.PURCHASED && (
                     <>
                         <FormRow
                             labelL="Approved By"
@@ -195,7 +215,23 @@ function SinglePurchase() {
                     )}
 
                     {purchase.status === PURCHASESTATUS.REQUESTED && (
+                        <CheckPurchase
+                            addedItems={addedItems}
+                            setAddedItems={setAddedItems}
+                            purchase={purchase}
+                        />
+                    )}
+
+                    {purchase.status === PURCHASESTATUS.CHECKED && (
                         <ApprovePurchase
+                            addedItems={addedItems}
+                            setAddedItems={setAddedItems}
+                            purchase={purchase}
+                        />
+                    )}
+
+                    {purchase.status === PURCHASESTATUS.APPROVED && (
+                        <ConfirmPurchase
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}
                             purchase={purchase}

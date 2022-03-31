@@ -12,7 +12,6 @@ import axios from "axios";
 const Login = () => {
     const token=useSelector(state=>state.auth.token)
     const storUsername=useSelector(state=>state.auth.username)
-
     const dispatch = useDispatch()
     console.log(token)
     const [value,setValue] = useState({
@@ -40,18 +39,24 @@ const Login = () => {
         }
         else if(!value.password){
           toast.error("Please provide your password",toastOption)
-        }
-     try{
-        const res = await api.post('Authorization/login',value)
-        dispatch(loginAction(res.data[0]))
-        localStorage.setItem("token",res.data[0])
-        console.log("loged in","bearer " + res.data[0])
-        //axios.defaults.headers.common["Authorization"] = "bearer " + res.data[0]
+        }else{
+          try{
+            const res = await api.post('Authorization/login',value)
+            dispatch(loginAction(res.data[0]))
+            dispatch(loginAction(res.data))
 
-     }catch(err){
-        
-     }
-    }
+            localStorage.setItem("token",res.data[0])
+           localStorage.setItem("data",JSON.stringify(res.data))
+            //axios.defaults.headers.common["Authorization"] = "bearer " + res.data[0]
+    
+         }catch(err){
+           console.log(err)
+            toast.error("incorrect username or password",toastOption)
+          
+         }
+        }
+        }
+     
   return (
     <div className="loginAndRegistration" >
       {storUsername && <div style={{maxWidth:"600px",margin:"auto"}} >
