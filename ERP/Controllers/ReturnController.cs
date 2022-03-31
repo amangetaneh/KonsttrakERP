@@ -1,6 +1,7 @@
 ﻿using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
+using ERP.Services.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,11 +14,26 @@ namespace ERP.Controllers
     {
         private readonly DataContext context;
         private readonly NotificationManager notificationManager;
+        private readonly IUserService _userService;
 
-        public ReturnController(DataContext context, NotificationManager notificationManager)
+        public UserAccount? UserAccount { get; }
+
+        public Employee Employee { get; }
+
+        public ReturnController(DataContext context, NotificationManager notificationManager, IUserService userService)
         {
             this.context = context;
             this.notificationManager = notificationManager;
+
+            _userService = userService;
+
+            UserAccount = context.UserAccounts
+                .Where(u => u.Username == _userService.GetMyName())
+                .Include(u => u.UserRole)
+                .Include(u => u.Employee)
+                .FirstOrDefault();
+
+            Employee = UserAccount.Employee;
         }
 
         [HttpGet("{id}")]
@@ -82,7 +98,7 @@ namespace ERP.Controllers
             }
 
             Return borrowReturn = new();
-            borrowReturn.ReturnedById = returnDTO.ReturnedById;
+            borrowReturn.ReturnedById = Employee.EmployeeId;
             borrowReturn.SiteId = returnDTO.SiteId;
 
             borrowReturn.ReturnEquipmentAssets = equipmentAssets;

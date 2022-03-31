@@ -1,6 +1,7 @@
 ﻿using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
+using ERP.Services.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,11 +14,26 @@ namespace ERP.Controllers
     {
         private readonly DataContext context;
         private readonly NotificationManager notificationManager;
+        private readonly IUserService _userService;
 
-        public MaintenanceController(DataContext context, NotificationManager notificationManager)
+        public UserAccount? UserAccount { get; }
+
+        public Employee Employee { get; }
+
+        public MaintenanceController(DataContext context, NotificationManager notificationManager, IUserService userService)
         {
             this.context = context;
             this.notificationManager = notificationManager;
+
+            _userService = userService;
+
+            UserAccount = context.UserAccounts
+                .Where(u => u.Username == _userService.GetMyName())
+                .Include(u => u.UserRole)
+                .Include(u => u.Employee)
+                .FirstOrDefault();
+
+            Employee = UserAccount.Employee;
         }
 
         [HttpGet("{id}")]
@@ -53,7 +69,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<List<Maintenance>>> Post(CreateMaintenanceDTO maintenanceDTO)
         {
             Maintenance maintenance = new();
-            maintenance.RequestedById = maintenanceDTO.RequestedById;
+            maintenance.RequestedById = Employee.EmployeeId;
             maintenance.SiteId = maintenanceDTO.SiteId;
             maintenance.Reason = maintenanceDTO.Reason;
 
@@ -109,7 +125,7 @@ namespace ERP.Controllers
             if (maintenance == null) return NotFound("Maintenance Request Not Found.");
 
             maintenance.ApproveDate = DateTime.Now;
-            maintenance.ApprovedById = approveDTO.ApprovedById;
+            maintenance.ApprovedById = Employee.EmployeeId;
             maintenance.ApproveRemark = approveDTO.ApproveRemark;
 
             maintenance.Status = MAINTENANCESTATUS.APPROVED;
@@ -134,7 +150,7 @@ namespace ERP.Controllers
             if (maintenance == null) return NotFound("Maintenance Request Not Found.");
 
             maintenance.ApproveDate = DateTime.Now;
-            maintenance.ApprovedById = declineDTO.ApprovedById;
+            maintenance.ApprovedById = Employee.EmployeeId;
             maintenance.ApproveRemark = declineDTO.ApproveRemark;
 
             maintenance.Status = MAINTENANCESTATUS.DECLINED;
@@ -160,7 +176,7 @@ namespace ERP.Controllers
 
 
             maintenance.FixDate = DateTime.Now;
-            maintenance.FixedById = fixDTO.FixedById;
+            maintenance.FixedById = Employee.EmployeeId;
             maintenance.FixRemark = fixDTO.FixRemark;
 
             maintenance.Status = MAINTENANCESTATUS.FIXED;

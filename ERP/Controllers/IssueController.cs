@@ -1,6 +1,7 @@
 ﻿using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
+using ERP.Services.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,11 +14,26 @@ namespace ERP.Controllers
     {
         private readonly DataContext context;
         private readonly NotificationManager notificationManager;
+        private readonly IUserService _userService;
 
-        public IssueController(DataContext context, NotificationManager notificationManager)
+        public UserAccount? UserAccount { get; }
+
+        public Employee Employee { get; }
+
+        public IssueController(DataContext context, NotificationManager notificationManager, IUserService userService)
         {
             this.context = context;
             this.notificationManager = notificationManager;
+
+            _userService = userService;
+
+            UserAccount = context.UserAccounts
+                .Where(u => u.Username == _userService.GetMyName())
+                .Include(u => u.UserRole)
+                .Include(u => u.Employee)
+                .FirstOrDefault();
+
+            Employee = UserAccount.Employee;
         }
 
         [HttpGet("{id}")]
@@ -55,7 +71,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<List<Issue>>> Post(CreateIssueDTO issueDTO)
         {
             Issue issue = new();
-            issue.RequestedById = issueDTO.RequestedById;
+            issue.RequestedById = Employee.EmployeeId;
             issue.SiteId = issueDTO.SiteId;
 
             ICollection<IssueItem> issueItems = new List<IssueItem>();
@@ -109,7 +125,7 @@ namespace ERP.Controllers
             if (issue == null) return NotFound("Issue Not Found.");
 
             issue.ApproveDate = DateTime.Now;
-            issue.ApprovedById = approveDTO.ApprovedById;
+            issue.ApprovedById = Employee.EmployeeId;
 
             foreach (var requestItem in approveDTO.IssueItems)
             {
@@ -146,7 +162,7 @@ namespace ERP.Controllers
             if (issue == null) return NotFound("Issue Not Found.");
 
             issue.ApproveDate = DateTime.Now;
-            issue.ApprovedById = declineDTO.ApprovedById;
+            issue.ApprovedById = Employee.EmployeeId;
 
             foreach (var requestItem in declineDTO.IssueItems)
             {
@@ -179,7 +195,7 @@ namespace ERP.Controllers
             if (issue == null) return NotFound("Issue Not Found.");
 
             issue.HandDate = DateTime.Now;
-            issue.HandedById = handDTO.HandedById;
+            issue.HandedById = Employee.EmployeeId;
 
             foreach (var requestItem in handDTO.IssueItems)
             {

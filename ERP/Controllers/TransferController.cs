@@ -23,6 +23,8 @@ namespace ERP.Controllers
 
         public UserAccount? UserAccount { get; }
 
+        public Employee Employee { get; }
+
         public TransferController(DataContext context, IUserService userService, NotificationManager notificationManager)
         {
             this.context = context;
@@ -35,6 +37,8 @@ namespace ERP.Controllers
                 .Include(u => u.UserRole)
                 .Include(u => u.Employee)
                 .FirstOrDefault();
+
+            Employee = UserAccount.Employee;
         }
 
         [HttpGet("{id}")]
@@ -95,7 +99,7 @@ namespace ERP.Controllers
             Transfer transfer = new();
             transfer.SendSiteId = transferDTO.SendSiteId;
             transfer.ReceiveSiteId = transferDTO.ReceiveSiteId;
-            transfer.RequestedById = transferDTO.RequestedById;
+            transfer.RequestedById = Employee.EmployeeId;
 
             ICollection<TransferItem> transferItems = new List<TransferItem>();
 
@@ -148,7 +152,7 @@ namespace ERP.Controllers
             Transfer transfer = new();
             transfer.SendSiteId = transferDTO.SendSiteId;
             transfer.ReceiveSiteId = transferDTO.ReceiveSiteId;
-            transfer.RequestedById = transferDTO.RequestedById;
+            transfer.RequestedById = Employee.EmployeeId;
 
             ICollection<TransferItem> transferItems = new List<TransferItem>();
 
@@ -197,7 +201,7 @@ namespace ERP.Controllers
             if (transfer == null) return NotFound("Transfer Not Found.");
 
             transfer.ApproveDate = DateTime.Now;
-            transfer.ApprovedById = approveDTO.ApprovedById;
+            transfer.ApprovedById = Employee.EmployeeId;
 
             foreach (var requestItem in approveDTO.TransferItems)
             {
@@ -233,7 +237,7 @@ namespace ERP.Controllers
             if (transfer == null) return NotFound("Transfer Not Found.");
 
             transfer.ApproveDate = DateTime.Now;
-            transfer.ApprovedById = declineDTO.ApprovedById;
+            transfer.ApprovedById = Employee.EmployeeId;
 
             foreach (var requestItem in declineDTO.TransferItems)
             {
@@ -268,7 +272,7 @@ namespace ERP.Controllers
             if (transfer == null) return NotFound("Transfer Not Found.");
 
             transfer.SendDate = DateTime.Now;
-            transfer.SentById = sendDTO.SentById;
+            transfer.SentById = Employee.EmployeeId;
 
             foreach (var requestItem in sendDTO.TransferItems)
             {
@@ -318,7 +322,7 @@ namespace ERP.Controllers
             if (transfer == null) return NotFound("Transfer Not Found.");
 
             transfer.ReceiveDate = DateTime.Now;
-            transfer.ReceivedById = receiveDTO.ReceivedById;
+            transfer.ReceivedById = Employee.EmployeeId;
             transfer.DeliveredById = receiveDTO.DeliveredById;
             transfer.VehiclePlateNo = receiveDTO.VehiclePlateNo;
 

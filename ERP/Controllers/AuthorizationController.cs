@@ -22,6 +22,9 @@ namespace ERP.Controllers
         private readonly IConfiguration _configuration;
         private readonly IUserService _userService;
 
+        public UserAccount? UserAccount { get; }
+        public Employee Employee { get; }
+
         public AuthorizationController(DataContext context, IConfiguration configuration, IUserService userService)
         {
             //classes
@@ -30,6 +33,14 @@ namespace ERP.Controllers
             //interfaces
             _configuration = configuration;
             _userService = userService;
+
+            UserAccount = context.UserAccounts
+                .Where(u => u.Username == _userService.GetMyName())
+                .Include(u => u.UserRole)
+                .Include(u => u.Employee)
+                .FirstOrDefault();
+
+            Employee = UserAccount.Employee;
         }
 
         [HttpGet, Authorize]

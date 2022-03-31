@@ -1,6 +1,7 @@
 ﻿using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
+using ERP.Services.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,11 +14,26 @@ namespace ERP.Controllers
     {
         private readonly DataContext context;
         private readonly NotificationManager notificationManager;
+        private readonly IUserService _userService;
 
-        public BorrowController(DataContext context, NotificationManager notificationManager)
+        public UserAccount? UserAccount { get; }
+
+        public Employee Employee { get; }
+
+        public BorrowController(DataContext context, NotificationManager notificationManager, IUserService userService)
         {
             this.context = context;
             this.notificationManager = notificationManager;
+
+            _userService = userService;
+
+            UserAccount = context.UserAccounts
+                .Where(u => u.Username == _userService.GetMyName())
+                .Include(u => u.UserRole)
+                .Include(u => u.Employee)
+                .FirstOrDefault();
+
+            Employee = UserAccount.Employee;
         }
 
         [HttpGet("{id}")]
@@ -56,7 +72,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<int>> Post(CreateBorrowDTO borrowDTO)
         {
             Borrow borrow = new();
-            borrow.RequestedById = borrowDTO.RequestedById;
+            borrow.RequestedById = Employee.EmployeeId;
             borrow.SiteId = borrowDTO.SiteId;
 
             ICollection<BorrowItem> borrowItems = new List<BorrowItem>();
@@ -113,7 +129,7 @@ namespace ERP.Controllers
             if (borrow == null) return NotFound("Borrow Not Found.");
 
             borrow.ApproveDate = DateTime.Now;
-            borrow.ApprovedById = approveDTO.ApprovedById;
+            borrow.ApprovedById = Employee.EmployeeId;
 
             foreach (var requestItem in approveDTO.BorrowItems)
             {
@@ -150,7 +166,7 @@ namespace ERP.Controllers
             if (borrow == null) return NotFound("Borrow Not Found.");
 
             borrow.ApproveDate = DateTime.Now;
-            borrow.ApprovedById = declineDTO.ApprovedById;
+            borrow.ApprovedById = Employee.EmployeeId;
 
             foreach (var requestItem in declineDTO.BorrowItems)
             {
@@ -187,7 +203,7 @@ namespace ERP.Controllers
             if (borrow == null) return NotFound("Borrow Not Found.");
 
             borrow.HandDate = DateTime.Now;
-            borrow.HandedById = handDTO.HandedById;
+            borrow.HandedById = Employee.EmployeeId;
 
             foreach (var requestItem in handDTO.BorrowItems)
             {
