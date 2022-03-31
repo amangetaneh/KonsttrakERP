@@ -1,10 +1,10 @@
 import api from "./api";
 
 export const fetchPurchases = () =>
-    api.get("/receive").then((res) => res.data);
+    api.get("/purchase").then((res) => res.data);
 
 export const fetchPurchase = (id) =>
-    api.get(`/receive/${id}`).then((res) => res.data);
+    api.get(`/purchase/${id}`).then((res) => res.data);
 
 export const requestPurchase = (data) => api.post("/purchase/request", data);
 

@@ -10,9 +10,18 @@ import {
 } from "react-pro-sidebar";
 import "react-pro-sidebar/dist/css/styles.css";
 import { FaHome, FaList, FaBars, FaUser } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { loginAction } from '../../redux/auth'
+
 
 function Sidebar() {
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const username=useSelector(state=>state.auth.data[3])
+    const userRole=useSelector(state=>state.auth.data[2])
+
+
     const [collapsed, setCollapsed] = useState(false);
     
 
@@ -46,18 +55,21 @@ function Sidebar() {
                             <SubMenu
                                 title="Purchase">
                                 <MenuItem>
-                                    New Purchase <Link to="/purchase/material" />
+                                    Purchase an Item <Link to="/purchase/material" />
                                 </MenuItem>
-                                <MenuItem>
+                                {
+                                    userRole.canRequestPurchase===1 &&
+                                    <MenuItem>
                                     Purchase Requests <Link to="/purchase" />
                                 </MenuItem>
+                                }
                             </SubMenu>
                             <SubMenu
                                 title="Receive"
                                
                             >
                                 <MenuItem>
-                                    Receive an Item <Link to="/receive/new" />
+                                    Receive an Item <Link to="/receive/material" />
                                 </MenuItem>
                                 <MenuItem>
                                     List Received Items <Link to="/receive/list" />
@@ -130,9 +142,13 @@ function Sidebar() {
                 </SidebarContent>
                 <SidebarFooter>
                     <Menu subMenuBullets={true}>
-                        <SubMenu title="User Name" icon={<FaUser className="fs-5" />}>
+                        <SubMenu title={username} icon={<FaUser className="fs-5" />}>
                             <MenuItem>Manage Account</MenuItem>
-                            <MenuItem>Logout</MenuItem>
+                            <MenuItem onClick={()=>{
+                                localStorage.removeItem('token')
+                                dispatch(loginAction(""))
+                                navigate('/login')
+                            }} >Logout</MenuItem>
                         </SubMenu>
                     </Menu>
                 </SidebarFooter>

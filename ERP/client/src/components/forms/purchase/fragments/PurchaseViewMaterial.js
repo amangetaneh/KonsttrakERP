@@ -110,6 +110,33 @@ function PurchaseViewMaterial({ addedItems, index }) {
                             </Form.Group>
                         </div>
                     </div>
+                    <div className="row">
+                        <div className="col">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Quantity Purchased</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="qtySent"
+                                    value={addedItems[index].qtyPurchased}
+                                    readOnly
+                                />
+                            </Form.Group>
+                        </div>
+                        <div className="col">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Purchased Total Cost</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="total"
+                                    readOnly
+                                    value={
+                                        addedItems[index].qtyPurchased *
+                                        addedItems[index].cost
+                                    }
+                                />
+                            </Form.Group>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -131,6 +158,17 @@ function PurchaseViewMaterial({ addedItems, index }) {
                             type="text"
                             name="approveRemark"
                             value={addedItems[index].approveRemark}
+                            readOnly
+                        />
+                    </Form.Group>
+                </div>
+                <div className="col">
+                    <Form.Group className="mb-3">
+                        <Form.Label>Purchase Remark</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="purchaseRemark"
+                            value={addedItems[index].purchaseRemark}
                             readOnly
                         />
                     </Form.Group>

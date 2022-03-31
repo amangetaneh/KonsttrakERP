@@ -5,13 +5,15 @@ import ContextProviders from "./contexts/ContextProviders";
 import Sidebar from "./components/layouts/Sidebar";
 import MaterialTransfer from "./components/forms/transfer/MaterialTransfer";
 import MaterialPurchase from "./components/forms/purchase/MaterialPurchase";
+import MaterialReceive from "./components/forms/receive/MaterialReceive";
 import EquipmentTransfer from "./components/forms/transfer/EquipmentTransfer";
 import ListTransfers from "./components/forms/transfer/ListTransfers";
 //import PurchaseNewItem from "./components/forms/purchase/PurchaseNewItem";
 import ListPurchases from "./components/forms/purchase/ListPurchases";
 import SingleTransfer from "./components/forms/transfer/SingleTransfer";
 import SinglePurchase from "./components/forms/purchase/SinglePurchase";
-import ReceiveNewItem from "./components/forms/receive/ReceiveNewItem";
+import SingleReceive from "./components/forms/receive/SingleReceive";
+//import ReceiveNewItem from "./components/forms/receive/ReceiveNewItem";
 import ListReceives from "./components/forms/receive/ListReceives";
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
@@ -29,7 +31,7 @@ import NewReturn from "./components/forms/return/NewReturn";
 import SingleReturn from "./components/forms/return/SingleReturn";
 import SignUp from './components/forms/authorization/RegistrationForm'
 import { useDispatch, useSelector } from "react-redux";
-import { loginAction } from "./redux/auth";
+import { loginAction,setData } from "./redux/auth";
 import Login from "./components/forms/authorization/Login";
 
 const App=()=>  {
@@ -37,6 +39,8 @@ const App=()=>  {
     const dispatch = useDispatch()
     useEffect(()=>{
          dispatch(loginAction(localStorage.getItem('token')))
+         dispatch(setData(JSON.parse(localStorage.getItem('data'))))
+
      },[])   
     return (
             <ContextProviders>
@@ -84,8 +88,9 @@ const App=()=>  {
                              <Route path="purchase/:id" element={<SinglePurchase />} />
                              <Route path="purchase/material" element={<MaterialPurchase />} />
 
-                             <Route path="receive/new" element={<ReceiveNewItem />} />
-                             <Route path="receive/list" element={<ListReceives />} />
+                             <Route path="receive" element={<ListReceives />} />
+                             <Route path="receive/:id" element={<SingleReceive />} />
+                             <Route path="receive/material" element={<MaterialReceive />} />
                          </Routes>
                      </div>
                  </div>:

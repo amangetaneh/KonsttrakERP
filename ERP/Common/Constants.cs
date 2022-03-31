@@ -49,21 +49,21 @@
     public class PURCHASESTATUS
     {
         public const int DECLINED = 0;
-        public const int REQUESTED = 1;
-        public const int CHECKED = 2;
-        public const int APPROVED = 3;
-        public const int PURCHASED = 4;
-        public const int QUEUED = 5;
+        public const int QUEUED = 1;
+        public const int REQUESTED = 2;
+        public const int CHECKED = 3;
+        public const int APPROVED = 4;
+        public const int PURCHASED = 5;
     }
 
     public class BUYSTATUS
     {
         public const int DECLINED = 0;
         public const int REQUESTED = 1;
-        public const int CHECKED = 2;
-        public const int APPROVED = 3;
-        public const int BOUGHT = 4;
-        public const int QUEUED = 5;
+        public const int QUEUED = 2;
+        public const int CHECKED = 3;
+        public const int APPROVED = 4;
+        public const int BOUGHT = 5;
     }
 
     public class RECEIVESTATUS
