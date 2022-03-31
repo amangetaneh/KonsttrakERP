@@ -31,7 +31,7 @@ namespace ERP.Controllers
             transferDTO.SetDates(); // parse request data to set what date is given
             transferDTO.SetEmployees();
 
-            var transfers = await context.Transfers
+            var transfers = context.Transfers
                 .Where(transfer =>
                 //dates
                 (transferDTO.RequestDateFrom == null || transfer.RequestDate >= transferDTO.RequestDateFrom) &&
@@ -57,18 +57,70 @@ namespace ERP.Controllers
                 //item type
                 (transferDTO.ItemType == -1 || transfer.TransferItems.Any(ti => ti.Item.Type == transferDTO.ItemType)) &&
                 //equipment category
-                (transferDTO.ItemType != ITEMTYPE.EQUIPMENT || transfer.TransferItems.Any(ti => ti.Item.Equipment.EquipmentCategoryId == transferDTO.EquipmentCategoryId))
+                (transferDTO.ItemType != ITEMTYPE.EQUIPMENT || transfer.TransferItems.Any(ti => ti.Item.Equipment.EquipmentCategoryId == transferDTO.EquipmentCategoryId)) &&
+                //item
+                (transferDTO.ItemId == -1 || transfer.TransferItems.Any(ti => ti.ItemId == transferDTO.ItemId))
                 )
                 .Include(transfer => transfer.SendSite)
                 .Include(transfer => transfer.ReceiveSite)
                 .Include(transfer => transfer.RequestedBy)
                 .Include(transfer => transfer.SentBy)
                 .Include(transfer => transfer.ReceivedBy)
-                .Include(transfer => transfer.ApprovedBy)
-                .ToListAsync();
+                .Include(transfer => transfer.ApprovedBy);
+
+            IQueryable? summary = null;
+
+            if (transferDTO.GroupBy == TRANSFERREPORTGROUPBY.STATUS)
+               summary  = transfers.GroupBy(transfer => transfer.Status)
+                    .Select(s => new { key = s.Key, count = s.Count(), value = s.Single().Status });
+
+            else if (transferDTO.GroupBy == TRANSFERREPORTGROUPBY.REQUESTDATE)
+                summary = transfers.GroupBy(transfer => transfer.RequestDate.Date)
+                     .Select(s => new { key = s.Key, count = s.Count(), value = s.Single().RequestDate});
+
+            else if (transferDTO.GroupBy == TRANSFERREPORTGROUPBY.APPROVEDATE)
+                summary = transfers.GroupBy(transfer => transfer.ApproveDate == null ? DateTime.MinValue.Date : transfer.ApproveDate.Value.Date)
+                     .Select(s => new { key = s.Key, count = s.Count(), value = s.Single().ApproveDate });
+
+            else if (transferDTO.GroupBy == TRANSFERREPORTGROUPBY.SENDDATE)
+                summary = transfers.GroupBy(transfer => transfer.SendDate == null ? DateTime.MinValue.Date : transfer.SendDate.Value.Date)
+                     .Select(s => new { key = s.Key, count = s.Count(), value = s.Single().SendDate });
+
+            else if (transferDTO.GroupBy == TRANSFERREPORTGROUPBY.RECEIVEDATE)
+                summary = transfers.GroupBy(transfer => transfer.ReceiveDate == null ? DateTime.MinValue.Date : transfer.ReceiveDate.Value.Date)
+                     .Select(s => new { key = s.Key, count = s.Count(), value = s.Single().ReceiveDate });
+
+            else if (transferDTO.GroupBy == TRANSFERREPORTGROUPBY.REQUESTEDBY)
+                summary = transfers.GroupBy(transfer => transfer.RequestedById)
+                     .Select(s => new { key = s.Key, count = s.Count(), value = s.Single().RequestedBy });
+
+            else if (transferDTO.GroupBy == TRANSFERREPORTGROUPBY.APPROVEDBY)
+                summary = transfers.GroupBy(transfer => transfer.ApprovedById == null ? 0 : transfer.ApprovedById)
+                     .Select(s => new { key = s.Key, count = s.Count(), value = s.Single().ApprovedBy });
+
+            else if (transferDTO.GroupBy == TRANSFERREPORTGROUPBY.SENTBY)
+                summary = transfers.GroupBy(transfer => transfer.SentById == null ? 0 : transfer.SentById)
+                     .Select(s => new { key = s.Key, count = s.Count(), value = s.Single().SentBy });
+
+            else if (transferDTO.GroupBy == TRANSFERREPORTGROUPBY.RECEIVEDBY)
+                summary = transfers.GroupBy(transfer => transfer.ReceivedById == null ? 0 : transfer.ReceivedById)
+                     .Select(s => new { key = s.Key, count = s.Count(), value = s.Single().ReceivedBy });
+
+            else if (transferDTO.GroupBy == TRANSFERREPORTGROUPBY.SENDSITE)
+                summary = transfers.GroupBy(transfer => transfer.SendSiteId)
+                     .Select(s => new { key = s.Key, count = s.Count(), value = s.Single().SendSite });
+
+            else if (transferDTO.GroupBy == TRANSFERREPORTGROUPBY.RECEIVESITE)
+                summary = transfers.GroupBy(transfer => transfer.ReceiveSiteId)
+                     .Select(s => new { key = s.Key, count = s.Count(), value = s.Single().ReceiveSite });
 
 
-            return Ok(transfers);
+
+            return Ok(new
+            {
+                summary,
+                data = transfers.ToList()
+            });
         }
 
     }

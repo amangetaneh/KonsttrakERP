@@ -76,6 +76,19 @@ namespace ERP.Controllers
             return Ok(transfers);
         }
 
+        [HttpPost]
+        public async Task<ActionResult<List<Transfer>>> GetByParams(GetTransfersDTO getTransfersDTO)
+        {
+
+            var transfers = await context.Transfers.
+                Where()
+                .Include(transfer => transfer.SendSite)
+                .Include(transfer => transfer.ReceiveSite)
+                .ToListAsync();
+
+            return Ok(transfers);
+        }
+
         [HttpPost("request/equipment")]
         public async Task<ActionResult<List<Transfer>>> RequestEquipment(CreateEquipmentTransferDTO transferDTO)
         {

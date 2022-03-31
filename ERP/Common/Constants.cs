@@ -1,5 +1,20 @@
 ﻿namespace ERP
 {
+    public class TRANSFERREPORTGROUPBY
+    {
+        public const string STATUS = "Status";
+        public const string REQUESTDATE = "Request Date";
+        public const string APPROVEDATE = "Approve Date";
+        public const string SENDDATE = "Send Date";
+        public const string RECEIVEDATE = "Receive Date";
+        public const string REQUESTEDBY = "Requesting Employee";
+        public const string APPROVEDBY = "Approving Employee";
+        public const string SENTBY = "Sending Employee";
+        public const string RECEIVEDBY = "Receiveing Employee";
+        public const string SENDSITE = "Sending Site";
+        public const string RECEIVESITE = "Receiving Site";
+    }
+
     public class NOTIFICATIONTYPE
     {
         public const string TRANSFER = "transferNotification";

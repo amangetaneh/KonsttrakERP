@@ -1,20 +1,22 @@
-import { useState, useMemo, useEffect } from "react";
-import { Form, Button, Container } from "react-bootstrap";
+import { useState, useMemo, useEffect, useCallback } from "react";
+import { Form, Button, Container, Table as BootstrapTable } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FaFolderOpen } from "react-icons/fa";
 import Table from "../../fragments/Table";
 import Header from "../../layouts/Header";
+
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
 import FormRow from "../../fragments/FormRow";
 import { useQuery } from "react-query";
 import { fetchSites } from "../../../api/site";
-import { ITEMTYPE, TRANSFERSTATUS } from "../../../Constants";
+import { ITEMTYPE, TRANSFERREPORTGROUPBY, TRANSFERSTATUS } from "../../../Constants";
 import { fetchEquipmentCategories, fetchEquipmentCategory } from "../../../api/category";
 import { fetchTransferReport } from "../../../api/report";
 import { fetchEmployees } from "../../../api/employee";
 import TransferStatusBadge from "../transfer/fragments/TransferStatusBadge";
 import { fetchMaterials } from "../../../api/item";
+import Chart from "../../fragments/Chart";
 
 function initFormValues() {
     return {
@@ -29,12 +31,16 @@ function initFormValues() {
         itemId: "-1",
         employeeRole: "-1",
         employeeId: "-1",
+        groupBy: TRANSFERREPORTGROUPBY.STATUS,
     };
 }
 
 function TransferReport() {
     const [formValues, setFormValues] = useState(initFormValues);
-    const [report, setReport] = useState([]);
+    const [report, setReport] = useState();
+    const [chartData, setChartData] = useState();
+    const [tableData, setTableData] = useState();
+    const [chartType, setChartType] = useState("bar");
 
     const sitesQuery = useQuery(["sites"], fetchSites);
     const categoriesQuery = useQuery("equipmentcategories", fetchEquipmentCategories);
@@ -47,20 +53,71 @@ function TransferReport() {
     var materialsQuery = useQuery(["materials"], fetchMaterials);
     const employeesQuery = useQuery(["employees"], fetchEmployees);
 
-    const { data, isLoading, refetch } = useQuery(
-        ["transfer", formValues],
-        () => fetchTransferReport(formValues),
-        {
-            enabled: false,
-        }
-    );
+    const {
+        data: queryResult,
+        isLoading,
+        refetch,
+    } = useQuery(["transfer", formValues], () => fetchTransferReport(formValues), {
+        enabled: false,
+    });
 
     function valueChanged(e) {
         setFormValues({ ...formValues, [e.target.name]: e.target.value });
     }
 
+    const setChartDataCallback = useCallback(
+        (summary) => {
+            const { groupBy } = formValues;
+            summary = summary.map((current) => {
+                var label;
+
+                if (groupBy === TRANSFERREPORTGROUPBY.STATUS) label = TRANSFERSTATUS[current.key];
+                else if (
+                    groupBy === TRANSFERREPORTGROUPBY.REQUESTDATE ||
+                    groupBy === TRANSFERREPORTGROUPBY.APPROVEDATE ||
+                    groupBy === TRANSFERREPORTGROUPBY.SENDDATE ||
+                    groupBy === TRANSFERREPORTGROUPBY.RECEIVEDATE
+                ) {
+                    label = new Date(current.value).toLocaleDateString();
+                    if (label === "Invalid Date") label = "N/A";
+                } else if (
+                    groupBy === TRANSFERREPORTGROUPBY.REQUESTEDBY ||
+                    groupBy === TRANSFERREPORTGROUPBY.APPROVEDBY ||
+                    groupBy === TRANSFERREPORTGROUPBY.SENTBY ||
+                    groupBy === TRANSFERREPORTGROUPBY.RECEIVEDBY
+                )
+                    label = current.value ? `${current.value.fName} ${current.value.mName}` : "N/A";
+                else if (
+                    groupBy === TRANSFERREPORTGROUPBY.SENDSITE ||
+                    groupBy === TRANSFERREPORTGROUPBY.RECEIVESITE
+                )
+                    label = current.value.name;
+
+                return { ...current, label };
+            });
+
+            const data = {
+                labels: summary.map((x) => x.label),
+                datasets: [
+                    {
+                        label: "Transfers",
+                        data: summary.map((x) => x.count),
+                    },
+                ],
+            };
+
+            setTableData(summary);
+            setChartData(data);
+        },
+        [formValues.groupBy]
+    );
+
     useEffect(() => {
-        if (data === undefined) return;
+        if (queryResult === undefined) return;
+
+        const { data } = queryResult;
+
+        setChartDataCallback(queryResult.summary);
 
         Object.keys(data).map((key, index) => {
             //format date
@@ -104,7 +161,7 @@ function TransferReport() {
         });
 
         setReport(data);
-    }, [data]);
+    }, [queryResult]);
 
     const columns = useMemo(
         () => [
@@ -175,7 +232,7 @@ function TransferReport() {
             <Header title="Generate Transfer Report" />
 
             <Container className="my-3">
-                <Form>
+                <Form className="mb-3">
                     <FormRow
                         labelL="Date"
                         valueL={
@@ -337,11 +394,12 @@ function TransferReport() {
                                     required
                                 >
                                     <option value="-1">All Materials</option>
-                                    {materialsQuery.data?.equipments?.map((equipment) => (
-                                        <option key={equipment.itemId} value={equipment.itemId}>
-                                            {equipment.item.name}
-                                        </option>
-                                    ))}
+                                    {materialsQuery.data &&
+                                        materialsQuery.data?.map((material) => (
+                                            <option key={material.itemId} value={material.itemId}>
+                                                {material.name}
+                                            </option>
+                                        ))}
                                 </Form.Select>
                             ) : null
                         }
@@ -385,6 +443,32 @@ function TransferReport() {
                             }
                         />
                     )}
+                    <FormRow
+                        labelL="Group By"
+                        valueL={
+                            <Form.Select
+                                name="groupBy"
+                                value={formValues["groupBy"]}
+                                onChange={valueChanged}
+                            >
+                                {Object.keys(TRANSFERREPORTGROUPBY).map((key) => (
+                                    <option key={key} value={TRANSFERREPORTGROUPBY[key]}>
+                                        {TRANSFERREPORTGROUPBY[key]}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        }
+                        labelR="Chart Type"
+                        valueR={
+                            <Form.Select
+                                value={chartType}
+                                onChange={(e) => setChartType(e.target.value)}
+                            >
+                                <option value="bar">Bar Chart</option>
+                                <option value="line">Line Chart</option>
+                            </Form.Select>
+                        }
+                    />
 
                     <div className="row">
                         <div className="col-10 d-grid">
@@ -395,15 +479,51 @@ function TransferReport() {
                         <div className="col-2 d-grid">
                             <Button
                                 variant="outline-danger"
-                                onClick={() => setFormValues(initFormValues())}
+                                onClick={() => {
+                                    setFormValues(initFormValues());
+                                    setChartData(null);
+                                    setTableData(null);
+                                    setReport(null);
+                                }}
                             >
                                 Reset
                             </Button>
                         </div>
                     </div>
                 </Form>
+                {chartData && (
+                    <>
+                        <h1 className="display-6 text-center mb-2">Report Result</h1>
+                        <Container fluid className="px-4">
+                            <BootstrapTable responsive striped bordered hover>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>{formValues.groupBy}</th>
+                                        <th>Number of Transfers</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {tableData.map((current, index) => (
+                                        <tr>
+                                            <td>{index + 1}</td>
+                                            <td>{current.label}</td>
+                                            <td>{current.count}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </BootstrapTable>
+                        </Container>
 
-                <Table columns={columns} data={report} />
+                        <Chart data={chartData} type={chartType} />
+                    </>
+                )}
+                {report && (
+                    <>
+                        <h1 className="display-6 text-center my-4">Detailed List</h1>
+                        <Table columns={columns} data={report} />
+                    </>
+                )}
             </Container>
         </>
     );

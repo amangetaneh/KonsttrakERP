@@ -1,3 +1,17 @@
+export const TRANSFERREPORTGROUPBY = {
+    STATUS: "Status",
+    REQUESTDATE: "Request Date",
+    APPROVEDATE: "Approve Date",
+    SENDDATE: "Send Date",
+    RECEIVEDATE: "Receive Date",
+    REQUESTEDBY: "Requesting Employee",
+    APPROVEDBY: "Approving Employee",
+    SENTBY: "Sending Employee",
+    RECEIVEDBY: "Receiveing Employee",
+    SENDSITE: "Sending Site",
+    RECEIVESITE: "Receiving Site",
+};
+
 export const NOTIFICATIONTYPE = {
     TRANSFER: "transferNotification",
     ISSUE: "issueNotification",
@@ -71,7 +85,7 @@ export const PURCHASESTATUS = {
     CHECKED: 3,
     APPROVED: 4,
     PURCHASED: 5,
-    
+
     0: "Declined",
     1: "Queued",
     2: "Requested",
@@ -93,7 +107,6 @@ export const BUYSTATUS = {
     3: "Checked",
     4: "Approved",
     5: "Bought",
-    
 };
 
 export const RECEIVESTATUS = {

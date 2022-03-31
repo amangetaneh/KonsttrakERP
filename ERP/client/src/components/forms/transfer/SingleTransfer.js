@@ -14,13 +14,16 @@ import { useQuery } from "react-query";
 import { fetchTransfer } from "../../../api/transfer";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
+import { useSelector } from "react-redux";
+import AlertNotification from "../../fragments/AlertNotification";
 
 function SingleTransfer() {
     const { id } = useParams();
     const [transfer, setTransfer] = useState({});
     const [addedItems, setAddedItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-
+    //const userRole = useSelector((state) => state.auth.data[2]);
+    
     var query = useQuery(["transfer", id], () => fetchTransfer(id));
 
     useEffect(() => {
@@ -33,7 +36,7 @@ function SingleTransfer() {
             itemObj.itemId = transferItem.itemId;
             itemObj.name = transferItem.item.name;
             itemObj.cost = transferItem.cost;
-            itemObj.type = transferItem.item.type
+            itemObj.type = transferItem.item.type;
 
             itemObj.qtyRequested = transferItem.qtyRequested;
             itemObj.requestRemark = transferItem.requestRemark;
@@ -229,6 +232,10 @@ function SingleTransfer() {
 
             <Container className="my-3">
                 <>
+                    <AlertNotification
+                        title="Transfer Waiting for Appproval"
+                        content="This Transfer Needs Approval to Conitnue"
+                    />
                     <TopForm />
 
                     {transfer.status === TRANSFERSTATUS.DECLINED && (

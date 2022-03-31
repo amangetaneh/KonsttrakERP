@@ -14,7 +14,6 @@ import { Link } from "react-router-dom";
 
 function Sidebar() {
     const [collapsed, setCollapsed] = useState(false);
-    
 
     return (
         <>
@@ -40,11 +39,8 @@ function Sidebar() {
                         </MenuItem>
 
                         <SubMenu title="Inventory" icon={<FaList className="fs-5" />}>
-                            <SubMenu
-                                title="Stock">
-                            </SubMenu>
-                            <SubMenu
-                                title="Purchase">
+                            <SubMenu title="Stock"></SubMenu>
+                            <SubMenu title="Purchase">
                                 <MenuItem>
                                     New Purchase <Link to="/purchase/material" />
                                 </MenuItem>
@@ -52,10 +48,7 @@ function Sidebar() {
                                     Purchase Requests <Link to="/purchase" />
                                 </MenuItem>
                             </SubMenu>
-                            <SubMenu
-                                title="Receive"
-                               
-                            >
+                            <SubMenu title="Receive">
                                 <MenuItem>
                                     Receive an Item <Link to="/receive/new" />
                                 </MenuItem>
@@ -63,10 +56,7 @@ function Sidebar() {
                                     List Received Items <Link to="/receive/list" />
                                 </MenuItem>
                             </SubMenu>
-                            <SubMenu
-                                title="Transfer"
-                               
-                            >
+                            <SubMenu title="Transfer">
                                 <MenuItem>
                                     New Material Transfer
                                     <Link to="/transfer/material" />
@@ -83,10 +73,7 @@ function Sidebar() {
                                     <Link to="/transfer/out" />
                                 </MenuItem>
                             </SubMenu>
-                            <SubMenu
-                                title="Issue"
-                               
-                            >
+                            <SubMenu title="Issue">
                                 <MenuItem>
                                     New Issue Request
                                     <Link to="/issue/new" />
@@ -96,10 +83,7 @@ function Sidebar() {
                                     <Link to="/issue" />
                                 </MenuItem>
                             </SubMenu>
-                            <SubMenu
-                                title="Borrow"
-                               
-                            >
+                            <SubMenu title="Borrow">
                                 <MenuItem>
                                     New Borrow Request <Link to="/borrow/new" />
                                 </MenuItem>
@@ -114,15 +98,17 @@ function Sidebar() {
                                 </MenuItem>
                             </SubMenu>
 
-                            <SubMenu
-                                title="Maintenance"
-                              
-                            >
+                            <SubMenu title="Maintenance">
                                 <MenuItem>
                                     New Maintenance Request <Link to="/maintenance/new" />
                                 </MenuItem>
                                 <MenuItem>
                                     Maintenance Requests <Link to="/maintenance" />
+                                </MenuItem>
+                            </SubMenu>
+                            <SubMenu title="Report">
+                                <MenuItem>
+                                    Transfer <Link to="/report/transfer" />
                                 </MenuItem>
                             </SubMenu>
                         </SubMenu>

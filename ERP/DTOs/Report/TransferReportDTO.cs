@@ -24,6 +24,8 @@
 
         public int EmployeeId { get; set; } = -1;
 
+        public string GroupBy { get; set; } = "";
+
         public DateTime? RequestDateFrom;
 
         public DateTime? RequestDateTo;

@@ -27,95 +27,92 @@ import NewMaintenance from "./components/forms/maintenance/NewMaintenance";
 import ListReturns from "./components/forms/return/ListReturns";
 import NewReturn from "./components/forms/return/NewReturn";
 import SingleReturn from "./components/forms/return/SingleReturn";
-import SignUp from './components/forms/authorization/RegistrationForm'
+import SignUp from "./components/forms/authorization/RegistrationForm";
 import { useDispatch, useSelector } from "react-redux";
 import { loginAction } from "./redux/auth";
 import Login from "./components/forms/authorization/Login";
 import TransferReport from "./components/forms/report/TransferReport";
 
-const App=()=>  {
-    const token = useSelector(state=>state.auth.token)
-    const dispatch = useDispatch()
-    useEffect(()=>{
-         dispatch(loginAction(localStorage.getItem('token')))
-     },[])   
+const App = () => {
+    const token = useSelector((state) => state.auth.token);
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(loginAction(localStorage.getItem("token")));
+    }, []);
     return (
-            <ContextProviders>
-                <Router>
-                   {token?
-                     <div
-                     className="row m-0"
-                     style={{
-                         minHeight: "100vh",
-                         maxWidth: "100vw",
-                         minWidth: "900px",
-                     }}
-                 >
-                     <div className="col-auto p-0">
-                         <Sidebar />
-                     </div>
-                     <div className="col p-0">
-                         <Routes>
+        <ContextProviders>
+            <Router>
+                {token ? (
+                    <div
+                        className="row m-0 flex-nowrap"
+                        style={{
+                            minHeight: "100vh",
+                            maxWidth: "100vw",
+                            minWidth: "900px",
+                        }}
+                    >
+                        <div className="col-auto p-0">
+                            <Sidebar />
+                        </div>
+                        <div className="col p-0">
+                            <Routes>
+                                <Route path="/report/transfer" element={<TransferReport />} />
 
-                             <Route path="issue" element={<ListIssues />} />
-                             <Route path="issue/:id" element={<SingleIssue />} />
-                             <Route path="issue/new" element={<NewIssue />} />
+                                <Route path="issue" element={<ListIssues />} />
+                                <Route path="issue/:id" element={<SingleIssue />} />
+                                <Route path="issue/new" element={<NewIssue />} />
 
-                             <Route path="borrow" element={<ListBorrows />} />
-                             <Route path="borrow/:id" element={<SingleBorrow />} />
-                             <Route path="borrow/new" element={<NewBorrow />} />
+                                <Route path="borrow" element={<ListBorrows />} />
+                                <Route path="borrow/:id" element={<SingleBorrow />} />
+                                <Route path="borrow/new" element={<NewBorrow />} />
 
-                             <Route path="return" element={<ListReturns />} />
-                             <Route path="return/:id" element={<SingleReturn />} />
-                             <Route path="return/new" element={<NewReturn />} />
+                                <Route path="return" element={<ListReturns />} />
+                                <Route path="return/:id" element={<SingleReturn />} />
+                                <Route path="return/new" element={<NewReturn />} />
 
-                             <Route path="maintenance" element={<ListMaintenance />} />
-                             <Route path="maintenance/:id" element={<SingleMaintenance />} />
-                             <Route path="maintenance/new" element={<NewMaintenance />} />
+                                <Route path="maintenance" element={<ListMaintenance />} />
+                                <Route path="maintenance/:id" element={<SingleMaintenance />} />
+                                <Route path="maintenance/new" element={<NewMaintenance />} />
 
-                             <Route path="transfer/material" element={<MaterialTransfer />} />
-                             <Route path="transfer/equipment" element={<EquipmentTransfer />} />
-                             <Route
-                                 path="transfer/in"
-                                 element={<ListTransfers title="Transfer In" type="in" />}
-                             />
-                             <Route path="transfer/:id" element={<SingleTransfer />} />
+                                <Route path="transfer/material" element={<MaterialTransfer />} />
+                                <Route path="transfer/equipment" element={<EquipmentTransfer />} />
+                                <Route
+                                    path="transfer/in"
+                                    element={<ListTransfers title="Transfer In" type="in" />}
+                                />
+                                <Route path="transfer/:id" element={<SingleTransfer />} />
 
-                             <Route path="purchase" element={<ListPurchases />} />
-                             <Route path="purchase/:id" element={<SinglePurchase />} />
-                             <Route path="purchase/material" element={<MaterialPurchase />} />
+                                <Route path="purchase" element={<ListPurchases />} />
+                                <Route path="purchase/:id" element={<SinglePurchase />} />
+                                <Route path="purchase/material" element={<MaterialPurchase />} />
 
-                             <Route path="receive/new" element={<ReceiveNewItem />} />
-                             <Route path="receive/list" element={<ListReceives />} />
-                         </Routes>
-                     </div>
-                 </div>:
-                  <div
-                  className="row m-0"
-                  style={{
-                      minHeight: "100vh",
-                      maxWidth: "100vw",
-                      minWidth: "900px",
-                  }}
-              >
-                    <div >
-                         <Routes>
+                                <Route path="receive/new" element={<ReceiveNewItem />} />
+                                <Route path="receive/list" element={<ListReceives />} />
+                            </Routes>
+                        </div>
+                    </div>
+                ) : (
+                    <div
+                        className="row m-0"
+                        style={{
+                            minHeight: "100vh",
+                            maxWidth: "100vw",
+                            minWidth: "900px",
+                        }}
+                    >
+                        <div>
+                            <Routes>
+                                <Route path="/login" element={<Login />} />
+                                <Route path="/" element={<Navigate to={"/login"} />} />
 
-                              <Route path="/login" element={<Login />} />
-                              <Route path="/" element={<Navigate to={"/login"} />} />
-                              
-                              <Route path="/registration" element={<SignUp />} />
+                                <Route path="/registration" element={<SignUp />} />
+                            </Routes>
+                        </div>
+                    </div>
+                )}
+            </Router>
+        </ContextProviders>
+    );
+};
 
-
-                         </Routes>
-                         </div>
-                  
-              </div>   
-                }
-                </Router>
-            </ContextProviders>
-        );
-    }
-
-    export default App 
-
+export default App;
