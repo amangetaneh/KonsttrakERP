@@ -505,7 +505,7 @@ function TransferReport() {
                                 </thead>
                                 <tbody>
                                     {tableData.map((current, index) => (
-                                        <tr>
+                                        <tr key={index}>
                                             <td>{index + 1}</td>
                                             <td>{current.label}</td>
                                             <td>{current.count}</td>

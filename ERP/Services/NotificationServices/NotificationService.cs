@@ -2,14 +2,14 @@
 using ERP.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace ERP.Controllers
+namespace ERP.Services.NotificationServices
 {
-    public class NotificationManager
+    public class NotificationService : INotificationService
     {
         private readonly DataContext context;
         private Notification notification;
 
-        public NotificationManager(DataContext context)
+        public NotificationService(DataContext context)
         {
             this.context = context;
         }

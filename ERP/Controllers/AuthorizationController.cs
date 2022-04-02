@@ -40,7 +40,7 @@ namespace ERP.Controllers
                 .Include(u => u.Employee)
                 .FirstOrDefault();
 
-            Employee = UserAccount.Employee;
+            //Employee = UserAccount.Employee;
         }
 
         [HttpGet, Authorize]

@@ -1,6 +1,7 @@
 ﻿using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,7 @@ namespace ERP.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Employee")]
     public class ReportController : Controller
     {
         private readonly DataContext context;

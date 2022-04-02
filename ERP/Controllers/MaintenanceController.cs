@@ -1,7 +1,10 @@
 ﻿using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
+using ERP.Services.MaintenanceServices;
+using ERP.Services.NotificationServices;
 using ERP.Services.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,48 +13,34 @@ namespace ERP.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Employee")]
     public class MaintenanceController : Controller
     {
         private readonly DataContext context;
-        private readonly NotificationManager notificationManager;
+        private readonly IMaintenanceService _maintenanceService;
         private readonly IUserService _userService;
 
-        public UserAccount? UserAccount { get; }
 
-        public Employee Employee { get; }
-
-        public MaintenanceController(DataContext context, NotificationManager notificationManager, IUserService userService)
+        public MaintenanceController(DataContext context, IMaintenanceService maintenanceService, IUserService userService)
         {
             this.context = context;
-            this.notificationManager = notificationManager;
+            _maintenanceService = maintenanceService;
 
             _userService = userService;
-
-            UserAccount = context.UserAccounts
-                .Where(u => u.Username == _userService.GetMyName())
-                .Include(u => u.UserRole)
-                .Include(u => u.Employee)
-                .FirstOrDefault();
-
-            Employee = UserAccount.Employee;
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Maintenance>> Get(int id)
         {
-            var maintenance = context.Maintenances.Where(maintenance => maintenance.MaintenanceId == id)
-                .Include(maintenance => maintenance.Site)
-                .Include(maintenance => maintenance.RequestedBy)
-                .Include(maintenance => maintenance.ApprovedBy)
-                .Include(maintenance => maintenance.FixedBy)
-                .Include(maintenance => maintenance.Item)
-                .ThenInclude(item => item.Equipment)
-                .Include(maintenance => maintenance.EquipmentAsset)
-                .FirstOrDefault();
-
-            if (maintenance == null) return NotFound("Maintenance Request Not Found.");
-
-            return Ok(maintenance);
+            try
+            {
+                var maintenance = await _maintenanceService.GetById(id);
+                return Ok(maintenance);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         [HttpGet]
@@ -66,130 +55,78 @@ namespace ERP.Controllers
         }
 
         [HttpPost("request")]
-        public async Task<ActionResult<List<Maintenance>>> Post(CreateMaintenanceDTO maintenanceDTO)
+        public async Task<ActionResult<int>> Post(CreateMaintenanceDTO maintenanceDTO)
         {
-            Maintenance maintenance = new();
-            maintenance.RequestedById = Employee.EmployeeId;
-            maintenance.SiteId = maintenanceDTO.SiteId;
-            maintenance.Reason = maintenanceDTO.Reason;
 
-            var itemTemp = context.Items.Where(item => item.ItemId == maintenanceDTO.ItemId).FirstOrDefault();
-
-            if (itemTemp == null) return NotFound($"Maintenance Item with Id {maintenanceDTO.ItemId} Not Found");
-
-            if (itemTemp.Type != ITEMTYPE.EQUIPMENT) 
-                return BadRequest($"Maintenance Item with Id {maintenanceDTO.ItemId} Is Not Type of Equipment");
-
-            var maintenanceEquipmentModel = await context.EquipmentModels
-                .Where(em => em.EquipmentModelId == maintenanceDTO.EquipmentModelId && em.ItemId == maintenanceDTO.ItemId)
-                .FirstOrDefaultAsync();
-
-            if (maintenanceEquipmentModel == null) 
-                return NotFound($"Maitenance Item with Id {maintenanceDTO.ItemId} and Model Id {maintenanceDTO.EquipmentModelId} Not Found");
-
-            if (maintenanceDTO.EquipmentAssetId != null)
+            try
             {
-                var maintenanceEquipmentAsset = await context.EquipmentAssets
-                    .Where(ea => ea.EquipmentAssetId == maintenanceDTO.EquipmentAssetId && ea.EquipmentModelId == maintenanceDTO.EquipmentModelId)
-                    .FirstOrDefaultAsync();
-
-                if (maintenanceEquipmentAsset == null)
-                    return NotFound($"Maitenance Item with Model Id {maintenanceDTO.EquipmentModelId} and Asset Id {maintenanceDTO.EquipmentAssetId} Not Found");
-
-                maintenance.EquipmentAssetId = maintenanceDTO.EquipmentAssetId;
+                var maintenance = await _maintenanceService.RequestMaintenance(maintenanceDTO);
+                return Ok(maintenance.MaintenanceId);
             }
-
-            maintenance.Cost = maintenanceEquipmentModel.Cost;
-
-            maintenance.ItemId = maintenanceDTO.ItemId;
-            maintenance.EquipmentModelId = maintenanceDTO.EquipmentModelId;
-
-            context.Maintenances.Add(maintenance);
-            await context.SaveChangesAsync();
-
-            await notificationManager.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
-                status: maintenance.Status,
-                actionId: maintenance.MaintenanceId,
-                siteId: maintenance.SiteId,
-                employeeId: maintenance.RequestedById);
-
-            return Ok(maintenance.MaintenanceId);
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("approve")]
         public async Task<ActionResult<Maintenance>> Approve(ApproveMaintenanceDTO approveDTO)
         {
-            var maintenance = await context.Maintenances
-                .Where(m => m.MaintenanceId == approveDTO.MaintenanceId)
-                .FirstOrDefaultAsync();
-            if (maintenance == null) return NotFound("Maintenance Request Not Found.");
 
-            maintenance.ApproveDate = DateTime.Now;
-            maintenance.ApprovedById = Employee.EmployeeId;
-            maintenance.ApproveRemark = approveDTO.ApproveRemark;
-
-            maintenance.Status = MAINTENANCESTATUS.APPROVED;
-
-            await context.SaveChangesAsync();
-
-            await notificationManager.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
-                status: maintenance.Status,
-                actionId: maintenance.MaintenanceId,
-                siteId: maintenance.SiteId,
-                employeeId: maintenance.RequestedById);
-
-            return Ok(maintenance);
+            try
+            {
+                var maintenance = await _maintenanceService.ApproveMaintenance(approveDTO);
+                return Ok(maintenance);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("decline")]
         public async Task<ActionResult<Maintenance>> Decline(ApproveMaintenanceDTO declineDTO)
         {
-            var maintenance = await context.Maintenances
-                .Where(m => m.MaintenanceId == declineDTO.MaintenanceId)
-                .FirstOrDefaultAsync();
-            if (maintenance == null) return NotFound("Maintenance Request Not Found.");
 
-            maintenance.ApproveDate = DateTime.Now;
-            maintenance.ApprovedById = Employee.EmployeeId;
-            maintenance.ApproveRemark = declineDTO.ApproveRemark;
-
-            maintenance.Status = MAINTENANCESTATUS.DECLINED;
-
-            await context.SaveChangesAsync();
-
-            await notificationManager.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
-                status: maintenance.Status,
-                actionId: maintenance.MaintenanceId,
-                siteId: maintenance.SiteId,
-                employeeId: maintenance.RequestedById);
-
-            return Ok(maintenance);
+            try
+            {
+                var maintenance = await _maintenanceService.DeclineMaintenance(declineDTO);
+                return Ok(maintenance);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("fix")]
         public async Task<ActionResult<Maintenance>> fix(FixMaintenanceDTO fixDTO)
         {
-            var maintenance = await context.Maintenances
-                .Where(m => m.MaintenanceId == fixDTO.MaintenanceId)
-                .FirstOrDefaultAsync();
-            if (maintenance == null) return NotFound("Maintenance Request Not Found.");
-
-
-            maintenance.FixDate = DateTime.Now;
-            maintenance.FixedById = Employee.EmployeeId;
-            maintenance.FixRemark = fixDTO.FixRemark;
-
-            maintenance.Status = MAINTENANCESTATUS.FIXED;
-
-            await context.SaveChangesAsync();
-
-            await notificationManager.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
-                status: maintenance.Status,
-                actionId: maintenance.MaintenanceId,
-                siteId: maintenance.SiteId,
-                employeeId: maintenance.RequestedById);
-
-            return Ok(maintenance);
+            try
+            {
+                var maintenance = await _maintenanceService.FixMaintenance(fixDTO);
+                return Ok(maintenance);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
     }

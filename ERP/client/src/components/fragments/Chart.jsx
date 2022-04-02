@@ -10,6 +10,7 @@ import {
     BarElement,
     ArcElement,
 } from "chart.js";
+import { Container } from "react-bootstrap";
 import { Bar, Line, Pie } from "react-chartjs-2";
 
 ChartJS.register(
@@ -56,15 +57,15 @@ function Chart({ type, data }) {
 
     if (type == "line")
         return (
-            <div className="mb-4" style={{ maxHeight: "50%" }}>
+            <Container className="mb-4" style={{ maxHeight: "50%" }}>
                 <Line data={data} options={options} />
-            </div>
+            </Container>
         );
 
     return (
-        <div className="mb-4" style={{ maxHeight: "50%" }}>
+        <Container className="mb-4" style={{ maxHeight: "50%" }}>
             <Bar data={data} options={options} />
-        </div>
+        </Container>
     );
 }
 

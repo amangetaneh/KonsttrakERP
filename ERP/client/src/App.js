@@ -31,35 +31,35 @@ import NewReturn from "./components/forms/return/NewReturn";
 import SingleReturn from "./components/forms/return/SingleReturn";
 import SignUp from "./components/forms/authorization/RegistrationForm";
 import { useDispatch, useSelector } from "react-redux";
-import { loginAction,setData } from "./redux/auth";
+import { loginAction, setData } from "./redux/auth";
 import Login from "./components/forms/authorization/Login";
 import TransferReport from "./components/forms/report/TransferReport";
 
-const App=()=>  {
-    const token = useSelector(state=>state.auth.token)
-    const dispatch = useDispatch()
-    useEffect(()=>{
-         dispatch(loginAction(localStorage.getItem('token')))
-         dispatch(setData(JSON.parse(localStorage.getItem('data'))))
-
-     },[])   
+const App = () => {
+    const token = useSelector((state) => state.auth.token);
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(loginAction(localStorage.getItem("token")));
+        dispatch(setData(JSON.parse(localStorage.getItem("data"))));
+    }, []);
     return (
-            <ContextProviders>
-                <Router>
-                   {token?
-                     <div
-                     className="row m-0"
-                     style={{
-                         minHeight: "100vh",
-                         maxWidth: "100vw",
-                         minWidth: "900px",
-                     }}
-                 >
-                     <div className="col-auto p-0">
-                         <Sidebar />
-                     </div>
-                     <div className="col p-0">
-                         <Routes>
+        <ContextProviders>
+            <Router>
+                {token ? (
+                    <div
+                        className="row m-0 flex-nowrap"
+                        style={{
+                            minHeight: "100vh",
+                            maxWidth: "100vw",
+                            minWidth: "900px",
+                        }}
+                    >
+                        <div className="col-auto p-0">
+                            <Sidebar />
+                        </div>
+                        <div className="col p-0">
+                            <Routes>
+                                <Route path="report/transfer" element={<TransferReport />} />
 
                                 <Route path="issue" element={<ListIssues />} />
                                 <Route path="issue/:id" element={<SingleIssue />} />
@@ -89,38 +89,34 @@ const App=()=>  {
                                 <Route path="purchase/:id" element={<SinglePurchase />} />
                                 <Route path="purchase/material" element={<MaterialPurchase />} />
 
-                             <Route path="receive" element={<ListReceives />} />
-                             <Route path="receive/:id" element={<SingleReceive />} />
-                             <Route path="receive/material" element={<MaterialReceive />} />
-                         </Routes>
-                     </div>
-                 </div>:
-                  <div
-                  className="row m-0"
-                  style={{
-                      minHeight: "100vh",
-                      maxWidth: "100vw",
-                      minWidth: "900px",
-                  }}
-              >
-                    <div >
-                         <Routes>
+                                <Route path="receive" element={<ListReceives />} />
+                                <Route path="receive/:id" element={<SingleReceive />} />
+                                <Route path="receive/material" element={<MaterialReceive />} />
+                            </Routes>
+                        </div>
+                    </div>
+                ) : (
+                    <div
+                        className="row m-0"
+                        style={{
+                            minHeight: "100vh",
+                            maxWidth: "100vw",
+                            minWidth: "900px",
+                        }}
+                    >
+                        <div>
+                            <Routes>
+                                <Route path="/login" element={<Login />} />
+                                <Route path="/" element={<Navigate to={"/login"} />} />
 
-                              <Route path="/login" element={<Login />} />
-                              <Route path="/" element={<Navigate to={"/login"} />} />
-                              
-                              <Route path="/registration" element={<SignUp />} />
-
-
-                         </Routes>
-                         </div>
-                  
-              </div>   
-                }
-                </Router>
-            </ContextProviders>
-        );
-    }
-
+                                <Route path="/registration" element={<SignUp />} />
+                            </Routes>
+                        </div>
+                    </div>
+                )}
+            </Router>
+        </ContextProviders>
+    );
+};
 
 export default App;

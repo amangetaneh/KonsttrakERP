@@ -1,7 +1,10 @@
 ﻿using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
+using ERP.Services.IssueServices;
+using ERP.Services.NotificationServices;
 using ERP.Services.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,50 +13,33 @@ namespace ERP.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Employee")]
     public class IssueController : Controller
     {
         private readonly DataContext context;
-        private readonly NotificationManager notificationManager;
+        private readonly IIssueService _issueService;
         private readonly IUserService _userService;
 
-        public UserAccount? UserAccount { get; }
-
-        public Employee Employee { get; }
-
-        public IssueController(DataContext context, NotificationManager notificationManager, IUserService userService)
+        public IssueController(DataContext context, IIssueService issueService, IUserService userService)
         {
             this.context = context;
-            this.notificationManager = notificationManager;
-
+            _issueService = issueService;
             _userService = userService;
-
-            UserAccount = context.UserAccounts
-                .Where(u => u.Username == _userService.GetMyName())
-                .Include(u => u.UserRole)
-                .Include(u => u.Employee)
-                .FirstOrDefault();
-
-            Employee = UserAccount.Employee;
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Issue>> Get(int id)
         {
-            var issue = context.Issues.Where(issue => issue.IssueId == id)
-                .Include(issue => issue.Site)
-                .Include(issue => issue.RequestedBy)
-                .Include(issue => issue.ApprovedBy)
-                .Include(issue => issue.HandedBy)
-               .Include(issue => issue.IssueItems)
-               .ThenInclude(issueItem => issueItem.Item)
-               .ThenInclude(item => item.Material)
-               .Include(issue => issue.IssueItems)
-               .ThenInclude(issueItem => issueItem.Item.Equipment)
-               .FirstOrDefault();
 
-            if (issue == null) return NotFound("Issue Not Found.");
-
-            return Ok(issue);
+            try
+            {
+                var issue = await _issueService.GetById(id);
+                return Ok(issue);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         [HttpGet]
@@ -68,154 +54,79 @@ namespace ERP.Controllers
         }
 
         [HttpPost("request")]
-        public async Task<ActionResult<List<Issue>>> Post(CreateIssueDTO issueDTO)
+        public async Task<ActionResult<int>> Post(CreateIssueDTO issueDTO)
         {
-            Issue issue = new();
-            issue.RequestedById = Employee.EmployeeId;
-            issue.SiteId = issueDTO.SiteId;
 
-            ICollection<IssueItem> issueItems = new List<IssueItem>();
-
-            foreach (var requestItem in issueDTO.IssueItems)
+            try
             {
-                IssueItem issueItem = new();
-                issueItem.ItemId = requestItem.ItemId;
-                issueItem.QtyRequested = requestItem.QtyRequested;
-                issueItem.RequestRemark = requestItem.RequestRemark;
-
-                var itemTemp = context.Items.Where(item => item.ItemId == requestItem.ItemId).
-                   Include(i => i.Equipment).
-                   Include(i => i.Material).
-                   FirstOrDefault();
-
-                if (itemTemp == null) return NotFound($"Issue Item with Id {requestItem.ItemId} Not Found");
-
-                if (itemTemp.Type == ITEMTYPE.MATERIAL)
-                    issueItem.Cost = itemTemp.Material.Cost;
-                // else
-
-                /////////////////////////////////////
-
-
-
-                issueItems.Add(issueItem);
+                var issue = await _issueService.RequestIssue(issueDTO);
+                return Ok(issue.IssueId);
             }
-
-            issue.IssueItems = issueItems;
-
-            context.Issues.Add(issue);
-            await context.SaveChangesAsync();
-
-            await notificationManager.Add(type: NOTIFICATIONTYPE.ISSUE,
-                status: issue.Status,
-                actionId: issue.IssueId,
-                siteId: issue.SiteId,
-                employeeId: issue.RequestedById);
-
-            return Ok(issue.IssueId);
+            catch(KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("approve")]
         public async Task<ActionResult<Issue>> Approve(ApproveIssueDTO approveDTO)
         {
-            var issue = await context.Issues
-                .Where(i => i.IssueId == approveDTO.IssueId)
-                .Include(i => i.IssueItems)
-                .FirstOrDefaultAsync();
-            if (issue == null) return NotFound("Issue Not Found.");
 
-            issue.ApproveDate = DateTime.Now;
-            issue.ApprovedById = Employee.EmployeeId;
-
-            foreach (var requestItem in approveDTO.IssueItems)
+            try
             {
-                var isssueItem = issue.IssueItems
-                    .Where(tItem => tItem.ItemId == requestItem.ItemId)
-                    .FirstOrDefault();
-
-                if (isssueItem == null) return NotFound($"Issue Item with Id {requestItem.ItemId} Not Found");
-
-                isssueItem.QtyApproved = requestItem.QtyApproved;
-                isssueItem.ApproveRemark = requestItem.ApproveRemark;
+                var issue = await _issueService.ApproveIssue(approveDTO);
+                return Ok(issue.IssueId);
             }
-
-            issue.Status = ISSUESTATUS.APPROVED;
-
-            await context.SaveChangesAsync();
-
-            await notificationManager.Add(type: NOTIFICATIONTYPE.ISSUE,
-                status: issue.Status,
-                actionId: issue.IssueId,
-                siteId: issue.SiteId,
-                employeeId: issue.RequestedById);
-
-            return Ok(issue);
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("decline")]
         public async Task<ActionResult<Issue>> Decline(DeclineIssueDTO declineDTO)
         {
-            var issue = await context.Issues
-               .Where(i => i.IssueId == declineDTO.IssueId)
-               .Include(i => i.IssueItems)
-               .FirstOrDefaultAsync();
-            if (issue == null) return NotFound("Issue Not Found.");
 
-            issue.ApproveDate = DateTime.Now;
-            issue.ApprovedById = Employee.EmployeeId;
-
-            foreach (var requestItem in declineDTO.IssueItems)
+            try
             {
-                var issueItem = issue.IssueItems.Where(tItem => tItem.ItemId == requestItem.ItemId).FirstOrDefault();
-                if (issueItem == null) return NotFound($"Issue Item with Id {requestItem.ItemId} Not Found");
-
-                issueItem.ApproveRemark = requestItem.ApproveRemark;
+                var issue = await _issueService.DeclineIssue(declineDTO);
+                return Ok(issue.IssueId);
             }
-
-            issue.Status = ISSUESTATUS.DECLINED;
-
-            await context.SaveChangesAsync();
-
-            await notificationManager.Add(type: NOTIFICATIONTYPE.ISSUE,
-                status: issue.Status,
-                actionId: issue.IssueId,
-                siteId: issue.SiteId,
-                employeeId: issue.RequestedById);
-
-            return Ok(issue);
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("hand")]
         public async Task<ActionResult<Issue>> Hand(HandIssueDTO handDTO)
         {
-            var issue = context.Issues
-                .Where(i => i.IssueId == handDTO.IssueId)
-                .Include(i => i.IssueItems)
-                .FirstOrDefault();
-            if (issue == null) return NotFound("Issue Not Found.");
 
-            issue.HandDate = DateTime.Now;
-            issue.HandedById = Employee.EmployeeId;
-
-            foreach (var requestItem in handDTO.IssueItems)
+            try
             {
-                var issueItem = issue.IssueItems.Where(tItem => tItem.ItemId == requestItem.ItemId).FirstOrDefault();
-                if (issueItem == null) return NotFound($"Issue Item with Id {requestItem.ItemId} Not Found");
-
-                issueItem.HandRemark = requestItem.HandRemark;
+                var issue = await _issueService.HandIssue(handDTO);
+                return Ok(issue);
             }
-
-            issue.Status = ISSUESTATUS.HANDED;
-
-            await context.SaveChangesAsync();
-
-            await notificationManager.Add(type: NOTIFICATIONTYPE.ISSUE,
-                status: issue.Status,
-                actionId: issue.IssueId,
-                siteId: issue.SiteId,
-                employeeId: issue.RequestedById);
-
-            return Ok(issue);
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
     }

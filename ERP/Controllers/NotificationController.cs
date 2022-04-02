@@ -1,5 +1,7 @@
 ﻿using ERP.Context;
 using ERP.Models;
+using ERP.Services.NotificationServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,21 +9,22 @@ namespace ERP.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Employee")]
     public class NotificationController : Controller
     {
-        private readonly DataContext context;
-        private readonly NotificationManager notificationManager;
+        private readonly DataContext _context;
+        private readonly INotificationService _notificationService;
 
-        public NotificationController(DataContext context, NotificationManager notificationManager)
+        public NotificationController(DataContext context, INotificationService notificationService)
         {
-            this.context = context;
-            this.notificationManager = notificationManager;
+            _context = context;
+            _notificationService = notificationService;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<Notification>>> Get()
         {
-            List<Notification> notifications = await context.Notifications.Where(n => n.IsCleared == false).ToListAsync();
+            List<Notification> notifications = await _context.Notifications.Where(n => n.IsCleared == false).ToListAsync();
 
             notifications = notifications.OrderByDescending(n => n.Date).ToList();
 
@@ -31,7 +34,7 @@ namespace ERP.Controllers
         [HttpGet("clear/{notificationId}")]
         public async Task<ActionResult<bool>> Clear(int notificationId)
         {
-            var res = await notificationManager.Clear(notificationId);
+            var res = await _notificationService.Clear(notificationId);
             return Ok(res);
         }
 

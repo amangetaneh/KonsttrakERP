@@ -1,14 +1,28 @@
-﻿using System.Security.Claims;
+﻿using ERP.Context;
+using ERP.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace ERP.Services.User
 {
     public class UserService : IUserService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
+        
+        public Employee Employee { get; }
 
-        public UserService(IHttpContextAccessor httpContextAccessor)
+        public UserService(DataContext context, IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
+
+            var UserAccount = context.UserAccounts
+                .Where(u => u.Username == GetMyName())
+                .Include(u => u.UserRole)
+                .Include(u => u.Employee)
+                .ThenInclude(e => e.EmployeeSite)
+                .FirstOrDefault();
+
+            Employee = UserAccount == null ? null : UserAccount.Employee;
         }
 
         public string GetMyName()

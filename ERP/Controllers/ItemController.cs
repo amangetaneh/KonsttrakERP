@@ -4,24 +4,29 @@ using ERP.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ERP.DTOs.Item;
+using ERP.Services.ItemServices;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ERP.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Employee")]
     public class ItemController : Controller
     {
         private readonly DataContext context;
+        private readonly IItemService _itemService;
 
-        public ItemController(DataContext context)
+        public ItemController(DataContext context, IItemService itemService)
         {
             this.context = context;
+            _itemService = itemService;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<Item>>> GetAll()
         {
-            var items = await context.Items.Include(i => i.Material).Include(i => i.Equipment).ToListAsync();
+            var items = await  _itemService.GetAll();
 
             return Ok(items);
         }
@@ -29,38 +34,39 @@ namespace ERP.Controllers
         [HttpGet("{ItemId}")]
         public async Task<ActionResult<Item>> GetOne(int ItemId)
         {
-            var item = await context.Items
-                .Where(item => item.ItemId == ItemId)
-                .Include(i => i.Material)
-                .Include(i => i.Equipment)
-                .ThenInclude(e => e.EquipmentModels)
-                .FirstOrDefaultAsync();
-
-            if (item == null) return NotFound("Item Not Found");
-
-            return Ok(item);
+           
+            try
+            {
+                var item = await _itemService.GetById(ItemId);
+                return Ok(item);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
 
         }
 
         [HttpGet("equipmentmodel/{ModelId}")]
         public async Task<ActionResult<EquipmentModel>> GetModel(int ModelId)
         {
-            var model = await context.EquipmentModels
-                .Where(model => model.EquipmentModelId == ModelId)
-                .Include(model => model.EquipmentAssets)
-                .FirstOrDefaultAsync();
 
-            if (model == null) return NotFound("Equipment Model Not Found");
-
-            return Ok(model);
+            try
+            {
+                var model = await _itemService.GetModel(ModelId);
+                return Ok(model);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
 
         }
 
         [HttpGet("material")]
         public async Task<ActionResult<List<Item>>> GetMaterial()
         {
-            var items = await context.Items.Where(item => item.Type == ITEMTYPE.MATERIAL)
-                .Include(i => i.Material).ToListAsync();
+            var items = await _itemService.GetMaterials();
 
             return Ok(items);
         }
@@ -68,8 +74,7 @@ namespace ERP.Controllers
         [HttpGet("equipment")]
         public async Task<ActionResult<List<Item>>> GetEquipment()
         {
-            var items = await context.Items.Where(item => item.Type == ITEMTYPE.EQUIPMENT)
-                .Include(i => i.Equipment).ToListAsync();
+            var items = await _itemService.GetEquipments();
 
             return Ok(items);
         }
