@@ -62,10 +62,10 @@ function Sidebar() {
                             </SubMenu>
                             <SubMenu title="Receive">
                                 <MenuItem>
-                                    Receive an Item <Link to="/receive/material" />
+                                    Receive an Item <Link to="/receive/purchase" />
                                 </MenuItem>
                                 <MenuItem>
-                                    List Received Items <Link to="/receive/list" />
+                                    List Received Items <Link to="/receive" />
                                 </MenuItem>
                             </SubMenu>
                             <SubMenu title="Transfer">

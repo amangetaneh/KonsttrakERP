@@ -36,7 +36,7 @@ function ConfirmPurchase({ addedItems, setAddedItems, purchase }) {
             };
 
             data.purchaseItems.push(tempItem);
-        }
+        } 
 
         submitConfirmPurchase(data);
     }

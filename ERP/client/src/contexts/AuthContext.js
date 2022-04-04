@@ -12,11 +12,18 @@ export function useAuthUpdate(){
 }
 
 export function AuthProvider({ children }) {
-    const [state, setState] = useState({});
+    const [state, setState] = useState({
+        token:"",
+        data:[{w:"pppp"}],
+        username:""
+    });
+    const func = (data)=>{
+        setState(data)
+    }
 
     return (
         <AuthContext.Provider value={state}>
-            <AuthtUpdateContext.Provider value={setState}>
+            <AuthtUpdateContext.Provider value={func}>
                 {children}
             </AuthtUpdateContext.Provider>
         </AuthContext.Provider>

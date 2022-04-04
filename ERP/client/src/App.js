@@ -5,7 +5,7 @@ import ContextProviders from "./contexts/ContextProviders";
 import Sidebar from "./components/layouts/Sidebar";
 import MaterialTransfer from "./components/forms/transfer/MaterialTransfer";
 import MaterialPurchase from "./components/forms/purchase/MaterialPurchase";
-import MaterialReceive from "./components/forms/receive/MaterialReceive";
+// import MaterialReceive from "./components/forms/receive/MaterialReceive";
 import EquipmentTransfer from "./components/forms/transfer/EquipmentTransfer";
 import ListTransfers from "./components/forms/transfer/ListTransfers";
 //import PurchaseNewItem from "./components/forms/purchase/PurchaseNewItem";
@@ -34,7 +34,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginAction, setData } from "./redux/auth";
 import Login from "./components/forms/authorization/Login";
 import TransferReport from "./components/forms/report/TransferReport";
-
+// import {useAuth,useAuthUpdate} from './contexts/AuthContext'
+// const {token} = useAuth()
 const App = () => {
     const token = useSelector((state) => state.auth.token);
     const dispatch = useDispatch();
@@ -91,7 +92,7 @@ const App = () => {
 
                                 <Route path="receive" element={<ListReceives />} />
                                 <Route path="receive/:id" element={<SingleReceive />} />
-                                <Route path="receive/material" element={<MaterialReceive />} />
+                                {/* <Route path="receive/material" element={<MaterialReceive />} /> */}
                             </Routes>
                         </div>
                     </div>

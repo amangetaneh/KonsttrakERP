@@ -36,17 +36,21 @@ const Login = () => {
         e.preventDefault()
         if(!value.username){
           toast.error("Please provide your username",toastOption)
-        }
+        } 
         else if(!value.password){
           toast.error("Please provide your password",toastOption)
         }else{
           try{
             const res = await api.post('Authorization/login',value)
+            console.log(res)
+
             dispatch(loginAction(res.data[0]))
-            dispatch(loginAction(res.data))
+            //dispatch(loginAction(res.data))
+            console.log(res.data[0])
 
             localStorage.setItem("token",res.data[0])
-           localStorage.setItem("data",JSON.stringify(res.data))
+            localStorage.setItem("data",JSON.stringify(res.data))
+            //console.log(res.data)
             //axios.defaults.headers.common["Authorization"] = "bearer " + res.data[0]
     
          }catch(err){

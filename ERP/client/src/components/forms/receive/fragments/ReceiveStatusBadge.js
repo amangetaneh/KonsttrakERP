@@ -2,7 +2,7 @@ import { Badge } from "react-bootstrap";
 import { RECEIVESTATUS } from "../../../../Constants";
 
 function ReceiveStatusBadge(status) {
-    const color = ["danger", "info", "success", "primary"];
+    const color = ["success", "info"];
 
     return (
         <Badge

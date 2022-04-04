@@ -80,7 +80,7 @@ import { registration } from "../../../redux/auth";
             toast.error("The password must be greaterthan 8 characters",toastOption)
           }else{
               try{
-            const res = await api.post('Authorization/register',value)
+                const res = await api.post('Authorization/register',value)
                 toast.success("Registration successFull! please wait for approval.",toastOption)
                 console.log(res.data)
                   dispatch(registration(res.data.username))
