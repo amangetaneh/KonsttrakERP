@@ -3,19 +3,21 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
-import { Provider } from "react-redux";
-import store from './redux/store'
+
+import ContextProviders from "./contexts/ContextProviders";
+
 
 const queryClient = new QueryClient();
 
 ReactDOM.render(
     <React.StrictMode>
-        <Provider store={store}>
+        <ContextProviders>
         <QueryClientProvider client={queryClient}>
             <App />
             <ReactQueryDevtools />
         </QueryClientProvider>
-        </Provider>
+        
+        </ContextProviders>
     </React.StrictMode>,
     document.getElementById("root")
 );

@@ -1,19 +1,20 @@
 import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { FcFlowChart } from "react-icons/fc";
 import api from '../../../api/api'
-import { loginAction } from '../../../redux/auth'
 import {ToastContainer,toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
-import axios from "axios";
+import { useAuth, useAuthUpdate } from '../../../contexts/AuthContext';
 
 
 const Login = () => {
-    const token=useSelector(state=>state.auth.token)
-    const storUsername=useSelector(state=>state.auth.username)
-    const dispatch = useDispatch()
-    console.log(token)
+  const navigate = useNavigate()
+    // const token=useSelector(state=>state.auth.token)
+  const contextData=useAuth()
+  const updateAuthContext = useAuthUpdate()
+   console.log("pppppppppppppp",contextData)
+    // const storUsername=useSelector(state=>state.auth.username)
+    // const dispatch = useDispatch()
     const [value,setValue] = useState({
         username:"",
         password:""
@@ -44,15 +45,16 @@ const Login = () => {
             const res = await api.post('Authorization/login',value)
             console.log(res)
 
-            dispatch(loginAction(res.data[0]))
-            //dispatch(loginAction(res.data))
-            console.log(res.data[0])
-
-            localStorage.setItem("token",res.data[0])
+            // dispatch(loginAction(res.data.token))
+            // dispatch(setData(res.data))
+            // dispatch(registration(res.data.username))
+            updateAuthContext({...contextData,token:res.data.token,data:res.data})
+            localStorage.setItem("token",res.data.token)
             localStorage.setItem("data",JSON.stringify(res.data))
             //console.log(res.data)
             //axios.defaults.headers.common["Authorization"] = "bearer " + res.data[0]
     
+           navigate("/")
          }catch(err){
            console.log(err)
             toast.error("incorrect username or password",toastOption)
@@ -63,9 +65,9 @@ const Login = () => {
      
   return (
     <div className="loginAndRegistration" >
-      {storUsername && <div style={{maxWidth:"600px",margin:"auto"}} >
-        <div style={{marginTop:"30px"}} class="alert alert-success" role="alert">
-     You have successfully registered. Use username: {storUsername} to login.
+      {contextData?.username && <div style={{maxWidth:"600px",margin:"auto"}} >
+        <div style={{marginTop:"30px"}} className="alert alert-success" role="alert">
+     You have successfully registered. Use username: {contextData.username} to login.
 </div>
         </div>}
     <div>

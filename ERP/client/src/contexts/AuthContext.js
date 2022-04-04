@@ -13,8 +13,8 @@ export function useAuthUpdate(){
 
 export function AuthProvider({ children }) {
     const [state, setState] = useState({
-        token:"",
-        data:[{w:"pppp"}],
+        data:"",
+        toekn:"",
         username:""
     });
     const func = (data)=>{
