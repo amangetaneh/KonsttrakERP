@@ -51,7 +51,33 @@ function Sidebar() {
                         </MenuItem>
 
                         <SubMenu title="Inventory" icon={<FaList className="fs-5" />}>
-                            <SubMenu title="Stock"></SubMenu>
+                            <SubMenu title="Stock">
+                                <MenuItem>
+                                    Add a new Material <Link to="/receive/purchase" />
+                                </MenuItem>
+                                <SubMenu title="Equipment">
+                                    <MenuItem>
+                                        Add a new Equipment <Link to="/receive" />
+                                    </MenuItem>
+                                    <MenuItem>
+                                        Add a new Model <Link to="/receive" />
+                                    </MenuItem>
+                                    <MenuItem>
+                                        Add a new Category <Link to="/receive" />
+                                    </MenuItem>
+                                </SubMenu>
+                            </SubMenu>
+                            <SubMenu title="Buy">
+                                <MenuItem>
+                                    Buy an Item <Link to="/purchase/material" />
+                                </MenuItem>
+                                {
+                                    data.userRole?.canRequestPurchase===1 &&
+                                    <MenuItem>
+                                    Buy Requests <Link to="/purchase" />
+                                </MenuItem>
+                                }
+                            </SubMenu>
                             <SubMenu title="Purchase">
                                 <MenuItem>
                                     Purchase an Item <Link to="/purchase/material" />

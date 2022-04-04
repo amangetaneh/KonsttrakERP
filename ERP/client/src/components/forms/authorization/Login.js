@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import axios from "axios";
 import { Link, useNavigate } from 'react-router-dom'
 import { FcFlowChart } from "react-icons/fc";
 import api from '../../../api/api'
@@ -12,7 +13,7 @@ const Login = () => {
     // const token=useSelector(state=>state.auth.token)
   const contextData=useAuth()
   const updateAuthContext = useAuthUpdate()
-   console.log("pppppppppppppp",contextData)
+   console.log("pppppppppppppp", contextData)
     // const storUsername=useSelector(state=>state.auth.username)
     // const dispatch = useDispatch()
     const [value,setValue] = useState({
@@ -48,11 +49,11 @@ const Login = () => {
             // dispatch(loginAction(res.data.token))
             // dispatch(setData(res.data))
             // dispatch(registration(res.data.username))
-            updateAuthContext({...contextData,token:res.data.token,data:res.data})
+            updateAuthContext({...contextData,token:res.data.token, data:res.data})
             localStorage.setItem("token",res.data.token)
             localStorage.setItem("data",JSON.stringify(res.data))
             //console.log(res.data)
-            //axios.defaults.headers.common["Authorization"] = "bearer " + res.data[0]
+            axios.defaults.headers.common["Authorization"] = "bearer " + res.data.token;
     
            navigate("/")
          }catch(err){
@@ -61,7 +62,7 @@ const Login = () => {
           
          }
         }
-        }
+      }
      
   return (
     <div className="loginAndRegistration" >

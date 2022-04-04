@@ -14,7 +14,7 @@ export function useAuthUpdate(){
 export function AuthProvider({ children }) {
     const [state, setState] = useState({
         data:"",
-        toekn:"",
+        token:"",
         username:""
     });
     const func = (data)=>{
