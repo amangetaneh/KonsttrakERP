@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     ProSidebar,
     Menu,
@@ -16,15 +16,10 @@ import { useAuth, useAuthUpdate } from "../../contexts/AuthContext";
 
 function Sidebar() {
     const navigate = useNavigate()
-    // const dispatch = useDispatch()
-    // const contextData=useAuth()
     const updateAuthContext = useAuthUpdate()
 
-
-    const {data}=useAuth()
-    
-
-
+    const {data}= useAuth()
+ 
     const [collapsed, setCollapsed] = useState(false);
 
     return (
@@ -68,35 +63,46 @@ function Sidebar() {
                                 </SubMenu>
                             </SubMenu>
                             <SubMenu title="Buy">
+                                {data.userRole?.canRequestBuy &&
                                 <MenuItem>
-                                    Buy an Item <Link to="/purchase/material" />
-                                </MenuItem>
-                                {
-                                    data.userRole?.canRequestPurchase===1 &&
-                                    <MenuItem>
-                                    Buy Requests <Link to="/purchase" />
+                                    Buy an Item <Link to="/buy/material" />
                                 </MenuItem>
                                 }
+                                <MenuItem>
+                                    Buy Requests <Link to="/buy" />
+                                </MenuItem>
                             </SubMenu>
+                            {data.userRole.canViewPurchase &&
                             <SubMenu title="Purchase">
+                                {
+                                data.userRole?.canRequestPurchase &&
                                 <MenuItem>
                                     Purchase an Item <Link to="/purchase/material" />
                                 </MenuItem>
-                                {
-                                    data.userRole?.canRequestPurchase===1 &&
-                                    <MenuItem>
-                                    Purchase Requests <Link to="/purchase" />
-                                </MenuItem>
                                 }
+                                
+                                <MenuItem>
+                                    List Purchase Requests <Link to="/purchase" />
+                                </MenuItem>
+                                
                             </SubMenu>
+                            }
+                            {data.userRole.canViewReceive &&
                             <SubMenu title="Receive">
+                                {
+                                data.userRole?.canReceive &&
+                                
                                 <MenuItem>
                                     Receive an Item <Link to="/receive/purchase" />
                                 </MenuItem>
+                                }
+                                
                                 <MenuItem>
                                     List Received Items <Link to="/receive" />
                                 </MenuItem>
+                            
                             </SubMenu>
+                            }
                             <SubMenu title="Transfer">
                                 <MenuItem>
                                     New Material Transfer

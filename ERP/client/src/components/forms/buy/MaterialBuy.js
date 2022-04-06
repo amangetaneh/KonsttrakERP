@@ -2,19 +2,18 @@ import { useEffect, useRef, useState } from "react";
 import { Form, Button, Container } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
 import Item from "../../../models/Item";
-import PurchaseRequestMaterial from "./fragments/PurchaseRequestMaterial";
+import BuyRequestMaterial from "./fragments/BuyRequestMaterial";
 import Header from "../../layouts/Header";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { fetchSites } from "../../../api/site";
 import { fetchMaterials } from "../../../api/item";
-import { requestPurchase} from "../../../api/purchase";
+import { requestBuy} from "../../../api/buy";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
 
-function MaterialPurchase() {
+function MaterialBuy() {
     const navigate = useNavigate();
-    const [receivingSite, setReceivingSite] = useState(0);
     const [addedItems, setAddedItems] = useState([new Item()]);
 
     const [allSites, setAllSites] = useState([]);
@@ -25,7 +24,6 @@ function MaterialPurchase() {
     const sitesQuery = useQuery("sites", fetchSites, {
         onSuccess: (data) => {
             setAllSites(data);
-            setReceivingSite(data[0].siteId); // Select Defalut Sites
         },
     });
 
@@ -44,9 +42,9 @@ function MaterialPurchase() {
     const {
         isError: isSubmitError,
         isLoading: isSubmitLoading,
-        mutate: submitPurchaseRequest,
-    } = useMutation(requestPurchase, {
-        onSuccess: (res) => navigate(`/purchase/${res.data}`),
+        mutate: submitBuyRequest,
+    } = useMutation(requestBuy, {
+        onSuccess: (res) => navigate(`/buy/${res.data}`),
     });
 
     function submit(e) {
@@ -54,8 +52,7 @@ function MaterialPurchase() {
         if (isSubmitLoading) return;
 
         var data = {
-            receivingSiteId: Number(receivingSite),
-            purchaseItems: [],
+            buyItems: [],
         };
 
         for (let item of addedItems) {
@@ -65,10 +62,10 @@ function MaterialPurchase() {
                 requestRemark: item.requestRemark,
             };
 
-            data.purchaseItems.push(tempItem);
+            data.buyItems.push(tempItem);
         }
 
-        submitPurchaseRequest(data);
+        submitBuyRequest(data);
     }
 
     //scroll when Item is added
@@ -93,30 +90,13 @@ function MaterialPurchase() {
 
     return (
         <>
-            <Header title="New Material Purchase Request" />
+            <Header title="New Material Buy Request" />
 
             <Container className="my-3">
                 <Form onSubmit={submit}>
-                    <div className="row mx-2">
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Receiving Site</Form.Label>
-                                <Form.Select
-                                    value={receivingSite}
-                                    onChange={(e) => setReceivingSite(e.target.value)}
-                                >
-                                    {allSites.map((site) => (
-                                        <option key={site.siteId} value={site.siteId}>
-                                            {site.name}
-                                        </option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
-                        </div>
-                    </div>
 
                     {addedItems.map((item, index) => (
-                        <PurchaseRequestMaterial
+                        <BuyRequestMaterial
                             key={item.key}
                             index={index}
                             allItems={allItems}
@@ -128,7 +108,7 @@ function MaterialPurchase() {
                     <div className="row">
                         <div className="col-9 d-grid">
                             <Button type="submit" className="btn-teal-dark">
-                                Request Purchase
+                                Request Buy
                             </Button>
                         </div>
                         <div className="col-3 d-grid">
@@ -149,4 +129,4 @@ function MaterialPurchase() {
     );
 }
 
-export default MaterialPurchase;
+export default MaterialBuy;

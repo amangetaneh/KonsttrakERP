@@ -1099,6 +1099,9 @@ namespace ERP.Migrations
                     b.Property<bool>("CanApprovePurchase")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("CanApproveReceive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("CanApproveTransfer")
                         .HasColumnType("bit");
 
@@ -1108,7 +1111,10 @@ namespace ERP.Migrations
                     b.Property<bool>("CanCheckPurchase")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("CanCheckRecieve")
+                    b.Property<bool>("CanConfirmBuy")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanConfirmPurchase")
                         .HasColumnType("bit");
 
                     b.Property<bool>("CanFixMaintenance")
@@ -1120,10 +1126,10 @@ namespace ERP.Migrations
                     b.Property<bool>("CanHandIssue")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("CanReceiveTransfer")
+                    b.Property<bool>("CanReceive")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("CanRecieve")
+                    b.Property<bool>("CanReceiveTransfer")
                         .HasColumnType("bit");
 
                     b.Property<bool>("CanRequestBorrow")
@@ -1165,7 +1171,7 @@ namespace ERP.Migrations
                     b.Property<bool>("CanViewPurchase")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("CanViewRecieve")
+                    b.Property<bool>("CanViewReceive")
                         .HasColumnType("bit");
 
                     b.Property<bool>("CanViewTransfer")

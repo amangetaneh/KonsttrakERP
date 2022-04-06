@@ -1,21 +1,21 @@
 import React from "react";
 import PropTypes from "prop-types";
-import PurchaseConfirmMaterial from "./fragments/PurchaseConfirmMaterial";
+import BuyConfirmMaterial from "./fragments/BuyConfirmMaterial";
 import { Button, Form, Spinner } from "react-bootstrap";
-import { confirmPurchase } from "../../../api/purchase";
+import { confirmBuy } from "../../../api/buy";
 import { useMutation, useQueryClient } from "react-query";
 import ConnectionError from "../../fragments/ConnectionError";
 
-function ConfirmPurchase({ addedItems, setAddedItems, purchase }) {
+function ConfirmBuy({ addedItems, setAddedItems, buy }) {
     const queryClient = useQueryClient();
 
     const {
         isLoading: isConfirmLoading,
         isError: isConfirmError,
-        mutate: submitConfirmPurchase,
-    } = useMutation(confirmPurchase, {
+        mutate: submitConfirmBuy,
+    } = useMutation(confirmBuy, {
         onSuccess: (res) =>
-            queryClient.invalidateQueries(["purchase", purchase.purchaseId.toString()]),
+            queryClient.invalidateQueries(["buy", buy.buyId.toString()]),
     });
 
 
@@ -24,21 +24,21 @@ function ConfirmPurchase({ addedItems, setAddedItems, purchase }) {
         if (isConfirmLoading) return;
 
         const data = {
-            purchaseId: purchase.purchaseId,
-            purchaseItems: [],
+            buyId: buy.buyId,
+            buyItems: [],
         };
 
         for (let item of addedItems) {
             let tempItem = {
                 itemId: Number(item.itemId),
-                qtyPurchased: Number(item.qtyPurchased),
-                purchaseRemark: item.purchaseRemark,
+                qtyBought: Number(item.qtyBought),
+                buyRemark: item.buyRemark,
             };
 
-            data.purchaseItems.push(tempItem);
+            data.buyItems.push(tempItem);
         } 
 
-        submitConfirmPurchase(data);
+        submitConfirmBuy(data);
     }
 
     if (isConfirmError) return <ConnectionError />;
@@ -48,7 +48,7 @@ function ConfirmPurchase({ addedItems, setAddedItems, purchase }) {
             <Form onSubmit={submit}>
 
                 {addedItems.map((item, index) => (
-                    <PurchaseConfirmMaterial
+                    <BuyConfirmMaterial
                         key={index}
                         addedItems={addedItems}
                         setAddedItems={setAddedItems}
@@ -64,7 +64,7 @@ function ConfirmPurchase({ addedItems, setAddedItems, purchase }) {
                                 animation="grow" 
                                 size="sm" />
                         )}
-                        Confirm Purchase
+                        Confirm Buy
                     </Button>
                 </div>
             </Form>
@@ -72,10 +72,10 @@ function ConfirmPurchase({ addedItems, setAddedItems, purchase }) {
     );
 }
 
-ConfirmPurchase.propTypes = {
+ConfirmBuy.propTypes = {
     addedItems: PropTypes.array.isRequired,
     setAddedItems: PropTypes.func.isRequired,
-    purchase: PropTypes.object.isRequired,
+    buy: PropTypes.object.isRequired,
 };
 
-export default ConfirmPurchase;
+export default ConfirmBuy;

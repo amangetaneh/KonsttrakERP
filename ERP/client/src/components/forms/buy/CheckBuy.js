@@ -1,40 +1,40 @@
 import React from "react";
 import PropTypes from "prop-types";
-import PurchaseCheckMaterial from "./fragments/PurchaseCheckMaterial";
+import BuyCheckMaterial from "./fragments/BuyCheckMaterial";
 import { Button, Spinner } from "react-bootstrap";
-import { checkPurchase, declinePurchase } from "../../../api/purchase";
+import { checkBuy, queueBuy } from "../../../api/buy";
 import { useMutation, useQueryClient } from "react-query";
 import ConnectionError from "../../fragments/ConnectionError";
 
-function CheckPurchase({ addedItems, setAddedItems, purchase }) {
+function CheckBuy({ addedItems, setAddedItems, buy }) {
     const queryClient = useQueryClient();
 
     const {
         isLoading: isCheckLoading,
         isError: isCheckError,
-        mutate: submitCheckPurchase,
-    } = useMutation(checkPurchase, {
+        mutate: submitCheckBuy,
+    } = useMutation(checkBuy, {
         onSuccess: (res) =>
-            queryClient.invalidateQueries(["purchase", purchase.purchaseId.toString()]),
+            queryClient.invalidateQueries(["buy", buy.buyId.toString()]),
     });
 
     const {
-        isLoading: isDeclineLoading,
-        isError: isDeclineError,
-        mutate: submitDeclinePurchase,
-    } = useMutation(declinePurchase, {
+        isLoading: isQueueLoading,
+        isError: isQueueError,
+        mutate: submitQueueBuy,
+    } = useMutation(queueBuy, {
         onSuccess: (res) =>
-            queryClient.invalidateQueries(["purchase", purchase.purchaseId.toString()]),
+            queryClient.invalidateQueries(["buy", buy.buyId.toString()]),
     });
 
 
     function submit(type, e) {
         e.preventDefault();
-        if (isCheckLoading || isDeclineLoading) return;
+        if (isCheckLoading || isQueueLoading) return;
 
         const data = {
-            purchaseId: purchase.purchaseId,
-            purchaseItems: [],
+            buyId: buy.buyId,
+            buyItems: [],
         };
 
         for (let item of addedItems) {
@@ -44,19 +44,19 @@ function CheckPurchase({ addedItems, setAddedItems, purchase }) {
                 approveRemark: item.approveRemark,
             };
 
-            data.purchaseItems.push(tempItem);
+            data.buyItems.push(tempItem);
         }
 
-        if (type === "decline") submitDeclinePurchase(data);
-        else submitCheckPurchase(data);
+        if (type === "queue") submitQueueBuy(data);
+        else submitCheckBuy(data);
     }
 
-    if (isCheckError || isDeclineError) return <ConnectionError />;
+    if (isCheckError || isQueueError) return <ConnectionError />;
 
     return (
         <>
             {addedItems.map((item, index) => (
-                <PurchaseCheckMaterial
+                <BuyCheckMaterial
                     key={index}
                     addedItems={addedItems}
                     setAddedItems={setAddedItems}
@@ -74,11 +74,11 @@ function CheckPurchase({ addedItems, setAddedItems, purchase }) {
                     </Button>
                 </div>
                 <div className="col-4 d-grid">
-                    <Button variant="danger" onClick={submit.bind(this, "decline")}>
-                        {isDeclineLoading && (
+                    <Button variant="warning" onClick={submit.bind(this, "queue")}>
+                        {isQueueLoading && (
                             <Spinner className="me-2" animation="grow" size="sm" />
                         )}
-                        Decline
+                        Queue
                     </Button>
                 </div>
             </div>
@@ -86,10 +86,10 @@ function CheckPurchase({ addedItems, setAddedItems, purchase }) {
     );
 }
 
-CheckPurchase.propTypes = {
+CheckBuy.propTypes = {
     addedItems: PropTypes.array.isRequired,
     setAddedItems: PropTypes.func.isRequired,
-    purchase: PropTypes.object.isRequired,
+    buy: PropTypes.object.isRequired,
 };
 
-export default CheckPurchase;
+export default CheckBuy;

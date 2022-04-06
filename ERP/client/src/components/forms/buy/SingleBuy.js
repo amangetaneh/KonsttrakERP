@@ -3,59 +3,59 @@ import { useParams } from "react-router-dom";
 import { Form, Container } from "react-bootstrap";
 import Item from "../../../models/Item";
 import Header from "../../layouts/Header";
-import PurchaseStatusBadge from "./fragments/PurchaseStatusBadge";
-import { ITEMTYPE, PURCHASESTATUS } from "../../../Constants";
-import ApprovePurchase from "./ApprovePurchase";
-import ConfirmPurchase from "./ConfirmPurchase";
-import CheckPurchase from "./CheckPurchase";
-import ViewPurchase from "./ViewPurchase";
-import DeclinedPurchase from "./DeclinedPurchase";
+import BuyStatusBadge from "./fragments/BuyStatusBadge";
+import { ITEMTYPE, BUYSTATUS } from "../../../Constants";
+import ApproveBuy from "./ApproveBuy";
+import ConfirmBuy from "./ConfirmBuy";
+import CheckBuy from "./CheckBuy";
+import ViewBuy from "./ViewBuy";
+import DeclinedBuy from "./DeclinedBuy";
 import { useQuery } from "react-query";
-import { fetchPurchase } from "../../../api/purchase";
+import { fetchBuy } from "../../../api/buy";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
 
-function SinglePurchase() {
+function SingleBuy() {
     const { id } = useParams();
-    const [purchase, setPurchase] = useState({});
+    const [buy, setBuy] = useState({});
     const [addedItems, setAddedItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    var query = useQuery(["purchase", id], () => fetchPurchase(id));
+    var query = useQuery(["buy", id], () => fetchBuy(id));
 
     useEffect(() => {
         if (query.data === undefined) return;
-        setPurchase(query.data);
+        setBuy(query.data);
         let items = [];
-        for (let purchaseItem of query.data.purchaseItems) {
+        for (let buyItem of query.data.buyItems) {
             let itemObj = new Item();
 
-            itemObj.itemId = purchaseItem.itemId;
-            itemObj.name = purchaseItem.item.name;
-            itemObj.cost = purchaseItem.cost;
-            itemObj.type = purchaseItem.item.type
+            itemObj.itemId = buyItem.itemId;
+            itemObj.name = buyItem.item.name;
+            itemObj.cost = buyItem.cost;
+            itemObj.type = buyItem.item.type
 
-            itemObj.qtyRequested = purchaseItem.qtyRequested;
-            itemObj.requestRemark = purchaseItem.requestRemark;
+            itemObj.qtyRequested = buyItem.qtyRequested;
+            itemObj.requestRemark = buyItem.requestRemark;
 
             if (
-                query.data.status >= PURCHASESTATUS.APPROVED ||
-                query.data.status === PURCHASESTATUS.DECLINED
+                query.data.status >= BUYSTATUS.APPROVED ||
+                query.data.status === BUYSTATUS.DECLINED
             ) {
-                itemObj.qtyApproved = purchaseItem.qtyApproved;
-                itemObj.approveRemark = purchaseItem.approveRemark;
+                itemObj.qtyApproved = buyItem.qtyApproved;
+                itemObj.approveRemark = buyItem.approveRemark;
             }
 
             if (
-                query.data.status >= PURCHASESTATUS.PURCHASED
+                query.data.status >= BUYSTATUS.PURCHASED
             ) {
-                itemObj.qtyPurchased = purchaseItem.qtyPurchased;
-                itemObj.purchaseRemark = purchaseItem.purchaseRemark;
+                itemObj.qtyBought = buyItem.qtyBought;
+                itemObj.buyRemark = buyItem.buyRemark;
             }
 
-            if (purchaseItem.item.type === ITEMTYPE.MATERIAL) {
-                itemObj.spec = purchaseItem.item.material.spec;
-                itemObj.units = [purchaseItem.item.material.unit];
+            if (buyItem.item.type === ITEMTYPE.MATERIAL) {
+                itemObj.spec = buyItem.item.material.spec;
+                itemObj.units = [buyItem.item.material.unit];
             }
 
             items.push(itemObj);
@@ -109,72 +109,67 @@ function SinglePurchase() {
         return (
             <Form>
                 <FormRow
-                    labelL="Purchase Number"
-                    valueL={purchase.purchaseId}
+                    labelL="Buy Number"
+                    valueL={buy.buyId}
                     labelR="Status"
-                    valueR={PurchaseStatusBadge(purchase.status)}
-                />
-
-                <FormRow
-                    labelL="Receiving Site"
-                    valueL={purchase.receivingSite.name}
+                    valueR={BuyStatusBadge(buy.status)}
                 />
 
                 <FormRow
                     labelL="Requested By"
-                    valueL={`${purchase.requestedBy.fName} ${purchase.requestedBy.mName}`}
+                    valueL={`${buy.requestedBy.fName} ${buy.requestedBy.mName}`}
                     labelR="Requested On"
-                    valueR={new Date(purchase.requestDate).toLocaleString()}
+                    valueR={new Date(buy.requestDate).toLocaleString()}
                 />
-                {purchase.status >= PURCHASESTATUS.CHECKED && (
+                {buy.status >= BUYSTATUS.CHECKED && (
                     <>
                         <FormRow
                             labelL="Checked By"
                             valueL={
-                                purchase.checkedBy
-                                    ? `${purchase.checkedBy.fName} ${purchase.checkedBy.mName}`
+                                buy.checkedBy
+                                    ? `${buy.checkedBy.fName} ${buy.checkedBy.mName}`
                                     : ""
                             }
                             labelR="Checked On"
                             valueR={
-                                purchase.checkDate
-                                    ? new Date(purchase.checkDate).toLocaleString()
+                                buy.checkDate
+                                    ? new Date(buy.checkDate).toLocaleString()
                                     : ""
                             }
                         />
                     </>
                 )}
-                {purchase.status >= PURCHASESTATUS.APPROVED && (
+                {buy.status >= BUYSTATUS.APPROVED && (
                     <>
                         <FormRow
                             labelL="Approved By"
                             valueL={
-                                purchase.approvedBy
-                                    ? `${purchase.approvedBy.fName} ${purchase.approvedBy.mName}`
+                                buy.approvedBy
+                                    ? `${buy.approvedBy.fName} ${buy.approvedBy.mName}`
                                     : ""
                             }
                             labelR="Approved On"
                             valueR={
-                                purchase.approveDate
-                                    ? new Date(purchase.approveDate).toLocaleString()
+                                buy.approveDate
+                                    ? new Date(buy.approveDate).toLocaleString()
                                     : ""
                             }
                         />
                     </>
                 )}
-                {purchase.status >= PURCHASESTATUS.PURCHASED && (
+                {buy.status >= BUYSTATUS.PURCHASED && (
                     <>
                         <FormRow
                             labelL="Approved By"
                             valueL={
-                                purchase.approvedBy
-                                    ? `${purchase.approvedBy.fName} ${purchase.approvedBy.mName}`
+                                buy.approvedBy
+                                    ? `${buy.approvedBy.fName} ${buy.approvedBy.mName}`
                                     : ""
                             }
                             labelR="Approved On"
                             valueR={
-                                purchase.approveDate
-                                    ? new Date(purchase.approveDate).toLocaleString()
+                                buy.approveDate
+                                    ? new Date(buy.approveDate).toLocaleString()
                                     : ""
                             }
                         />
@@ -186,10 +181,12 @@ function SinglePurchase() {
 
     const titles = useMemo(
         () => [
-            "Declined Purchase",
-            "Check Purchase",
-            "Approve Purchase",
-            "Confirm Purchase",
+            "Declined Buy",
+            "Check Buy",
+            "Queued Buy",
+            "Approve Buy",
+            "Confirm Buy",
+            "Item Bought",
         ],
         []
     );
@@ -200,46 +197,46 @@ function SinglePurchase() {
 
     return (
         <>
-            <Header title={titles[purchase.status]} />
+            <Header title={titles[buy.status]} />
 
             <Container className="my-3">
                 <>
                     <TopForm />
 
-                    {purchase.status === PURCHASESTATUS.DECLINED && (
-                        <DeclinedPurchase
+                    {buy.status === BUYSTATUS.DECLINED && (
+                        <DeclinedBuy
                             addedItems={addedItems}
                             FormRow={FormRow}
-                            purchase={purchase}
+                            buy={buy}
                         />
                     )}
 
-                    {purchase.status === PURCHASESTATUS.REQUESTED && (
-                        <CheckPurchase
+                    {buy.status === BUYSTATUS.REQUESTED && (
+                        <CheckBuy
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}
-                            purchase={purchase}
+                            buy={buy}
                         />
                     )}
 
-                    {purchase.status === PURCHASESTATUS.CHECKED && (
-                        <ApprovePurchase
+                    {buy.status === BUYSTATUS.CHECKED && (
+                        <ApproveBuy
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}
-                            purchase={purchase}
+                            buy={buy}
                         />
                     )}
 
-                    {purchase.status === PURCHASESTATUS.APPROVED && (
-                        <ConfirmPurchase
+                    {buy.status === BUYSTATUS.APPROVED && (
+                        <ConfirmBuy
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}
-                            purchase={purchase}
+                            buy={buy}
                         />
                     )}
 
-                    {purchase.status === PURCHASESTATUS.PURCHASED && (
-                        <ViewPurchase addedItems={addedItems} purchase={purchase} />
+                    {(buy.status === BUYSTATUS.BOUGHT || buy.status === BUYSTATUS.QUEUED ) && (
+                        <ViewBuy addedItems={addedItems} buy={buy} />
                     )}
                 </>
             </Container>
@@ -247,4 +244,4 @@ function SinglePurchase() {
     );
 }
 
-export default SinglePurchase;
+export default SingleBuy;

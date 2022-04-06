@@ -112,9 +112,11 @@ export const BUYSTATUS = {
 };
 
 export const RECEIVESTATUS = {
-    RECEIVED: 1,
-    APPROVED: 2,
-    0: "Received",
+    PURCHASED: 1,
+    RECEIVED: 2,
+    APPROVED: 3,
+    0: "Purchased",
+    1: "Received",
     1: "Approved",
 };
 

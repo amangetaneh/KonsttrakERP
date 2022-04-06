@@ -1,6 +1,7 @@
 import { Form, InputGroup } from "react-bootstrap";
 
-function PurchaseDeclinedMaterial({ addedItems, index }) {
+function BuyCheckMaterial({ addedItems, setAddedItems, index }) {
+
     return (
         <div className="shadow pt-3 px-4 mb-4 rounded">
             <div className=" row justify-content-between">
@@ -82,27 +83,16 @@ function PurchaseDeclinedMaterial({ addedItems, index }) {
                             </Form.Group>
                         </div>
                     </div>
-                    <div className="col">
-                        <Form.Group className="mb-3">
-                            <Form.Label>Request Remark</Form.Label>
-                            <Form.Control
-                                type="text"
-                                readOnly
-                                value={addedItems[index].requestRemark}
-                            />
-                        </Form.Group>
-                    </div>
                 </div>
             </div>
             <div className="row">
                 <div className="col">
                     <Form.Group className="mb-3">
-                        <Form.Label>Decline Remark</Form.Label>
+                        <Form.Label>Request Remark</Form.Label>
                         <Form.Control
                             type="text"
-                            name="approveRemark"
-                            value={addedItems[index].approveRemark}
                             readOnly
+                            value={addedItems[index].requestRemark}
                         />
                     </Form.Group>
                 </div>
@@ -111,4 +101,4 @@ function PurchaseDeclinedMaterial({ addedItems, index }) {
     );
 }
 
-export default PurchaseDeclinedMaterial;
+export default BuyCheckMaterial;

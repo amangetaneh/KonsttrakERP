@@ -14,7 +14,6 @@ import { useQuery } from "react-query";
 import { fetchTransfer } from "../../../api/transfer";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
-import { useSelector } from "react-redux";
 import AlertNotification from "../../fragments/AlertNotification";
 
 function SingleTransfer() {

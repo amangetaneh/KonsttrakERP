@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Form, InputGroup } from "react-bootstrap";
 
-function PurchaseApproveMaterial({ addedItems, setAddedItems, index }) {
+function PurchaseConfirmMaterial({ addedItems, setAddedItems, index }) {
     //set purchased qty to approved as default
     useEffect(() => {
         const addedItemsCpy = [...addedItems];
@@ -185,4 +185,4 @@ function PurchaseApproveMaterial({ addedItems, setAddedItems, index }) {
     );
 }
 
-export default PurchaseApproveMaterial;
+export default PurchaseConfirmMaterial;

@@ -1,30 +1,30 @@
 import React from "react";
 import PropTypes from "prop-types";
-import PurchaseDecliendMaterial from "./fragments/PurchaseDeclinedMaterial";
+import BuyDecliendMaterial from "./fragments/BuyDeclinedMaterial";
 
-function DeclinedPurchase({ purchase, addedItems, FormRow }) {
+function DeclinedBuy({ buy, addedItems, FormRow }) {
     return (
         <>
             <FormRow
                 labelL="Declined By"
                 valueL={
-                    purchase.approvedBy
-                        ? `${purchase.approvedBy.fName} ${purchase.approvedBy.mName}`
+                    buy.approvedBy
+                        ? `${buy.approvedBy.fName} ${buy.approvedBy.mName}`
                         : ""
                 }
                 labelR="Declined On"
                 valueR={
-                    purchase.approveDate 
-                        ? new Date(purchase.approveDate).toLocaleString() 
+                    buy.approveDate 
+                        ? new Date(buy.approveDate).toLocaleString() 
                         : ""}
             />
 
             <h1 className="display-6 text-center mt-2 mb-4">
-                Purchase Request Has Been Declined
+                Buy Request Has Been Declined
             </h1>
 
             {addedItems.map((item, index) => (
-                <PurchaseDecliendMaterial 
+                <BuyDecliendMaterial 
                     key={index} addedItems={addedItems} 
                     index={index} />
             ))}
@@ -32,9 +32,9 @@ function DeclinedPurchase({ purchase, addedItems, FormRow }) {
     );
 }
 
-DeclinedPurchase.propTypes = {
-    purchase: PropTypes.object.isRequired,
+DeclinedBuy.propTypes = {
+    buy: PropTypes.object.isRequired,
     addedItems: PropTypes.array.isRequired,
 };
 
-export default DeclinedPurchase;
+export default DeclinedBuy;

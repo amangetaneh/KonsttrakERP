@@ -13,9 +13,9 @@ const Login = () => {
     // const token=useSelector(state=>state.auth.token)
   const contextData=useAuth()
   const updateAuthContext = useAuthUpdate()
-   console.log("pppppppppppppp", contextData)
-    // const storUsername=useSelector(state=>state.auth.username)
-    // const dispatch = useDispatch()
+  //console.log("pppppppppppppp", contextData)
+  // const storUsername=useSelector(state=>state.auth.username)
+  // const dispatch = useDispatch()
     const [value,setValue] = useState({
         username:"",
         password:""
@@ -45,14 +45,9 @@ const Login = () => {
           try{
             const res = await api.post('Authorization/login',value)
             console.log(res)
-
-            // dispatch(loginAction(res.data.token))
-            // dispatch(setData(res.data))
-            // dispatch(registration(res.data.username))
             updateAuthContext({...contextData,token:res.data.token, data:res.data})
             localStorage.setItem("token",res.data.token)
             localStorage.setItem("data",JSON.stringify(res.data))
-            //console.log(res.data)
             axios.defaults.headers.common["Authorization"] = "bearer " + res.data.token;
     
            navigate("/")

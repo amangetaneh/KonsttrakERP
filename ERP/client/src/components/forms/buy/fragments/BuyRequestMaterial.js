@@ -2,7 +2,7 @@ import { Form, Button, InputGroup } from "react-bootstrap";
 import { FaTrash } from "react-icons/fa";
 import PropTypes from "prop-types";
 
-function PurchaseRequestMaterial({
+function BuyRequestMaterial({
     allItems,
     addedItems,
     setAddedItems,
@@ -174,11 +174,11 @@ function PurchaseRequestMaterial({
     );
 }
 
-PurchaseRequestMaterial.propTypes = {
+BuyRequestMaterial.propTypes = {
     allItems: PropTypes.array.isRequired,
     addedItems: PropTypes.array.isRequired,
     setAddedItems: PropTypes.func.isRequired,
     index: PropTypes.number.isRequired,
 };
 
-export default PurchaseRequestMaterial;
+export default BuyRequestMaterial;

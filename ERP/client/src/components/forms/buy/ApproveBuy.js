@@ -1,30 +1,30 @@
 import React from "react";
 import PropTypes from "prop-types";
-import PurchaseApproveMaterial from "./fragments/PurchaseApproveMaterial";
+import BuyApproveMaterial from "./fragments/BuyApproveMaterial";
 import { Button, Spinner } from "react-bootstrap";
-import { approvePurchase, declinePurchase } from "../../../api/purchase";
+import { approveBuy, declineBuy } from "../../../api/buy";
 import { useMutation, useQueryClient } from "react-query";
 import ConnectionError from "../../fragments/ConnectionError";
 
-function ApprovePurchase({ addedItems, setAddedItems, purchase }) {
+function ApproveBuy({ addedItems, setAddedItems, buy }) {
     const queryClient = useQueryClient();
 
     const {
         isLoading: isApproveLoading,
         isError: isApproveError,
-        mutate: submitApprovePurchase,
-    } = useMutation(approvePurchase, {
+        mutate: submitApproveBuy,
+    } = useMutation(approveBuy, {
         onSuccess: (res) =>
-            queryClient.invalidateQueries(["purchase", purchase.purchaseId.toString()]),
+            queryClient.invalidateQueries(["buy", buy.buyId.toString()]),
     });
 
     const {
         isLoading: isDeclineLoading,
         isError: isDeclineError,
-        mutate: submitDeclinePurchase,
-    } = useMutation(declinePurchase, {
+        mutate: submitDeclineBuy,
+    } = useMutation(declineBuy, {
         onSuccess: (res) =>
-            queryClient.invalidateQueries(["purchase", purchase.purchaseId.toString()]),
+            queryClient.invalidateQueries(["buy", buy.buyId.toString()]),
     });
 
     function submit(type, e) {
@@ -32,8 +32,8 @@ function ApprovePurchase({ addedItems, setAddedItems, purchase }) {
         if (isApproveLoading || isDeclineLoading) return;
 
         const data = {
-            purchaseId: purchase.purchaseId,
-            purchaseItems: [],
+            buyId: buy.buyId,
+            buyItems: [],
         };
 
         for (let item of addedItems) {
@@ -43,11 +43,11 @@ function ApprovePurchase({ addedItems, setAddedItems, purchase }) {
                 approveRemark: item.approveRemark,
             };
 
-            data.purchaseItems.push(tempItem);
+            data.buyItems.push(tempItem);
         }
 
-        if (type === "decline") submitDeclinePurchase(data);
-        else submitApprovePurchase(data);
+        if (type === "decline") submitDeclineBuy(data);
+        else submitApproveBuy(data);
     }
 
     if (isApproveError || isDeclineError) return <ConnectionError />;
@@ -55,7 +55,7 @@ function ApprovePurchase({ addedItems, setAddedItems, purchase }) {
     return (
         <>
             {addedItems.map((item, index) => (
-                <PurchaseApproveMaterial
+                <BuyApproveMaterial
                     key={index}
                     addedItems={addedItems}
                     setAddedItems={setAddedItems}
@@ -85,10 +85,10 @@ function ApprovePurchase({ addedItems, setAddedItems, purchase }) {
     );
 }
 
-ApprovePurchase.propTypes = {
+ApproveBuy.propTypes = {
     addedItems: PropTypes.array.isRequired,
     setAddedItems: PropTypes.func.isRequired,
-    purchase: PropTypes.object.isRequired,
+    buy: PropTypes.object.isRequired,
 };
 
-export default ApprovePurchase;
+export default ApproveBuy;
