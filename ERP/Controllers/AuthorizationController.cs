@@ -123,12 +123,12 @@ namespace ERP.Controllers
 
             string token = CreateToken(userAccount, employee);
 
-            List<object> result = new List<object>();
+            var result = new LoginReturnDTO();
 
-            result.Add(token);
-            result.Add(employee);
-            result.Add(userRole);
-            result.Add(userAccount.Username);
+            result.token = token;
+            result.employee = employee;
+            result.userRole = userRole;
+            result.username = userAccount.Username;
 
             return Ok(result);
         }

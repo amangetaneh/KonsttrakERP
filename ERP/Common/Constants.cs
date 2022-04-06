@@ -90,8 +90,9 @@
 
     public class RECEIVESTATUS
     {
-        public const int RECEIVED = 1;
-        public const int APPROVED = 2;
+        public const int PURCHASED = 1;
+        public const int RECEIVED = 2;
+        public const int APPROVED = 3;
     }
 
     public class ITEMTYPE

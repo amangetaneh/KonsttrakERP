@@ -9,9 +9,9 @@ namespace ERP.Models
         [Key]
         public int ReceiveId { get; set; }
 
-        public int Status { get; set; } = RECEIVESTATUS.RECEIVED;
+        public int Status { get; set; }
 
-        public DateTime ReceiveDate { get; set; } = DateTime.Now;
+        public DateTime? ReceiveDate { get; set; }
 
         public Purchase Purchase { get; set; }
 
@@ -23,7 +23,7 @@ namespace ERP.Models
 
         public Employee ReceivedBy { get; set; }
 
-        public int ReceivedById { get; set; }
+        public int? ReceivedById { get; set; }
 
         public DateTime? ApproveDate { get; set; }
 
@@ -32,6 +32,10 @@ namespace ERP.Models
         public int? ApprovedById { get; set; }
 
         public string? ApproveRemark { get; set; }
+
+        public Site ReceivingSite { get; set; }
+
+        public int ReceivingSiteId { get; set; }
 
         public ICollection<ReceiveItem> ReceiveItems { get; set; }
     }

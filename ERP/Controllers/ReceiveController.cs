@@ -87,33 +87,39 @@ namespace ERP.Controllers
             return Ok(purchases);
         }
 
-        [HttpPost("request")]
+        [HttpPost("receive")]
         public async Task<ActionResult<List<Receive>>> Post(CreateReceiveDTO receiveDTO)
         {
             
-            Receive receive = new();
-            receive.PurchaseId = receiveDTO.PurchaseId;
+            var receive = context.Receives
+                 .Where(r => r.ReceiveId == receiveDTO.ReceiveId)
+                 .Include(r => r.ReceiveItems)
+                 .FirstOrDefault();
+
+            if (receive == null) return NotFound("Request Not Found.");
+            
+            receive.ReceiveDate = DateTime.Now;
             receive.DeliveredById = receiveDTO.DeliveredById;
             receive.ReceivedById = Employee.EmployeeId;
-
             ICollection<ReceiveItem> receiveItems = new List<ReceiveItem>();
 
             foreach (var requestItem in receiveDTO.ReceiveItems)
             {
-                ReceiveItem receiveItem = new();
-                receiveItem.ItemId = requestItem.ItemId;
+                var receiveItem = receive.ReceiveItems
+                    .Where(rItem => rItem.ItemId == requestItem.ItemId)
+                    .FirstOrDefault();
+
+                if (receiveItem == null) return NotFound($"Receive Item with Id {requestItem.ItemId} Not Found");
+
                 receiveItem.QtyReceived = requestItem.QtyReceived;
                 receiveItem.ReceiveRemark = requestItem.ReceiveRemark;
 
                 receiveItems.Add(receiveItem);
             }
 
-            receive.ReceiveItems = receiveItems;
             receive.Status = RECEIVESTATUS.RECEIVED;
 
-            context.Receives.Add(receive);
-
-            var buy = context.Buys.Where(buy => buy.PurchaseId == receiveDTO.PurchaseId && buy.Status == 5)
+            var buy = context.Buys.Where(buy => buy.PurchaseId == receive.PurchaseId && buy.Status == BUYSTATUS.QUEUED)
                             .Include(buy => buy.BuyItems)
                             .FirstOrDefault();
 

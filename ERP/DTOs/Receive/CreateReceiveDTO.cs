@@ -2,7 +2,7 @@
 {
     public class CreateReceiveDTO
     {
-        public int PurchaseId { get; set; }
+        public int ReceiveId { get; set; }
 
         public int DeliveredById { get; set; }
 

@@ -4,6 +4,7 @@ import {register} from '../api/authorization'
 export const authSlice= createSlice({
   name: 'counter',
   initialState:{
+    www:"abebe",
    token:"",
    username:"",
    data:[]

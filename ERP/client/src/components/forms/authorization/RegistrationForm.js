@@ -7,13 +7,15 @@ import { FcFlowChart } from "react-icons/fc";
 import {ToastContainer,toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { registration } from "../../../redux/auth";
+import { useAuth, useAuthUpdate } from "../../../contexts/AuthContext";
 
 
  const SignUp = ()=>  {
      const navigate = useNavigate()
-     const dispatch = useDispatch()
+    //  const dispatch = useDispatch()
+    
+     const contextData=useAuth()
+     const updateAuthContext = useAuthUpdate()
      const [allUserRole,setAllUserRole]=useState([])
      const [allSite,setAllSite]=useState([])
 
@@ -80,10 +82,9 @@ import { registration } from "../../../redux/auth";
             toast.error("The password must be greaterthan 8 characters",toastOption)
           }else{
               try{
-            const res = await api.post('Authorization/register',value)
+                const res = await api.post('Authorization/register',value)
                 toast.success("Registration successFull! please wait for approval.",toastOption)
-                console.log(res.data)
-                  dispatch(registration(res.data.username))
+                  updateAuthContext({...contextData,username:res.data.username})
                 navigate("/login")
                 
 
@@ -100,7 +101,7 @@ import { registration } from "../../../redux/auth";
         return (
             <div className="loginAndRegistration">
                
-            <form className="signup" autocomplete="off" style={{backgroundColor:"#f1f1f1"}}>
+            <form className="signup" autoComplete="off" style={{backgroundColor:"#f1f1f1"}}>
             <h3 style={{color:"grey", paddingTop:"10px"}}><FcFlowChart style={{width: "40px", height: "40px", marginBottom: "10px"}} /> ERP</h3>
                 <h3>Sign Up</h3>
                 <div className="signup__row">
@@ -115,7 +116,7 @@ import { registration } from "../../../redux/auth";
                 </div>
                 <div className="form-group">
                 <label>Position</label>
-                    <input name="position" onChange={(e)=>setValue({...value,position:e.target.value})} autocomplete="false" value={value.position} type="text" className="form-control" placeholder="Position" />
+                    <input name="position" onChange={(e)=>setValue({...value,position:e.target.value})} autoComplete="false" value={value.position} type="text" className="form-control" placeholder="Position" />
                 
                 </div>
                 {/* <div className="form-group">
@@ -134,7 +135,7 @@ import { registration } from "../../../redux/auth";
                 </div> */}
                 <div className="form-group">
                     <label>Password</label>
-                    <input name="password" onChange={(e)=>setValue({...value,password:e.target.value})} autocomplete="false" value={value.password} type="password" className="form-control" placeholder="Password" />
+                    <input name="password" onChange={(e)=>setValue({...value,password:e.target.value})} autoComplete="false" value={value.password} type="password" className="form-control" placeholder="Password" />
                 </div>
                 </div>
                 <div>
@@ -148,6 +149,8 @@ import { registration } from "../../../redux/auth";
  
                     <select   onChange={(e)=>setValue({...value,employeeSiteId:e.target.value})} value={value.employeeSiteId} className="form-control"  name="employeeSiteId" id="employeeSiteId">
                     <option hidden>Select your site</option>
+                    <option value={"1"}>Site002</option>
+
                     
                     {
                       allSite.map((val,i)=><option key={i} value={val.siteId}>{val.name}</option>)

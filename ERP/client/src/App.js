@@ -5,7 +5,7 @@ import ContextProviders from "./contexts/ContextProviders";
 import Sidebar from "./components/layouts/Sidebar";
 import MaterialTransfer from "./components/forms/transfer/MaterialTransfer";
 import MaterialPurchase from "./components/forms/purchase/MaterialPurchase";
-import MaterialReceive from "./components/forms/receive/MaterialReceive";
+// import MaterialReceive from "./components/forms/receive/MaterialReceive";
 import EquipmentTransfer from "./components/forms/transfer/EquipmentTransfer";
 import ListTransfers from "./components/forms/transfer/ListTransfers";
 //import PurchaseNewItem from "./components/forms/purchase/PurchaseNewItem";
@@ -30,22 +30,21 @@ import ListReturns from "./components/forms/return/ListReturns";
 import NewReturn from "./components/forms/return/NewReturn";
 import SingleReturn from "./components/forms/return/SingleReturn";
 import SignUp from "./components/forms/authorization/RegistrationForm";
-import { useDispatch, useSelector } from "react-redux";
-import { loginAction, setData } from "./redux/auth";
 import Login from "./components/forms/authorization/Login";
 import TransferReport from "./components/forms/report/TransferReport";
+import { useAuth, useAuthUpdate } from "./contexts/AuthContext";
 
 const App = () => {
-    const token = useSelector((state) => state.auth.token);
-    const dispatch = useDispatch();
+    
+  const contextData=useAuth()
+  const updateAuthContext = useAuthUpdate()
     useEffect(() => {
-        dispatch(loginAction(localStorage.getItem("token")));
-        dispatch(setData(JSON.parse(localStorage.getItem("data"))));
+        updateAuthContext({...contextData,token:localStorage.getItem('token'),data:JSON.parse(localStorage.getItem("data"))})
     }, []);
     return (
-        <ContextProviders>
+        
             <Router>
-                {token ? (
+                {contextData?.token ? (
                     <div
                         className="row m-0 flex-nowrap"
                         style={{
@@ -59,6 +58,10 @@ const App = () => {
                         </div>
                         <div className="col p-0">
                             <Routes>
+                                <Route path="/login" element={<Navigate to={"/"} />} />
+                                <Route path="/register" element={<Navigate to={"/"} />} />
+
+
                                 <Route path="report/transfer" element={<TransferReport />} />
 
                                 <Route path="issue" element={<ListIssues />} />
@@ -91,7 +94,7 @@ const App = () => {
 
                                 <Route path="receive" element={<ListReceives />} />
                                 <Route path="receive/:id" element={<SingleReceive />} />
-                                <Route path="receive/material" element={<MaterialReceive />} />
+                                {/* <Route path="receive/material" element={<MaterialReceive />} /> */}
                             </Routes>
                         </div>
                     </div>
@@ -115,7 +118,6 @@ const App = () => {
                     </div>
                 )}
             </Router>
-        </ContextProviders>
     );
 };
 

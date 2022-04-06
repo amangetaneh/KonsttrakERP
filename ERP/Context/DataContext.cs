@@ -251,13 +251,19 @@ namespace ERP.Context
             modelBuilder.Entity<Receive>()
                    .HasOne(i => i.ReceivedBy)
                    .WithMany()
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .IsRequired(false);
 
             modelBuilder.Entity<Receive>()
                    .HasOne(i => i.ApprovedBy)
                    .WithMany()
                    .OnDelete(DeleteBehavior.Restrict)
                    .IsRequired(false);
+
+            modelBuilder.Entity<Receive>()
+                   .HasOne(i => i.ReceivingSite)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict);
 
             //Buy
             modelBuilder.Entity<Buy>()

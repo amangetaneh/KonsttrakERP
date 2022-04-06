@@ -798,10 +798,13 @@ namespace ERP.Migrations
                     b.Property<int>("PurchaseId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ReceiveDate")
+                    b.Property<DateTime?>("ReceiveDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ReceivedById")
+                    b.Property<int?>("ReceivedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReceivingSiteId")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
@@ -817,6 +820,8 @@ namespace ERP.Migrations
 
                     b.HasIndex("ReceivedById");
 
+                    b.HasIndex("ReceivingSiteId");
+
                     b.ToTable("Receives");
                 });
 
@@ -828,11 +833,13 @@ namespace ERP.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
 
+                    b.Property<int>("QtyPurchased")
+                        .HasColumnType("int");
+
                     b.Property<int>("QtyReceived")
                         .HasColumnType("int");
 
                     b.Property<string>("ReceiveRemark")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ReceiveId", "ItemId");
@@ -1626,6 +1633,11 @@ namespace ERP.Migrations
                     b.HasOne("ERP.Models.Employee", "ReceivedBy")
                         .WithMany()
                         .HasForeignKey("ReceivedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ERP.Models.Site", "ReceivingSite")
+                        .WithMany()
+                        .HasForeignKey("ReceivingSiteId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1636,6 +1648,8 @@ namespace ERP.Migrations
                     b.Navigation("Purchase");
 
                     b.Navigation("ReceivedBy");
+
+                    b.Navigation("ReceivingSite");
                 });
 
             modelBuilder.Entity("ERP.Models.ReceiveItem", b =>

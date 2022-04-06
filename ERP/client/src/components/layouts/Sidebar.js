@@ -11,15 +11,18 @@ import {
 import "react-pro-sidebar/dist/css/styles.css";
 import { FaHome, FaList, FaBars, FaUser } from "react-icons/fa";
 import { Link,useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { loginAction } from '../../redux/auth'
+import { useAuth, useAuthUpdate } from "../../contexts/AuthContext";
 
 
 function Sidebar() {
     const navigate = useNavigate()
-    const dispatch = useDispatch()
-    const username=useSelector(state=>state.auth.data[3])
-    const userRole=useSelector(state=>state.auth.data[2])
+    // const dispatch = useDispatch()
+    // const contextData=useAuth()
+    const updateAuthContext = useAuthUpdate()
+
+
+    const {data}=useAuth()
+    
 
 
     const [collapsed, setCollapsed] = useState(false);
@@ -48,13 +51,39 @@ function Sidebar() {
                         </MenuItem>
 
                         <SubMenu title="Inventory" icon={<FaList className="fs-5" />}>
-                            <SubMenu title="Stock"></SubMenu>
+                            <SubMenu title="Stock">
+                                <MenuItem>
+                                    Add a new Material <Link to="/receive/purchase" />
+                                </MenuItem>
+                                <SubMenu title="Equipment">
+                                    <MenuItem>
+                                        Add a new Equipment <Link to="/receive" />
+                                    </MenuItem>
+                                    <MenuItem>
+                                        Add a new Model <Link to="/receive" />
+                                    </MenuItem>
+                                    <MenuItem>
+                                        Add a new Category <Link to="/receive" />
+                                    </MenuItem>
+                                </SubMenu>
+                            </SubMenu>
+                            <SubMenu title="Buy">
+                                <MenuItem>
+                                    Buy an Item <Link to="/purchase/material" />
+                                </MenuItem>
+                                {
+                                    data.userRole?.canRequestPurchase===1 &&
+                                    <MenuItem>
+                                    Buy Requests <Link to="/purchase" />
+                                </MenuItem>
+                                }
+                            </SubMenu>
                             <SubMenu title="Purchase">
                                 <MenuItem>
                                     Purchase an Item <Link to="/purchase/material" />
                                 </MenuItem>
                                 {
-                                    userRole.canRequestPurchase===1 &&
+                                    data.userRole?.canRequestPurchase===1 &&
                                     <MenuItem>
                                     Purchase Requests <Link to="/purchase" />
                                 </MenuItem>
@@ -62,10 +91,10 @@ function Sidebar() {
                             </SubMenu>
                             <SubMenu title="Receive">
                                 <MenuItem>
-                                    Receive an Item <Link to="/receive/material" />
+                                    Receive an Item <Link to="/receive/purchase" />
                                 </MenuItem>
                                 <MenuItem>
-                                    List Received Items <Link to="/receive/list" />
+                                    List Received Items <Link to="/receive" />
                                 </MenuItem>
                             </SubMenu>
                             <SubMenu title="Transfer">
@@ -128,11 +157,12 @@ function Sidebar() {
                 </SidebarContent>
                 <SidebarFooter>
                     <Menu subMenuBullets={true}>
-                        <SubMenu title={username} icon={<FaUser className="fs-5" />}>
+                        <SubMenu title={data.username} icon={<FaUser className="fs-5" />}>
                             <MenuItem>Manage Account</MenuItem>
                             <MenuItem onClick={()=>{
                                 localStorage.removeItem('token')
-                                dispatch(loginAction(""))
+                                localStorage.removeItem('data')
+                                updateAuthContext({token:"",data:"",username:""})
                                 navigate('/login')
                             }} >Logout</MenuItem>
                         </SubMenu>

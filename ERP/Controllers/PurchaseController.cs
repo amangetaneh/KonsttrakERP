@@ -246,6 +246,28 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
+            //Add receive
+            Receive receive = new();
+            receive.PurchaseId = purchase.PurchaseId;
+            receive.ReceivingSiteId = purchase.ReceivingSiteId;
+            ICollection<ReceiveItem> receiveItems = new List<ReceiveItem>();
+
+            foreach (var requestItem in purchase.PurchaseItems)
+            {
+                ReceiveItem receiveItem = new();
+                receiveItem.ItemId = requestItem.ItemId;
+                receiveItem.QtyPurchased = requestItem.QtyPurchased;
+
+                receiveItems.Add(receiveItem);
+            }
+
+            receive.ReceiveItems = receiveItems;
+            receive.Status = RECEIVESTATUS.PURCHASED;
+
+            context.Receives.Add(receive);
+
+            await context.SaveChangesAsync();
+
             return Ok(purchase);
         }
     }

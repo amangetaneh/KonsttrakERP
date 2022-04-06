@@ -7,10 +7,12 @@ import PurchaseStatusBadge from "./fragments/PurchaseStatusBadge";
 import { ITEMTYPE, PURCHASESTATUS } from "../../../Constants";
 import ApprovePurchase from "./ApprovePurchase";
 import ConfirmPurchase from "./ConfirmPurchase";
+import ReceivePurchase from "../receive/ReceivePurchase";
 import CheckPurchase from "./CheckPurchase";
 import ViewPurchase from "./ViewPurchase";
 import DeclinedPurchase from "./DeclinedPurchase";
 import { useQuery } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchPurchase } from "../../../api/purchase";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
@@ -20,6 +22,7 @@ function SinglePurchase() {
     const [purchase, setPurchase] = useState({});
     const [addedItems, setAddedItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const employee = useSelector(state=>state.auth.data[1])
 
     var query = useQuery(["purchase", id], () => fetchPurchase(id));
 
@@ -162,24 +165,6 @@ function SinglePurchase() {
                         />
                     </>
                 )}
-                {purchase.status >= PURCHASESTATUS.PURCHASED && (
-                    <>
-                        <FormRow
-                            labelL="Approved By"
-                            valueL={
-                                purchase.approvedBy
-                                    ? `${purchase.approvedBy.fName} ${purchase.approvedBy.mName}`
-                                    : ""
-                            }
-                            labelR="Approved On"
-                            valueR={
-                                purchase.approveDate
-                                    ? new Date(purchase.approveDate).toLocaleString()
-                                    : ""
-                            }
-                        />
-                    </>
-                )}
             </Form>
         );
     }
@@ -239,8 +224,17 @@ function SinglePurchase() {
                     )}
 
                     {purchase.status === PURCHASESTATUS.PURCHASED && (
-                        <ViewPurchase addedItems={addedItems} purchase={purchase} />
+                        <ReceivePurchase
+                            addedItems={addedItems}
+                            setAddedItems={setAddedItems}
+                            purchase={purchase}
+                        />
                     )}
+
+                    {//purchase.status === PURCHASESTATUS.PURCHASED && (
+                        //<ViewPurchase addedItems={//addedItems} purchase={//purchase} />
+                    //)
+                }
                 </>
             </Container>
         </>

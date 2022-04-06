@@ -127,5 +127,33 @@ namespace ERP.Controllers
             return Ok(item);
         }
 
+        [HttpPost("equipmentcategory/add")]
+        public async Task<ActionResult<List<EquipmentCategory>>> CreateEquipmentCategory(CreateEquipmentCategoryDTO equipmentCategoryDTO)
+        {
+            EquipmentCategory equipmentCategory = new();
+            equipmentCategory.Name = equipmentCategoryDTO.Name;
+
+            context.EquipmentCategories.Add(equipmentCategory);
+
+            await context.SaveChangesAsync();
+
+            return Ok(equipmentCategory);
+        }
+
+        [HttpPost("equipmentmodel/add")]
+        public async Task<ActionResult<List<EquipmentModel>>> CreateEquipmentModel(CreateEquipmentModelDTO equipmentModelDTO)
+        {
+            EquipmentModel equipmentModel = new();
+            equipmentModel.ItemId = equipmentModelDTO.ItemId;
+            equipmentModel.Name = equipmentModelDTO.Name;
+            equipmentModel.Cost = equipmentModelDTO.Cost;
+
+            context.EquipmentModels.Add(equipmentModel);
+
+            await context.SaveChangesAsync();
+
+            return Ok(equipmentModel);
+        }
+
     }
 }

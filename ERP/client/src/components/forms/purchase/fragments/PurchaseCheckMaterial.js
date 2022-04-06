@@ -1,6 +1,6 @@
 import { Form, InputGroup } from "react-bootstrap";
 
-function PurchaseApproveMaterial({ addedItems, setAddedItems, index }) {
+function PurchaseCheckMaterial({ addedItems, setAddedItems, index }) {
 
     return (
         <div className="shadow pt-3 px-4 mb-4 rounded">
@@ -101,4 +101,4 @@ function PurchaseApproveMaterial({ addedItems, setAddedItems, index }) {
     );
 }
 
-export default PurchaseApproveMaterial;
+export default PurchaseCheckMaterial;

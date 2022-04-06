@@ -12,9 +12,11 @@ namespace ERP.Models
         [Key]
         public int ItemId { get; set; }
 
-        public int QtyReceived { get; set; }
+        public int QtyPurchased { get; set; }
 
-        public string ReceiveRemark { get; set; }
+        public int QtyReceived { get; set; } = 0;
+
+        public string? ReceiveRemark { get; set; }
 
         [JsonIgnore]
         [ForeignKey("ReceiveId")]
