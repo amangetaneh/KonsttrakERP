@@ -18,12 +18,8 @@
 
         public string SendRemark { get; set; }
 
-        public ICollection<SendEquipmentAsset>? EquipmentAssets { get; set; }
+        public ICollection<int>? EquipmentAssetIds { get; set; }
 
-    }
-    public class SendEquipmentAsset
-    {
-        public int EquipmentAssetId { get; set; }
     }
 
 }

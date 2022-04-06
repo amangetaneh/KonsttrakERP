@@ -67,5 +67,7 @@ namespace ERP.Models
        
         public bool CanViewMaintenance { get; set; } = false;
 
+        public bool CanGetStockNotification { get; set; } = false;
+
     }
 }

@@ -5,7 +5,7 @@
 }
 
 .text-teal {
-    color: var(--color-teal-dark)
+    color: var(--color-teal-dark);
 }
 
 .bg-teal {
@@ -97,3 +97,22 @@ input[type="checkbox"]:checked {
     border-color: var(--color-teal);
 }
 
+.asset-select *,
+.asset-select input[type="text"] {
+    box-shadow: none !important;
+}
+
+.asset-select > * {
+    border-color: var(--color-teal) !important;
+}
+
+.asset-select-number input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+.asset-select-number input[type="number"] {
+    -moz-appearance: textfield;
+}

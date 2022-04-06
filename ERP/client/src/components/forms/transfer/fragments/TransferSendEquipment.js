@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
-import { Form, InputGroup } from "react-bootstrap";
+import { Col, Row, Form, InputGroup } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { useQuery } from "react-query";
 import { fetchEquipmentModel } from "../../../../api/item";
+import Select from "react-select";
 
 function TransferSendEquipment({ addedItems, setAddedItems, index }) {
-    const [isSetAssets, SetIsSetAssets] = useState(false);
-
+    const [assetNumbers, setAssetNumbers] = useState([]);
+    console.log(addedItems[index].equipmentAssets);
     var modelQuery = useQuery(
         ["model", addedItems[index].equipmentModelId],
         () =>
@@ -15,32 +16,19 @@ function TransferSendEquipment({ addedItems, setAddedItems, index }) {
     );
 
     useEffect(() => {
-        //Initialize asset number entry array
-        const addedItemsCpy = [...addedItems];
+        if (!modelQuery?.data?.equipmentAssets) return setAssetNumbers([]);
 
-        addedItemsCpy[index].equipmentAssets = Array(addedItems[index].qtyApproved).fill({
-            equipmentAssetId: "",
-        });
+        var data = [];
 
-        setAddedItems(addedItemsCpy);
-    }, []);
-
-    function assetChanged(changedIndex, e) {
-        const newAddedItemsCpy = addedItems.map((item, i) => {
-            if (i !== index) return item;
-
-            let { equipmentAssets } = item;
-
-            const newEquipmentAssets = equipmentAssets.map((asset, assetIndex) => {
-                if (assetIndex !== changedIndex) return asset;
-                return { equipmentAssetId: e.target.value };
+        for (var equipmentAsset of modelQuery.data.equipmentAssets) {
+            data.push({
+                value: equipmentAsset.equipmentAssetId,
+                label: equipmentAsset.assetNo,
             });
+        }
 
-            return { ...item, equipmentAssets: newEquipmentAssets };
-        });
-
-        setAddedItems(newAddedItemsCpy);
-    }
+        setAssetNumbers(data);
+    }, [modelQuery.data]);
 
     function valueChanged(e) {
         const addedItemsCpy = [...addedItems];
@@ -49,7 +37,7 @@ function TransferSendEquipment({ addedItems, setAddedItems, index }) {
     }
 
     return (
-        <div className="shadow pt-3 px-4 mb-4 rounded">
+        <div className="shadow pt-3 pb-2 px-4 mb-4 rounded">
             <div className=" row justify-content-between">
                 <div className="col-auto">
                     <h1 className="display-6 fs-4">Equipment {index + 1}</h1>
@@ -175,78 +163,55 @@ function TransferSendEquipment({ addedItems, setAddedItems, index }) {
                     </Form.Group>
                 </div>
             </div>
-
-            <div className="pb-3">
-                <Form.Check
-                    type="switch"
-                    id="insert asset numbers"
-                    label="Insert Asset Numbers"
-                    checked={isSetAssets}
-                    onChange={() =>
-                        SetIsSetAssets((prev) => {
-                            addedItems[index].isSetAssets = !prev;
-                            return !prev;
-                        })
-                    }
-                />
+            <div>
+                <Row>
+                    <Col>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Asset Numbers</Form.Label>
+                            <Select
+                                placeholder="Select Asset Numbers"
+                                style={{ display: "inline" }}
+                                value={addedItems[index].equipmentAssets}
+                                onChange={(o) =>
+                                    valueChanged({ target: { name: "equipmentAssets", value: o } })
+                                }
+                                className="asset-select"
+                                closeMenuOnSelect={false}
+                                isOptionDisabled={() =>
+                                    addedItems[index].equipmentAssets.length >=
+                                    addedItems[index].qtyApproved
+                                }
+                                isMulti
+                                options={assetNumbers}
+                            />
+                        </Form.Group>
+                    </Col>
+                    <Col xs="auto">
+                        <Form.Group className="mb-3">
+                            <Form.Label>Remaining</Form.Label>
+                            <Form.Control
+                                className="asset-select-number"
+                                style={{ width: "5rem" }}
+                                onInvalid={(e) =>
+                                    e.target.setCustomValidity(
+                                        `Please Select ${addedItems[index].qtyApproved} Asset${
+                                            addedItems[index].qtyApproved > 1 ? "s" : ""
+                                        }`
+                                    )
+                                }
+                                type="number"
+                                min={0}
+                                max={0}
+                                value={
+                                    addedItems[index].qtyApproved -
+                                    addedItems[index].equipmentAssets.length
+                                }
+                                onChange={() => {}}
+                            />
+                        </Form.Group>
+                    </Col>
+                </Row>
             </div>
-            {isSetAssets &&
-                addedItems[index].equipmentAssets.map((asset, assetIndex) => {
-                    return (
-                        <div className="row" key={assetIndex}>
-                            <div className="col">
-                                <Form.Group className="mb-3">
-                                    <Form.Label>{assetIndex + 1}. Asset Number</Form.Label>
-                                    <Form.Select
-                                        value={asset.equipmentAssetId}
-                                        name={assetIndex}
-                                        onChange={(e) => assetChanged(assetIndex, e)}
-                                        required
-                                    >
-                                        <option value="">Select Asset Number</option>
-                                        {modelQuery.data?.equipmentAssets
-                                            ?.filter(
-                                                (currentItem) =>
-                                                    addedItems[index].equipmentAssets.filter(
-                                                        (addedItem) =>
-                                                            addedItem.equipmentAssetId ===
-                                                                currentItem.equipmentAssetId.toString() &&
-                                                            addedItem.equipmentAssetId !==
-                                                                addedItems[index].equipmentAssets[
-                                                                    assetIndex
-                                                                ].equipmentAssetId
-                                                    ).length === 0
-                                            )
-                                            ?.map((equipmentAsset) => (
-                                                <option
-                                                    key={equipmentAsset.equipmentAssetId}
-                                                    value={equipmentAsset.equipmentAssetId}
-                                                >
-                                                    {equipmentAsset.assetNo}
-                                                </option>
-                                            ))}
-                                    </Form.Select>
-                                </Form.Group>
-                            </div>
-                            <div className="col">
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Serial Number</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        value={
-                                            modelQuery.data?.equipmentAssets?.find(
-                                                (e) =>
-                                                    e.equipmentAssetId.toString() ===
-                                                    asset.equipmentAssetId
-                                            )?.serialNo || ""
-                                        }
-                                        readOnly
-                                    />
-                                </Form.Group>
-                            </div>
-                        </div>
-                    );
-                })}
         </div>
     );
 }

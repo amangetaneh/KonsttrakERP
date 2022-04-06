@@ -51,7 +51,9 @@ namespace ERP.Context
 
         public DbSet<Store> Stores { get; set; }
 
-        public DbSet<ItemSiteQty> ItemSiteQties { get; set; }
+        public DbSet<MaterialSiteQty> MaterialSiteQties { get; set; }
+
+        public DbSet<EquipmentSiteQty> EquipmentSiteQties { get; set; }
 
         public DbSet<EquipmentCategory> EquipmentCategories { get; set; }
 
@@ -73,6 +75,7 @@ namespace ERP.Context
 
         public DbSet<AssetNumberId> AssetNumberIds { get; set; }
 
+
         public DbSet<Miscellaneous> Miscellaneouses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -81,8 +84,11 @@ namespace ERP.Context
             base.OnModelCreating(modelBuilder);
 
             //Set Composite keys
-            modelBuilder.Entity<ItemSiteQty>()
+            modelBuilder.Entity<MaterialSiteQty>()
                 .HasKey(o => new { o.ItemId, o.SiteId });
+
+            modelBuilder.Entity<EquipmentSiteQty>()
+                .HasKey(o => new { o.EquipmentModelId, o.SiteId });
 
             modelBuilder.Entity<TransferItem>()
                 .HasKey(o => new { o.TransferId, o.ItemId, o.EquipmentModelId });

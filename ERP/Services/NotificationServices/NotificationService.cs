@@ -35,11 +35,26 @@ namespace ERP.Services.NotificationServices
             notifications.AddRange(await GetReceiveNotifications(siteId, employeeId));
             notifications.AddRange(await GetMaintenanceNotifications(siteId, employeeId));
             notifications.AddRange(await GetBuyNotifications(siteId, employeeId));
+            notifications.AddRange(await GetStockNotifications(siteId, employeeId));
 
             return notifications;
         }
+        private async Task<List<Notification>> GetStockNotifications(int siteId, int employeeId)
+        {
+            List<Notification> notifications = new();
 
-        private async Task<List<Notification>> GetMaintenanceNotifications(int siteId, int employeeId)
+            if (_userService.UserRole.CanGetStockNotification)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        (noti.Type == NOTIFICATIONTYPE.MINEQUIPMENT || noti.Type == NOTIFICATIONTYPE.MINMATERIAL) &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
+
+
+            return notifications;
+
+        }
+            private async Task<List<Notification>> GetMaintenanceNotifications(int siteId, int employeeId)
         {
 
             List<Notification> notifications = new();
@@ -263,7 +278,7 @@ namespace ERP.Services.NotificationServices
             return notifications;
         }
 
-        public async Task<bool> Add(string type, int status, int actionId, int siteId, int employeeId)
+        public async Task<bool> Add(string type, int status, int actionId, int siteId, int? employeeId)
         {
             //If there are previous notifications for the same transfer/issue/receive
             await Clear(type, actionId);
@@ -283,7 +298,7 @@ namespace ERP.Services.NotificationServices
 
         }
 
-        private async Task Clear(string type, int actionId)
+        public async Task Clear(string type, int actionId)
         {
             List<Notification> notifications = await _context.Notifications
                 .Where(n => n.Type == type && n.ActionId == actionId)
@@ -362,14 +377,49 @@ namespace ERP.Services.NotificationServices
                     await MakeContentBuy(status, actionId);
                     break;
 
+                case NOTIFICATIONTYPE.MINEQUIPMENT:
+                    await MakeContentMinEquipment(status, actionId);
+                    break;
+
+                case NOTIFICATIONTYPE.MINMATERIAL:
+                    await MakeContentMinMaterial(status, actionId);
+                    break;
 
 
             }
         }
 
+        private async Task MakeContentMinMaterial(int status, int actionId)
+        {
+            var item = await _context.Items.Where(i => i.ItemId == actionId).FirstOrDefaultAsync();
+
+            string itemName = item == null ? "A Material" : $"The {item.Name}";
+
+            var site = await _context.Sites.Where(i => i.SiteId == notification.SiteId).FirstOrDefaultAsync();
+            string siteName = site == null ? "A Site." : $"The {site.Name} Site.";
+
+            notification.Title = "Running Out of Stock";
+            notification.Content = $"{itemName} Available in Stock Is Less Than The Minimum Stock At {siteName}";
+        }
+
+        private async Task MakeContentMinEquipment(int status, int actionId)
+        {
+            var model = await _context.EquipmentModels.Where(em => em.EquipmentModelId == actionId)
+                .Include(em => em.Equipment)
+                .ThenInclude(e => e.Item)
+                .FirstOrDefaultAsync();
+
+            string itemName = model == null ? "An Equipment Model": $"The {model.Equipment.Item.Name} Model {model.Name}";
+
+            var site = await _context.Sites.Where(i=> i.SiteId == notification.SiteId).FirstOrDefaultAsync();
+            string siteName = site == null ? "A Site." : $"The {site.Name} Site.";
+
+            notification.Title = "Stock Running Out";
+            notification.Content = $"{itemName} Available in Stock Is Less Than The Minimum Stock At {siteName}";
+        }
+
         private async Task MakeContentTransfer(int status, int actionId)
         {
-            Employee employee;
 
             switch (status)
             {

@@ -32,6 +32,8 @@
         public const string MAINTENANCE = "maintenanceNotification";
         public const string RETURN = "returnNotification";
         public const string BUY = "buyNotification";
+        public const string MINEQUIPMENT = "equipmentMinNotification";
+        public const string MINMATERIAL = "materialMinNotification";
     }
 
     public class TRANSFERSTATUS

@@ -17,9 +17,9 @@ namespace ERP.Models
 
         public int ActionId { get; set; }
 
-        public int EmployeeId { get; set; }
+        public int? EmployeeId { get; set; }
 
-        public Employee Employee { get; set; }
+        public Employee? Employee { get; set; }
 
         public int SiteId { get; set; }
 

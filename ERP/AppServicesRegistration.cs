@@ -1,5 +1,5 @@
 
-using ERP.DTOs.ReportServices;
+using ERP.Services.ReportServices;
 using ERP.Services.AssetNumberServices;
 using ERP.Services.BorrowServices;
 using ERP.Services.EquipmentCategoryServices;
@@ -10,6 +10,7 @@ using ERP.Services.NotificationServices;
 using ERP.Services.ReturnServices;
 using ERP.Services.SiteServices;
 using ERP.Services.TransferServices;
+using ERP.Services.ItemSiteQtyServices;
 
 namespace ERP
 {
@@ -28,6 +29,7 @@ namespace ERP
             services.AddScoped<IEquipmentCategoryService, EquipmentCategoryService>();
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IAssetNumberService, AssetNumberService>();
+            services.AddScoped<IItemSiteQtyService, ItemSiteQtyService>();
 
         }
     }
