@@ -18,8 +18,9 @@ export const NOTIFICATIONTYPE = {
     PURCHASE: "purchaseNotification",
     BORROW: "borrowNotification",
     RECEIVE: "receiveNotification",
-    MAINTAINANCE: "maintainanceNotification",
+    MAINTENANCE: "maintenanceNotification",
     RETURN: "returnNotification",
+    BUY: "buyNotification",
 };
 
 export const NOTIFICATIONROUTE = {
@@ -28,8 +29,9 @@ export const NOTIFICATIONROUTE = {
     [NOTIFICATIONTYPE.PURCHASE]: "/purchase",
     [NOTIFICATIONTYPE.BORROW]: "/borrow",
     [NOTIFICATIONTYPE.RECEIVE]: "/receive",
-    [NOTIFICATIONTYPE.MAINTAINANCE]: "/maintainance",
+    [NOTIFICATIONTYPE.MAINTENANCE]: "/maintenance",
     [NOTIFICATIONTYPE.RETURN]: "/return",
+    [NOTIFICATIONTYPE.BUY]: "/buy"
 };
 
 export const MAINTENANCESTATUS = {

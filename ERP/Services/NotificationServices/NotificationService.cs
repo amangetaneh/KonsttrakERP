@@ -1,17 +1,266 @@
 ﻿using ERP.Context;
 using ERP.Models;
+using ERP.Services.User;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERP.Services.NotificationServices
 {
     public class NotificationService : INotificationService
     {
-        private readonly DataContext context;
+        private readonly DataContext _context;
+        private readonly IUserService _userService;
         private Notification notification;
 
-        public NotificationService(DataContext context)
+        public NotificationService(DataContext context, IUserService userService)
         {
-            this.context = context;
+            _context = context;
+            _userService = userService;
+        }
+
+        public async Task<List<Notification>> GetUserNotifications()
+        {
+
+            List<Notification> notifications = new();
+
+            if (_userService.UserRole == null || _userService.Employee.EmployeeSite == null) 
+                return notifications;
+
+            int siteId = (int)_userService.Employee.EmployeeSiteId;
+            int employeeId = (int)_userService.Employee.EmployeeId;
+
+            notifications.AddRange(await GetTransferNotifications(siteId, employeeId));
+            notifications.AddRange(await GetIssueNotifications(siteId, employeeId));
+            notifications.AddRange(await GetPurchaseNotifications(siteId, employeeId));
+            notifications.AddRange(await GetBorrowNotifications(siteId, employeeId));
+            notifications.AddRange(await GetReceiveNotifications(siteId, employeeId));
+            notifications.AddRange(await GetMaintenanceNotifications(siteId, employeeId));
+            notifications.AddRange(await GetBuyNotifications(siteId, employeeId));
+
+            return notifications;
+        }
+
+        private async Task<List<Notification>> GetMaintenanceNotifications(int siteId, int employeeId)
+        {
+
+            List<Notification> notifications = new();
+
+            if (_userService.UserRole.CanRequestMaintenance)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.MAINTENANCE &&
+                        (noti.Status == MAINTENANCESTATUS.FIXED || noti.Status == MAINTENANCESTATUS.DECLINED) &&
+                        noti.EmployeeId == employeeId)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanApproveMaintenance)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.MAINTENANCE&&
+                        noti.Status == MAINTENANCESTATUS.REQUESTED &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanFixMaintenance)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.MAINTENANCE &&
+                        noti.Status == MAINTENANCESTATUS.APPROVED &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
+
+            return notifications;
+        }
+
+        private async Task<List<Notification>> GetTransferNotifications(int siteId, int employeeId)
+        {
+
+            List<Notification> notifications = new();
+
+            if (_userService.UserRole.CanRequestTransfer)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.TRANSFER &&
+                        (noti.Status == TRANSFERSTATUS.DECLINED) &&
+                        noti.EmployeeId == employeeId)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanApproveTransfer)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.TRANSFER &&
+                        noti.Status == TRANSFERSTATUS.REQUESTED &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanSendTransfer)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.TRANSFER &&
+                        noti.Status == TRANSFERSTATUS.APPROVED &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanReceiveTransfer)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.TRANSFER &&
+                        noti.Status == TRANSFERSTATUS.SENT &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
+
+            return notifications;
+        }
+
+        private async Task<List<Notification>> GetBorrowNotifications(int siteId, int employeeId)
+        {
+
+            List<Notification> notifications = new();
+
+            if (_userService.UserRole.CanRequestBorrow)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.BORROW &&
+                        (noti.Status == BORROWSTATUS.HANDED || noti.Status == BORROWSTATUS.DECLINED) &&
+                        noti.EmployeeId == employeeId)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanApproveBorrow)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.BORROW &&
+                        noti.Status == BORROWSTATUS.REQUESTED &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanHandBorrow)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.BORROW &&
+                        noti.Status == BORROWSTATUS.APPROVED &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
+
+            return notifications;
+        }
+
+        private async Task<List<Notification>> GetIssueNotifications(int siteId, int employeeId)
+        {
+
+            List<Notification> notifications = new();
+
+            if (_userService.UserRole.CanRequestIssue)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.ISSUE &&
+                        (noti.Status == ISSUESTATUS.HANDED || noti.Status == ISSUESTATUS.DECLINED) &&
+                        noti.EmployeeId == employeeId)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanApproveIssue)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.ISSUE &&
+                        noti.Status == ISSUESTATUS.REQUESTED &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanHandIssue)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.ISSUE &&
+                        noti.Status == ISSUESTATUS.APPROVED &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
+
+            return notifications;
+        }
+
+        private async Task<List<Notification>> GetReceiveNotifications(int siteId, int employeeId)
+        {
+
+            List<Notification> notifications = new();
+
+            if (_userService.UserRole.CanRecieve)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.RECEIVE &&
+                        (noti.Status == RECEIVESTATUS.APPROVED) &&
+                        noti.EmployeeId == employeeId)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanCheckRecieve)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.RECEIVE &&
+                        noti.Status == RECEIVESTATUS.RECEIVED &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
+
+            return notifications;
+        }
+
+        private async Task<List<Notification>> GetBuyNotifications(int siteId, int employeeId)
+        {
+
+            List<Notification> notifications = new();
+
+            if (_userService.UserRole.CanRequestBuy)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.BUY &&
+                        (noti.Status == BUYSTATUS.CHECKED || noti.Status == BUYSTATUS.DECLINED) &&
+                        noti.EmployeeId == employeeId)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanApproveBuy)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.BUY &&
+                        noti.Status == BUYSTATUS.REQUESTED &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanCheckBuy)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.BUY &&
+                        noti.Status == BUYSTATUS.APPROVED &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
+
+            return notifications;
+        }
+
+        private async Task<List<Notification>> GetPurchaseNotifications(int siteId, int employeeId)
+        {
+
+            List<Notification> notifications = new();
+
+            if (_userService.UserRole.CanRequestPurchase)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.PURCHASE &&
+                        (noti.Status == PURCHASESTATUS.CHECKED || noti.Status == PURCHASESTATUS.DECLINED) &&
+                        noti.EmployeeId == employeeId)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanApprovePurchase)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.PURCHASE &&
+                        noti.Status == PURCHASESTATUS.REQUESTED &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanCheckPurchase)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.PURCHASE &&
+                        noti.Status == PURCHASESTATUS.APPROVED &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
+
+            return notifications;
         }
 
         public async Task<bool> Add(string type, int status, int actionId, int siteId, int employeeId)
@@ -27,8 +276,8 @@ namespace ERP.Services.NotificationServices
             notification.EmployeeId = employeeId;
             await MakeContent(type, status, actionId);
 
-            context.Notifications.Add(notification);
-            await context.SaveChangesAsync();
+            _context.Notifications.Add(notification);
+            await _context.SaveChangesAsync();
 
             return true;
 
@@ -36,7 +285,7 @@ namespace ERP.Services.NotificationServices
 
         private async Task Clear(string type, int actionId)
         {
-            List<Notification> notifications = await context.Notifications
+            List<Notification> notifications = await _context.Notifications
                 .Where(n => n.Type == type && n.ActionId == actionId)
                 .ToListAsync();
 
@@ -47,20 +296,20 @@ namespace ERP.Services.NotificationServices
                 notification.IsCleared = true;
             }
 
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
         }
 
         public async Task<bool> Clear(int notificationId)
         {
-            var notification = await context.Notifications
+            var notification = await _context.Notifications
                 .Where(n => n.NotificationId == notificationId)
                 .FirstOrDefaultAsync();
 
             if (notification != null)
             {
                 notification.IsCleared = true;
-                await context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
                 return true;
             }
@@ -70,7 +319,7 @@ namespace ERP.Services.NotificationServices
 
         public async Task<List<Notification>> Get(string type, int status, int siteId)
         {
-            var notifications = await context.Notifications
+            var notifications = await _context.Notifications
                 .Where(n => n.Type == type && n.Status == status && n.SiteId == siteId && n.IsCleared == false)
                 .ToListAsync();
 
@@ -101,12 +350,16 @@ namespace ERP.Services.NotificationServices
                     await MakeContentReceive(status, actionId);
                     break;
 
-                case NOTIFICATIONTYPE.MAINTAINANCE:
+                case NOTIFICATIONTYPE.MAINTENANCE:
                     await MakeContentMaintainance(status, actionId);
                     break;
 
                 case NOTIFICATIONTYPE.RETURN:
                     await MakeContentReturn(status, actionId);
+                    break;
+
+                case NOTIFICATIONTYPE.BUY:
+                    await MakeContentBuy(status, actionId);
                     break;
 
 
@@ -116,6 +369,8 @@ namespace ERP.Services.NotificationServices
 
         private async Task MakeContentTransfer(int status, int actionId)
         {
+            Employee employee;
+
             switch (status)
             {
                 case TRANSFERSTATUS.REQUESTED:
@@ -190,6 +445,28 @@ namespace ERP.Services.NotificationServices
             }
         }
 
+        private async Task MakeContentBuy(int status, int actionId)
+        {
+            switch (status)
+            {
+                case BUYSTATUS.REQUESTED:
+                    notification.Title = "Approve Buy Request";
+                    notification.Content = $"New Buy Request With Request No: {actionId}";
+                    break;
+
+                case BUYSTATUS.APPROVED:
+                    notification.Title = "Check Bought Items";
+                    notification.Content = $"Check Buy Request {actionId} Items";
+                    break;
+
+                case BUYSTATUS.DECLINED:
+                    notification.Title = "Declined Buy Request";
+                    notification.Content = $"Buy Request {actionId} Has Been Declined";
+                    break;
+
+            }
+        }
+
         private async Task MakeContentReceive(int status, int actionId)
         {
             switch (status)
@@ -197,6 +474,11 @@ namespace ERP.Services.NotificationServices
                 case RECEIVESTATUS.RECEIVED:
                     notification.Title = "Check Received Items";
                     notification.Content = $"Items of Receive No. {actionId} Has Been Received";
+                    break;
+
+                case RECEIVESTATUS.APPROVED:
+                    notification.Title = "Received Items Checked";
+                    notification.Content = $"Items of Receive No. {actionId} Has Been Checked";
                     break;
 
             }

@@ -8,8 +8,10 @@ namespace ERP.Services.User
     public class UserService : IUserService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        
+
+        public UserRole UserRole { get; }
         public Employee Employee { get; }
+       
 
         public UserService(DataContext context, IHttpContextAccessor httpContextAccessor)
         {
@@ -22,6 +24,7 @@ namespace ERP.Services.User
                 .ThenInclude(e => e.EmployeeSite)
                 .FirstOrDefault();
 
+            UserRole = UserAccount == null ? null : UserAccount.UserRole;
             Employee = UserAccount == null ? null : UserAccount.Employee;
         }
 

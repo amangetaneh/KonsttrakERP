@@ -19,5 +19,10 @@ namespace ERP.Models
 
         public Site CurrentSite { get; set; }
 
+        public int? AssetDamageId { get; set; }
+
+        public AssetDamage? AssetDamage { get; set; }
+
+
     }
 }

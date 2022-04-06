@@ -9,69 +9,63 @@ namespace ERP.Models
 
         public string Role { get; set; } = string.Empty;
 
-        public int CanRequestPurchase { get; set; } = 0;
+        public bool CanRequestPurchase { get; set; } = false;
 
-        public int CanApprovePurchase { get; set; } = 0;
+        public bool CanApprovePurchase { get; set; } = false;
 
-        public int CanCheckPurchase { get; set; } = 0;
+        public bool CanCheckPurchase { get; set; } = false;
         
-        public int CanViewPurchase { get; set; } = 0;
+        public bool CanViewPurchase { get; set; } = false;
 
-        public int CanRequestBuy { get; set; } = 0;
+        public bool CanRequestBuy { get; set; } = false;
 
-        public int CanApproveBuy { get; set; } = 0;
+        public bool CanApproveBuy { get; set; } = false;
 
-        public int CanCheckBuy { get; set; } = 0;
+        public bool CanCheckBuy { get; set; } = false;
 
-        public int CanViewBuy { get; set; } = 0;
+        public bool CanViewBuy { get; set; } = false;
 
-        public int CanRecieve { get; set; } = 0;
+        public bool CanRecieve { get; set; } = false;
 
-        public int CanCheckRecieve { get; set; } = 0;
+        public bool CanCheckRecieve { get; set; } = false;
         
-        public int CanViewRecieve { get; set; } = 0;
+        public bool CanViewRecieve { get; set; } = false;
 
-        public int CanRequestIssue { get; set; } = 0;
+        public bool CanRequestIssue { get; set; } = false;
 
-        public int CanApproveIssue { get; set; } = 0;
+        public bool CanApproveIssue { get; set; } = false;
         
-        public int CanHandIssue { get; set; } = 0; 
+        public bool CanHandIssue { get; set; } = false; 
         
-        public int CanViewIssue { get; set; } = 0; 
+        public bool CanViewIssue { get; set; } = false; 
         
-        public int CanRequestBorrow { get; set; } = 0;
+        public bool CanRequestBorrow { get; set; } = false;
 
-        public int CanApproveBorrow { get; set; } = 0;
+        public bool CanApproveBorrow { get; set; } = false;
         
-        public int CanHandBorrow { get; set; } = 0;
+        public bool CanHandBorrow { get; set; } = false;
         
-        public int CanViewBorrow { get; set; } = 0;
+        public bool CanViewBorrow { get; set; } = false;
 
-        public int CanReturnBorrow { get; set; } = 0;
+        public bool CanReturnBorrow { get; set; } = false;
 
-        public int CanRequestEquipmentTransfer { get; set; } = 0;
+        public bool CanRequestTransfer { get; set; } = false;
 
-        public int CanRequestMaterialTransfer { get; set; } = 0;
+        public bool CanApproveTransfer { get; set; } = false;
+
+        public bool CanSendTransfer { get; set; } = false;
         
-        public int CanApproveEquipmentTransfer { get; set; } = 0;
+        public bool CanReceiveTransfer { get; set; } = false;
 
-        public int CanApproveMaterialTransfer { get; set; } = 0;
-        
-        public int CanHandEquipmentTransfer { get; set; } = 0;
+        public bool CanViewTransfer { get; set; } = false;
 
-        public int CanHandMaterialTransfer { get; set; } = 0;
-        
-        public int CanViewEquipmentTransfer { get; set; } = 0;
+        public bool CanRequestMaintenance { get; set; } = false;
 
-        public int CanViewMaterialTransfer { get; set; } = 0;
-
-        public int CanRequestMaintainance { get; set; } = 0;
-
-        public int CanApproveMaintainance { get; set; } = 0;
+        public bool CanApproveMaintenance { get; set; } = false;
        
-        public int CanFixMaintainance { get; set; } = 0;
+        public bool CanFixMaintenance { get; set; } = false;
        
-        public int CanViewMaintainance { get; set; } = 0;
+        public bool CanViewMaintenance { get; set; } = false;
 
     }
 }

@@ -86,7 +86,7 @@ namespace ERP.Services.MaintenanceServices
             _context.Maintenances.Add(maintenance);
             await _context.SaveChangesAsync();
 
-            await _notificationService.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
+            await _notificationService.Add(type: NOTIFICATIONTYPE.MAINTENANCE,
                 status: maintenance.Status,
                 actionId: maintenance.MaintenanceId,
                 siteId: maintenance.SiteId,
@@ -111,7 +111,7 @@ namespace ERP.Services.MaintenanceServices
 
             await _context.SaveChangesAsync();
 
-            await _notificationService.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
+            await _notificationService.Add(type: NOTIFICATIONTYPE.MAINTENANCE,
                 status: maintenance.Status,
                 actionId: maintenance.MaintenanceId,
                 siteId: maintenance.SiteId,
@@ -135,7 +135,7 @@ namespace ERP.Services.MaintenanceServices
 
             await _context.SaveChangesAsync();
 
-            await _notificationService.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
+            await _notificationService.Add(type: NOTIFICATIONTYPE.MAINTENANCE,
                 status: maintenance.Status,
                 actionId: maintenance.MaintenanceId,
                 siteId: maintenance.SiteId,
@@ -160,7 +160,7 @@ namespace ERP.Services.MaintenanceServices
 
             await _context.SaveChangesAsync();
 
-            await _notificationService.Add(type: NOTIFICATIONTYPE.MAINTAINANCE,
+            await _notificationService.Add(type: NOTIFICATIONTYPE.MAINTENANCE,
                 status: maintenance.Status,
                 actionId: maintenance.MaintenanceId,
                 siteId: maintenance.SiteId,

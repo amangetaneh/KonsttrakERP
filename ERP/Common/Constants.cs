@@ -13,18 +13,25 @@
         public const string RECEIVEDBY = "Receiveing Employee";
         public const string SENDSITE = "Sending Site";
         public const string RECEIVESITE = "Receiving Site";
+        
+    }
+
+    public class MICELLANEOUSKEYS
+    {
+        public const string COMPANYPREFIX = "companyPrefix";
+        public const string COMPANYNAME = "companyName";
     }
 
     public class NOTIFICATIONTYPE
     {
         public const string TRANSFER = "transferNotification";
         public const string ISSUE = "issueNotification";
-        public const string Buy = "buyNotification";
         public const string PURCHASE = "purchaseNotification";
         public const string BORROW = "borrowNotification";
         public const string RECEIVE = "receiveNotification";
-        public const string MAINTAINANCE = "maintainanceNotification";
+        public const string MAINTENANCE = "maintenanceNotification";
         public const string RETURN = "returnNotification";
+        public const string BUY = "buyNotification";
     }
 
     public class TRANSFERSTATUS

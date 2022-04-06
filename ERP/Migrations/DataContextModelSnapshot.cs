@@ -42,6 +42,31 @@ namespace ERP.Migrations
                     b.ToTable("AssetDamages");
                 });
 
+            modelBuilder.Entity("ERP.Models.AssetNumberId", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LastId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Prefix")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("AssetNumberIds");
+                });
+
             modelBuilder.Entity("ERP.Models.Borrow", b =>
                 {
                     b.Property<int>("BorrowId")
@@ -316,6 +341,9 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EquipmentAssetId"), 1L, 1);
 
+                    b.Property<int?>("AssetDamageId")
+                        .HasColumnType("int");
+
                     b.Property<string>("AssetNo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -331,6 +359,8 @@ namespace ERP.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("EquipmentAssetId");
+
+                    b.HasIndex("AssetDamageId");
 
                     b.HasIndex("CurrentSiteId");
 
@@ -590,6 +620,20 @@ namespace ERP.Migrations
                     b.HasKey("ItemId");
 
                     b.ToTable("Materials");
+                });
+
+            modelBuilder.Entity("ERP.Models.Miscellaneous", b =>
+                {
+                    b.Property<string>("Key")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Key");
+
+                    b.ToTable("Miscellaneouses");
                 });
 
             modelBuilder.Entity("ERP.Models.Notification", b =>
@@ -1033,101 +1077,92 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"), 1L, 1);
 
-                    b.Property<int>("CanApproveBorrow")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanApproveBorrow")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanApproveBuy")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanApproveBuy")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanApproveEquipmentTransfer")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanApproveIssue")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanApproveIssue")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanApproveMaintenance")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanApproveMaintainance")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanApprovePurchase")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanApproveMaterialTransfer")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanApproveTransfer")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanApprovePurchase")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanCheckBuy")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanCheckBuy")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanCheckPurchase")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanCheckPurchase")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanCheckRecieve")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanCheckRecieve")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanFixMaintenance")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanFixMaintainance")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanHandBorrow")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanHandBorrow")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanHandIssue")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanHandEquipmentTransfer")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanReceiveTransfer")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanHandIssue")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanRecieve")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanHandMaterialTransfer")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanRequestBorrow")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanRecieve")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanRequestBuy")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanRequestBorrow")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanRequestIssue")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanRequestBuy")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanRequestMaintenance")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanRequestEquipmentTransfer")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanRequestPurchase")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanRequestIssue")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanRequestTransfer")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanRequestMaintainance")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanReturnBorrow")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanRequestMaterialTransfer")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanSendTransfer")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanRequestPurchase")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanViewBorrow")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanReturnBorrow")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanViewBuy")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanViewBorrow")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanViewIssue")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanViewBuy")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanViewMaintenance")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanViewEquipmentTransfer")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanViewPurchase")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanViewIssue")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanViewRecieve")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CanViewMaintainance")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CanViewMaterialTransfer")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CanViewPurchase")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CanViewRecieve")
-                        .HasColumnType("int");
+                    b.Property<bool>("CanViewTransfer")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -1136,6 +1171,17 @@ namespace ERP.Migrations
                     b.HasKey("RoleId");
 
                     b.ToTable("UserRoles");
+                });
+
+            modelBuilder.Entity("ERP.Models.AssetNumberId", b =>
+                {
+                    b.HasOne("ERP.Models.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Item");
                 });
 
             modelBuilder.Entity("ERP.Models.Borrow", b =>
@@ -1310,6 +1356,10 @@ namespace ERP.Migrations
 
             modelBuilder.Entity("ERP.Models.EquipmentAsset", b =>
                 {
+                    b.HasOne("ERP.Models.AssetDamage", "AssetDamage")
+                        .WithMany()
+                        .HasForeignKey("AssetDamageId");
+
                     b.HasOne("ERP.Models.Site", "CurrentSite")
                         .WithMany()
                         .HasForeignKey("CurrentSiteId");
@@ -1319,6 +1369,8 @@ namespace ERP.Migrations
                         .HasForeignKey("EquipmentModelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AssetDamage");
 
                     b.Navigation("CurrentSite");
 

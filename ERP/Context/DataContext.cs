@@ -71,6 +71,10 @@ namespace ERP.Context
 
         public DbSet<AssetDamage> AssetDamages { get; set; }
 
+        public DbSet<AssetNumberId> AssetNumberIds { get; set; }
+
+        public DbSet<Miscellaneous> Miscellaneouses { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -278,6 +282,12 @@ namespace ERP.Context
                    .WithMany()
                    .OnDelete(DeleteBehavior.Restrict)
                    .IsRequired(false);
+
+            //AssetNumberIds
+            modelBuilder.Entity<AssetNumberId>()
+                .HasOne(a => a.Item)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
 
             //TransferItem-EquipmentAsset
             modelBuilder.Entity<TransferItemEquipmentAsset>()
