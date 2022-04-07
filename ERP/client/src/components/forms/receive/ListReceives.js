@@ -1,36 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
+import { FaFolderOpen } from "react-icons/fa";
 import Table from "../../fragments/Table";
 import Header from "../../layouts/Header";
-import { Container, Spinner } from "react-bootstrap";
-import axios from "axios";
+import { Container } from "react-bootstrap";
 import ReceiveStatusBadge from "./fragments/ReceiveStatusBadge";
-import PropTypes from "prop-types";
+import { useQuery } from "react-query";
+import { fetchReceives } from "../../../api/receive";
+import ConnectionError from "../../fragments/ConnectionError";
+import LoadingSpinner from "../../fragments/LoadingSpinner";
 
-function ListPurchases({ title, type }) {
-    const [purchases, setPurchases] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+function ListReceives() {
+    const [receives, setReceives] = useState([]);
+
+    var { data, isLoading, isError } = useQuery("receives", fetchReceives);
 
     useEffect(() => {
-        axios.get("https://localhost:7067/api/purchase").then((res) => {
-            var data = res.data;
+        if (data === undefined) return;
 
             Object.keys(data).map((key, index) => {
                 //format date
-                data[key].requestDate = new Date(data[key].requestDate).toLocaleDateString();
-                data[key].approveDate = new Date(data[key].approveDate).toLocaleDateString();
+                data[key].receiveDate = new Date(
+                    data[key].receiveDate
+                ).toLocaleString();
                 
                 //add status badge
-                data[key].status = ReceiveStatusBadge(data[key].status);
+                data[key].statusBadge = ReceiveStatusBadge(data[key].status);
 
                 //add links to each row
                 data[key].open = (
                     <>
                         <Link
                             className="btn btn-teal me-2"
-                            to={`/purchase/${data[key].id}`}
+                            to={`/receive/${data[key].receiveId}`}
                         >
+                            <FaFolderOpen className="me-1 mb-1" />
                             Open
                         </Link>
                     </>
@@ -38,62 +42,50 @@ function ListPurchases({ title, type }) {
 
                 return null;
             });
-
-            setPurchases(data);
-            setIsLoading(false);
-        });
-    }, []);
+            setReceives(data);
+    }, [data]);
 
     const columns = React.useMemo(
         () => [
             {
-                Header: "Request No.",
-                accessor: "id", // accessor is the "key" in the data
+                Header: "Receive No.",
+                accessor: "receiveId", // accessor is the "key" in the data
             },
             {
                 Header: "Date",
-                accessor: "requestDate", // accessor is the "key" in the data
-            },
-            {
-                Header: "Request Store",
-                accessor: "site.name", // accessor is the "key" in the data
+                accessor: "receiveDate", 
             },
             {
                 Header: "Status",
-                accessor: "status", // accessor is the "key" in the data
+                accessor: "statusBadge", 
+                sortType: (
+                    rowA,
+                    rowB //get original data of row and compare status
+                ) => (rowA.original.status > rowB.original.status ? 1 : -1),
             },
-            {
-                Header: "Last Status",
-                accessor: "approveDate", // accessor is the "key" in the data
-            },
+            
             {
                 Header: "",
-                accessor: "open", // accessor is the "key" in the data
+                accessor: "open", 
+                disableSortBy: true,
             },
         ],
         []
     );
 
+    if (isLoading) return <LoadingSpinner />;
+
+    if (isError) return <ConnectionError />;
+
     return (
         <>
-            <Header title={title} />
+            <Header title="Receives" />
 
-            {isLoading ? (
-                <div className="d-flex justify-content-center align-content-center mt-4 pt-4">
-                    <Spinner animation="grow" className="bg-teal" />
-                </div>
-            ) : (
-                <Container className="my-3">
-                    <Table columns={columns} data={purchases} />
-                </Container>
-            )}
+            <Container className="my-3">
+                <Table columns={columns} data={receives} />
+            </Container>
         </>
     );
 }
-/*
-ListPurchases.propTypes = {
-    title: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-};
-*/
-export default ListPurchases;
+
+export default ListReceives;

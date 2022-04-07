@@ -25,6 +25,7 @@ function RequestReceive({ addedItems, setAddedItems, receive }) {
 
         const data = {
             receiveId: receive.receiveId,
+            deliveredById: receive.deliveredById,
             receiveItems: [],
         };
 
@@ -57,12 +58,12 @@ function RequestReceive({ addedItems, setAddedItems, receive }) {
                 ))}
 
             <div className="row">
-                <div className="col-8 d-grid">
-                    <Button className="btn-teal-dark" onClick={submit.bind(this, "request")}>
+                <div className="d-grid">
+                    <Button className="btn-teal-dark" type="submit">
                         {isRequestLoading && (
                             <Spinner className="me-2" animation="grow" size="sm" />
                         )}
-                        Receive Purchase
+                        Receive
                     </Button>
                 </div>
             </div>

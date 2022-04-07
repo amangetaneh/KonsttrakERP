@@ -62,13 +62,12 @@ const Login = () => {
   return (
     <div className="loginAndRegistration" >
       {contextData?.username && <div style={{maxWidth:"600px",margin:"auto"}} >
-        <div style={{marginTop:"30px"}} className="alert alert-success" role="alert">
-     You have successfully registered. Use username: {contextData.username} to login.
-</div>
+          <div style={{marginTop:"30px"}} className="alert alert-success" role="alert">
+      You have successfully registered. Use username: {contextData.username} to login.
+          </div>
         </div>}
-    <div>
-        
 
+      <div>
          <form className="login" style={{backgroundColor:"#f1f1f1"}}>
             <h3 style={{color:"grey", paddingTop:"10px"}}><FcFlowChart style={{width: "40px", height: "40px", marginBottom: "10px"}} /> ERP</h3>
                 <h3>Login</h3>
@@ -85,10 +84,10 @@ const Login = () => {
                 </div>
                 <button onClick={handleLogin} type="submit" className="btn btn-primary btn-block">Login</button>
                 <span className='signup__link'>Not registered? <Link to={"/registration"}>Create account</Link></span>
-            </form>
+          </form>
            
-    </div>
-    <ToastContainer/>
+      </div>
+      <ToastContainer/>
     </div>
   )
 }

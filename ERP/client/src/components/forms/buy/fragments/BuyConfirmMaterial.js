@@ -2,10 +2,10 @@ import { useEffect } from "react";
 import { Form, InputGroup } from "react-bootstrap";
 
 function BuyConfirmMaterial({ addedItems, setAddedItems, index }) {
-    //set purchased qty to approved as default
+    //set bought qty to approved as default
     useEffect(() => {
         const addedItemsCpy = [...addedItems];
-        addedItemsCpy[index].qtyBought = addedItemsCpy[index].qtyBought;
+        addedItemsCpy[index].qtyBought = addedItemsCpy[index].qtyApproved;
         setAddedItems(addedItemsCpy);
     }, []);
 
@@ -174,8 +174,8 @@ function BuyConfirmMaterial({ addedItems, setAddedItems, index }) {
                         <Form.Label>Buy Remark</Form.Label>
                         <Form.Control
                             type="text"
-                            name="purchaseRemark"
-                            value={addedItems[index].purchaseRemark}
+                            name="buyRemark"
+                            value={addedItems[index].buyRemark}
                             onChange={valueChanged}
                         />
                     </Form.Group>

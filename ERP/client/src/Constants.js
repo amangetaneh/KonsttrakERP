@@ -115,9 +115,9 @@ export const RECEIVESTATUS = {
     PURCHASED: 1,
     RECEIVED: 2,
     APPROVED: 3,
-    0: "Purchased",
-    1: "Received",
-    1: "Approved",
+    1: "Purchased",
+    2: "Received",
+    3: "Approved",
 };
 
 export const ITEMTYPE = {

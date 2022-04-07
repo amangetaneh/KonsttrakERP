@@ -47,7 +47,7 @@ function SingleBuy() {
             }
 
             if (
-                query.data.status >= BUYSTATUS.PURCHASED
+                query.data.status >= BUYSTATUS.BOUGHT
             ) {
                 itemObj.qtyBought = buyItem.qtyBought;
                 itemObj.buyRemark = buyItem.buyRemark;
@@ -140,24 +140,6 @@ function SingleBuy() {
                     </>
                 )}
                 {buy.status >= BUYSTATUS.APPROVED && (
-                    <>
-                        <FormRow
-                            labelL="Approved By"
-                            valueL={
-                                buy.approvedBy
-                                    ? `${buy.approvedBy.fName} ${buy.approvedBy.mName}`
-                                    : ""
-                            }
-                            labelR="Approved On"
-                            valueR={
-                                buy.approveDate
-                                    ? new Date(buy.approveDate).toLocaleString()
-                                    : ""
-                            }
-                        />
-                    </>
-                )}
-                {buy.status >= BUYSTATUS.PURCHASED && (
                     <>
                         <FormRow
                             labelL="Approved By"

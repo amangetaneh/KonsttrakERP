@@ -7,6 +7,8 @@ import ContextProviders from "./contexts/ContextProviders";
 import Sidebar from "./components/layouts/Sidebar";
 import MaterialTransfer from "./components/forms/transfer/MaterialTransfer";
 import MaterialPurchase from "./components/forms/purchase/MaterialPurchase";
+import MaterialItem from "./components/forms/item/MaterialItem";
+import ListMySiteReceives from "./components/forms/receive/ListMySiteReceives";
 import MaterialBuy from "./components/forms/buy/MaterialBuy";
 import EquipmentTransfer from "./components/forms/transfer/EquipmentTransfer";
 import ListTransfers from "./components/forms/transfer/ListTransfers";
@@ -35,6 +37,8 @@ import SignUp from "./components/forms/authorization/RegistrationForm";
 import Login from "./components/forms/authorization/Login";
 import TransferReport from "./components/forms/report/TransferReport";
 import { useAuth, useAuthUpdate } from "./contexts/AuthContext";
+import EquipmentItem from "./components/forms/item/EquipmentItem";
+import EquipmentModel from "./components/forms/item/EquipmentModel";
 
 const App = () => {
     
@@ -72,6 +76,10 @@ const App = () => {
 
                                 <Route path="report/transfer" element={<TransferReport />} />
 
+                                <Route path="item/material/new" element={<MaterialItem />} />
+                                <Route path="item/equipment/new" element={<EquipmentItem />} />
+                                <Route path="item/equipment/model/new" element={<EquipmentModel />} />
+                                
                                 <Route path="issue" element={<ListIssues />} />
                                 <Route path="issue/:id" element={<SingleIssue />} />
                                 <Route path="issue/new" element={<NewIssue />} />
@@ -106,7 +114,7 @@ const App = () => {
 
                                 <Route path="receive" element={<ListReceives />} />
                                 <Route path="receive/:id" element={<SingleReceive />} />
-                                {/* <Route path="receive/material" element={<MaterialReceive />} /> */}
+                                <Route path="receive/material" element={<ListMySiteReceives />} />
                             </Routes>
                         </div>
                     </div>

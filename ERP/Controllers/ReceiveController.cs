@@ -99,7 +99,7 @@ namespace ERP.Controllers
             if (receive == null) return NotFound("Request Not Found.");
             
             receive.ReceiveDate = DateTime.Now;
-            receive.DeliveredById = receiveDTO.DeliveredById;
+            //receive.DeliveredById = receiveDTO.DeliveredById;
             receive.ReceivedById = Employee.EmployeeId;
             ICollection<ReceiveItem> receiveItems = new List<ReceiveItem>();
 
@@ -137,7 +137,7 @@ namespace ERP.Controllers
         {
             var receive = await context.Receives.FindAsync(approveDTO.ReceieveId);
 
-            if (receive == null) return NotFound("Request Not Found.");
+            if (receive == null) return NotFound($"Request With ID {approveDTO.ReceieveId} Not Found.");
 
             receive.ApproveDate = DateTime.Now;
             receive.ApprovedById = Employee.EmployeeId;

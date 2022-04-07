@@ -48,14 +48,14 @@ function Sidebar() {
                         <SubMenu title="Inventory" icon={<FaList className="fs-5" />}>
                             <SubMenu title="Stock">
                                 <MenuItem>
-                                    Add a new Material <Link to="/receive/purchase" />
+                                    Add a new Material <Link to="/item/material/new" />
                                 </MenuItem>
                                 <SubMenu title="Equipment">
                                     <MenuItem>
-                                        Add a new Equipment <Link to="/receive" />
+                                        Add a new Equipment <Link to="/item/equipment/new" />
                                     </MenuItem>
                                     <MenuItem>
-                                        Add a new Model <Link to="/receive" />
+                                        Add a new Model <Link to="/item/equipment/model/new" />
                                     </MenuItem>
                                     <MenuItem>
                                         Add a new Category <Link to="/receive" />
@@ -93,7 +93,7 @@ function Sidebar() {
                                 data.userRole?.canReceive &&
                                 
                                 <MenuItem>
-                                    Receive an Item <Link to="/receive/purchase" />
+                                    Receive an Item <Link to="/receive/material" />
                                 </MenuItem>
                                 }
                                 
