@@ -122,8 +122,8 @@ function SingleReceive() {
                         <FormRow
                             labelL="Approve Remark"
                             valueL={
-                                buy.approveRemark
-                                    ? `${buy.approveRemark}`
+                                receive.approveRemark
+                                    ? `${receive.approveRemark}`
                                     : ""
                             }
                         />
@@ -135,6 +135,7 @@ function SingleReceive() {
 
     const titles = useMemo(
         () => [
+            "",
             "Receive Item",
             "Approve Receive",
             "Approved Receive",
@@ -162,15 +163,15 @@ function SingleReceive() {
                         />
                     )}
 
-                    {receive.status === RECEIVESTATUS.RECEIVED && (
+                    {/* {receive.status === RECEIVESTATUS.PURCHASED && (
                         <ApproveReceive
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}
                             receive={receive}
                         />
-                    )}
+                    )} */}
 
-                    {receive.status === RECEIVESTATUS.APPROVED && (
+                    {receive.status === RECEIVESTATUS.RECEIVED && (
                         <ViewReceive addedItems={addedItems} receive={receive} />
                     )}
                 </>

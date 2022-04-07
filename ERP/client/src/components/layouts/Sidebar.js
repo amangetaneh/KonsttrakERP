@@ -58,7 +58,7 @@ function Sidebar() {
                                         Add a new Model <Link to="/item/equipment/model/new" />
                                     </MenuItem>
                                     <MenuItem>
-                                        Add a new Category <Link to="/receive" />
+                                        Add a new Category <Link to="/item/equipment/category/new" />
                                     </MenuItem>
                                 </SubMenu>
                             </SubMenu>
@@ -164,7 +164,9 @@ function Sidebar() {
                 <SidebarFooter>
                     <Menu subMenuBullets={true}>
                         <SubMenu title={data.username} icon={<FaUser className="fs-5" />}>
-                            <MenuItem>Manage Account</MenuItem>
+                            <MenuItem>
+                                Manage Account <Link to="/user/manage" />
+                            </MenuItem>
                             <MenuItem onClick={()=>{
                                 localStorage.removeItem('token')
                                 localStorage.removeItem('data')

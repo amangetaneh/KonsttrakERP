@@ -39,6 +39,8 @@ import TransferReport from "./components/forms/report/TransferReport";
 import { useAuth, useAuthUpdate } from "./contexts/AuthContext";
 import EquipmentItem from "./components/forms/item/EquipmentItem";
 import EquipmentModel from "./components/forms/item/EquipmentModel";
+import EquipmentCategory from "./components/forms/item/EquipmentCategory";
+import ManageUser from "./components/forms/user/ManageUser";
 
 const App = () => {
     
@@ -73,12 +75,14 @@ const App = () => {
                                 <Route path="/login" element={<Navigate to={"/"} />} />
                                 <Route path="/register" element={<Navigate to={"/"} />} />
 
+                                <Route path="user/manage" element={<ManageUser />} />
 
                                 <Route path="report/transfer" element={<TransferReport />} />
 
                                 <Route path="item/material/new" element={<MaterialItem />} />
                                 <Route path="item/equipment/new" element={<EquipmentItem />} />
                                 <Route path="item/equipment/model/new" element={<EquipmentModel />} />
+                                <Route path="item/equipment/category/new" element={<EquipmentCategory />} />
                                 
                                 <Route path="issue" element={<ListIssues />} />
                                 <Route path="issue/:id" element={<SingleIssue />} />

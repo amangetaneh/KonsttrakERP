@@ -26,6 +26,7 @@ function ApproveReceive({ addedItems, setAddedItems, receive }) {
             receiveId: receive.receiveId,
             receiveItems: [],
         };
+        
         for (let item of addedItems) {
             let tempItem = {
                 itemId: Number(item.itemId),

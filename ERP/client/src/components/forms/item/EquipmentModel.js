@@ -3,7 +3,6 @@ import { Form, Button, Container } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
 import Header from "../../layouts/Header";
 import {ToastContainer,toast} from 'react-toastify'
-import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { addEquipmentModel } from "../../../api/item";
 import { fetchEquipments } from "../../../api/item";
@@ -11,12 +10,11 @@ import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
 
 function EquipmentModel() {
-    const navigate = useNavigate();
     const [name, setName] = useState("");
     const [cost, setCost] = useState(0);
     const [equipmentItem, setEquipmentItem] = useState(0);
     const [allEquipmentItems, setAllEquipmentItems] = useState([]);
-
+    
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
 
@@ -64,7 +62,7 @@ function EquipmentModel() {
 
     if (isLoading) return <LoadingSpinner />;
 
-    if (isError || isSubmitError) return <ConnectionError />;
+    if (isError) return <ConnectionError />;
 
     return (
         <>
@@ -94,7 +92,7 @@ function EquipmentModel() {
                     <div className="row ">
                         <div className="col">
                             <Form.Group className="mb-3">
-                                <Form.Label>Model Name</Form.Label>
+                                <Form.Label>Equipment Model Name</Form.Label>
                                 <Form.Control
                                     type="text"
                                     value={name}
@@ -114,7 +112,6 @@ function EquipmentModel() {
                                     value={cost}
                                     onChange={(e) => setCost(e.target.value)}
                                 />
-                                
                             </Form.Group>
                         </div>
                     </div>

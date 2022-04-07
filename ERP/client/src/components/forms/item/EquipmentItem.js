@@ -3,7 +3,6 @@ import { Form, Button, Container } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
 import Header from "../../layouts/Header";
 import {ToastContainer,toast} from 'react-toastify'
-import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { addEquipment } from "../../../api/item";
 import { fetchEquipmentCategories } from "../../../api/item";
@@ -11,7 +10,6 @@ import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
 
 function EquipmentItem() {
-    const navigate = useNavigate();
     const [name, setName] = useState("");
     const [unit, setUnit] = useState("");
     const [description, setDescription] = useState("");

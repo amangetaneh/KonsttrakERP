@@ -62,7 +62,7 @@ function ReceiveApprove({ addedItems, setAddedItems, index }) {
                             <Form.Control
                                 type="text"
                                 name="qty"
-                                readonly
+                                readOnly
                                 value={addedItems[index].qtyReceived}
                             />
                         </Form.Group>
@@ -73,7 +73,7 @@ function ReceiveApprove({ addedItems, setAddedItems, index }) {
                             <Form.Label>Receive Remark</Form.Label>
                             <Form.Control
                                 type="text"
-                                readonly
+                                readOnly
                                 value={addedItems[index].receiveRemark}
                             />
                         </Form.Group>
