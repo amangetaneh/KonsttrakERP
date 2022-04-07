@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs.ReportServices
+﻿namespace ERP.Services.ReportServices
 {
     public interface IReportService
     {

@@ -244,14 +244,14 @@ namespace ERP.Services.TransferServices
 
                 transferItem.SendRemark = requestItem.SendRemark;
 
-                if (transferItem.Item.Type == ITEMTYPE.EQUIPMENT && requestItem.EquipmentAssets != null)
+                if (transferItem.Item.Type == ITEMTYPE.EQUIPMENT && requestItem.EquipmentAssetIds != null)
                 {
                     transferItem.TransferEquipmentAssets = new List<TransferItemEquipmentAsset>();
 
-                    foreach (var requestAsset in requestItem.EquipmentAssets)
+                    foreach (var requestAssetId in requestItem.EquipmentAssetIds)
                     {
                         TransferItemEquipmentAsset equipmentAsset = new();
-                        equipmentAsset.EquipmentAssetId = requestAsset.EquipmentAssetId;
+                        equipmentAsset.EquipmentAssetId = requestAssetId;
 
                         transferItem.TransferEquipmentAssets.Add(equipmentAsset);
                     }

@@ -1,6 +1,6 @@
 ﻿using ERP.Context;
 
-namespace ERP.DTOs.ReportServices
+namespace ERP.Services.ReportServices
 {
     public class ReportService : IReportService
     {

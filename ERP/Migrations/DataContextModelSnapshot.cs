@@ -411,6 +411,27 @@ namespace ERP.Migrations
                     b.ToTable("EquipmentModels");
                 });
 
+            modelBuilder.Entity("ERP.Models.EquipmentSiteQty", b =>
+                {
+                    b.Property<int>("EquipmentModelId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SiteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MinimumQty")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Qty")
+                        .HasColumnType("int");
+
+                    b.HasKey("EquipmentModelId", "SiteId");
+
+                    b.HasIndex("SiteId");
+
+                    b.ToTable("EquipmentSiteQties");
+                });
+
             modelBuilder.Entity("ERP.Models.Issue", b =>
                 {
                     b.Property<int>("IssueId")
@@ -510,24 +531,6 @@ namespace ERP.Migrations
                     b.ToTable("Items");
                 });
 
-            modelBuilder.Entity("ERP.Models.ItemSiteQty", b =>
-                {
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SiteId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Qty")
-                        .HasColumnType("int");
-
-                    b.HasKey("ItemId", "SiteId");
-
-                    b.HasIndex("SiteId");
-
-                    b.ToTable("ItemSiteQties");
-                });
-
             modelBuilder.Entity("ERP.Models.Maintenance", b =>
                 {
                     b.Property<int>("MaintenanceId")
@@ -622,6 +625,27 @@ namespace ERP.Migrations
                     b.ToTable("Materials");
                 });
 
+            modelBuilder.Entity("ERP.Models.MaterialSiteQty", b =>
+                {
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SiteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MinimumQty")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Qty")
+                        .HasColumnType("int");
+
+                    b.HasKey("ItemId", "SiteId");
+
+                    b.HasIndex("SiteId");
+
+                    b.ToTable("MaterialSiteQties");
+                });
+
             modelBuilder.Entity("ERP.Models.Miscellaneous", b =>
                 {
                     b.Property<string>("Key")
@@ -654,7 +678,7 @@ namespace ERP.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EmployeeId")
+                    b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsCleared")
@@ -1120,6 +1144,9 @@ namespace ERP.Migrations
                     b.Property<bool>("CanFixMaintenance")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("CanGetStockNotification")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("CanHandBorrow")
                         .HasColumnType("bit");
 
@@ -1401,6 +1428,25 @@ namespace ERP.Migrations
                     b.Navigation("Equipment");
                 });
 
+            modelBuilder.Entity("ERP.Models.EquipmentSiteQty", b =>
+                {
+                    b.HasOne("ERP.Models.EquipmentModel", "EquipmentModel")
+                        .WithMany()
+                        .HasForeignKey("EquipmentModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Site", "Site")
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EquipmentModel");
+
+                    b.Navigation("Site");
+                });
+
             modelBuilder.Entity("ERP.Models.Issue", b =>
                 {
                     b.HasOne("ERP.Models.Employee", "ApprovedBy")
@@ -1451,25 +1497,6 @@ namespace ERP.Migrations
                     b.Navigation("Issue");
 
                     b.Navigation("Item");
-                });
-
-            modelBuilder.Entity("ERP.Models.ItemSiteQty", b =>
-                {
-                    b.HasOne("ERP.Models.Item", "Item")
-                        .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ERP.Models.Site", "Site")
-                        .WithMany()
-                        .HasForeignKey("SiteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Item");
-
-                    b.Navigation("Site");
                 });
 
             modelBuilder.Entity("ERP.Models.Maintenance", b =>
@@ -1539,13 +1566,30 @@ namespace ERP.Migrations
                     b.Navigation("Item");
                 });
 
+            modelBuilder.Entity("ERP.Models.MaterialSiteQty", b =>
+                {
+                    b.HasOne("ERP.Models.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Site", "Site")
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Site");
+                });
+
             modelBuilder.Entity("ERP.Models.Notification", b =>
                 {
                     b.HasOne("ERP.Models.Employee", "Employee")
                         .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployeeId");
 
                     b.HasOne("ERP.Models.Site", "Site")
                         .WithMany()

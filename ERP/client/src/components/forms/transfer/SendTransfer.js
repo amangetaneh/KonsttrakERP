@@ -39,7 +39,7 @@ function SendTransfer({ addedItems, setAddedItems, transfer }) {
 
             if (item.type === ITEMTYPE.EQUIPMENT) {
                 tempItem.equipmentModelId = item.equipmentModelId;
-                if (item.isSetAssets) tempItem["equipmentAssets"] = item.equipmentAssets;
+                tempItem["equipmentAssetIds"] = item.equipmentAssets.map((ea) => ea.value);
             }
 
             data.transferItems.push(tempItem);
