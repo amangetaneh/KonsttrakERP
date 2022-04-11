@@ -66,7 +66,7 @@ function MaterialItem() {
 
             <Container className="my-3 align-self-center">
                 <Form onSubmit={submit}>
-                <div className="col-10 shadow py-5 px-5 ml-5 rounded">
+                <div className="col-10 mx-auto shadow py-5 px-5 rounded">
                     <div className="row ">
                         <div className="col">
                             <Form.Group className="mb-3">

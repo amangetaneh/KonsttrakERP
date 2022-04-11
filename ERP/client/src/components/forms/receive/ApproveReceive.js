@@ -36,7 +36,6 @@ function ApproveReceive({ addedItems, setAddedItems, receive }) {
 
             data.receiveItems.push(tempItem);
         }
-        console.log(data);
 
         submitApproveReceive(data);
     }

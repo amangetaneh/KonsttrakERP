@@ -9,6 +9,7 @@ import {
     SidebarContent,
 } from "react-pro-sidebar";
 import "react-pro-sidebar/dist/css/styles.css";
+import { GoSettings } from "react-icons/go";
 import { FaHome, FaList, FaBars, FaUser } from "react-icons/fa";
 import { Link,useNavigate } from "react-router-dom";
 import { useAuth, useAuthUpdate } from "../../contexts/AuthContext";
@@ -42,10 +43,20 @@ function Sidebar() {
                 <SidebarContent>
                     <Menu>
                         <MenuItem className="" icon={<FaHome className="fs-5" />}>
-                            Home
+                            Home <Link to="/" />
                         </MenuItem>
 
-                        <SubMenu title="Inventory" icon={<FaList className="fs-5" />}>
+                        <SubMenu title="Setting" icon={<GoSettings className="fs-5" />}>
+                            <SubMenu title="Role">
+                                <MenuItem>
+                                    Add a new Role <Link to="/role/new" />
+                                </MenuItem>
+                            </SubMenu>
+                            <SubMenu title="Site">
+                                <MenuItem>
+                                    Add a new Site <Link to="/role/new" />
+                                </MenuItem>
+                            </SubMenu>
                             <SubMenu title="Stock">
                                 <MenuItem>
                                     Add a new Material <Link to="/item/material/new" />
@@ -62,6 +73,9 @@ function Sidebar() {
                                     </MenuItem>
                                 </SubMenu>
                             </SubMenu>
+                        </SubMenu>
+                        <SubMenu title="Inventory" icon={<FaList className="fs-5" />}>
+                            
                             <SubMenu title="Buy">
                                 {data.userRole?.canRequestBuy &&
                                 <MenuItem>

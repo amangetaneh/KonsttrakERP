@@ -48,6 +48,7 @@ const Login = () => {
             updateAuthContext({...contextData,token:res.data.token, data:res.data})
             localStorage.setItem("token",res.data.token)
             localStorage.setItem("data",JSON.stringify(res.data))
+            
             axios.defaults.headers.common["Authorization"] = "bearer " + res.data.token;
     
            navigate("/")

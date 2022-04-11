@@ -149,7 +149,7 @@ import { useAuth, useAuthUpdate } from "../../../contexts/AuthContext";
  
                     <select   onChange={(e)=>setValue({...value,employeeSiteId:e.target.value})} value={value.employeeSiteId} className="form-control"  name="employeeSiteId" id="employeeSiteId">
                     <option hidden>Select your site</option>
-                    <option value={"1"}>Site002</option>
+    
 
                     
                     {

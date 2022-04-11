@@ -9,6 +9,10 @@ namespace ERP.Models
 
         public string Role { get; set; } = string.Empty;
 
+        public bool CanApproveUser { get; set; } = false;
+
+        public bool CanDeleteUser { get; set; } = false;
+
         public bool CanRequestPurchase { get; set; } = false;
 
         public bool CanApprovePurchase { get; set; } = false;

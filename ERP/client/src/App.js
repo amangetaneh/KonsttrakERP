@@ -41,6 +41,8 @@ import EquipmentItem from "./components/forms/item/EquipmentItem";
 import EquipmentModel from "./components/forms/item/EquipmentModel";
 import EquipmentCategory from "./components/forms/item/EquipmentCategory";
 import ManageUser from "./components/forms/user/ManageUser";
+import NewRole from "./components/forms/user/NewRole";
+import Dashboard from "./components/forms/user/Dashboard";
 
 const App = () => {
     
@@ -72,10 +74,15 @@ const App = () => {
                         </div>
                         <div className="col p-0">
                             <Routes>
+                                
                                 <Route path="/login" element={<Navigate to={"/"} />} />
                                 <Route path="/register" element={<Navigate to={"/"} />} />
 
+                                <Route path="/" element={<Dashboard/>} />
+                                
                                 <Route path="user/manage" element={<ManageUser />} />
+                                
+                                <Route path="role/new" element={<NewRole />} />
 
                                 <Route path="report/transfer" element={<TransferReport />} />
 
