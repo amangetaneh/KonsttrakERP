@@ -53,6 +53,14 @@ namespace ERP.Controllers
             return Ok(issues);
         }
 
+        [HttpPost]
+        public async Task<ActionResult<List<Issue>>> GetByCondition(GetIssuesDTO getIssuesDTO)
+        {
+            var issues = await _issueService.GetByCondition(getIssuesDTO);
+
+            return Ok(issues);
+        }
+
         [HttpPost("request")]
         public async Task<ActionResult<int>> Post(CreateIssueDTO issueDTO)
         {

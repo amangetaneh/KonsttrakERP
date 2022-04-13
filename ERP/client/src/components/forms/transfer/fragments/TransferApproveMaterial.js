@@ -1,13 +1,22 @@
 import { useEffect } from "react";
 import { Form, InputGroup } from "react-bootstrap";
+import { useQuery } from "react-query";
+import { fetchQty } from "../../../../api/item";
+import LoadingSpinner from "../../../fragments/LoadingSpinner";
 
 function TransferApproveMaterial({ addedItems, setAddedItems, index }) {
+    const qtyQuery = useQuery(["itemQty", addedItems[index].itemId], () =>
+        fetchQty({ itemId: addedItems[index].itemId })
+    );
+
     //set approved qty to requested as default
     useEffect(() => {
+        if (!qtyQuery.data) return;
+
         const addedItemsCpy = [...addedItems];
-        addedItemsCpy[index].qtyApproved = addedItemsCpy[index].qtyRequested;
+        addedItemsCpy[index].qtyApproved = Math.min(addedItems[index].qtyRequested, qtyQuery.data);
         setAddedItems(addedItemsCpy);
-    }, []);
+    }, [qtyQuery.data]);
 
     function valueChanged(e) {
         const addedItemsCpy = [...addedItems];
@@ -15,11 +24,16 @@ function TransferApproveMaterial({ addedItems, setAddedItems, index }) {
         setAddedItems(addedItemsCpy);
     }
 
+    if (qtyQuery.isLoading) return <LoadingSpinner />;
+
     return (
         <div className="shadow pt-3 px-4 mb-4 rounded">
             <div className=" row justify-content-between">
-                <div className="col-auto">
-                    <h1 className="display-6 fs-4">Material {index + 1}</h1>
+                <div className="col d-flex justify-content-between">
+                    <span className="display-6 fs-4">Material {index + 1}</span>
+                    <span className="display-6 fs-4">
+                        Available Qty: <strong>{qtyQuery.data}</strong>
+                    </span>
                 </div>
             </div>
 
@@ -27,11 +41,7 @@ function TransferApproveMaterial({ addedItems, setAddedItems, index }) {
                 <div className="col">
                     <Form.Group className="mb-3">
                         <Form.Label>Item</Form.Label>
-                        <Form.Control
-                            type="text"
-                            readOnly
-                            value={addedItems[index].name}
-                        />
+                        <Form.Control type="text" readOnly value={addedItems[index].name} />
                     </Form.Group>
                 </div>
                 <div className="col">
@@ -88,10 +98,7 @@ function TransferApproveMaterial({ addedItems, setAddedItems, index }) {
                                     type="text"
                                     name="total"
                                     readOnly
-                                    value={
-                                        addedItems[index].qtyRequested *
-                                        addedItems[index].cost
-                                    }
+                                    value={addedItems[index].qtyRequested * addedItems[index].cost}
                                 />
                             </Form.Group>
                         </div>
@@ -102,10 +109,16 @@ function TransferApproveMaterial({ addedItems, setAddedItems, index }) {
                                 <Form.Label>Quantity Approved</Form.Label>
                                 <Form.Control
                                     min="0"
+                                    max={Math.min(
+                                        addedItems[index].qtyRequested,
+                                        qtyQuery.data ?? 0
+                                    )}
                                     type="number"
                                     name="qtyApproved"
                                     value={addedItems[index].qtyApproved}
-                                    onChange={valueChanged}
+                                    onChange={(e) => {
+                                        if (e.target.value <= e.target.max) valueChanged(e);
+                                    }}
                                     required
                                 />
                             </Form.Group>
@@ -117,10 +130,7 @@ function TransferApproveMaterial({ addedItems, setAddedItems, index }) {
                                     type="text"
                                     name="total"
                                     readOnly
-                                    value={
-                                        addedItems[index].qtyApproved *
-                                        addedItems[index].cost
-                                    }
+                                    value={addedItems[index].qtyApproved * addedItems[index].cost}
                                 />
                             </Form.Group>
                         </div>

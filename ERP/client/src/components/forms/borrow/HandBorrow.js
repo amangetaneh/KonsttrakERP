@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import BorrowHandEquipment from "./fragments/BorrowHandEquipment";
 import { Button, Form, Spinner } from "react-bootstrap";
-import {handBorrow } from "../../../api/borrow";
+import { handBorrow } from "../../../api/borrow";
 import { useMutation, useQueryClient } from "react-query";
 import ConnectionError from "../../fragments/ConnectionError";
 
@@ -12,10 +12,10 @@ function HandBorrow({ addedItems, setAddedItems, borrow }) {
     const {
         isLoading: isHandLoading,
         isError: isHandError,
+        error: handError,
         mutate: submitHandBorrow,
     } = useMutation(handBorrow, {
-        onSuccess: (res) =>
-            queryClient.invalidateQueries(["borrow", borrow.borrowId.toString()]),
+        onSuccess: (res) => queryClient.invalidateQueries(["borrow", borrow.borrowId.toString()]),
     });
 
     function submit(e) {
@@ -24,7 +24,7 @@ function HandBorrow({ addedItems, setAddedItems, borrow }) {
 
         const data = {
             borrowId: borrow.borrowId,
-            handedById: 1,////////////////////////
+            handedById: 1, ////////////////////////
             borrowItems: [],
         };
 
@@ -33,17 +33,16 @@ function HandBorrow({ addedItems, setAddedItems, borrow }) {
                 itemId: item.itemId,
                 equipmentModelId: item.equipmentModelId,
                 handRemark: item.handRemark,
+                equipmentAssetIds: item.equipmentAssets.map((ea) => ea.value),
             };
-           
-            if (item.isSetAssets) tempItem["equipmentAssets"] = item.equipmentAssets;
-           
+
             data.borrowItems.push(tempItem);
         }
 
         submitHandBorrow(data);
     }
 
-    if (isHandError) return <ConnectionError />;
+    if (isHandError) return <ConnectionError status={handError?.response?.status} />;
 
     return (
         <>
@@ -59,13 +58,7 @@ function HandBorrow({ addedItems, setAddedItems, borrow }) {
 
                 <div className="d-grid">
                     <Button className="btn-teal-dark" type="submit">
-                        {isHandLoading && (
-                            <Spinner
-                                className="me-2"
-                                animation="grow"
-                                size="sm"
-                            />
-                        )}
+                        {isHandLoading && <Spinner className="me-2" animation="grow" size="sm" />}
                         Hand Over Borrow Request Items
                     </Button>
                 </div>

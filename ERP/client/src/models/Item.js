@@ -22,7 +22,7 @@ class Item {
         this.fixRemark = "";
         this.reason = "";
         this.returnRemark = "";
-        this.assetDamageId = "";
+        this.assetDamageId = "-1";
 
         this.equipmentModelId = 0;
 

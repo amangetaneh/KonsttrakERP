@@ -37,6 +37,24 @@ namespace ERP.Services.MaintenanceServices
             return maintenance;
         }
 
+        public async Task<List<Maintenance>> GetByCondition(GetMaintenancesDTO getMaintenanceDTO)
+        {
+            UserRole userRole = _userService.UserRole;
+            int employeeId = _userService.Employee.EmployeeId;
+
+            var borrows = await _context.Maintenances
+                .Where(maintenance => (
+                    (getMaintenanceDTO.SiteId == -1 || maintenance.SiteId == getMaintenanceDTO.SiteId) &&
+                    ((userRole.CanRequestMaintenance == true && maintenance.RequestedById == employeeId) ||
+                    (userRole.CanApproveMaintenance == true && maintenance.Status == MAINTENANCESTATUS.REQUESTED) ||
+                    (userRole.CanFixMaintenance == true && maintenance.Status == MAINTENANCESTATUS.APPROVED))))
+                .Include(m => m.Site)
+                .OrderByDescending(m => m.MaintenanceId)
+                .ToListAsync();
+
+            return borrows;
+        }
+
         private void checkEmployeeSiteIsAvailable()
         {
             if (_userService.Employee.EmployeeSite == null)

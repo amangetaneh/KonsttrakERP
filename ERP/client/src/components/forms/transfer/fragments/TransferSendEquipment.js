@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Col, Row, Form, InputGroup } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { useQuery } from "react-query";
@@ -7,7 +7,7 @@ import Select from "react-select";
 
 function TransferSendEquipment({ addedItems, setAddedItems, index }) {
     const [assetNumbers, setAssetNumbers] = useState([]);
-    console.log(addedItems[index].equipmentAssets);
+    const assetSelectedNumberRef = useRef();
     var modelQuery = useQuery(
         ["model", addedItems[index].equipmentModelId],
         () =>
@@ -29,6 +29,10 @@ function TransferSendEquipment({ addedItems, setAddedItems, index }) {
 
         setAssetNumbers(data);
     }, [modelQuery.data]);
+
+    useEffect(() => {
+        assetSelectedNumberRef.current.setCustomValidity("");
+    }, [addedItems[index].equipmentAssets]);
 
     function valueChanged(e) {
         const addedItemsCpy = [...addedItems];
@@ -194,8 +198,8 @@ function TransferSendEquipment({ addedItems, setAddedItems, index }) {
                                 style={{ width: "5rem" }}
                                 onInvalid={(e) =>
                                     e.target.setCustomValidity(
-                                        `Please Select ${addedItems[index].qtyApproved} Asset${
-                                            addedItems[index].qtyApproved > 1 ? "s" : ""
+                                        `Please Select ${e.target.value} More Asset${
+                                            e.target.value > 1 ? "s" : ""
                                         }`
                                     )
                                 }
@@ -206,6 +210,7 @@ function TransferSendEquipment({ addedItems, setAddedItems, index }) {
                                     addedItems[index].qtyApproved -
                                     addedItems[index].equipmentAssets.length
                                 }
+                                ref={assetSelectedNumberRef}
                                 onChange={() => {}}
                             />
                         </Form.Group>

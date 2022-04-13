@@ -1,6 +1,7 @@
 ﻿using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
+using ERP.Services.ItemSiteQtyServices;
 using ERP.Services.NotificationServices;
 using ERP.Services.User;
 using Microsoft.EntityFrameworkCore;
@@ -12,12 +13,14 @@ namespace ERP.Services.IssueServices
         private readonly DataContext _context;
         private readonly IUserService _userService;
         private readonly INotificationService _notificationService;
+        private readonly IItemSiteQtyService _itemSiteQtyService;
 
-        public IssueService(DataContext context, IUserService userService, INotificationService notificationService)
+        public IssueService(DataContext context, IUserService userService, INotificationService notificationService, IItemSiteQtyService itemSiteQtyService)
         {
             _context = context;
             _userService = userService;
             _notificationService = notificationService;
+            _itemSiteQtyService = itemSiteQtyService;
         }
 
         public async Task<Issue> GetById(int id)
@@ -38,6 +41,25 @@ namespace ERP.Services.IssueServices
 
             return issue;
         }
+
+        public async Task<List<Issue>> GetByCondition(GetIssuesDTO getIssuesDTO)
+        {
+            UserRole userRole = _userService.UserRole;
+            int employeeId = _userService.Employee.EmployeeId;
+
+            var issues = await _context.Issues
+                .Where(issue => (
+                    (getIssuesDTO.SiteId == -1 || issue.SiteId == getIssuesDTO.SiteId) &&
+                    ((userRole.CanRequestIssue == true && issue.RequestedById == employeeId) || 
+                    (userRole.CanApproveIssue == true && issue.Status == ISSUESTATUS.REQUESTED) ||
+                    (userRole.CanHandIssue == true && issue.Status == ISSUESTATUS.APPROVED))))
+                .Include(issue => issue.Site)
+                .OrderByDescending(issue => issue.IssueId)
+                .ToListAsync();
+
+            return issues;
+        }
+
         private void checkEmployeeSiteIsAvailable()
         {
             if (_userService.Employee.EmployeeSite == null)
@@ -68,7 +90,7 @@ namespace ERP.Services.IssueServices
 
                 if (itemTemp == null) throw new KeyNotFoundException($"Issue Item with Id {requestItem.ItemId} Not Found");
 
-                if (itemTemp.Type != ITEMTYPE.MATERIAL) throw new InvalidOperationException($"Borrow Item with Id {requestItem.ItemId} Is Not Type of Material");
+                if (itemTemp.Type != ITEMTYPE.MATERIAL) throw new InvalidOperationException($"Issue Item with Id {requestItem.ItemId} Is Not Type of Material");
 
                 issueItem.Cost = itemTemp.Material.Cost;
 
@@ -176,6 +198,8 @@ namespace ERP.Services.IssueServices
                 if (issueItem == null) throw new KeyNotFoundException($"Issue Item with Id {requestItem.ItemId} Not Found");
 
                 issueItem.HandRemark = requestItem.HandRemark;
+
+                await _itemSiteQtyService.SubtractMaterial(issueItem.ItemId, issue.SiteId, (int)issueItem.QtyApproved);
             }
 
             issue.Status = ISSUESTATUS.HANDED;

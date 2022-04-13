@@ -21,12 +21,20 @@ namespace ERP.Controllers
             _notificationService = notificationService;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
+        public async Task<ActionResult<List<Notification>>> GetAll()
+        {
+            List<Notification> notifications = await _notificationService.GetAllNotifications();
+
+            return Ok(notifications);
+        }
+
+
+
+            [HttpGet]
         public async Task<ActionResult<List<Notification>>> Get()
         {
-            List<Notification> notifications = await _context.Notifications.Where(n => n.IsCleared == false).ToListAsync();
-
-            notifications = notifications.OrderByDescending(n => n.Date).ToList();
+            List<Notification> notifications = await _notificationService.GetUserNotifications();
 
             return Ok(notifications);
         }

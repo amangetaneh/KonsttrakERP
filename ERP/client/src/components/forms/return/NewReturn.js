@@ -45,6 +45,7 @@ function NewReturn() {
     const {
         isError: isSubmitError,
         isLoading: isSubmitLoading,
+        error: submitError,
         mutate: submitReturnReturn,
     } = useMutation(returnReturn, {
         onSuccess: (res) => navigate(`/return/${res.data}`),
@@ -94,7 +95,12 @@ function NewReturn() {
 
     if (isLoading) return <LoadingSpinner />;
 
-    if (isError || isSubmitError) return <ConnectionError />;
+    if (isError || isSubmitError)
+        return (
+            <ConnectionError
+                status={sitesQuery?.error?.response?.status ?? submitError?.response?.status}
+            />
+        );
 
     return (
         <>
@@ -105,38 +111,29 @@ function NewReturn() {
                     <div className="row mx-2">
                         <div className="col">
                             <Form.Group className="mb-3">
-                                <Form.Label>Return Site</Form.Label>
-                                <Form.Select
-                                    value={returnSite}
-                                    onChange={(e) => setReturnSite(e.target.value)}
-                                >
-                                    {allSites.map((site) => (
-                                        <option key={site.siteId} value={site.siteId}>
-                                            {site.name}
-                                        </option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
-                        </div>
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Borrowed By</Form.Label>
-                                <Form.Select
-                                    required
-                                    value={requestedBy}
-                                    onChange={(e) => setRequestedBy(e.target.value)}
-                                >
-                                    <option value="">Select Employee</option>
-                                    {employeesQuery.data &&
-                                        employeesQuery.data?.map((employee) => (
-                                            <option
-                                                key={employee.employeeId}
-                                                value={employee.employeeId}
-                                            >
-                                                {`${employee.fName} ${employee.mName} ${employee.lName}`}
-                                            </option>
-                                        ))}
-                                </Form.Select>
+                                <div className="row">
+                                    <div className="col-1 mt-1" style={{ width: "15%" }}>
+                                        <Form.Label>Borrowed By</Form.Label>
+                                    </div>
+                                    <div className="col">
+                                        <Form.Select
+                                            required
+                                            value={requestedBy}
+                                            onChange={(e) => setRequestedBy(e.target.value)}
+                                        >
+                                            <option value="">Select Employee</option>
+                                            {employeesQuery.data &&
+                                                employeesQuery.data?.map((employee) => (
+                                                    <option
+                                                        key={employee.employeeId}
+                                                        value={employee.employeeId}
+                                                    >
+                                                        {`${employee.fName} ${employee.mName} ${employee.lName}`}
+                                                    </option>
+                                                ))}
+                                        </Form.Select>
+                                    </div>
+                                </div>
                             </Form.Group>
                         </div>
                     </div>

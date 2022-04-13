@@ -9,20 +9,22 @@ import { useQuery } from "react-query";
 import { fetchIssues } from "../../../api/issue";
 import ConnectionError from "../../fragments/ConnectionError";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
+import { useAuth } from "../../../contexts/AuthContext";
 
 function ListIssues() {
     const [issues, setIssues] = useState([]);
-
-    var { data, isLoading, isError } = useQuery("issues", fetchIssues);
+    const auth = useAuth();
+    const requestData = {
+        siteId: auth.data.employee.employeeSiteId,
+    };
+    var { data, isLoading, isError, error } = useQuery("issues", () => fetchIssues(requestData));
 
     useEffect(() => {
         if (data === undefined) return;
 
         Object.keys(data).map((key, index) => {
             //format date
-            data[key].requestDate = new Date(
-                data[key].requestDate
-            ).toLocaleString();
+            data[key].requestDate = new Date(data[key].requestDate).toLocaleString();
 
             //add status badge
             data[key].statusBadge = IssueStatusBadge(data[key].status);
@@ -30,10 +32,7 @@ function ListIssues() {
             //add links to each row
             data[key].open = (
                 <>
-                    <Link
-                        className="btn btn-teal me-2"
-                        to={`/issue/${data[key].issueId}`}
-                    >
+                    <Link className="btn btn-teal me-2" to={`/issue/${data[key].issueId}`}>
                         <FaFolderOpen className="me-1 mb-1" />
                         Open
                     </Link>
@@ -79,7 +78,7 @@ function ListIssues() {
 
     if (isLoading) return <LoadingSpinner />;
 
-    if (isError) return <ConnectionError />;
+    if (isError) return <ConnectionError status={error?.response?.status} />;
 
     return (
         <>
@@ -91,6 +90,5 @@ function ListIssues() {
         </>
     );
 }
-
 
 export default ListIssues;

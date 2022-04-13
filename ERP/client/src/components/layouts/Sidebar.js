@@ -10,20 +10,18 @@ import {
 } from "react-pro-sidebar";
 import "react-pro-sidebar/dist/css/styles.css";
 import { FaHome, FaList, FaBars, FaUser } from "react-icons/fa";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth, useAuthUpdate } from "../../contexts/AuthContext";
-
+import { useQueryClient } from "react-query";
 
 function Sidebar() {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     // const dispatch = useDispatch()
     // const contextData=useAuth()
-    const updateAuthContext = useAuthUpdate()
+    const updateAuthContext = useAuthUpdate();
+    const queryClient = useQueryClient();
 
-
-    const {data}=useAuth()
-    
-
+    const { data } = useAuth();
 
     const [collapsed, setCollapsed] = useState(false);
 
@@ -50,7 +48,11 @@ function Sidebar() {
                             Home
                         </MenuItem>
 
-                        <SubMenu title="Inventory" icon={<FaList className="fs-5" />}>
+                        <SubMenu
+                            title="Inventory"
+                            icon={<FaList className="fs-5" />}
+                            defaultOpen={true}
+                        >
                             <SubMenu title="Stock">
                                 <MenuItem>
                                     Add a new Material <Link to="/receive/purchase" />
@@ -71,23 +73,21 @@ function Sidebar() {
                                 <MenuItem>
                                     Buy an Item <Link to="/purchase/material" />
                                 </MenuItem>
-                                {
-                                    data.userRole?.canRequestPurchase===1 &&
+                                {data.userRole?.canRequestPurchase === 1 && (
                                     <MenuItem>
-                                    Buy Requests <Link to="/purchase" />
-                                </MenuItem>
-                                }
+                                        Buy Requests <Link to="/purchase" />
+                                    </MenuItem>
+                                )}
                             </SubMenu>
                             <SubMenu title="Purchase">
                                 <MenuItem>
                                     Purchase an Item <Link to="/purchase/material" />
                                 </MenuItem>
-                                {
-                                    data.userRole?.canRequestPurchase===1 &&
+                                {data.userRole?.canRequestPurchase === 1 && (
                                     <MenuItem>
-                                    Purchase Requests <Link to="/purchase" />
-                                </MenuItem>
-                                }
+                                        Purchase Requests <Link to="/purchase" />
+                                    </MenuItem>
+                                )}
                             </SubMenu>
                             <SubMenu title="Receive">
                                 <MenuItem>
@@ -147,9 +147,9 @@ function Sidebar() {
                                     Maintenance Requests <Link to="/maintenance" />
                                 </MenuItem>
                             </SubMenu>
-                            <SubMenu title="Report">
+                            <SubMenu title="Settings">
                                 <MenuItem>
-                                    Transfer <Link to="/report/transfer" />
+                                    Report <Link to="/report" />
                                 </MenuItem>
                             </SubMenu>
                         </SubMenu>
@@ -159,12 +159,17 @@ function Sidebar() {
                     <Menu subMenuBullets={true}>
                         <SubMenu title={data.username} icon={<FaUser className="fs-5" />}>
                             <MenuItem>Manage Account</MenuItem>
-                            <MenuItem onClick={()=>{
-                                localStorage.removeItem('token')
-                                localStorage.removeItem('data')
-                                updateAuthContext({token:"",data:"",username:""})
-                                navigate('/login')
-                            }} >Logout</MenuItem>
+                            <MenuItem
+                                onClick={() => {
+                                    localStorage.removeItem("token");
+                                    localStorage.removeItem("data");
+                                    updateAuthContext({ token: "", data: "", username: "" });
+                                    queryClient.invalidateQueries();
+                                    navigate("/login");
+                                }}
+                            >
+                                Logout
+                            </MenuItem>
                         </SubMenu>
                     </Menu>
                 </SidebarFooter>

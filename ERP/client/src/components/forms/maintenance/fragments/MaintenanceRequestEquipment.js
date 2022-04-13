@@ -11,10 +11,9 @@ function MaintenanceRequestEquipment({ addedItems, setAddedItems, index }) {
     const [categoryId, setCategoryId] = useState(0);
     const [itemId, setItemId] = useState(0);
     const [modelId, setModelId] = useState(0);
-    const [isSetAssets, SetIsSetAssets] = useState(false);
 
     const categoriesQuery = useQuery("equipmentcategories", fetchEquipmentCategories);
-    
+
     var itemsQuery = useQuery(
         ["equipmentcategory", categoryId],
         () => categoryId && fetchEquipmentCategory(categoryId)
@@ -91,7 +90,16 @@ function MaintenanceRequestEquipment({ addedItems, setAddedItems, index }) {
     }
 
     if (categoriesQuery.isError || itemsQuery.isError || itemQuery.isError || modelQuery.isError)
-        return <ConnectionError />;
+        return (
+            <ConnectionError
+                status={
+                    categoriesQuery?.error?.response?.status ??
+                    itemsQuery?.error?.response?.status ??
+                    itemQuery?.error?.response?.status ??
+                    modelQuery?.error?.response?.status
+                }
+            />
+        );
 
     return (
         <div className="shadow pt-3 px-3 mb-4 rounded">
@@ -210,21 +218,6 @@ function MaintenanceRequestEquipment({ addedItems, setAddedItems, index }) {
                             value={addedItems[index].description}
                         />
                     </Form.Group>
-
-                    <div className="pb-3">
-                        <Form.Check
-                            type="switch"
-                            id="insert asset numbers"
-                            label="Insert Asset Number"
-                            checked={isSetAssets}
-                            onChange={() =>
-                                SetIsSetAssets((prev) => {
-                                    addedItems[index].isSetAssets = !prev;
-                                    return !prev;
-                                })
-                            }
-                        />
-                    </div>
                 </div>
                 <div className="col">
                     <Form.Group className="mb-3">
@@ -233,7 +226,7 @@ function MaintenanceRequestEquipment({ addedItems, setAddedItems, index }) {
                             required
                             as="textarea"
                             name="reason"
-                            rows={5}
+                            rows={3}
                             value={addedItems[index].reason}
                             onChange={valueChanged}
                         />
@@ -241,63 +234,62 @@ function MaintenanceRequestEquipment({ addedItems, setAddedItems, index }) {
                 </div>
             </div>
 
-            {isSetAssets &&
-                addedItems[index].equipmentAssets.map((asset, assetIndex) => {
-                    return (
-                        <div className="row" key={assetIndex}>
-                            <div className="col">
-                                <Form.Group className="mb-3">
-                                    <Form.Label> Asset Number</Form.Label>
-                                    <Form.Select
-                                        value={asset.equipmentAssetId}
-                                        name={assetIndex}
-                                        onChange={(e) => assetChanged(assetIndex, e)}
-                                        required
-                                    >
-                                        <option value="">Select Asset Number</option>
-                                        {modelQuery.data?.equipmentAssets
-                                            ?.filter(
-                                                (currentItem) =>
-                                                    addedItems[index].equipmentAssets.filter(
-                                                        (addedItem) =>
-                                                            addedItem.equipmentAssetId ===
-                                                                currentItem.equipmentAssetId.toString() &&
-                                                            addedItem.equipmentAssetId !==
-                                                                addedItems[index].equipmentAssets[
-                                                                    assetIndex
-                                                                ].equipmentAssetId
-                                                    ).length === 0
-                                            )
-                                            ?.map((equipmentAsset) => (
-                                                <option
-                                                    key={equipmentAsset.equipmentAssetId}
-                                                    value={equipmentAsset.equipmentAssetId}
-                                                >
-                                                    {equipmentAsset.assetNo}
-                                                </option>
-                                            ))}
-                                    </Form.Select>
-                                </Form.Group>
-                            </div>
-                            <div className="col">
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Serial Number</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        value={
-                                            modelQuery.data?.equipmentAssets?.find(
-                                                (e) =>
-                                                    e.equipmentAssetId.toString() ===
-                                                    asset.equipmentAssetId
-                                            )?.serialNo || ""
-                                        }
-                                        readOnly
-                                    />
-                                </Form.Group>
-                            </div>
+            {addedItems[index].equipmentAssets.map((asset, assetIndex) => {
+                return (
+                    <div className="row" key={assetIndex}>
+                        <div className="col">
+                            <Form.Group className="mb-3">
+                                <Form.Label> Asset Number</Form.Label>
+                                <Form.Select
+                                    value={asset.equipmentAssetId}
+                                    name={assetIndex}
+                                    onChange={(e) => assetChanged(assetIndex, e)}
+                                    required
+                                >
+                                    <option value="">Select Asset Number</option>
+                                    {modelQuery.data?.equipmentAssets
+                                        ?.filter(
+                                            (currentItem) =>
+                                                addedItems[index].equipmentAssets.filter(
+                                                    (addedItem) =>
+                                                        addedItem.equipmentAssetId ===
+                                                            currentItem.equipmentAssetId.toString() &&
+                                                        addedItem.equipmentAssetId !==
+                                                            addedItems[index].equipmentAssets[
+                                                                assetIndex
+                                                            ].equipmentAssetId
+                                                ).length === 0
+                                        )
+                                        ?.map((equipmentAsset) => (
+                                            <option
+                                                key={equipmentAsset.equipmentAssetId}
+                                                value={equipmentAsset.equipmentAssetId}
+                                            >
+                                                {equipmentAsset.assetNo}
+                                            </option>
+                                        ))}
+                                </Form.Select>
+                            </Form.Group>
                         </div>
-                    );
-                })}
+                        <div className="col">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Serial Number</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    value={
+                                        modelQuery.data?.equipmentAssets?.find(
+                                            (e) =>
+                                                e.equipmentAssetId.toString() ===
+                                                asset.equipmentAssetId
+                                        )?.serialNo || ""
+                                    }
+                                    readOnly
+                                />
+                            </Form.Group>
+                        </div>
+                    </div>
+                );
+            })}
         </div>
     );
 }

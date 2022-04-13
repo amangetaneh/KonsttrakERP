@@ -12,6 +12,7 @@ function FixMaintenance({ addedItems, setAddedItems, maintenance }) {
     const {
         isLoading: isHandLoading,
         isError: isHandError,
+        error: handError,
         mutate: submitFixMaintenance,
     } = useMutation(fixMaintenance, {
         onSuccess: (res) =>
@@ -31,7 +32,7 @@ function FixMaintenance({ addedItems, setAddedItems, maintenance }) {
         submitFixMaintenance(data);
     }
 
-    if (isHandError) return <ConnectionError />;
+    if (isHandError) return <ConnectionError submit={handError?.response?.status} />;
 
     return (
         <>

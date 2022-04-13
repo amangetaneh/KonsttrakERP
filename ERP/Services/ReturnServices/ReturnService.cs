@@ -1,6 +1,7 @@
 ﻿using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
+using ERP.Services.ItemSiteQtyServices;
 using ERP.Services.NotificationServices;
 using ERP.Services.User;
 using Microsoft.EntityFrameworkCore;
@@ -12,12 +13,14 @@ namespace ERP.Services.ReturnServices
         private readonly DataContext _context;
         private readonly IUserService _userService;
         private readonly INotificationService _notificationService;
+        private readonly IItemSiteQtyService _itemSiteQtyService;
 
-        public ReturnService(DataContext context, IUserService userService, INotificationService notificationService)
+        public ReturnService(DataContext context, IUserService userService, INotificationService notificationService, IItemSiteQtyService itemSiteQtyService)
         {
             _context = context;
             _userService = userService;
             _notificationService = notificationService;
+            _itemSiteQtyService = itemSiteQtyService;
         }
 
         public async Task<Return> GetById(int id){
@@ -30,7 +33,7 @@ namespace ERP.Services.ReturnServices
                 .ThenInclude(em => em.Equipment)
                 .ThenInclude(equipment => equipment.Item)
                 .Include(ret => ret.ReturnEquipmentAssets)
-                .ThenInclude(ea => ea.Borrow)
+                .ThenInclude(ea => ea.Borrow.RequestedBy)
                 .Include(ret => ret.ReturnEquipmentAssets)
                 .ThenInclude(ea => ea.AssetDamage)
                 .Include(ret => ret.Site)
@@ -67,15 +70,18 @@ namespace ERP.Services.ReturnServices
                 if (asset == null)
                     throw new KeyNotFoundException($"Borrow Item with Id {requestAsset.ItemId},  Model Id {requestAsset.EquipmentModelId}, Asset Id {requestAsset.EquipmentAssetId} Not Found In Borrowed Equiments");
 
-                asset.AssetDamageId = requestAsset.AssetDamageId;
+                asset.AssetDamageId = requestAsset.AssetDamageId == -1 ? null : requestAsset.AssetDamageId;
                 asset.ReturnRemark = requestAsset.ReturnRemark;
 
                 equipmentAssets.Add(asset);
+
+
+                await _itemSiteQtyService.AddEquipmentModel(asset.EquipmentModelId, (int)_userService.Employee.EmployeeSiteId, 1);
             }
 
             Return borrowReturn = new();
             borrowReturn.ReturnedById = _userService.Employee.EmployeeId;
-            borrowReturn.SiteId = returnDTO.SiteId;
+            borrowReturn.SiteId = (int)_userService.Employee.EmployeeSiteId;
 
             borrowReturn.ReturnEquipmentAssets = equipmentAssets;
 

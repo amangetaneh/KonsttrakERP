@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import IssueApproveMaterial from "./fragments/IssueApproveMaterial";
-import { Button, Spinner } from "react-bootstrap";
+import { Button, Spinner, Form } from "react-bootstrap";
 import { approveIssue, declineIssue } from "../../../api/issue";
 import { useMutation, useQueryClient } from "react-query";
 import ConnectionError from "../../fragments/ConnectionError";
@@ -12,6 +12,7 @@ function ApproveIssue({ addedItems, setAddedItems, issue }) {
     const {
         isLoading: isApproveLoading,
         isError: isApproveError,
+        error: approveError,
         mutate: submitApproveIssue,
     } = useMutation(approveIssue, {
         onSuccess: (res) => queryClient.invalidateQueries(["issue", issue.issueId.toString()]),
@@ -20,14 +21,17 @@ function ApproveIssue({ addedItems, setAddedItems, issue }) {
     const {
         isLoading: isDeclineLoading,
         isError: isDeclineError,
+        error: declineError,
         mutate: submitDeclineIssue,
     } = useMutation(declineIssue, {
         onSuccess: (res) => queryClient.invalidateQueries(["issue", issue.issueId.toString()]),
     });
 
-    function submit(type, e) {
+    function submit(e) {
         e.preventDefault();
         if (isApproveLoading || isDeclineLoading) return;
+
+        const type = e.nativeEvent.submitter.name;
 
         const data = {
             issueId: issue.issueId,
@@ -49,10 +53,15 @@ function ApproveIssue({ addedItems, setAddedItems, issue }) {
         else submitApproveIssue(data);
     }
 
-    if (isApproveError || isDeclineError) return <ConnectionError />;
+    if (isApproveError || isDeclineError)
+        return (
+            <ConnectionError
+                status={approveError?.response?.status && declineError?.response?.status}
+            />
+        );
 
     return (
-        <>
+        <Form onSubmit={submit}>
             {addedItems.map((item, index) => (
                 <IssueApproveMaterial
                     key={index}
@@ -64,7 +73,7 @@ function ApproveIssue({ addedItems, setAddedItems, issue }) {
 
             <div className="row">
                 <div className="col-8 d-grid">
-                    <Button className="btn-teal-dark" onClick={submit.bind(this, "approve")}>
+                    <Button className="btn-teal-dark" type="submit" name="approve">
                         {isApproveLoading && (
                             <Spinner className="me-2" animation="grow" size="sm" />
                         )}
@@ -72,7 +81,7 @@ function ApproveIssue({ addedItems, setAddedItems, issue }) {
                     </Button>
                 </div>
                 <div className="col-4 d-grid">
-                    <Button variant="danger" onClick={submit.bind(this, "decline")}>
+                    <Button variant="danger" type="submit" name="decline">
                         {isDeclineLoading && (
                             <Spinner className="me-2" animation="grow" size="sm" />
                         )}
@@ -80,7 +89,7 @@ function ApproveIssue({ addedItems, setAddedItems, issue }) {
                     </Button>
                 </div>
             </div>
-        </>
+        </Form>
     );
 }
 

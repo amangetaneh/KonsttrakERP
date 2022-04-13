@@ -12,10 +12,10 @@ function HandIssue({ addedItems, setAddedItems, issue }) {
     const {
         isLoading: isHandLoading,
         isError: isHandError,
+        error: handError,
         mutate: submitHandIssue,
     } = useMutation(handIssue, {
-        onSuccess: (res) =>
-            queryClient.invalidateQueries(["issue", issue.issueId.toString()]),
+        onSuccess: (res) => queryClient.invalidateQueries(["issue", issue.issueId.toString()]),
     });
 
     function submit(e) {
@@ -39,7 +39,7 @@ function HandIssue({ addedItems, setAddedItems, issue }) {
         submitHandIssue(data);
     }
 
-    if (isHandError) return <ConnectionError />;
+    if (isHandError) return <ConnectionError status={handError?.response?.status} />;
 
     return (
         <>
@@ -55,13 +55,7 @@ function HandIssue({ addedItems, setAddedItems, issue }) {
 
                 <div className="d-grid">
                     <Button className="btn-teal-dark" type="submit">
-                        {isHandLoading && (
-                            <Spinner
-                                className="me-2"
-                                animation="grow"
-                                size="sm"
-                            />
-                        )}
+                        {isHandLoading && <Spinner className="me-2" animation="grow" size="sm" />}
                         Hand Over Issued Items
                     </Button>
                 </div>

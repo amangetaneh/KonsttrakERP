@@ -154,6 +154,13 @@ namespace ERP.Controllers
 
             return Ok(equipmentModel);
         }
+        
+        [HttpPost("qty")]
+        public async Task<ActionResult<int>> GetItemSiteQty(GetQtyDTO getQtyDTO)
+        {
+            var qty = await _itemService.GetItemQty(getQtyDTO);
 
+            return Ok(qty);
+        }
     }
 }

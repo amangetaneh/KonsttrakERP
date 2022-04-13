@@ -121,7 +121,17 @@ function ReturnReturnEquipment({ addedItems, setAddedItems, index, employee }) {
         modelQuery.isError ||
         assetsQuery.isError
     )
-        return <ConnectionError />;
+        return (
+            <ConnectionError
+                status={
+                    categoriesQuery?.error?.response?.status ??
+                    itemsQuery?.error?.response?.status ??
+                    itemQuery?.error?.response?.status ??
+                    modelQuery?.error?.response?.status ??
+                    assetsQuery?.error?.response?.status
+                }
+            />
+        );
 
     return (
         <div className="shadow pt-3 px-3 mb-4 rounded">
@@ -277,7 +287,7 @@ function ReturnReturnEquipment({ addedItems, setAddedItems, index, employee }) {
                             onChange={valueChanged}
                             required
                         >
-                            <option value="">Select Asset Damage Level</option>
+                            <option value="-1">No Damage</option>
                             {damagesQuery.data &&
                                 damagesQuery.data?.map((damage) => (
                                     <option key={damage.assetDamageId} value={damage.assetDamageId}>

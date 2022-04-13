@@ -106,13 +106,13 @@ input[type="checkbox"]:checked {
     border-color: var(--color-teal) !important;
 }
 
-.asset-select-number input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
+input.asset-select-number::-webkit-outer-spin-button,
+input.asset-select-number::-webkit-inner-spin-button  {
     -webkit-appearance: none;
     margin: 0;
 }
 
 /* Firefox */
-.asset-select-number input[type="number"] {
+input[type="number"].asset-select-number {
     -moz-appearance: textfield;
 }

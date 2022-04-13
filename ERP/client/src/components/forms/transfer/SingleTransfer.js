@@ -11,10 +11,11 @@ import ReceiveTransfer from "./ReceiveTransfer";
 import ViewTransfer from "./ViewTransfer";
 import DeclinedTransfer from "./DeclinedTransfer";
 import { useQuery } from "react-query";
+import FormRow from "../../fragments/FormRow";
 import { fetchTransfer } from "../../../api/transfer";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
-import { useSelector } from "react-redux";
+import { useAuth } from "../../../contexts/AuthContext";
 import AlertNotification from "../../fragments/AlertNotification";
 
 function SingleTransfer() {
@@ -22,8 +23,10 @@ function SingleTransfer() {
     const [transfer, setTransfer] = useState({});
     const [addedItems, setAddedItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    //const userRole = useSelector((state) => state.auth.data[2]);
-    
+    const [viewOnly, setViewOnly] = useState();
+    const [notificationType, setNotificationType] = useState(null);
+    const auth = useAuth();
+
     var query = useQuery(["transfer", id], () => fetchTransfer(id));
 
     useEffect(() => {
@@ -76,44 +79,68 @@ function SingleTransfer() {
         setIsLoading(false);
     }, [query.data]);
 
-    function FormRow({ labelL, labelR, valueL, valueR }) {
-        //defines layout of each row
-        return (
-            <div className="row mx-2">
-                <div className="col">
-                    <Form.Group className="mb-3">
-                        <div className="row">
-                            <div className="col-3 mt-1">
-                                <Form.Label>{labelL}</Form.Label>
-                            </div>
-                            <div className="col">
-                                {typeof valueL === "object" ? (
-                                    valueL
-                                ) : (
-                                    <Form.Control type="text" readOnly value={valueL} />
-                                )}
-                            </div>
-                        </div>
-                    </Form.Group>
-                </div>
-                <div className="col">
-                    <Form.Group className="mb-3">
-                        <div className="row">
-                            <div className="col-3 mt-1">
-                                <Form.Label>{labelR}</Form.Label>
-                            </div>
-                            <div className="col">
-                                {typeof valueR === "object" ? (
-                                    valueR
-                                ) : (
-                                    <Form.Control type="text" readOnly value={valueR} />
-                                )}
-                            </div>
-                        </div>
-                    </Form.Group>
-                </div>
-            </div>
-        );
+    useEffect(() => {
+        if (transfer.status === undefined) return;
+        if (
+            transfer.status === TRANSFERSTATUS.REQUESTED &&
+            (auth.data.employee.employeeSiteId !== transfer.sendSiteId ||
+                !auth.data.userRole.canApproveTransfer)
+        ) {
+            setViewOnly(true);
+            return setNotificationType(TRANSFERSTATUS.REQUESTED);
+        }
+
+        if (
+            transfer.status === TRANSFERSTATUS.APPROVED &&
+            (auth.data.employee.employeeSiteId !== transfer.sendSiteId ||
+                !auth.data.userRole.canSendTransfer)
+        ) {
+            setViewOnly(true);
+            return setNotificationType(TRANSFERSTATUS.APPROVED);
+        }
+
+        if (
+            transfer.status === TRANSFERSTATUS.SENT &&
+            (auth.data.employee.employeeSiteId !== transfer.receiveSiteId ||
+                !auth.data.userRole.canReceiveTransfer)
+        ) {
+            setViewOnly(true);
+            return setNotificationType(TRANSFERSTATUS.SENT);
+        }
+
+        setViewOnly(false);
+        setNotificationType(null);
+    }, [transfer]);
+
+    function TransferNotificaion() {
+        switch (notificationType) {
+            case TRANSFERSTATUS.REQUESTED:
+                return (
+                    <AlertNotification
+                        title="Tranfer Needs Approval"
+                        content="Transfer Has Been Requested and Needs Approval to Continue."
+                    />
+                );
+
+            case TRANSFERSTATUS.APPROVED:
+                return (
+                    <AlertNotification
+                        title="Tranfer Out Pending"
+                        content="Transfer Has Been Approved but Hasn't Been Transferred Out Yet."
+                    />
+                );
+
+            case TRANSFERSTATUS.SENT:
+                return (
+                    <AlertNotification
+                        title="Tranfer In Pending"
+                        content="Transfer Has Been Transferred Out but Hasn't Been Transferred In Yet."
+                    />
+                );
+
+            default:
+                return <></>;
+        }
     }
 
     function TopForm() {
@@ -224,7 +251,7 @@ function SingleTransfer() {
 
     if (isLoading) return <LoadingSpinner />;
 
-    if (query.isError) return <ConnectionError />;
+    if (query.isError) return <ConnectionError status={query.error?.response?.status} />;
 
     return (
         <>
@@ -232,10 +259,7 @@ function SingleTransfer() {
 
             <Container className="my-3">
                 <>
-                    <AlertNotification
-                        title="Transfer Waiting for Appproval"
-                        content="This Transfer Needs Approval to Conitnue"
-                    />
+                    <TransferNotificaion />
                     <TopForm />
 
                     {transfer.status === TRANSFERSTATUS.DECLINED && (
@@ -246,7 +270,7 @@ function SingleTransfer() {
                         />
                     )}
 
-                    {transfer.status === TRANSFERSTATUS.REQUESTED && (
+                    {transfer.status === TRANSFERSTATUS.REQUESTED && !viewOnly && (
                         <ApproveTransfer
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}
@@ -254,7 +278,7 @@ function SingleTransfer() {
                         />
                     )}
 
-                    {transfer.status === TRANSFERSTATUS.APPROVED && (
+                    {transfer.status === TRANSFERSTATUS.APPROVED && !viewOnly && (
                         <SendTransfer
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}
@@ -262,7 +286,7 @@ function SingleTransfer() {
                         />
                     )}
 
-                    {transfer.status === TRANSFERSTATUS.SENT && (
+                    {transfer.status === TRANSFERSTATUS.SENT && !viewOnly && (
                         <ReceiveTransfer
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}
@@ -270,7 +294,7 @@ function SingleTransfer() {
                         />
                     )}
 
-                    {transfer.status === TRANSFERSTATUS.RECEIVED && (
+                    {(transfer.status === TRANSFERSTATUS.RECEIVED || viewOnly) && (
                         <ViewTransfer addedItems={addedItems} transfer={transfer} />
                     )}
                 </>

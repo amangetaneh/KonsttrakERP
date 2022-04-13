@@ -10,16 +10,21 @@ import HandIssue from "./HandIssue";
 import ViewIssue from "./ViewIssue";
 import DeclinedIssue from "./DeclinedIssue";
 import { useQuery } from "react-query";
+import FormRow from "../../fragments/FormRow";
 import { fetchIssue } from "../../../api/issue";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
+import { useAuth } from "../../../contexts/AuthContext";
+import AlertNotification from "../../fragments/AlertNotification";
 
 function SingleIssue() {
     const { id } = useParams();
     const [issue, setIssue] = useState({});
     const [addedItems, setAddedItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-
+    const [viewOnly, setViewOnly] = useState(true);
+    const [notificationType, setNotificationType] = useState(null);
+    const auth = useAuth();
     var query = useQuery(["issue", id], () => fetchIssue(id));
 
     useEffect(() => {
@@ -60,44 +65,50 @@ function SingleIssue() {
         setIsLoading(false);
     }, [query.data]);
 
-    function FormRow({ labelL, labelR, valueL, valueR }) {
-        //defines layout of each row
-        return (
-            <div className="row mx-2">
-                <div className="col">
-                    <Form.Group className="mb-3">
-                        <div className="row">
-                            <div className="col-3 mt-1">
-                                <Form.Label>{labelL}</Form.Label>
-                            </div>
-                            <div className="col">
-                                {typeof valueL === "object" ? (
-                                    valueL
-                                ) : (
-                                    <Form.Control type="text" readOnly value={valueL} />
-                                )}
-                            </div>
-                        </div>
-                    </Form.Group>
-                </div>
-                <div className="col">
-                    <Form.Group className="mb-3">
-                        <div className="row">
-                            <div className="col-3 mt-1">
-                                <Form.Label>{labelR}</Form.Label>
-                            </div>
-                            <div className="col">
-                                {typeof valueR === "object" ? (
-                                    valueR
-                                ) : (
-                                    <Form.Control type="text" readOnly value={valueR} />
-                                )}
-                            </div>
-                        </div>
-                    </Form.Group>
-                </div>
-            </div>
-        );
+    useEffect(() => {
+        if (issue.status === undefined) return;
+        if (
+            issue.status === ISSUESTATUS.REQUESTED &&
+            (auth.data.employee.employeeSiteId !== issue.siteId ||
+                !auth.data.userRole.canApproveIssue)
+        ) {
+            setViewOnly(true);
+            return setNotificationType(ISSUESTATUS.REQUESTED);
+        }
+
+        if (
+            issue.status === ISSUESTATUS.APPROVED &&
+            (auth.data.employee.employeeSiteId !== issue.siteId || !auth.data.userRole.canHandIssue)
+        ) {
+            setViewOnly(true);
+            return setNotificationType(ISSUESTATUS.APPROVED);
+        }
+
+        setViewOnly(false);
+        setNotificationType(null);
+    }, [issue]);
+
+    function IssueNotificaion() {
+        switch (notificationType) {
+            case ISSUESTATUS.REQUESTED:
+                return (
+                    <AlertNotification
+                        title="Issue Request Needs Approval"
+                        content="Issue Has Been Requested and Needs Approval to Continue."
+                    />
+                );
+
+            case ISSUESTATUS.APPROVED:
+                return (
+                    <AlertNotification
+                        title="Handing Issued Items Pending"
+                        content="Issue Has Been Approved but Hasn't Been Handed Over Yet."
+                    />
+                );
+
+            default:
+                return <></>;
+        }
     }
 
     function TopForm() {
@@ -176,7 +187,7 @@ function SingleIssue() {
 
     if (isLoading) return <LoadingSpinner />;
 
-    if (query.isError) return <ConnectionError />;
+    if (query.isError) return <ConnectionError status={query?.error?.response?.status} />;
 
     return (
         <>
@@ -184,13 +195,14 @@ function SingleIssue() {
 
             <Container className="my-3">
                 <>
+                    <IssueNotificaion />
                     <TopForm />
 
                     {issue.status === ISSUESTATUS.DECLINED && (
                         <DeclinedIssue addedItems={addedItems} FormRow={FormRow} issue={issue} />
                     )}
 
-                    {issue.status === ISSUESTATUS.REQUESTED && (
+                    {issue.status === ISSUESTATUS.REQUESTED && !viewOnly && (
                         <ApproveIssue
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}
@@ -198,7 +210,7 @@ function SingleIssue() {
                         />
                     )}
 
-                    {issue.status === ISSUESTATUS.APPROVED && (
+                    {issue.status === ISSUESTATUS.APPROVED && !viewOnly && (
                         <HandIssue
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}
@@ -206,7 +218,7 @@ function SingleIssue() {
                         />
                     )}
 
-                    {issue.status === ISSUESTATUS.HANDED && (
+                    {(issue.status === ISSUESTATUS.HANDED || viewOnly) && (
                         <ViewIssue
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}

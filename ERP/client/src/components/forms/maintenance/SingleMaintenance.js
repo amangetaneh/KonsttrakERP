@@ -182,7 +182,7 @@ function SingleMaintenance() {
 
     if (isLoading) return <LoadingSpinner />;
 
-    if (query.isError) return <ConnectionError />;
+    if (query.isError) return <ConnectionError status={query?.error?.response?.status} />;
 
     return (
         <>

@@ -8,7 +8,7 @@ import Header from "../../layouts/Header";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
 import FormRow from "../../fragments/FormRow";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { fetchSites } from "../../../api/site";
 import { ITEMTYPE, TRANSFERREPORTGROUPBY, TRANSFERSTATUS } from "../../../Constants";
 import { fetchEquipmentCategories, fetchEquipmentCategory } from "../../../api/category";
@@ -31,7 +31,7 @@ function initFormValues() {
         itemId: "-1",
         employeeRole: "-1",
         employeeId: "-1",
-        groupBy: TRANSFERREPORTGROUPBY.STATUS,
+        groupBy: TRANSFERREPORTGROUPBY.STATUS.key,
     };
 }
 
@@ -41,6 +41,7 @@ function TransferReport() {
     const [chartData, setChartData] = useState();
     const [tableData, setTableData] = useState();
     const [chartType, setChartType] = useState("bar");
+    const queryClient = useQueryClient();
 
     const sitesQuery = useQuery(["sites"], fetchSites);
     const categoriesQuery = useQuery("equipmentcategories", fetchEquipmentCategories);
@@ -48,6 +49,7 @@ function TransferReport() {
         ["equipmentcategory", formValues.equipmentCategoryId],
         () =>
             formValues.equipmentCategoryId !== "-1" &&
+            formValues.equipmentCategoryId !== undefined &&
             fetchEquipmentCategory(formValues.equipmentCategoryId)
     );
     var materialsQuery = useQuery(["materials"], fetchMaterials);
@@ -56,40 +58,40 @@ function TransferReport() {
     const {
         data: queryResult,
         isLoading,
+        isFetching,
+        isError,
+        error,
         refetch,
     } = useQuery(["transfer", formValues], () => fetchTransferReport(formValues), {
         enabled: false,
     });
 
     function valueChanged(e) {
+        queryClient.removeQueries(["transfer", formValues]);
         setFormValues({ ...formValues, [e.target.name]: e.target.value });
+        setChartData(null);
+        setTableData(null);
+        setReport(null);
     }
 
     const setChartDataCallback = useCallback(
         (summary) => {
             const { groupBy } = formValues;
             summary = summary.map((current) => {
-                var label;
+                var label = current.value;
 
-                if (groupBy === TRANSFERREPORTGROUPBY.STATUS) label = TRANSFERSTATUS[current.key];
+                if (groupBy === TRANSFERREPORTGROUPBY.STATUS.key)
+                    label = TRANSFERSTATUS[current.key];
                 else if (
-                    groupBy === TRANSFERREPORTGROUPBY.REQUESTDATE ||
-                    groupBy === TRANSFERREPORTGROUPBY.APPROVEDATE ||
-                    groupBy === TRANSFERREPORTGROUPBY.SENDDATE ||
-                    groupBy === TRANSFERREPORTGROUPBY.RECEIVEDATE
-                ) {
-                    label = new Date(current.value).toLocaleDateString();
-                    if (label === "Invalid Date") label = "N/A";
-                } else if (
-                    groupBy === TRANSFERREPORTGROUPBY.REQUESTEDBY ||
-                    groupBy === TRANSFERREPORTGROUPBY.APPROVEDBY ||
-                    groupBy === TRANSFERREPORTGROUPBY.SENTBY ||
-                    groupBy === TRANSFERREPORTGROUPBY.RECEIVEDBY
+                    groupBy === TRANSFERREPORTGROUPBY.REQUESTEDBY.key ||
+                    groupBy === TRANSFERREPORTGROUPBY.APPROVEDBY.key ||
+                    groupBy === TRANSFERREPORTGROUPBY.SENTBY.key ||
+                    groupBy === TRANSFERREPORTGROUPBY.RECEIVEDBY.key
                 )
                     label = current.value ? `${current.value.fName} ${current.value.mName}` : "N/A";
                 else if (
-                    groupBy === TRANSFERREPORTGROUPBY.SENDSITE ||
-                    groupBy === TRANSFERREPORTGROUPBY.RECEIVESITE
+                    groupBy === TRANSFERREPORTGROUPBY.SENDSITE.key ||
+                    groupBy === TRANSFERREPORTGROUPBY.RECEIVESITE.key
                 )
                     label = current.value.name;
 
@@ -229,8 +231,6 @@ function TransferReport() {
 
     return (
         <>
-            <Header title="Generate Transfer Report" />
-
             <Container className="my-3">
                 <Form className="mb-3">
                     <FormRow
@@ -451,9 +451,9 @@ function TransferReport() {
                                 value={formValues["groupBy"]}
                                 onChange={valueChanged}
                             >
-                                {Object.keys(TRANSFERREPORTGROUPBY).map((key) => (
-                                    <option key={key} value={TRANSFERREPORTGROUPBY[key]}>
-                                        {TRANSFERREPORTGROUPBY[key]}
+                                {Object.keys(TRANSFERREPORTGROUPBY).map((i) => (
+                                    <option key={i} value={TRANSFERREPORTGROUPBY[i].key}>
+                                        {TRANSFERREPORTGROUPBY[i].label}
                                     </option>
                                 ))}
                             </Form.Select>
@@ -491,6 +491,11 @@ function TransferReport() {
                         </div>
                     </div>
                 </Form>
+
+                {(isLoading || isFetching) && <LoadingSpinner />}
+
+                {isError && <ConnectionError status={error?.response?.status} />}
+
                 {chartData && (
                     <>
                         <h1 className="display-6 text-center mb-2">Report Result</h1>
@@ -499,7 +504,17 @@ function TransferReport() {
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>{formValues.groupBy}</th>
+                                        <th>
+                                            {
+                                                TRANSFERREPORTGROUPBY[
+                                                    Object.keys(TRANSFERREPORTGROUPBY).find(
+                                                        (i) =>
+                                                            TRANSFERREPORTGROUPBY[i].key ===
+                                                            formValues.groupBy
+                                                    )
+                                                ]?.label
+                                            }
+                                        </th>
                                         <th>Number of Transfers</th>
                                     </tr>
                                 </thead>

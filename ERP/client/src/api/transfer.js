@@ -1,10 +1,10 @@
 import api from "./api";
 
-export const fetchTransfers = () =>
-    api.get("/transfer").then((res) => res.data);
+export const fetchAllTransfers = () => api.get("/transfer").then((res) => res.data);
 
-export const fetchTransfer = (id) =>
-    api.get(`/transfer/${id}`).then((res) => res.data);
+export const fetchTransfers = (data) => api.post("/transfer", data).then((res) => res.data);
+
+export const fetchTransfer = (id) => api.get(`/transfer/${id}`).then((res) => res.data);
 
 export const requestMaterialTransfer = (data) => api.post("/transfer/request/material", data);
 

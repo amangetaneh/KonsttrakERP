@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import BorrowApproveEquipment from "./fragments/BorrowApproveEquipment";
-import { Button, Spinner } from "react-bootstrap";
+import { Button, Spinner, Form } from "react-bootstrap";
 import { approveBorrow, declineBorrow } from "../../../api/borrow";
 import { useMutation, useQueryClient } from "react-query";
 import ConnectionError from "../../fragments/ConnectionError";
@@ -12,6 +12,7 @@ function ApproveBorrow({ addedItems, setAddedItems, borrow }) {
     const {
         isLoading: isApproveLoading,
         isError: isApproveError,
+        error: approveError,
         mutate: submitApproveBorrow,
     } = useMutation(approveBorrow, {
         onSuccess: (res) => queryClient.invalidateQueries(["borrow", borrow.borrowId.toString()]),
@@ -20,14 +21,17 @@ function ApproveBorrow({ addedItems, setAddedItems, borrow }) {
     const {
         isLoading: isDeclineLoading,
         isError: isDeclineError,
+        error: declineError,
         mutate: submitDeclineBorrow,
     } = useMutation(declineBorrow, {
         onSuccess: (res) => queryClient.invalidateQueries(["borrow", borrow.borrowId.toString()]),
     });
 
-    function submit(type, e) {
+    function submit(e) {
         e.preventDefault();
         if (isApproveLoading || isDeclineLoading) return;
+
+        const type = e.nativeEvent.submitter.name;
 
         const data = {
             borrowId: borrow.borrowId,
@@ -50,10 +54,15 @@ function ApproveBorrow({ addedItems, setAddedItems, borrow }) {
         else submitApproveBorrow(data);
     }
 
-    if (isApproveError || isDeclineError) return <ConnectionError />;
+    if (isApproveError || isDeclineError)
+        return (
+            <ConnectionError
+                status={approveError?.response?.status && declineError?.response?.status}
+            />
+        );
 
     return (
-        <>
+        <Form onSubmit={submit}>
             {addedItems.map((item, index) => (
                 <BorrowApproveEquipment
                     key={index}
@@ -65,7 +74,7 @@ function ApproveBorrow({ addedItems, setAddedItems, borrow }) {
 
             <div className="row">
                 <div className="col-8 d-grid">
-                    <Button className="btn-teal-dark" onClick={submit.bind(this, "approve")}>
+                    <Button type="submit" name="approve" className="btn-teal-dark">
                         {isApproveLoading && (
                             <Spinner className="me-2" animation="grow" size="sm" />
                         )}
@@ -73,7 +82,7 @@ function ApproveBorrow({ addedItems, setAddedItems, borrow }) {
                     </Button>
                 </div>
                 <div className="col-4 d-grid">
-                    <Button variant="danger" onClick={submit.bind(this, "decline")}>
+                    <Button type="submit" variant="danger" name="decline">
                         {isDeclineLoading && (
                             <Spinner className="me-2" animation="grow" size="sm" />
                         )}
@@ -81,7 +90,7 @@ function ApproveBorrow({ addedItems, setAddedItems, borrow }) {
                     </Button>
                 </div>
             </div>
-        </>
+        </Form>
     );
 }
 

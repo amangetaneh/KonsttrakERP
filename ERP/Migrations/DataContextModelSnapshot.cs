@@ -348,6 +348,9 @@ namespace ERP.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CurrentEmployeeId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CurrentSiteId")
                         .HasColumnType("int");
 
@@ -361,6 +364,8 @@ namespace ERP.Migrations
                     b.HasKey("EquipmentAssetId");
 
                     b.HasIndex("AssetDamageId");
+
+                    b.HasIndex("CurrentEmployeeId");
 
                     b.HasIndex("CurrentSiteId");
 
@@ -419,6 +424,9 @@ namespace ERP.Migrations
                     b.Property<int>("SiteId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ItemId")
+                        .HasColumnType("int");
+
                     b.Property<int>("MinimumQty")
                         .HasColumnType("int");
 
@@ -426,6 +434,8 @@ namespace ERP.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("EquipmentModelId", "SiteId");
+
+                    b.HasIndex("ItemId");
 
                     b.HasIndex("SiteId");
 
@@ -1260,7 +1270,7 @@ namespace ERP.Migrations
                         .IsRequired();
 
                     b.HasOne("ERP.Models.Item", "Item")
-                        .WithMany()
+                        .WithMany("BorrowItems")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1350,7 +1360,7 @@ namespace ERP.Migrations
                         .IsRequired();
 
                     b.HasOne("ERP.Models.Item", "Item")
-                        .WithMany()
+                        .WithMany("BuyItems")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1394,6 +1404,10 @@ namespace ERP.Migrations
                         .WithMany()
                         .HasForeignKey("AssetDamageId");
 
+                    b.HasOne("ERP.Models.Employee", "CurrentEmployee")
+                        .WithMany()
+                        .HasForeignKey("CurrentEmployeeId");
+
                     b.HasOne("ERP.Models.Site", "CurrentSite")
                         .WithMany()
                         .HasForeignKey("CurrentSiteId");
@@ -1405,6 +1419,8 @@ namespace ERP.Migrations
                         .IsRequired();
 
                     b.Navigation("AssetDamage");
+
+                    b.Navigation("CurrentEmployee");
 
                     b.Navigation("CurrentSite");
 
@@ -1429,6 +1445,10 @@ namespace ERP.Migrations
                         .HasForeignKey("EquipmentModelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("ERP.Models.Item", null)
+                        .WithMany("EquipmentSiteQties")
+                        .HasForeignKey("ItemId");
 
                     b.HasOne("ERP.Models.Site", "Site")
                         .WithMany()
@@ -1483,7 +1503,7 @@ namespace ERP.Migrations
                         .IsRequired();
 
                     b.HasOne("ERP.Models.Item", "Item")
-                        .WithMany()
+                        .WithMany("IssueItems")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1563,7 +1583,7 @@ namespace ERP.Migrations
             modelBuilder.Entity("ERP.Models.MaterialSiteQty", b =>
                 {
                     b.HasOne("ERP.Models.Item", "Item")
-                        .WithMany()
+                        .WithMany("MaterialSiteQties")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1632,7 +1652,7 @@ namespace ERP.Migrations
             modelBuilder.Entity("ERP.Models.PurchaseItem", b =>
                 {
                     b.HasOne("ERP.Models.Item", "Item")
-                        .WithMany()
+                        .WithMany("PurchaseItems")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1803,7 +1823,7 @@ namespace ERP.Migrations
             modelBuilder.Entity("ERP.Models.TransferItem", b =>
                 {
                     b.HasOne("ERP.Models.Item", "Item")
-                        .WithMany()
+                        .WithMany("TransferItems")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1892,11 +1912,25 @@ namespace ERP.Migrations
 
             modelBuilder.Entity("ERP.Models.Item", b =>
                 {
+                    b.Navigation("BorrowItems");
+
+                    b.Navigation("BuyItems");
+
                     b.Navigation("Equipment")
                         .IsRequired();
 
+                    b.Navigation("EquipmentSiteQties");
+
+                    b.Navigation("IssueItems");
+
                     b.Navigation("Material")
                         .IsRequired();
+
+                    b.Navigation("MaterialSiteQties");
+
+                    b.Navigation("PurchaseItems");
+
+                    b.Navigation("TransferItems");
                 });
 
             modelBuilder.Entity("ERP.Models.Purchase", b =>

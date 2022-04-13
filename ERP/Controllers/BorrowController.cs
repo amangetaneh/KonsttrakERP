@@ -56,6 +56,14 @@ namespace ERP.Controllers
             return Ok(borrows);
         }
 
+        [HttpPost]
+        public async Task<ActionResult<List<Borrow>>> GetByCondition(GetBorrowsDTO getBorrowsDTO)
+        {
+            var Borrows = await _borrowService.GetByCondition(getBorrowsDTO);
+
+            return Ok(Borrows);
+        }
+
         [HttpPost("request")]
         public async Task<ActionResult<int>> Post(CreateBorrowDTO borrowDTO)
         {

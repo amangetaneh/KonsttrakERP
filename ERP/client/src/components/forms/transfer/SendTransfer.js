@@ -15,6 +15,7 @@ function SendTransfer({ addedItems, setAddedItems, transfer }) {
     const {
         isLoading: isSendLoading,
         isError: isSendError,
+        error: sendError,
         mutate: submitSendTransfer,
     } = useMutation(sendTransfer, {
         onSuccess: (res) =>
@@ -48,7 +49,7 @@ function SendTransfer({ addedItems, setAddedItems, transfer }) {
         submitSendTransfer(data);
     }
 
-    if (isSendError) return <ConnectionError />;
+    if (isSendError) return <ConnectionError status={sendError?.response?.status} />;
 
     return (
         <>

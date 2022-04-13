@@ -23,6 +23,10 @@ namespace ERP.Models
 
         public AssetDamage? AssetDamage { get; set; }
 
+        public int? CurrentEmployeeId { get; set; }
+
+        public Employee? CurrentEmployee { get; set; }
+
 
     }
 }

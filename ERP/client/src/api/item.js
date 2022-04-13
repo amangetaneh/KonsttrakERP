@@ -6,9 +6,7 @@ export const fetchEquipments = () => api.get("/item/equipment").then((res) => re
 
 export const fetchItem = (itemId) => api.get(`/item/${itemId}`).then((res) => res.data);
 
+export const fetchQty = (data) => api.post("/item/qty", data).then((res) => res.data);
+
 export const fetchEquipmentModel = (modelId) =>
     api.get(`/item/equipmentmodel/${modelId}`).then((res) => res.data);
-
-
-    
-    

@@ -12,7 +12,7 @@ import LoadingSpinner from "../../fragments/LoadingSpinner";
 function ListReturns() {
     const [maintenances, setMaintenances] = useState([]);
 
-    var { data, isLoading, isError } = useQuery("returns", fetchReturns);
+    var { data, isLoading, isError, error } = useQuery("returns", fetchReturns);
 
     useEffect(() => {
         if (data === undefined) return;
@@ -65,7 +65,7 @@ function ListReturns() {
 
     if (isLoading) return <LoadingSpinner />;
 
-    if (isError) return <ConnectionError />;
+    if (isError) return <ConnectionError status={error?.response?.status}/>;
 
     return (
         <>

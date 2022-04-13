@@ -13,16 +13,14 @@ import LoadingSpinner from "../../fragments/LoadingSpinner";
 function ListBorrows() {
     const [borrows, setBorrows] = useState([]);
 
-    var { data, isLoading, isError } = useQuery("borrows", fetchBorrows);
+    var { data, isLoading, isError, error } = useQuery("borrows", fetchBorrows);
 
     useEffect(() => {
         if (data === undefined) return;
 
         Object.keys(data).map((key, index) => {
             //format date
-            data[key].requestDate = new Date(
-                data[key].requestDate
-            ).toLocaleString();
+            data[key].requestDate = new Date(data[key].requestDate).toLocaleString();
 
             //add status badge
             data[key].statusBadge = BorrowStatusBadge(data[key].status);
@@ -30,10 +28,7 @@ function ListBorrows() {
             //add links to each row
             data[key].open = (
                 <>
-                    <Link
-                        className="btn btn-teal me-2"
-                        to={`/borrow/${data[key].borrowId}`}
-                    >
+                    <Link className="btn btn-teal me-2" to={`/borrow/${data[key].borrowId}`}>
                         <FaFolderOpen className="me-1 mb-1" />
                         Open
                     </Link>
@@ -79,7 +74,7 @@ function ListBorrows() {
 
     if (isLoading) return <LoadingSpinner />;
 
-    if (isError) return <ConnectionError />;
+    if (isError) return <ConnectionError status={error?.response?.status} />;
 
     return (
         <>
@@ -91,6 +86,5 @@ function ListBorrows() {
         </>
     );
 }
-
 
 export default ListBorrows;

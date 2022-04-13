@@ -1,6 +1,7 @@
 ﻿using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
+using ERP.Services.ItemSiteQtyServices;
 using ERP.Services.NotificationServices;
 using ERP.Services.User;
 using Microsoft.EntityFrameworkCore;
@@ -12,12 +13,14 @@ namespace ERP.Services.BorrowServices
         private readonly DataContext _context;
         private readonly INotificationService _notificationService;
         private readonly IUserService _userService;
+        private readonly IItemSiteQtyService _itemSiteQtyService;
 
-        public BorrowService(DataContext context, INotificationService notificationService, IUserService userService)
+        public BorrowService(DataContext context, INotificationService notificationService, IUserService userService, IItemSiteQtyService itemSiteQtyService)
         {
             _context = context;
             _notificationService = notificationService;
             _userService = userService;
+            _itemSiteQtyService = itemSiteQtyService;
         }
 
 
@@ -39,6 +42,24 @@ namespace ERP.Services.BorrowServices
             if (borrow == null) throw new KeyNotFoundException("Borrow Not Found.");
 
             return borrow;
+        }
+
+        public async Task<List<Borrow>> GetByCondition(GetBorrowsDTO getBorrowsDTO)
+        {
+            UserRole userRole = _userService.UserRole;
+            int employeeId = _userService.Employee.EmployeeId;
+
+            var borrows = await _context.Borrows
+                .Where(borrow => (
+                    (getBorrowsDTO.SiteId == -1 || borrow.SiteId == getBorrowsDTO.SiteId) &&
+                    ((userRole.CanRequestBorrow == true && borrow.RequestedById == employeeId) ||
+                    (userRole.CanApproveBorrow == true && borrow.Status == BORROWSTATUS.REQUESTED) ||
+                    (userRole.CanHandBorrow == true && borrow.Status == BORROWSTATUS.APPROVED))))
+                .Include(borrow => borrow.Site)
+                .OrderByDescending(borrow => borrow.BorrowId)
+                .ToListAsync();
+
+            return borrows;
         }
 
         private void checkEmployeeSiteIsAvailable()
@@ -196,18 +217,21 @@ namespace ERP.Services.BorrowServices
 
                 borrowItem.HandRemark = requestItem.HandRemark;
 
-                if (requestItem.EquipmentAssets != null)
+                if (requestItem.EquipmentAssetIds != null)
                 {
                     borrowItem.BorrowEquipmentAssets = new List<BorrowItemEquipmentAsset>();
 
-                    foreach (var requestAsset in requestItem.EquipmentAssets)
+                    foreach (var requestAssetId in requestItem.EquipmentAssetIds)
                     {
                         BorrowItemEquipmentAsset equipmentAsset = new();
-                        equipmentAsset.EquipmentAssetId = requestAsset.EquipmentAssetId;
+                        equipmentAsset.EquipmentAssetId = requestAssetId;
 
                         borrowItem.BorrowEquipmentAssets.Add(equipmentAsset);
                     }
                 }
+
+
+                await _itemSiteQtyService.SubtractEquipmentModel(borrowItem.EquipmentModelId, borrow.SiteId, (int)borrowItem.QtyApproved);
             }
 
             borrow.Status = BORROWSTATUS.HANDED;

@@ -11,6 +11,7 @@ using ERP.Services.ReturnServices;
 using ERP.Services.SiteServices;
 using ERP.Services.TransferServices;
 using ERP.Services.ItemSiteQtyServices;
+using ERP.Services.EquipmentAssetServices;
 
 namespace ERP
 {
@@ -30,6 +31,8 @@ namespace ERP
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IAssetNumberService, AssetNumberService>();
             services.AddScoped<IItemSiteQtyService, ItemSiteQtyService>();
+            services.AddScoped<IEquipmentAssetService, EquipmentAssetService>();
+            services.AddScoped<IGeneralReportService, GeneralReportService>();
 
         }
     }

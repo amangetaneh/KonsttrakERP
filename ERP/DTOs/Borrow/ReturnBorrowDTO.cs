@@ -20,7 +20,7 @@
 
         public int EquipmentAssetId { get; set; }
 
-        public int AssetDamageId { get; set; }
+        public int AssetDamageId { get; set; } = -1;
 
         public string ReturnRemark { get; set; }
 

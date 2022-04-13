@@ -17,6 +17,15 @@ namespace ERP.Services.NotificationServices
             _userService = userService;
         }
 
+        public async Task<List<Notification>> GetAllNotifications()
+        {
+            var notifications = await _context.Notifications
+                    .Where(noti => noti.IsCleared == false)
+                    .ToListAsync();
+
+            return notifications.OrderByDescending(n => n.Date).ToList();
+        }
+
         public async Task<List<Notification>> GetUserNotifications()
         {
 
@@ -37,7 +46,7 @@ namespace ERP.Services.NotificationServices
             notifications.AddRange(await GetBuyNotifications(siteId, employeeId));
             notifications.AddRange(await GetStockNotifications(siteId, employeeId));
 
-            return notifications;
+            return notifications.OrderByDescending(n => n.Date).ToList();
         }
         private async Task<List<Notification>> GetStockNotifications(int siteId, int employeeId)
         {

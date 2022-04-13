@@ -10,20 +10,26 @@ import { useQuery } from "react-query";
 import { fetchTransfers } from "../../../api/transfer";
 import ConnectionError from "../../fragments/ConnectionError";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
+import { useAuth } from "../../../contexts/AuthContext";
 
 function ListTransfers({ title, type }) {
     const [transfers, setTransfers] = useState([]);
+    const auth = useAuth();
 
-    var { data, isLoading, isError } = useQuery("transfers", fetchTransfers);
+    const requestData = {};
+    if (type == "in") requestData["receiveSiteId"] = auth.data.employee.employeeSiteId;
+    else requestData["sendSiteId"] = auth.data.employee.employeeSiteId;
+
+    var { data, isLoading, isError, error } = useQuery(["transfers", type], () =>
+        fetchTransfers(requestData)
+    );
 
     useEffect(() => {
         if (data === undefined) return;
 
         Object.keys(data).map((key, index) => {
             //format date
-            data[key].requestDate = new Date(
-                data[key].requestDate
-            ).toLocaleString();
+            data[key].requestDate = new Date(data[key].requestDate).toLocaleString();
 
             //add status badge
             data[key].statusBadge = TransferStatusBadge(data[key].status);
@@ -31,10 +37,7 @@ function ListTransfers({ title, type }) {
             //add links to each row
             data[key].open = (
                 <>
-                    <Link
-                        className="btn btn-teal me-2"
-                        to={`/transfer/${data[key].transferId}`}
-                    >
+                    <Link className="btn btn-teal me-2" to={`/transfer/${data[key].transferId}`}>
                         <FaFolderOpen className="me-1 mb-1" />
                         Open
                     </Link>
@@ -84,7 +87,7 @@ function ListTransfers({ title, type }) {
 
     if (isLoading) return <LoadingSpinner />;
 
-    if (isError) return <ConnectionError />;
+    if (isError) return <ConnectionError status={error?.response?.status} />;
 
     return (
         <>

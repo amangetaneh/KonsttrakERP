@@ -13,12 +13,17 @@ import { useQuery } from "react-query";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
 import { fetchBorrow } from "../../../api/borrow";
+import { useAuth } from "../../../contexts/AuthContext";
+import AlertNotification from "../../fragments/AlertNotification";
 
 function SingleBorrow() {
     const { id } = useParams();
     const [borrow, setBorrow] = useState({});
     const [addedItems, setAddedItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [viewOnly, setViewOnly] = useState();
+    const [notificationType, setNotificationType] = useState(null);
+    const auth = useAuth();
 
     var query = useQuery(["borrow", id], () => fetchBorrow(id));
 
@@ -61,6 +66,53 @@ function SingleBorrow() {
         setAddedItems(items);
         setIsLoading(false);
     }, [query.data]);
+
+    useEffect(() => {
+        if (borrow.status === undefined) return;
+        if (
+            borrow.status === BORROWSTATUS.REQUESTED &&
+            (auth.data.employee.employeeSiteId !== borrow.siteId ||
+                !auth.data.userRole.canApproveBorrow)
+        ) {
+            setViewOnly(true);
+            return setNotificationType(BORROWSTATUS.REQUESTED);
+        }
+
+        if (
+            borrow.status === BORROWSTATUS.APPROVED &&
+            (auth.data.employee.employeeSiteId !== borrow.siteId ||
+                !auth.data.userRole.canHandBorrow)
+        ) {
+            setViewOnly(true);
+            return setNotificationType(BORROWSTATUS.APPROVED);
+        }
+
+        setViewOnly(false);
+        setNotificationType(null);
+    }, [borrow]);
+
+    function BorrowNotificaion() {
+        switch (notificationType) {
+            case BORROWSTATUS.REQUESTED:
+                return (
+                    <AlertNotification
+                        title="Borrow Request Needs Approval"
+                        content="Borrow Has Been Requested and Needs Approval to Continue."
+                    />
+                );
+
+            case BORROWSTATUS.APPROVED:
+                return (
+                    <AlertNotification
+                        title="Handing Borrowed Items Pending"
+                        content="Borrow Has Been Approved but Hasn't Been Handed Over Yet."
+                    />
+                );
+
+            default:
+                return <></>;
+        }
+    }
 
     function FormRow({ labelL, labelR, valueL, valueR }) {
         //defines layout of each row
@@ -185,7 +237,7 @@ function SingleBorrow() {
 
     if (isLoading) return <LoadingSpinner />;
 
-    if (query.isError) return <ConnectionError />;
+    if (query.isError) return <ConnectionError status={query.error?.response?.status} />;
 
     return (
         <>
@@ -193,13 +245,14 @@ function SingleBorrow() {
 
             <Container className="my-3">
                 <>
+                    <BorrowNotificaion />
                     <TopForm />
 
                     {borrow.status === BORROWSTATUS.DECLINED && (
                         <DeclinedBorrow addedItems={addedItems} FormRow={FormRow} borrow={borrow} />
                     )}
 
-                    {borrow.status === BORROWSTATUS.REQUESTED && (
+                    {borrow.status === BORROWSTATUS.REQUESTED && !viewOnly && (
                         <ApproveBorrow
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}
@@ -207,7 +260,7 @@ function SingleBorrow() {
                         />
                     )}
 
-                    {borrow.status === BORROWSTATUS.APPROVED && (
+                    {borrow.status === BORROWSTATUS.APPROVED && !viewOnly && (
                         <HandBorrow
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}
@@ -215,7 +268,7 @@ function SingleBorrow() {
                         />
                     )}
 
-                    {borrow.status === BORROWSTATUS.HANDED && (
+                    {(borrow.status === BORROWSTATUS.HANDED || viewOnly) && (
                         <ViewBorrow addedItems={addedItems} />
                     )}
                 </>

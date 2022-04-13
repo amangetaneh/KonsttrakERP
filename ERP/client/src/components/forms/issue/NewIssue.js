@@ -14,37 +14,28 @@ import ConnectionError from "../../fragments/ConnectionError";
 
 function NewIssue() {
     const navigate = useNavigate();
-    const [sendSite, setSendSite] = useState(0);
     const [addedItems, setAddedItems] = useState([new Item()]);
 
-    const [allSites, setAllSites] = useState([]);
     const [allItems, setAllItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
-
-    const sitesQuery = useQuery("sites", fetchSites, {
-        onSuccess: (data) => {
-            setAllSites(data);
-            setSendSite(data[0].siteId);
-        },
-    });
 
     const itemQuery = useQuery("material", fetchMaterials, {
         onSuccess: (data) => setAllItems(data),
     });
 
     useEffect(() => {
-        setIsLoading(sitesQuery.isLoading || itemQuery.isLoading);
-    }, [sitesQuery.isLoading, itemQuery.isLoading]);
+        setIsLoading(itemQuery.isLoading);
+    }, [itemQuery.isLoading]);
 
     useEffect(() => {
-        setIsError(sitesQuery.isError || itemQuery.isError);
-    }, [sitesQuery.isError, itemQuery.isError]);
-
+        setIsError(itemQuery.isError);
+    }, [itemQuery.isError]);
 
     const {
         isError: isSubmitError,
         isLoading: isSubmitLoading,
+        error: submitError,
         mutate: submitIssueRequest,
     } = useMutation(requestIssue, {
         onSuccess: (res) => navigate(`/issue/${res.data}`),
@@ -55,7 +46,6 @@ function NewIssue() {
         if (isSubmitLoading) return;
 
         var data = {
-            siteId: Number(sendSite),
             requestedById: 1, ////////////////////////////////////////////////////////////////////////////////
             issueItems: [],
         };
@@ -91,7 +81,12 @@ function NewIssue() {
 
     if (isLoading) return <LoadingSpinner />;
 
-    if (isError || isSubmitError) return <ConnectionError />;
+    if (isError || isSubmitError)
+        return (
+            <ConnectionError
+                status={submitError?.response?.status ?? itemQuery?.error?.response?.status}
+            />
+        );
 
     return (
         <>
@@ -99,25 +94,6 @@ function NewIssue() {
 
             <Container className="my-3">
                 <Form onSubmit={submit}>
-                    <div className="row mx-2">
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Issue Site</Form.Label>
-                                <Form.Select
-                                    value={sendSite}
-                                    onChange={(e) => setSendSite(e.target.value)}
-                                >
-                                    {allSites.map((site) => (
-                                        <option key={site.siteId} value={site.siteId}>
-                                            {site.name}
-                                        </option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
-                        </div>
-                        
-                    </div>
-
                     {addedItems.map((item, index) => (
                         <IssueRequestMaterial
                             key={index}

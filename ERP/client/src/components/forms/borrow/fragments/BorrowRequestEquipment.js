@@ -7,12 +7,7 @@ import { fetchItem, fetchEquipmentModel } from "../../../../api/item";
 import { fetchEquipmentCategories, fetchEquipmentCategory } from "../../../../api/category";
 import ConnectionError from "../../../fragments/ConnectionError";
 
-
-function BorrowRequestEquipment({
-    addedItems,
-    setAddedItems,
-    index,
-}) {
+function BorrowRequestEquipment({ addedItems, setAddedItems, index }) {
     const [categoryId, setCategoryId] = useState(0);
     const [itemId, setItemId] = useState(0);
     const [modelId, setModelId] = useState(0);
@@ -76,7 +71,16 @@ function BorrowRequestEquipment({
     }
 
     if (categoriesQuery.isError || itemsQuery.isError || itemQuery.isError || modelQuery.isError)
-        return <ConnectionError />;
+        return (
+            <ConnectionError
+                status={
+                    categoriesQuery?.error?.response?.status ??
+                    itemsQuery?.error?.response?.status ??
+                    itemQuery?.error?.response?.status ??
+                    modelQuery?.error?.response?.status
+                }
+            />
+        );
 
     return (
         <div className="shadow pt-3 px-3 mb-4 rounded">

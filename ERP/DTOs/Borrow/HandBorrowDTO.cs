@@ -17,14 +17,9 @@
         public int EquipmentModelId { get; set; }
 
         public string HandRemark { get; set; }
-        
-        public ICollection<HandBorrowAsset>? EquipmentAssets { get; set; }
 
-    }
+        public ICollection<int>? EquipmentAssetIds { get; set; }
 
-    public class HandBorrowAsset
-    {
-        public int EquipmentAssetId { get; set; }
     }
 
 }

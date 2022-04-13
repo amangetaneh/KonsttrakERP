@@ -37,6 +37,7 @@ function NewMaintenance() {
     const {
         isError: isSubmitError,
         isLoading: isSubmitLoading,
+        error: submitError,
         mutate: submitMaintenanceRequest,
     } = useMutation(requestMaintenance, {
         onSuccess: (res) => navigate(`/maintenance/${res.data}`),
@@ -78,7 +79,12 @@ function NewMaintenance() {
 
     if (isLoading) return <LoadingSpinner />;
 
-    if (isError || isSubmitError) return <ConnectionError />;
+    if (isError || isSubmitError)
+        return (
+            <ConnectionError
+                status={submitError?.response?.status ?? sitesQuery?.error?.response?.status}
+            />
+        );
 
     return (
         <>

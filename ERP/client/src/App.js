@@ -33,6 +33,7 @@ import SignUp from "./components/forms/authorization/RegistrationForm";
 import Login from "./components/forms/authorization/Login";
 import TransferReport from "./components/forms/report/TransferReport";
 import { useAuth, useAuthUpdate } from "./contexts/AuthContext";
+import Report from "./components/forms/report/Report";
 
 const App = () => {
     
@@ -62,7 +63,7 @@ const App = () => {
                                 <Route path="/register" element={<Navigate to={"/"} />} />
 
 
-                                <Route path="report/transfer" element={<TransferReport />} />
+                                <Route path="report" element={<Report />} />
 
                                 <Route path="issue" element={<ListIssues />} />
                                 <Route path="issue/:id" element={<SingleIssue />} />
@@ -85,6 +86,10 @@ const App = () => {
                                 <Route
                                     path="transfer/in"
                                     element={<ListTransfers title="Transfer In" type="in" />}
+                                />
+                                <Route
+                                    path="transfer/out"
+                                    element={<ListTransfers title="Transfer Out" type="out" />}
                                 />
                                 <Route path="transfer/:id" element={<SingleTransfer />} />
 

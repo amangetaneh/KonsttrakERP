@@ -15,6 +15,7 @@ function ReceiveTransfer({ addedItems, setAddedItems, transfer }) {
     const {
         isLoading: isReceiveLoading,
         isError: isReceiveError,
+        error: receiveError,
         mutate: submitReceiveTransfer,
     } = useMutation(receiveTransfer, {
         onSuccess: (res) =>
@@ -80,7 +81,7 @@ function ReceiveTransfer({ addedItems, setAddedItems, transfer }) {
         );
     }
 
-    if (isReceiveError) return <ConnectionError />;
+    if (isReceiveError) return <ConnectionError status={receiveError?.response?.status} />;
 
     return (
         <>

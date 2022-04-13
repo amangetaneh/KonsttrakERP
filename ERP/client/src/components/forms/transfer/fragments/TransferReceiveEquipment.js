@@ -178,28 +178,30 @@ function TransferReceiveMaterial({ addedItems, setAddedItems, index }) {
 
             {addedItems[index].equipmentAssets.length ? (
                 <div className="pb-1">
-                <Table striped  size="sm" >
-                    <thead>
-                        <tr>
-                            <th>Asset</th>
-                            <th>Asset Number</th>
-                            <th>Serial Number</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {addedItems[index].equipmentAssets.map((asset, assetIndex) => {
-                            return (
-                                <tr>
-                                    <td>{assetIndex + 1}</td>
-                                    <td>{asset.equipmentAsset.assetNo}</td>
-                                    <td>{asset.equipmentAsset.serialNo}</td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </Table>
+                    <Table striped size="sm">
+                        <thead>
+                            <tr>
+                                <th>Asset</th>
+                                <th>Asset Number</th>
+                                <th>Serial Number</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {addedItems[index].equipmentAssets.map((asset, assetIndex) => {
+                                return (
+                                    <tr key={assetIndex}>
+                                        <td>{assetIndex + 1}</td>
+                                        <td>{asset.equipmentAsset.assetNo}</td>
+                                        <td>{asset.equipmentAsset.serialNo}</td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </Table>
                 </div>
-            ) : ""}
+            ) : (
+                ""
+            )}
         </div>
     );
 }

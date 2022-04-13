@@ -12,6 +12,7 @@ function ApproveMaintenance({ addedItems, setAddedItems, maintenance }) {
     const {
         isLoading: isApproveLoading,
         isError: isApproveError,
+        error: approveError,
         mutate: submitApproveMaintenance,
     } = useMutation(approveMaintenance, {
         onSuccess: (res) =>
@@ -21,6 +22,7 @@ function ApproveMaintenance({ addedItems, setAddedItems, maintenance }) {
     const {
         isLoading: isDeclineLoading,
         isError: isDeclineError,
+        error: declineError,
         mutate: submitDeclineMaintenance,
     } = useMutation(declineMaintenance, {
         onSuccess: (res) =>
@@ -41,7 +43,12 @@ function ApproveMaintenance({ addedItems, setAddedItems, maintenance }) {
         else submitApproveMaintenance(data);
     }
 
-    if (isApproveError || isDeclineError) return <ConnectionError />;
+    if (isApproveError || isDeclineError)
+        return (
+            <ConnectionError
+                status={approveError?.response?.status ?? declineError?.response?.status}
+            />
+        );
 
     return (
         <>

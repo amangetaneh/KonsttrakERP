@@ -1,5 +1,7 @@
 ﻿using ERP.Context;
+using ERP.DTOs.Item;
 using ERP.Models;
+using ERP.Services.User;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERP.Services.ItemServices
@@ -7,10 +9,12 @@ namespace ERP.Services.ItemServices
     public class ItemService : IItemService
     {
         private readonly DataContext _context;
+        private readonly IUserService _userService;
 
-        public ItemService(DataContext context)
+        public ItemService(DataContext context, IUserService userService)
         {
             _context = context;
+            _userService = userService;
         }
 
         public async Task<List<Item>> GetAll()
@@ -63,6 +67,39 @@ namespace ERP.Services.ItemServices
             if (model == null) throw new KeyNotFoundException("Equipment Model Not Found");
 
             return model;
+        }
+
+        public async Task<int> GetItemQty(GetQtyDTO qtyDTO)
+        {
+
+            int qty = 0;
+
+            var siteId = qtyDTO.SiteId != -1 ? qtyDTO.SiteId : _userService.Employee.EmployeeSiteId;
+
+            if (siteId == null) return qty;
+
+            if (qtyDTO.EquipmentModelId != -1)
+            {
+                var temp  = await _context.EquipmentSiteQties
+                       .Where(esq => esq.EquipmentModelId == qtyDTO.EquipmentModelId && esq.SiteId == siteId)
+                       .FirstOrDefaultAsync();
+                
+                if (temp != null) qty = temp.Qty;
+
+            }
+
+
+            if (qtyDTO.ItemId != -1)
+            {
+                var temp = await _context.MaterialSiteQties
+                       .Where(esq => esq.ItemId == qtyDTO.ItemId && esq.SiteId == siteId)
+                       .FirstOrDefaultAsync();
+
+                if (temp != null) qty = temp.Qty;
+
+            }
+
+            return qty;
         }
     }
 }

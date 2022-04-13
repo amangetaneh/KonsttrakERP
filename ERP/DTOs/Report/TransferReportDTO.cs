@@ -88,9 +88,9 @@
                     RequestDateTo = toDate;
                 else if (DateOf == TRANSFERSTATUS.APPROVED)
                 {
-                    Status = TRANSFERSTATUS.APPROVED;
+                    //Status = TRANSFERSTATUS.APPROVED;
                     ApproveDateTo = toDate;
-                        }
+                }
                 else if (DateOf == TRANSFERSTATUS.SENT)
                     SendDateTo = toDate;
                 else if (DateOf == TRANSFERSTATUS.RECEIVED)
@@ -100,7 +100,7 @@
 
         public void SetEmployees()
         {
-            if(EmployeeRole == -1 && EmployeeId != -1) // any role one employee
+            if (EmployeeRole == -1 && EmployeeId != -1) // any role one employee
             {
                 RequestedById = EmployeeId;
                 ApprovedById = EmployeeId;
@@ -109,9 +109,9 @@
                 return;
             }
 
-            if(EmployeeRole != -1 && EmployeeId != -1)
+            if (EmployeeRole != -1 && EmployeeId != -1)
             {
-                if(EmployeeRole == TRANSFERSTATUS.DECLINED)
+                if (EmployeeRole == TRANSFERSTATUS.DECLINED)
                 {
                     Status = TRANSFERSTATUS.DECLINED;
                     ApprovedById = EmployeeId;
@@ -120,7 +120,7 @@
                     RequestedById = EmployeeId;
                 else if (EmployeeRole == TRANSFERSTATUS.APPROVED)
                 {
-                    Status=TRANSFERSTATUS.APPROVED;
+                    //Status=TRANSFERSTATUS.APPROVED;
                     ApprovedById = EmployeeId;
                 }
                 else if (EmployeeRole == TRANSFERSTATUS.SENT)

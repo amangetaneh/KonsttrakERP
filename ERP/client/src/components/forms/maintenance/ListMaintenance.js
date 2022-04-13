@@ -13,16 +13,14 @@ import LoadingSpinner from "../../fragments/LoadingSpinner";
 function ListMaintenance() {
     const [maintenances, setMaintenances] = useState([]);
 
-    var { data, isLoading, isError } = useQuery("maintenances", fetchMaintenances);
+    var { data, isLoading, isError, error } = useQuery("maintenances", fetchMaintenances);
 
     useEffect(() => {
         if (data === undefined) return;
 
         Object.keys(data).map((key, index) => {
             //format date
-            data[key].requestDate = new Date(
-                data[key].requestDate
-            ).toLocaleString();
+            data[key].requestDate = new Date(data[key].requestDate).toLocaleString();
 
             //add status badge
             data[key].statusBadge = MaintenanceStatusBadge(data[key].status);
@@ -79,7 +77,7 @@ function ListMaintenance() {
 
     if (isLoading) return <LoadingSpinner />;
 
-    if (isError) return <ConnectionError />;
+    if (isError) return <ConnectionError status={error?.response?.status} />;
 
     return (
         <>
@@ -91,6 +89,5 @@ function ListMaintenance() {
         </>
     );
 }
-
 
 export default ListMaintenance;

@@ -31,7 +31,7 @@ function SingleReturn() {
             itemObj.returnRemark = returnItem.returnRemark;
             itemObj.description = returnItem.equipmentAsset.equipmentModel.equipment.description;
             itemObj.assetDamageId = returnItem.assetDamageId;
-            itemObj.assetDamage = returnItem.assetDamage.name;
+            itemObj.assetDamage = returnItem.assetDamage?.name ?? "No Damage";
             itemObj.name = returnItem.equipmentAsset.equipmentModel.equipment.item.name;
 
             itemObj.requestedBy = returnItem.borrow.requestedBy;
@@ -113,7 +113,7 @@ function SingleReturn() {
 
     if (isLoading) return <LoadingSpinner />;
 
-    if (query.isError) return <ConnectionError />;
+    if (query.isError) return <ConnectionError status={query?.error?.response?.status} />;
 
     return (
         <>

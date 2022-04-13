@@ -1,15 +1,116 @@
 export const TRANSFERREPORTGROUPBY = {
-    STATUS: "Status",
-    REQUESTDATE: "Request Date",
-    APPROVEDATE: "Approve Date",
-    SENDDATE: "Send Date",
-    RECEIVEDATE: "Receive Date",
-    REQUESTEDBY: "Requesting Employee",
-    APPROVEDBY: "Approving Employee",
-    SENTBY: "Sending Employee",
-    RECEIVEDBY: "Receiveing Employee",
-    SENDSITE: "Sending Site",
-    RECEIVESITE: "Receiving Site",
+    STATUS: { key: "Status", label: "Status" },
+    REQUESTDATE: { key: "RequestDate", label: "Request Date" },
+    APPROVEDATE: { key: "ApproveDate", label: "Approve Date" },
+    SENDDATE: { key: "SendDate", label: "Send Date" },
+    RECEIVEDATE: { key: "ReceiveDate", label: "Receive Date" },
+    REQUESTWEEK: { key: "RequestWeek", label: "Request Week" },
+    APPROVEWEEK: { key: "ApproveWeek", label: "Approve Week" },
+    SENDWEEK: { key: "SendWeek", label: "Send Week" },
+    RECEIVEWEEK: { key: "ReceiveWeek", label: "Receive Week" },
+    REQUESTMONTH: { key: "RequestMonth", label: "Request Month" },
+    APPROVEMONTH: { key: "ApproveMonth", label: "Approve Month" },
+    SENDMONTH: { key: "SendMonth", label: "Send Month" },
+    RECEIVEMONTH: { key: "ReceiveMonth", label: "Receive Month" },
+    REQUESTYEAR: { key: "RequestYear", label: "Request Year" },
+    APPROVEYEAR: { key: "ApproveYear", label: "Approve Year" },
+    SENDYEAR: { key: "SendYear", label: "Send Year" },
+    RECEIVEYEAR: { key: "ReceiveYear", label: "Receive Year" },
+    REQUESTEDBY: { key: "RequestedBy", label: "Requesting Employee" },
+    APPROVEDBY: { key: "ApprovedBy", label: "Approving Employee" },
+    SENTBY: { key: "SentBy", label: "Sending Employee" },
+    RECEIVEDBY: { key: "ReceivedBy", label: "Receiveing Employee" },
+    SENDSITE: { key: "SendSite", label: "Sending Site" },
+    RECEIVESITE: { key: "ReceiveSite", label: "Receiving Site" },
+};
+
+export const CHARTDATATYPE = {
+    QTY: { key: "qty", label: "By Quantity" },
+    COST: { key: "cost", label: "By Cost" },
+    CURRENTVALUE: { key: "currentValue", label: "By Current Value" },
+};
+
+export const GENERALREPORTGROUPBY = {
+    ITEM: { key: "Item", label: "Item" },
+    MODEL: { key: "Model", label: "Model" },
+    DATE: { key: "Date", label: "Date" },
+    WEEK: { key: "Week", label: "Week" },
+    MONTH: { key: "Month", label: "Month" },
+    YEAR: { key: "Year", label: "Year" },
+    EMPLOYEE: { key: "Employee", label: "Employee" },
+    SITE: { key: "Site", label: "Site" },
+    CATEGORY: { key: "Category", label: "Category" },
+};
+
+export const GENERALREPORTSELECTION = {
+    INSTOCK: { value: "InStock", label: "In Stock" },
+    PURCHASED: { value: "Purchased", label: "Purchased" },
+    RECEIVED: { value: "Received", label: "Received" },
+    ISSUED: { value: "Issued", label: "Issued" },
+    BORROWED: { value: "Borrowed", label: "Borrowed" },
+    RETURNED: { value: "Returned", label: "Returned" },
+    TRANSFERREDIN: { value: "TransferredIn", label: "Transferred In" },
+    TRANSFERREDOUT: { value: "TransferredOut", label: "Transferred Out" },
+};
+
+export const ISSUEREPORTGROUPBY = {
+    STATUS: { key: "Status", label: "Status" },
+    REQUESTDATE: { key: "RequestDate", label: "Request Date" },
+    APPROVEDATE: { key: "ApproveDate", label: "Approve Date" },
+    HANDDATE: { key: "HandDate", label: "Hand Over Date" },
+    REQUESTWEEK: { key: "RequestWeek", label: "Request Week" },
+    APPROVEWEEK: { key: "ApproveWeek", label: "Approve Week" },
+    HANDWEEK: { key: "HandWeek", label: "Hand Over Week" },
+    REQUESTMONTH: { key: "RequestMonth", label: "Request Month" },
+    APPROVEMONTH: { key: "ApproveMonth", label: "Approve Month" },
+    HANDMONTH: { key: "HandMonth", label: "Hand Over Month" },
+    REQUESTYEAR: { key: "RequestYear", label: "Request Year" },
+    APPROVEYEAR: { key: "ApproveYear", label: "Approve Year" },
+    HANDYEAR: { key: "HandYear", label: "Hand Over Year" },
+    REQUESTEDBY: { key: "RequestedBy", label: "Requesting Employee" },
+    APPROVEDBY: { key: "ApprovedBy", label: "Approving Employee" },
+    HANDEDBY: { key: "HandedBy", label: "Handing Over Employee" },
+    SITE: { key: "Site", label: "Site" },
+};
+
+export const BORROWREPORTGROUPBY = {
+    STATUS: { key: "Status", label: "Status" },
+    REQUESTDATE: { key: "RequestDate", label: "Request Date" },
+    APPROVEDATE: { key: "ApproveDate", label: "Approve Date" },
+    HANDDATE: { key: "HandDate", label: "Hand Over Date" },
+    REQUESTWEEK: { key: "RequestWeek", label: "Request Week" },
+    APPROVEWEEK: { key: "ApproveWeek", label: "Approve Week" },
+    HANDWEEK: { key: "HandWeek", label: "Hand Over Week" },
+    REQUESTMONTH: { key: "RequestMonth", label: "Request Month" },
+    APPROVEMONTH: { key: "ApproveMonth", label: "Approve Month" },
+    HANDMONTH: { key: "HandMonth", label: "Hand Over Month" },
+    REQUESTYEAR: { key: "RequestYear", label: "Request Year" },
+    APPROVEYEAR: { key: "ApproveYear", label: "Approve Year" },
+    HANDYEAR: { key: "HandYear", label: "Hand Over Year" },
+    REQUESTEDBY: { key: "RequestedBy", label: "Requesting Employee" },
+    APPROVEDBY: { key: "ApprovedBy", label: "Approving Employee" },
+    HANDEDBY: { key: "HandedBy", label: "Handing Over Employee" },
+    SITE: { key: "Site", label: "Site" },
+};
+
+export const MAINTENANCEREPORTGROUPBY = {
+    STATUS: { key: "Status", label: "Status" },
+    REQUESTDATE: { key: "RequestDate", label: "Request Date" },
+    APPROVEDATE: { key: "ApproveDate", label: "Approve Date" },
+    FIXDATE: { key: "FixDate", label: "Fix Date" },
+    REQUESTWEEK: { key: "RequestWeek", label: "Request Week" },
+    APPROVEWEEK: { key: "ApproveWeek", label: "Approve Week" },
+    FIXWEEK: { key: "FixWeek", label: "Fix Week" },
+    REQUESTMONTH: { key: "RequestMonth", label: "Request Month" },
+    APPROVEMONTH: { key: "ApproveMonth", label: "Approve Month" },
+    FIXMONTH: { key: "FixMonth", label: "Fix Month" },
+    REQUESTYEAR: { key: "RequestYear", label: "Request Year" },
+    APPROVEYEAR: { key: "ApproveYear", label: "Approve Year" },
+    FIXYEAR: { key: "FixYear", label: "Fix Year" },
+    REQUESTEDBY: { key: "RequestedBy", label: "Requesting Employee" },
+    APPROVEDBY: { key: "ApprovedBy", label: "Approving Employee" },
+    FIXEDBY: { key: "FixedBy", label: "Fixing Employee" },
+    SITE: { key: "Site", label: "Site" },
 };
 
 export const NOTIFICATIONTYPE = {
@@ -21,6 +122,8 @@ export const NOTIFICATIONTYPE = {
     MAINTENANCE: "maintenanceNotification",
     RETURN: "returnNotification",
     BUY: "buyNotification",
+    MINEQUIPMENT: "equipmentMinNotification",
+    MINMATERIAL: "materialMinNotification",
 };
 
 export const NOTIFICATIONROUTE = {
@@ -31,7 +134,9 @@ export const NOTIFICATIONROUTE = {
     [NOTIFICATIONTYPE.RECEIVE]: "/receive",
     [NOTIFICATIONTYPE.MAINTENANCE]: "/maintenance",
     [NOTIFICATIONTYPE.RETURN]: "/return",
-    [NOTIFICATIONTYPE.BUY]: "/buy"
+    [NOTIFICATIONTYPE.BUY]: "/buy",
+    [NOTIFICATIONTYPE.MINEQUIPMENT]: "/purchase",
+    [NOTIFICATIONTYPE.MINMATERIAL]: "/purchase",
 };
 
 export const MAINTENANCESTATUS = {

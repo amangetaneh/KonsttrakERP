@@ -15,7 +15,6 @@ import ConnectionError from "../../fragments/ConnectionError";
 function MaterialTransfer() {
     const navigate = useNavigate();
     const [sendSite, setSendSite] = useState(0);
-    const [receiveSite, setReceiveSite] = useState(0);
     const [addedItems, setAddedItems] = useState([new Item()]);
 
     const [allSites, setAllSites] = useState([]);
@@ -26,8 +25,7 @@ function MaterialTransfer() {
     const sitesQuery = useQuery("sites", fetchSites, {
         onSuccess: (data) => {
             setAllSites(data);
-            setSendSite(data[0].siteId);
-            setReceiveSite(data[0].siteId); // Select Defalut Sites
+            setSendSite(data[0].siteId); // Select Defalut Sites
         },
     });
 
@@ -45,6 +43,7 @@ function MaterialTransfer() {
 
     const {
         isError: isSubmitError,
+        error: submitError,
         isLoading: isSubmitLoading,
         mutate: submitTransferRequest,
     } = useMutation(requestMaterialTransfer, {
@@ -57,7 +56,6 @@ function MaterialTransfer() {
 
         var data = {
             sendSiteId: Number(sendSite),
-            receiveSiteId: Number(receiveSite),
             requestedById: 1, ////////////////////////////////////////////////////////////////////////////////
             transferItems: [],
         };
@@ -93,7 +91,16 @@ function MaterialTransfer() {
 
     if (isLoading) return <LoadingSpinner />;
 
-    if (isError || isSubmitError) return <ConnectionError />;
+    if (isError || isSubmitError)
+        return (
+            <ConnectionError
+                status={
+                    itemQuery?.error?.response?.status ??
+                    sitesQuery?.error?.response?.status ??
+                    submitError?.response?.status
+                }
+            />
+        );
 
     return (
         <>
@@ -104,32 +111,23 @@ function MaterialTransfer() {
                     <div className="row mx-2">
                         <div className="col">
                             <Form.Group className="mb-3">
-                                <Form.Label>Sending Site</Form.Label>
-                                <Form.Select
-                                    value={sendSite}
-                                    onChange={(e) => setSendSite(e.target.value)}
-                                >
-                                    {allSites.map((site) => (
-                                        <option key={site.siteId} value={site.siteId}>
-                                            {site.name}
-                                        </option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
-                        </div>
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Receiving Site</Form.Label>
-                                <Form.Select
-                                    value={receiveSite}
-                                    onChange={(e) => setReceiveSite(e.target.value)}
-                                >
-                                    {allSites.map((site) => (
-                                        <option key={site.siteId} value={site.siteId}>
-                                            {site.name}
-                                        </option>
-                                    ))}
-                                </Form.Select>
+                                <div className="row">
+                                    <div className="col-1 mt-1" style={{ width: "15%" }}>
+                                        <Form.Label>Sending Site</Form.Label>
+                                    </div>
+                                    <div className="col">
+                                        <Form.Select
+                                            value={sendSite}
+                                            onChange={(e) => setSendSite(e.target.value)}
+                                        >
+                                            {allSites.map((site) => (
+                                                <option key={site.siteId} value={site.siteId}>
+                                                    {site.name}
+                                                </option>
+                                            ))}
+                                        </Form.Select>
+                                    </div>
+                                </div>
                             </Form.Group>
                         </div>
                     </div>
