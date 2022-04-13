@@ -7,22 +7,23 @@ import PurchaseStatusBadge from "./fragments/PurchaseStatusBadge";
 import { ITEMTYPE, PURCHASESTATUS } from "../../../Constants";
 import ApprovePurchase from "./ApprovePurchase";
 import ConfirmPurchase from "./ConfirmPurchase";
-import ReceivePurchase from "../receive/ReceivePurchase";
+import RequestQueuedPurchase from "./RequestQueuedPurchase";
 import CheckPurchase from "./CheckPurchase";
 import ViewPurchase from "./ViewPurchase";
 import DeclinedPurchase from "./DeclinedPurchase";
 import { useQuery } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
 import { fetchPurchase } from "../../../api/purchase";
+import { useAuth } from "../../../contexts/AuthContext";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
 
 function SinglePurchase() {
     const { id } = useParams();
+    const {data} = useAuth();
     const [purchase, setPurchase] = useState({});
     const [addedItems, setAddedItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const employee = useSelector(state=>state.auth.data[1])
+    //const employee = useSelector(state=>state.auth.data[1])
 
     var query = useQuery(["purchase", id], () => fetchPurchase(id));
 
@@ -172,9 +173,11 @@ function SinglePurchase() {
     const titles = useMemo(
         () => [
             "Declined Purchase",
+            "Request Purchase",
             "Check Purchase",
             "Approve Purchase",
             "Confirm Purchase",
+            "Item Purchased"
         ],
         []
     );
@@ -199,7 +202,15 @@ function SinglePurchase() {
                         />
                     )}
 
-                    {purchase.status === PURCHASESTATUS.REQUESTED && (
+                    {purchase.status === PURCHASESTATUS.QUEUED && (
+                        <RequestQueuedPurchase
+                            addedItems={addedItems}
+                            setAddedItems={setAddedItems}
+                            purchase={purchase}
+                        />
+                    )}
+
+                    {purchase.status === PURCHASESTATUS.REQUESTED && data.userRole.canCheckPurchase && (
                         <CheckPurchase
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}
@@ -207,7 +218,7 @@ function SinglePurchase() {
                         />
                     )}
 
-                    {purchase.status === PURCHASESTATUS.CHECKED && (
+                    {purchase.status === PURCHASESTATUS.CHECKED && data.userRole.canApprovePurchase && (
                         <ApprovePurchase
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}
@@ -215,7 +226,7 @@ function SinglePurchase() {
                         />
                     )}
 
-                    {purchase.status === PURCHASESTATUS.APPROVED && (
+                    {purchase.status === PURCHASESTATUS.APPROVED && data.userRole.canConfirmPurchase &&(
                         <ConfirmPurchase
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}
@@ -224,17 +235,8 @@ function SinglePurchase() {
                     )}
 
                     {purchase.status === PURCHASESTATUS.PURCHASED && (
-                        <ReceivePurchase
-                            addedItems={addedItems}
-                            setAddedItems={setAddedItems}
-                            purchase={purchase}
-                        />
+                        <ViewPurchase addedItems={addedItems} purchase={purchase} />
                     )}
-
-                    {//purchase.status === PURCHASESTATUS.PURCHASED && (
-                        //<ViewPurchase addedItems={//addedItems} purchase={//purchase} />
-                    //)
-                }
                 </>
             </Container>
         </>

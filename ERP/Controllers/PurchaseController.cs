@@ -179,6 +179,22 @@ namespace ERP.Controllers
             return Ok(purchase);
         }
 
+        [HttpPost("requestqueued")]
+        public async Task<ActionResult<Purchase>> RequestQueuedPurchase(CheckPurchaseDTO checkDTO)
+        {
+            //if (UserAccount != null && UserAccount.UserRole.CanCheckPurchase != 1) return Forbid();
+
+            var purchase = await context.Purchases.FindAsync(checkDTO.PurchaseId);
+
+            if (purchase == null) return NotFound("Request Not Found.");
+
+            purchase.Status = PURCHASESTATUS.REQUESTED;
+
+            await context.SaveChangesAsync();
+
+            return Ok(purchase);
+        }
+
         [HttpPost("decline")]
         public async Task<ActionResult<Purchase>> Decline(ApprovePurchaseDTO approveDTO)
         {

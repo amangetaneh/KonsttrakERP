@@ -1,11 +1,11 @@
 import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import { Button } from "react-bootstrap";
-import PurchaseViewMaterial from "./fragments/PurchaseViewMaterial";
+import BuyViewMaterial from "./fragments/BuyViewMaterial";
 import { useNavigate } from "react-router-dom";
 import { ITEMTYPE } from "../../../Constants";
 
-function ViewPurchase({ addedItems }) {
+function ViewBuy({ addedItems }) {
     const navigate = useNavigate();
 
     function goBack() {
@@ -16,9 +16,9 @@ function ViewPurchase({ addedItems }) {
         <>
             {addedItems.map((item, index) =>
                 item.type === ITEMTYPE.MATERIAL ? (
-                    <PurchaseViewMaterial key={index} addedItems={addedItems} index={index} />
+                    <BuyViewMaterial key={index} addedItems={addedItems} index={index} />
                 ) : (
-                    <PurchaseViewMaterial key={index} addedItems={addedItems} index={index} />
+                    <BuyViewMaterial key={index} addedItems={addedItems} index={index} />
                 )
             )}
 
@@ -31,8 +31,8 @@ function ViewPurchase({ addedItems }) {
     );
 }
 
-ViewPurchase.propTypes = {
+ViewBuy.propTypes = {
     addedItems: PropTypes.array.isRequired,
 };
 
-export default ViewPurchase;
+export default ViewBuy;

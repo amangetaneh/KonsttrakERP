@@ -4,9 +4,19 @@ export const fetchMaterials = () => api.get("/item/material").then((res) => res.
 
 export const fetchEquipments = () => api.get("/item/equipment").then((res) => res.data);
 
+export const fetchEquipmentCategories = () => api.get("/item/equipmentcategory").then((res) => res.data);
+
 export const fetchItem = (itemId) => api.get(`/item/${itemId}`).then((res) => res.data);
 
 export const fetchQty = (data) => api.post("/item/qty", data).then((res) => res.data);
 
 export const fetchEquipmentModel = (modelId) =>
     api.get(`/item/equipmentmodel/${modelId}`).then((res) => res.data);
+
+export const addMaterial = (data) => api.post("/item/material/add", data);
+
+export const addEquipment = (data) => api.post("/item/equipment/add", data);
+
+export const addEquipmentCategory = (data) => api.post("/item/equipmentcategory/add", data);
+
+export const addEquipmentModel = (data) => api.post("/item/equipmentmodel/add", data);

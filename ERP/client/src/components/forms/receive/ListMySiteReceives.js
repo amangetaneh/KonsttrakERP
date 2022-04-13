@@ -5,35 +5,34 @@ import Table from "../../fragments/Table";
 import Header from "../../layouts/Header";
 import { Container } from "react-bootstrap";
 import ReceiveStatusBadge from "./fragments/ReceiveStatusBadge";
-import PurchaseStatusBadge from "../purchase/fragments/PurchaseStatusBadge";
 import { useQuery } from "react-query";
-import { fetchPurchases } from "../../../api/receive";
+import { fetchMySiteReceives } from "../../../api/receive";
 import ConnectionError from "../../fragments/ConnectionError";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 
-function ListPurchases() {
-    const [purchases, setPurchases] = useState([]);
+function ListReceives() {
+    const [receives, setReceives] = useState([]);
 
-    var { data, isLoading, isError } = useQuery("purchases", fetchPurchases);
+    var { data, isLoading, isError } = useQuery("receives", fetchMySiteReceives);
 
     useEffect(() => {
         if (data === undefined) return;
 
             Object.keys(data).map((key, index) => {
                 //format date
-                data[key].requestDate = new Date(
-                    data[key].requestDate
+                data[key].receiveDate = new Date(
+                    data[key].receiveDate
                 ).toLocaleString();
                 
                 //add status badge
-                data[key].statusBadge = PurchaseStatusBadge(data[key].status);
+                data[key].statusBadge = ReceiveStatusBadge(data[key].status);
 
                 //add links to each row
                 data[key].open = (
                     <>
                         <Link
                             className="btn btn-teal me-2"
-                            to={`/purchase/${data[key].purchaseId}`}
+                            to={`/receive/${data[key].receiveId}`}
                         >
                             <FaFolderOpen className="me-1 mb-1" />
                             Open
@@ -43,18 +42,18 @@ function ListPurchases() {
 
                 return null;
             });
-            setPurchases(data);
+            setReceives(data);
     }, [data]);
 
     const columns = React.useMemo(
         () => [
             {
-                Header: "Purchase No.",
-                accessor: "purchaseId", // accessor is the "key" in the data
+                Header: "Receive No.",
+                accessor: "receiveId", // accessor is the "key" in the data
             },
             {
                 Header: "Date",
-                accessor: "requestDate", 
+                accessor: "receiveDate", 
             },
             {
                 Header: "Status",
@@ -80,13 +79,13 @@ function ListPurchases() {
 
     return (
         <>
-            <Header title="Purchases" />
+            <Header title="Receives" />
 
             <Container className="my-3">
-                <Table columns={columns} data={purchases} />
+                <Table columns={columns} data={receives} />
             </Container>
         </>
     );
 }
 
-export default ListPurchases;
+export default ListReceives;

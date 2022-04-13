@@ -8,6 +8,8 @@ export const fetchPurchase = (id) =>
 
 export const requestPurchase = (data) => api.post("/purchase/request", data);
 
+export const requestQueuedPurchase = (data) => api.post("/purchase/requestqueued", data);
+
 export const approvePurchase = (data) => api.post("/purchase/approve", data);
 
 export const declinePurchase = (data) => api.post("/purchase/decline", data);

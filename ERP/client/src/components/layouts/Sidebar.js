@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     ProSidebar,
     Menu,
@@ -9,20 +9,18 @@ import {
     SidebarContent,
 } from "react-pro-sidebar";
 import "react-pro-sidebar/dist/css/styles.css";
+import { GoSettings } from "react-icons/go";
 import { FaHome, FaList, FaBars, FaUser } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth, useAuthUpdate } from "../../contexts/AuthContext";
 import { useQueryClient } from "react-query";
 
 function Sidebar() {
-    const navigate = useNavigate();
-    // const dispatch = useDispatch()
-    // const contextData=useAuth()
-    const updateAuthContext = useAuthUpdate();
-    const queryClient = useQueryClient();
+    const navigate = useNavigate()
+    const updateAuthContext = useAuthUpdate()
 
-    const { data } = useAuth();
-
+    const {data}= useAuth()
+ 
     const [collapsed, setCollapsed] = useState(false);
 
     return (
@@ -45,58 +43,80 @@ function Sidebar() {
                 <SidebarContent>
                     <Menu>
                         <MenuItem className="" icon={<FaHome className="fs-5" />}>
-                            Home
+                            Home <Link to="/" />
                         </MenuItem>
 
-                        <SubMenu
-                            title="Inventory"
-                            icon={<FaList className="fs-5" />}
-                            defaultOpen={true}
-                        >
+                        <SubMenu title="Setting" icon={<GoSettings className="fs-5" />}>
+                            <SubMenu title="Role">
+                                <MenuItem>
+                                    Add a new Role <Link to="/role/new" />
+                                </MenuItem>
+                            </SubMenu>
+                            <SubMenu title="Site">
+                                <MenuItem>
+                                    Add a new Site <Link to="/role/new" />
+                                </MenuItem>
+                            </SubMenu>
                             <SubMenu title="Stock">
                                 <MenuItem>
-                                    Add a new Material <Link to="/receive/purchase" />
+                                    Add a new Material <Link to="/item/material/new" />
                                 </MenuItem>
                                 <SubMenu title="Equipment">
                                     <MenuItem>
-                                        Add a new Equipment <Link to="/receive" />
+                                        Add a new Equipment <Link to="/item/equipment/new" />
                                     </MenuItem>
                                     <MenuItem>
-                                        Add a new Model <Link to="/receive" />
+                                        Add a new Model <Link to="/item/equipment/model/new" />
                                     </MenuItem>
                                     <MenuItem>
-                                        Add a new Category <Link to="/receive" />
+                                        Add a new Category <Link to="/item/equipment/category/new" />
                                     </MenuItem>
                                 </SubMenu>
                             </SubMenu>
+                        </SubMenu>
+                        <SubMenu title="Inventory" icon={<FaList className="fs-5" />}>
+                            
                             <SubMenu title="Buy">
+                                {data.userRole?.canRequestBuy &&
                                 <MenuItem>
-                                    Buy an Item <Link to="/purchase/material" />
+                                    Buy an Item <Link to="/buy/material" />
                                 </MenuItem>
-                                {data.userRole?.canRequestPurchase === 1 && (
-                                    <MenuItem>
-                                        Buy Requests <Link to="/purchase" />
-                                    </MenuItem>
-                                )}
+                                }
+                                <MenuItem>
+                                    Buy Requests <Link to="/buy" />
+                                </MenuItem>
                             </SubMenu>
+                            {data.userRole.canViewPurchase &&
                             <SubMenu title="Purchase">
+                                {
+                                data.userRole?.canRequestPurchase &&
                                 <MenuItem>
                                     Purchase an Item <Link to="/purchase/material" />
                                 </MenuItem>
-                                {data.userRole?.canRequestPurchase === 1 && (
-                                    <MenuItem>
-                                        Purchase Requests <Link to="/purchase" />
-                                    </MenuItem>
-                                )}
-                            </SubMenu>
-                            <SubMenu title="Receive">
+                                }
+                                
                                 <MenuItem>
-                                    Receive an Item <Link to="/receive/purchase" />
+                                    List Purchase Requests <Link to="/purchase" />
                                 </MenuItem>
+                                
+                            </SubMenu>
+                            }
+                            {data.userRole.canViewReceive &&
+                            <SubMenu title="Receive">
+                                {
+                                data.userRole?.canReceive &&
+                                
+                                <MenuItem>
+                                    Receive an Item <Link to="/receive/material" />
+                                </MenuItem>
+                                }
+                                
                                 <MenuItem>
                                     List Received Items <Link to="/receive" />
                                 </MenuItem>
+                            
                             </SubMenu>
+                            }
                             <SubMenu title="Transfer">
                                 <MenuItem>
                                     New Material Transfer
@@ -158,18 +178,15 @@ function Sidebar() {
                 <SidebarFooter>
                     <Menu subMenuBullets={true}>
                         <SubMenu title={data.username} icon={<FaUser className="fs-5" />}>
-                            <MenuItem>Manage Account</MenuItem>
-                            <MenuItem
-                                onClick={() => {
-                                    localStorage.removeItem("token");
-                                    localStorage.removeItem("data");
-                                    updateAuthContext({ token: "", data: "", username: "" });
-                                    queryClient.invalidateQueries();
-                                    navigate("/login");
-                                }}
-                            >
-                                Logout
+                            <MenuItem>
+                                Manage Account <Link to="/user/manage" />
                             </MenuItem>
+                            <MenuItem onClick={()=>{
+                                localStorage.removeItem('token')
+                                localStorage.removeItem('data')
+                                updateAuthContext({token:"",data:"",username:""})
+                                navigate('/login')
+                            }} >Logout</MenuItem>
                         </SubMenu>
                     </Menu>
                 </SidebarFooter>

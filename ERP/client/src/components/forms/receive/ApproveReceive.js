@@ -26,7 +26,7 @@ function ApproveReceive({ addedItems, setAddedItems, receive }) {
             receiveId: receive.receiveId,
             receiveItems: [],
         };
-
+        
         for (let item of addedItems) {
             let tempItem = {
                 itemId: Number(item.itemId),
@@ -44,25 +44,25 @@ function ApproveReceive({ addedItems, setAddedItems, receive }) {
 
     return (
         <>
-            {addedItems.map((item, index) => (
-                <ReceiveApprove
-                    key={index}
-                    addedItems={addedItems}
-                    setAddedItems={setAddedItems}
-                    index={index}
-                />
-            ))}
+                {addedItems.map((item, index) => (
+                    <ReceiveApprove
+                        key={index}
+                        addedItems={addedItems}
+                        setAddedItems={setAddedItems}
+                        index={index}
+                    />
+                ))}
 
-            <div className="row">
-                <div className="col-8 d-grid">
-                    <Button className="btn-teal-dark" onClick={submit.bind(this, "approve")}>
-                        {isApproveLoading && (
-                            <Spinner className="me-2" animation="grow" size="sm" />
-                        )}
-                        Approve
-                    </Button>
+                <div className="row">
+                    <div className="d-grid">
+                        <Button className="btn-teal-dark" onClick={submit.bind(this, "approve")}>
+                            {isApproveLoading && (
+                                <Spinner className="me-2" animation="grow" size="sm" />
+                            )}
+                            Approve
+                        </Button>
+                    </div>
                 </div>
-            </div>
         </>
     );
 }

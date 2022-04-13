@@ -105,7 +105,7 @@ namespace ERP.Controllers
             context.Buys.Add(buy);
             await context.SaveChangesAsync();
 
-            return Ok(buy);
+            return Ok(buy.BuyId);
 
         }
 
@@ -256,6 +256,13 @@ namespace ERP.Controllers
                 buyItem.TotalCost = buyItem.Cost * buyItem.QtyApproved;
             }
 
+            buy.TotalBuyCost = 0;
+
+            foreach (var purchaseItem in buy.BuyItems)
+            {
+                buy.TotalBuyCost += purchaseItem.TotalCost;
+            }
+
             buy.Status = BUYSTATUS.APPROVED;
 
             await context.SaveChangesAsync();
@@ -315,6 +322,13 @@ namespace ERP.Controllers
                 buyItem.BuyRemark = requestItem.BuyRemark;
 
                 buyItem.TotalCost = buyItem.Cost * buyItem.QtyBought;
+            }
+
+            buy.TotalBuyCost = 0;
+
+            foreach (var purchaseItem in buy.BuyItems)
+            {
+                buy.TotalBuyCost += purchaseItem.TotalCost;
             }
 
             buy.Status = BUYSTATUS.BOUGHT;

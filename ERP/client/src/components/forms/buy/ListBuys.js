@@ -4,16 +4,16 @@ import { FaFolderOpen } from "react-icons/fa";
 import Table from "../../fragments/Table";
 import Header from "../../layouts/Header";
 import { Container } from "react-bootstrap";
-import PurchaseStatusBadge from "./fragments/PurchaseStatusBadge";
+import BuyStatusBadge from "./fragments/BuyStatusBadge";
 import { useQuery } from "react-query";
-import { fetchPurchases } from "../../../api/purchase";
+import { fetchBuys } from "../../../api/buy";
 import ConnectionError from "../../fragments/ConnectionError";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 
-function ListPurchases() {
-    const [purchases, setPurchases] = useState([]);
+function ListBuys() {
+    const [buys, setBuys] = useState([]);
 
-    var { data, isLoading, isError } = useQuery("purchases", fetchPurchases);
+    var { data, isLoading, isError } = useQuery("buys", fetchBuys);
 
     useEffect(() => {
         if (data === undefined) return;
@@ -25,14 +25,14 @@ function ListPurchases() {
                 ).toLocaleString();
                 
                 //add status badge
-                data[key].statusBadge = PurchaseStatusBadge(data[key].status);
+                data[key].statusBadge = BuyStatusBadge(data[key].status);
 
                 //add links to each row
                 data[key].open = (
                     <>
                         <Link
                             className="btn btn-teal me-2"
-                            to={`/purchase/${data[key].purchaseId}`}
+                            to={`/buy/${data[key].buyId}`}
                         >
                             <FaFolderOpen className="me-1 mb-1" />
                             Open
@@ -42,22 +42,18 @@ function ListPurchases() {
 
                 return null;
             });
-            setPurchases(data);
+            setBuys(data);
     }, [data]);
 
     const columns = React.useMemo(
         () => [
             {
-                Header: "Purchase No.",
-                accessor: "purchaseId", // accessor is the "key" in the data
+                Header: "Buy No.",
+                accessor: "buyId", // accessor is the "key" in the data
             },
             {
                 Header: "Date",
                 accessor: "requestDate", 
-            },
-            {
-                Header: "Receiving Site",
-                accessor: "receivingSite.name", 
             },
             {
                 Header: "Status",
@@ -83,13 +79,13 @@ function ListPurchases() {
 
     return (
         <>
-            <Header title="Purchases" />
+            <Header title="Buys" />
 
             <Container className="my-3">
-                <Table columns={columns} data={purchases} />
+                <Table columns={columns} data={buys} />
             </Container>
         </>
     );
 }
 
-export default ListPurchases;
+export default ListBuys;

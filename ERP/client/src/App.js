@@ -1,19 +1,23 @@
 import React, { Component, useEffect } from "react";
+import axios from "./api/api";
+
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ContextProviders from "./contexts/ContextProviders";
 import Sidebar from "./components/layouts/Sidebar";
 import MaterialTransfer from "./components/forms/transfer/MaterialTransfer";
 import MaterialPurchase from "./components/forms/purchase/MaterialPurchase";
-// import MaterialReceive from "./components/forms/receive/MaterialReceive";
+import MaterialItem from "./components/forms/item/MaterialItem";
+import ListMySiteReceives from "./components/forms/receive/ListMySiteReceives";
+import MaterialBuy from "./components/forms/buy/MaterialBuy";
 import EquipmentTransfer from "./components/forms/transfer/EquipmentTransfer";
 import ListTransfers from "./components/forms/transfer/ListTransfers";
-//import PurchaseNewItem from "./components/forms/purchase/PurchaseNewItem";
 import ListPurchases from "./components/forms/purchase/ListPurchases";
+import ListBuys from "./components/forms/buy/ListBuys";
 import SingleTransfer from "./components/forms/transfer/SingleTransfer";
 import SinglePurchase from "./components/forms/purchase/SinglePurchase";
+import SingleBuy from "./components/forms/buy/SingleBuy";
 import SingleReceive from "./components/forms/receive/SingleReceive";
-//import ReceiveNewItem from "./components/forms/receive/ReceiveNewItem";
 import ListReceives from "./components/forms/receive/ListReceives";
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
@@ -33,15 +37,27 @@ import SignUp from "./components/forms/authorization/RegistrationForm";
 import Login from "./components/forms/authorization/Login";
 import TransferReport from "./components/forms/report/TransferReport";
 import { useAuth, useAuthUpdate } from "./contexts/AuthContext";
+import EquipmentItem from "./components/forms/item/EquipmentItem";
+import EquipmentModel from "./components/forms/item/EquipmentModel";
+import EquipmentCategory from "./components/forms/item/EquipmentCategory";
+import ManageUser from "./components/forms/user/ManageUser";
+import NewRole from "./components/forms/user/NewRole";
+import Dashboard from "./components/forms/user/Dashboard";
 import Report from "./components/forms/report/Report";
 
 const App = () => {
     
   const contextData=useAuth()
   const updateAuthContext = useAuthUpdate()
+    
     useEffect(() => {
         updateAuthContext({...contextData,token:localStorage.getItem('token'),data:JSON.parse(localStorage.getItem("data"))})
     }, []);
+    useEffect(() => {
+        if (contextData.token) {
+            axios.defaults.headers.common["Authorization"] = "bearer " + contextData.token;
+        }
+    })
     return (
         
             <Router>
@@ -59,12 +75,23 @@ const App = () => {
                         </div>
                         <div className="col p-0">
                             <Routes>
+                                
                                 <Route path="/login" element={<Navigate to={"/"} />} />
                                 <Route path="/register" element={<Navigate to={"/"} />} />
 
+                                <Route path="/" element={<Dashboard/>} />
+                                
+                                <Route path="user/manage" element={<ManageUser />} />
+                                
+                                <Route path="role/new" element={<NewRole />} />
 
                                 <Route path="report" element={<Report />} />
 
+                                <Route path="item/material/new" element={<MaterialItem />} />
+                                <Route path="item/equipment/new" element={<EquipmentItem />} />
+                                <Route path="item/equipment/model/new" element={<EquipmentModel />} />
+                                <Route path="item/equipment/category/new" element={<EquipmentCategory />} />
+                                
                                 <Route path="issue" element={<ListIssues />} />
                                 <Route path="issue/:id" element={<SingleIssue />} />
                                 <Route path="issue/new" element={<NewIssue />} />
@@ -93,13 +120,17 @@ const App = () => {
                                 />
                                 <Route path="transfer/:id" element={<SingleTransfer />} />
 
+                                <Route path="buy" element={<ListBuys />} />
+                                <Route path="buy/:id" element={<SingleBuy />} />
+                                <Route path="buy/material" element={<MaterialBuy />} />
+
                                 <Route path="purchase" element={<ListPurchases />} />
                                 <Route path="purchase/:id" element={<SinglePurchase />} />
                                 <Route path="purchase/material" element={<MaterialPurchase />} />
 
                                 <Route path="receive" element={<ListReceives />} />
                                 <Route path="receive/:id" element={<SingleReceive />} />
-                                {/* <Route path="receive/material" element={<MaterialReceive />} /> */}
+                                <Route path="receive/material" element={<ListMySiteReceives />} />
                             </Routes>
                         </div>
                     </div>

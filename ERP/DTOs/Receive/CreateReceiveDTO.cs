@@ -4,7 +4,7 @@
     {
         public int ReceiveId { get; set; }
 
-        public int DeliveredById { get; set; }
+        //public int DeliveredById { get; set; }
 
         public ICollection<CreateReceiveItem> ReceiveItems { get; set; }
 

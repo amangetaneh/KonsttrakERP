@@ -204,7 +204,7 @@ namespace ERP.Services.NotificationServices
 
             List<Notification> notifications = new();
 
-            if (_userService.UserRole.CanRecieve)
+            if (_userService.UserRole.CanReceive)
                 notifications.AddRange(await _context.Notifications
                     .Where(noti => noti.IsCleared == false &&
                         noti.Type == NOTIFICATIONTYPE.RECEIVE &&
@@ -212,7 +212,7 @@ namespace ERP.Services.NotificationServices
                         noti.EmployeeId == employeeId)
                     .ToListAsync());
 
-            if (_userService.UserRole.CanCheckRecieve)
+            if (_userService.UserRole.CanApproveReceive)
                 notifications.AddRange(await _context.Notifications
                     .Where(noti => noti.IsCleared == false &&
                         noti.Type == NOTIFICATIONTYPE.RECEIVE &&

@@ -1,6 +1,19 @@
+import { useEffect } from "react";
 import { Form, InputGroup } from "react-bootstrap";
 
-function PurchaseApproveMaterial({ addedItems, setAddedItems, index }) {
+function PurchaseRequestQueuedPurchase({ addedItems, setAddedItems, index }) {
+    //set purchased qty to approved as default
+    useEffect(() => {
+        const addedItemsCpy = [...addedItems];
+        addedItemsCpy[index].qtyRequested = addedItemsCpy[index].qtyRequested;
+        setAddedItems(addedItemsCpy);
+    }, []);
+
+    function valueChanged(e) {
+        const addedItemsCpy = [...addedItems];
+        addedItemsCpy[index][e.target.name] = e.target.value;
+        setAddedItems(addedItemsCpy);
+    }
 
     return (
         <div className="shadow pt-3 px-4 mb-4 rounded">
@@ -101,4 +114,4 @@ function PurchaseApproveMaterial({ addedItems, setAddedItems, index }) {
     );
 }
 
-export default PurchaseApproveMaterial;
+export default PurchaseRequestQueuedPurchase;

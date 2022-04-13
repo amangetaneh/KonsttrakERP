@@ -6,6 +6,7 @@ import Header from "../../layouts/Header";
 import ReceiveStatusBadge from "./fragments/ReceiveStatusBadge";
 import { ITEMTYPE, RECEIVESTATUS } from "../../../Constants";
 import ApproveReceive from "./ApproveReceive";
+import MaterialReceive from "./MaterialReceive";
 import ViewReceive from "./ViewReceive";
 import { useQuery } from "react-query";
 import { fetchReceive } from "../../../api/receive";
@@ -31,8 +32,14 @@ function SingleReceive() {
             itemObj.name = receiveItem.item.name;
             itemObj.type = receiveItem.item.type
 
-            itemObj.qtyReceived = receiveItem.qtyReceived;
-            itemObj.receiveRemark = receiveItem.receiveRemark;
+            itemObj.qtyPurchased = receiveItem.qtyPurchased;
+
+            if (
+                query.data.status >= RECEIVESTATUS.RECEIVED
+            ) {
+                itemObj.qtyReceived = receiveItem.qtyReceived;
+                itemObj.receiveRemark = receiveItem.receiveRemark;
+            }
 
             if (receiveItem.item.type === ITEMTYPE.MATERIAL) {
                 itemObj.spec = receiveItem.item.material.spec;
@@ -112,6 +119,14 @@ function SingleReceive() {
                                     : ""
                             }
                         />
+                        <FormRow
+                            labelL="Approve Remark"
+                            valueL={
+                                receive.approveRemark
+                                    ? `${receive.approveRemark}`
+                                    : ""
+                            }
+                        />
                     </>
                 )}
             </Form>
@@ -120,7 +135,10 @@ function SingleReceive() {
 
     const titles = useMemo(
         () => [
+            "",
+            "Receive Item",
             "Approve Receive",
+            "Approved Receive",
         ],
         []
     );
@@ -137,15 +155,23 @@ function SingleReceive() {
                 <>
                     <TopForm />
 
-                    {receive.status === RECEIVESTATUS.RECEIVED && (
-                        <ApproveReceive
+                    {receive.status === RECEIVESTATUS.PURCHASED && (
+                        <MaterialReceive
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}
                             receive={receive}
                         />
                     )}
 
-                    {receive.status === RECEIVESTATUS.APPROVED && (
+                    {/* {receive.status === RECEIVESTATUS.PURCHASED && (
+                        <ApproveReceive
+                            addedItems={addedItems}
+                            setAddedItems={setAddedItems}
+                            receive={receive}
+                        />
+                    )} */}
+
+                    {receive.status === RECEIVESTATUS.RECEIVED && (
                         <ViewReceive addedItems={addedItems} receive={receive} />
                     )}
                 </>

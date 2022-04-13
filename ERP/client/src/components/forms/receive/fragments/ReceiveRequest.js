@@ -70,73 +70,34 @@ function ReceiveRequest({ addedItems, setAddedItems, index }) {
                 </div>
                 <div className="col">
                     <div className="row">
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Unit Cost</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    name="cost"
-                                    value={addedItems[index].cost}
-                                    readOnly
-                                />
-                            </Form.Group>
-                        </div>
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Purchased Total Cost</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    name="total"
-                                    readOnly
-                                    value={
-                                        addedItems[index].qtyPurchased *
-                                        addedItems[index].cost
-                                    }
-                                />
-                            </Form.Group>
-                        </div>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Quantity Received</Form.Label>
+                            <Form.Control
+                                min="0"
+                                type="number"
+                                name="qtyReceived"
+                                value={addedItems[index].qtyReceived}
+                                onChange={valueChanged}
+                                required
+                            />
+                        </Form.Group>
                     </div>
+
                     <div className="row">
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Quantity Received</Form.Label>
-                                <Form.Control
-                                    min="0"
-                                    type="number"
-                                    name="qtyReceived"
-                                    value={addedItems[index].qtyReceived}
-                                    onChange={valueChanged}
-                                    required
-                                />
-                            </Form.Group>
-                        </div>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Receive Remark</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="receiveRemark"
+                                value={addedItems[index].receiveRemark}
+                                onChange={valueChanged}
+                            />
+                        </Form.Group>
                     </div>
                 </div>
+
             </div>
             
-            <div className="row">
-                <div className="col">
-                    <Form.Group className="mb-3">
-                        <Form.Label>Request Remark</Form.Label>
-                        <Form.Control
-                            type="text"
-                            readOnly
-                            value={addedItems[index].requestRemark}
-                        />
-                    </Form.Group>
-                </div>
-                <div className="col">
-                    <Form.Group className="mb-3">
-                        <Form.Label>Receive Remark</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="receiveRemark"
-                            value={addedItems[index].receiveRemark}
-                            onChange={valueChanged}
-                        />
-                    </Form.Group>
-                </div>
-            </div>
         </div>
     );
 }

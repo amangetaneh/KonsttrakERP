@@ -9,6 +9,10 @@ namespace ERP.Models
 
         public string Role { get; set; } = string.Empty;
 
+        public bool CanApproveUser { get; set; } = false;
+
+        public bool CanDeleteUser { get; set; } = false;
+
         public bool CanRequestPurchase { get; set; } = false;
 
         public bool CanApprovePurchase { get; set; } = false;
@@ -16,6 +20,8 @@ namespace ERP.Models
         public bool CanCheckPurchase { get; set; } = false;
         
         public bool CanViewPurchase { get; set; } = false;
+
+        public bool CanConfirmPurchase { get; set; } = false;
 
         public bool CanRequestBuy { get; set; } = false;
 
@@ -25,11 +31,13 @@ namespace ERP.Models
 
         public bool CanViewBuy { get; set; } = false;
 
-        public bool CanRecieve { get; set; } = false;
+        public bool CanConfirmBuy { get; set; } = false;
 
-        public bool CanCheckRecieve { get; set; } = false;
+        public bool CanReceive { get; set; } = false;
+
+        public bool CanApproveReceive { get; set; } = false;
         
-        public bool CanViewRecieve { get; set; } = false;
+        public bool CanViewReceive { get; set; } = false;
 
         public bool CanRequestIssue { get; set; } = false;
 

@@ -27,6 +27,13 @@ namespace ERP.Services.ItemServices
             return items;
         }
 
+        public async Task<List<EquipmentCategory>> GetEquipmentCategories()
+        {
+            var categories = await _context.EquipmentCategories.ToListAsync();
+
+            return categories;
+        }
+        
         public async Task<List<Item>> GetMaterials()
         {
             var items = await _context.Items.Where(item => item.Type == ITEMTYPE.MATERIAL)

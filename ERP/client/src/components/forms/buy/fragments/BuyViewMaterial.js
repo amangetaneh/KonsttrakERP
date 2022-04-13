@@ -1,20 +1,7 @@
-import { useEffect } from "react";
 import { Form, InputGroup } from "react-bootstrap";
+import PropTypes from "prop-types";
 
-function PurchaseApproveMaterial({ addedItems, setAddedItems, index }) {
-    //set purchased qty to approved as default
-    useEffect(() => {
-        const addedItemsCpy = [...addedItems];
-        addedItemsCpy[index].qtyPurchased = addedItemsCpy[index].qtyApproved;
-        setAddedItems(addedItemsCpy);
-    }, []);
-
-    function valueChanged(e) {
-        const addedItemsCpy = [...addedItems];
-        addedItemsCpy[index][e.target.name] = e.target.value;
-        setAddedItems(addedItemsCpy);
-    }
-
+function BuyViewMaterial({ addedItems, index }) {
     return (
         <div className="shadow pt-3 px-4 mb-4 rounded">
             <div className=" row justify-content-between">
@@ -96,58 +83,67 @@ function PurchaseApproveMaterial({ addedItems, setAddedItems, index }) {
                             </Form.Group>
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Quantity Approved</Form.Label>
-                                <InputGroup className="mb-3">
+                    {addedItems[index].qtyApproved > 0 &&
+                        <div className="row">
+                            <div className="col">
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Quantity Approved</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        name="qty"
-                                        readOnly
+                                        name="qtySent"
                                         value={addedItems[index].qtyApproved}
-                                    />
-                                    <Form.Control
-                                        name="unit"
-                                        type="text"
                                         readOnly
-                                        value={addedItems[index].units[0]}
                                     />
-                                </InputGroup>
-                            </Form.Group>
+                                </Form.Group>
+                            </div>
+                            <div className="col">
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Approved Total Cost</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="total"
+                                        readOnly
+                                        value={
+                                            addedItems[index].qtyApproved *
+                                            addedItems[index].cost
+                                        }
+                                    />
+                                </Form.Group>
+                            </div>
                         </div>
-                    </div>
-                    <div className="row">
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Quantity Purchased</Form.Label>
-                                <Form.Control
-                                    min="0"
-                                    type="number"
-                                    name="qtyPurchased"
-                                    value={addedItems[index].qtyPurchased}
-                                    onChange={valueChanged}
-                                    required
-                                />
-                            </Form.Group>
+                    }
+                    {addedItems[index].qtyBought > 0 &&
+                        <div className="row">
+                            <div className="col">
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Quantity Bought</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="qtySent"
+                                        value={addedItems[index].qtyBought}
+                                        readOnly
+                                    />
+                                </Form.Group>
+                            </div>
+                            <div className="col">
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Bought Total Cost</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="total"
+                                        readOnly
+                                        value={
+                                            addedItems[index].qtyBought *
+                                            addedItems[index].cost
+                                        }
+                                    />
+                                </Form.Group>
+                            </div>
                         </div>
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Purchased Total Cost</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    name="total"
-                                    readOnly
-                                    value={
-                                        addedItems[index].qtyPurchased *
-                                        addedItems[index].cost
-                                    }
-                                />
-                            </Form.Group>
-                        </div>
-                    </div>
+                    }
                 </div>
             </div>
+
             <div className="row">
                 <div className="col">
                     <Form.Group className="mb-3">
@@ -164,19 +160,20 @@ function PurchaseApproveMaterial({ addedItems, setAddedItems, index }) {
                         <Form.Label>Approve Remark</Form.Label>
                         <Form.Control
                             type="text"
-                            readOnly
+                            name="approveRemark"
                             value={addedItems[index].approveRemark}
+                            readOnly
                         />
                     </Form.Group>
                 </div>
                 <div className="col">
                     <Form.Group className="mb-3">
-                        <Form.Label>Purchase Remark</Form.Label>
+                        <Form.Label>Buy Remark</Form.Label>
                         <Form.Control
                             type="text"
-                            name="purchaseRemark"
-                            value={addedItems[index].purchaseRemark}
-                            onChange={valueChanged}
+                            name="buyRemark"
+                            value={addedItems[index].buyRemark}
+                            readOnly
                         />
                     </Form.Group>
                 </div>
@@ -185,4 +182,9 @@ function PurchaseApproveMaterial({ addedItems, setAddedItems, index }) {
     );
 }
 
-export default PurchaseApproveMaterial;
+BuyViewMaterial.propTypes = {
+    addedItems: PropTypes.array.isRequired,
+    index: PropTypes.number.isRequired,
+};
+
+export default BuyViewMaterial;

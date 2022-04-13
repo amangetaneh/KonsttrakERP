@@ -79,6 +79,14 @@ namespace ERP.Controllers
             return Ok(items);
         }
 
+        [HttpGet("equipmentcategory")]
+        public async Task<ActionResult<List<EquipmentCategory>>> GetCategory()
+        {
+            var categories = await _itemService.GetEquipmentCategories();
+
+            return Ok(categories);
+        }
+
         [HttpPost("material/add")]
         public async Task<ActionResult<List<Item>>> CreateMaterialItem(CreateMaterialItemDTO materialItemDTO)
         {
