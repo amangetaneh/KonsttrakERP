@@ -73,9 +73,9 @@ function ListReceives() {
         []
     );
 
-    if (isLoading) return <LoadingSpinner />;
-
     if (isError) return <ConnectionError />;
+
+    if (isLoading) return <LoadingSpinner />;
 
     return (
         <>

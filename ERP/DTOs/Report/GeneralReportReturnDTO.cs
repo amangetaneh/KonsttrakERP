@@ -17,5 +17,10 @@
         public Dictionary<string, ReportSingleItem> ReturnSummary { get; set; }
 
         public Dictionary<string, ReportSingleItem> StockSummary { get; set; }
+
+        public Dictionary<string, ReportSingleItem> MinStockSummary { get; set; }
+
+        public Dictionary<string, ReportSingleItem> DamageSummary { get; set; }
+        public Dictionary<string, ReportSingleItem> ReceiveSummary { get; set; }
     }
 }

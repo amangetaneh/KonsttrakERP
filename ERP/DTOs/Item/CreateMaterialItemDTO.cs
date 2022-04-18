@@ -8,6 +8,8 @@
         
         public string Unit { get; set; }
 
+        public bool IsTransferable { get; set; }
+
         public decimal Cost { get; set; }
 
     }

@@ -182,9 +182,9 @@ function SinglePurchase() {
         []
     );
 
-    if (isLoading) return <LoadingSpinner />;
-
     if (query.isError) return <ConnectionError />;
+
+    if (isLoading) return <LoadingSpinner />;
 
     return (
         <>

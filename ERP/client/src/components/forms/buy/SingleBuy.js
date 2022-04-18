@@ -173,9 +173,9 @@ function SingleBuy() {
         []
     );
 
-    if (isLoading) return <LoadingSpinner />;
-
     if (query.isError) return <ConnectionError />;
+
+    if (isLoading) return <LoadingSpinner />;
 
     return (
         <>

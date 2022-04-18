@@ -21,6 +21,8 @@ namespace ERP.Services.NotificationServices
         {
             var notifications = await _context.Notifications
                     .Where(noti => noti.IsCleared == false)
+                    .Include(noti => noti.Site)
+                    .Include(noti => noti.Employee)
                     .ToListAsync();
 
             return notifications.OrderByDescending(n => n.Date).ToList();
@@ -450,6 +452,11 @@ namespace ERP.Services.NotificationServices
                 case TRANSFERSTATUS.SENT:
                     notification.Title = "Transfer In Items";
                     notification.Content = $"Transfer Request {actionId} Items Has Been Sent";
+                    break;
+
+                case TRANSFERSTATUS.RECEIVED:
+                    notification.Title = "Items Transferred In";
+                    notification.Content = $"Transfer Request {actionId} Items Has Been Received";
                     break;
 
             }

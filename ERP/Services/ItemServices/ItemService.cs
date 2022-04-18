@@ -42,6 +42,14 @@ namespace ERP.Services.ItemServices
             return items;
         }
 
+        public async Task<List<Item>> GetTransferableMaterials()
+        {
+            var items = await _context.Items.Where(item => item.Type == ITEMTYPE.MATERIAL && item.Material.IsTransferable == true)
+                .Include(i => i.Material).ToListAsync();
+
+            return items;
+        }
+
         public async Task<List<Item>> GetEquipments()
         {
             var items = await _context.Items.Where(item => item.Type == ITEMTYPE.EQUIPMENT)

@@ -71,6 +71,14 @@ namespace ERP.Controllers
             return Ok(items);
         }
 
+        [HttpGet("material/transferable")]
+        public async Task<ActionResult<List<Item>>> GetTransferableMaterial()
+        {
+            var items = await _itemService.GetTransferableMaterials();
+
+            return Ok(items);
+        }
+
         [HttpGet("equipment")]
         public async Task<ActionResult<List<Item>>> GetEquipment()
         {
@@ -103,6 +111,7 @@ namespace ERP.Controllers
             material.Spec = materialItemDTO.Spec;
             material.Unit = materialItemDTO.Unit;
             material.Cost = materialItemDTO.Cost;
+            material.IsTransferable = materialItemDTO.IsTransferable;
 
             context.Materials.Add(material);
 

@@ -622,6 +622,9 @@ namespace ERP.Migrations
                     b.Property<decimal>("Cost")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<bool>("IsTransferable")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Spec")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -865,6 +868,12 @@ namespace ERP.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("EquipmentModelId")
                         .HasColumnType("int");
 
                     b.Property<int>("QtyPurchased")
@@ -1218,6 +1227,9 @@ namespace ERP.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("CanViewTransfer")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsAdmin")
                         .HasColumnType("bit");
 
                     b.Property<string>("Role")

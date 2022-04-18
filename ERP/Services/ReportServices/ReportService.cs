@@ -843,7 +843,17 @@ namespace ERP.Services.ReportServices
 
         public async Task<GeneralReportReturnDTO> GetGeneralReport(GeneralReportDTO reportDTO)
         {
+            reportDTO.SetDates();
+
             GeneralReportReturnDTO result = new();
+
+            if (reportDTO.Include.Contains(GENERALREPORTSELECTION.RECEIVED))
+            {
+                var receiveSummary = await _generalReportService.GetReceiveReport(reportDTO);
+                foreach (var x in receiveSummary) result.Keys.Add(x.Key.ToString());
+                foreach (var x in receiveSummary) result.Labels.TryAdd(x.Key.ToString(), x.Label);
+                result.ReceiveSummary = receiveSummary.ToDictionary(d => (string)d.Key.ToString(), d => d);
+            }
 
             if (reportDTO.Include.Contains(GENERALREPORTSELECTION.TRANSFERREDOUT))
             {
@@ -885,7 +895,15 @@ namespace ERP.Services.ReportServices
                 result.ReturnSummary = returnSummary.ToDictionary(d => (string)d.Key.ToString(), d => d);
             }
 
-            if(reportDTO.Include.Contains(GENERALREPORTSELECTION.INSTOCK))
+            if (reportDTO.Include.Contains(GENERALREPORTSELECTION.DAMAGED))
+            {
+                var damageSummary = await _generalReportService.GetDamageReport(reportDTO);
+                foreach (var x in damageSummary) result.Keys.Add(x.Key.ToString());
+                foreach (var x in damageSummary) result.Labels.TryAdd(x.Key.ToString(), x.Label);
+                result.DamageSummary = damageSummary.ToDictionary(d => (string)d.Key.ToString(), d => d);
+            }
+
+            if (reportDTO.Include.Contains(GENERALREPORTSELECTION.INSTOCK))
             {
                 var stockSummary = await _generalReportService.GetStockReport(reportDTO);
                 foreach (var x in stockSummary) result.Keys.Add(x.Key.ToString());
@@ -901,6 +919,21 @@ namespace ERP.Services.ReportServices
                 }).ToDictionary(d => (string)d.Key.ToString(), d => d);
             }
 
+            if (reportDTO.Include.Contains(GENERALREPORTSELECTION.MINSTOCK))
+            {
+                var minStockSummary = await _generalReportService.GetMinStockReport(reportDTO);
+                foreach (var x in minStockSummary) result.Keys.Add(x.Key.ToString());
+                foreach (var x in minStockSummary) result.Labels.TryAdd(x.Key.ToString(), x.Label);
+                result.MinStockSummary = minStockSummary.GroupBy(x => x.Key).Select(s => new ReportSingleItem
+                {
+                    Key = s.Key,
+                    Label = s.First().Label,
+                    Qty = s.Sum(i => i.Qty),
+                    Cost = s.Sum(i => i.Cost),
+                    CurrentValue = s.Sum(i => i.CurrentValue)
+
+                }).ToDictionary(d => (string)d.Key.ToString(), d => d);
+            }
 
             result.Keys = result.Keys.OrderBy(x => x).ToHashSet();
 

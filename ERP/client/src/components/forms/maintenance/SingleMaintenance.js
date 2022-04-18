@@ -4,7 +4,7 @@ import { Form, Container, Alert } from "react-bootstrap";
 import Item from "../../../models/Item";
 import Header from "../../layouts/Header";
 import MaintenanceStatusBadge from "./fragments/MaintenanceStatusBadge";
-import { MAINTENANCESTATUS, ITEMTYPE } from "../../../Constants";
+import { MAINTENANCESTATUS } from "../../../Constants";
 import ApproveMaintenance from "./ApproveMaintenance";
 import FixMaintenance from "./FixMaintenance";
 import ViewMaintenance from "./ViewMaintenance.js";
@@ -13,12 +13,18 @@ import { useQuery } from "react-query";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
 import { fetchMaintenance } from "../../../api/maintenance";
+import { useAuth } from "../../../contexts/AuthContext";
+import AlertNotification from "../../fragments/AlertNotification";
+import FormRow from "../../fragments/FormRow";
 
 function SingleMaintenance() {
     const { id } = useParams();
     const [maintenance, setMaintenance] = useState({});
     const [addedItems, setAddedItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [viewOnly, setViewOnly] = useState(true);
+    const [notificationType, setNotificationType] = useState(null);
+    const auth = useAuth();
 
     var query = useQuery(["maintenance", id], () => fetchMaintenance(id));
 
@@ -53,44 +59,51 @@ function SingleMaintenance() {
         setIsLoading(false);
     }, [query.data]);
 
-    function FormRow({ labelL, labelR, valueL, valueR }) {
-        //defines layout of each row
-        return (
-            <div className="row mx-2">
-                <div className="col">
-                    <Form.Group className="mb-3">
-                        <div className="row">
-                            <div className="col-3 mt-1">
-                                <Form.Label>{labelL}</Form.Label>
-                            </div>
-                            <div className="col">
-                                {typeof valueL === "object" ? (
-                                    valueL
-                                ) : (
-                                    <Form.Control type="text" readOnly value={valueL} />
-                                )}
-                            </div>
-                        </div>
-                    </Form.Group>
-                </div>
-                <div className="col">
-                    <Form.Group className="mb-3">
-                        <div className="row">
-                            <div className="col-3 mt-1">
-                                <Form.Label>{labelR}</Form.Label>
-                            </div>
-                            <div className="col">
-                                {typeof valueR === "object" ? (
-                                    valueR
-                                ) : (
-                                    <Form.Control type="text" readOnly value={valueR} />
-                                )}
-                            </div>
-                        </div>
-                    </Form.Group>
-                </div>
-            </div>
-        );
+    useEffect(() => {
+        if (maintenance.status === undefined) return;
+        if (
+            maintenance.status === MAINTENANCESTATUS.REQUESTED &&
+            (auth.data.employee.employeeSiteId !== maintenance.siteId ||
+                !auth.data.userRole.canApproveMaintenance)
+        ) {
+            setViewOnly(true);
+            return setNotificationType(MAINTENANCESTATUS.REQUESTED);
+        }
+
+        if (
+            maintenance.status === MAINTENANCESTATUS.APPROVED &&
+            (auth.data.employee.employeeSiteId !== maintenance.siteId ||
+                !auth.data.userRole.canFixMaintenance)
+        ) {
+            setViewOnly(true);
+            return setNotificationType(MAINTENANCESTATUS.APPROVED);
+        }
+
+        setViewOnly(false);
+        setNotificationType(null);
+    }, [maintenance]);
+
+    function MaintenanceNotification() {
+        switch (notificationType) {
+            case MAINTENANCESTATUS.REQUESTED:
+                return (
+                    <AlertNotification
+                        title="Maintenance Request Needs Approval"
+                        content="Maaintenance Request Has Been Requested and Needs Approval to Continue."
+                    />
+                );
+
+            case MAINTENANCESTATUS.APPROVED:
+                return (
+                    <AlertNotification
+                        title="Fixing Item Pending"
+                        content="Maintenance Has Been Approved but Item Hasn't Been Fixed Yet."
+                    />
+                );
+
+            default:
+                return <></>;
+        }
     }
 
     function TopForm() {
@@ -190,6 +203,7 @@ function SingleMaintenance() {
 
             <Container className="my-3">
                 <>
+                    <MaintenanceNotification />
                     <TopForm />
 
                     {maintenance.status === MAINTENANCESTATUS.DECLINED && (
@@ -200,7 +214,7 @@ function SingleMaintenance() {
                         />
                     )}
 
-                    {maintenance.status === MAINTENANCESTATUS.REQUESTED && (
+                    {maintenance.status === MAINTENANCESTATUS.REQUESTED && !viewOnly && (
                         <ApproveMaintenance
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}
@@ -208,7 +222,7 @@ function SingleMaintenance() {
                         />
                     )}
 
-                    {maintenance.status === MAINTENANCESTATUS.APPROVED && (
+                    {maintenance.status === MAINTENANCESTATUS.APPROVED && !viewOnly && (
                         <FixMaintenance
                             addedItems={addedItems}
                             setAddedItems={setAddedItems}
@@ -216,7 +230,7 @@ function SingleMaintenance() {
                         />
                     )}
 
-                    {maintenance.status === MAINTENANCESTATUS.FIXED && (
+                    {(maintenance.status === MAINTENANCESTATUS.FIXED || viewOnly) && (
                         <ViewMaintenance addedItems={addedItems} />
                     )}
                 </>

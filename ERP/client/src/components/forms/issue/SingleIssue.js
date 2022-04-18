@@ -178,16 +178,16 @@ function SingleIssue() {
                 )}
             </Form>
         );
-    }
+    } 
 
     const titles = useMemo(
         () => ["Declined Issue", "Approve Issue", "Hand Issue", "Completed Issue"],
         []
     );
 
-    if (isLoading) return <LoadingSpinner />;
-
     if (query.isError) return <ConnectionError status={query?.error?.response?.status} />;
+
+    if (isLoading) return <LoadingSpinner />;
 
     return (
         <>

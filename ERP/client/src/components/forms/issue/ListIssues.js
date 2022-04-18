@@ -76,9 +76,9 @@ function ListIssues() {
         []
     );
 
-    if (isLoading) return <LoadingSpinner />;
-
     if (isError) return <ConnectionError status={error?.response?.status} />;
+
+    if (isLoading) return <LoadingSpinner />;
 
     return (
         <>

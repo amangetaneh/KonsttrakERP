@@ -2,9 +2,13 @@ import api from "./api";
 
 export const fetchMaterials = () => api.get("/item/material").then((res) => res.data);
 
+export const fetchTransferableMaterials = () =>
+    api.get("/item/material/transferable").then((res) => res.data);
+
 export const fetchEquipments = () => api.get("/item/equipment").then((res) => res.data);
 
-export const fetchEquipmentCategories = () => api.get("/item/equipmentcategory").then((res) => res.data);
+export const fetchEquipmentCategories = () =>
+    api.get("/item/equipmentcategory").then((res) => res.data);
 
 export const fetchItem = (itemId) => api.get(`/item/${itemId}`).then((res) => res.data);
 

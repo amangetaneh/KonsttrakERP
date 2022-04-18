@@ -492,9 +492,9 @@ function TransferReport() {
                     </div>
                 </Form>
 
-                {(isLoading || isFetching) && <LoadingSpinner />}
-
                 {isError && <ConnectionError status={error?.response?.status} />}
+
+                {(isLoading || isFetching) && <LoadingSpinner />}
 
                 {chartData && (
                     <>

@@ -89,8 +89,6 @@ function EquipmentTransfer() {
         setScroll(true);
     }
 
-    if (isLoading) return <LoadingSpinner />;
-
     if (isError || isSubmitError)
         return (
             <ConnectionError
@@ -101,6 +99,8 @@ function EquipmentTransfer() {
                 }
             />
         );
+
+    if (isLoading) return <LoadingSpinner />;
 
     return (
         <>

@@ -93,14 +93,14 @@ function NewReturn() {
         setScroll(true);
     }
 
-    if (isLoading) return <LoadingSpinner />;
-
     if (isError || isSubmitError)
         return (
             <ConnectionError
                 status={sitesQuery?.error?.response?.status ?? submitError?.response?.status}
             />
         );
+
+    if (isLoading) return <LoadingSpinner />;
 
     return (
         <>
