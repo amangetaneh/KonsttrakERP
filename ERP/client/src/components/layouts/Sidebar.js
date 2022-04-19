@@ -47,6 +47,11 @@ function Sidebar() {
                         </MenuItem>
 
                         <SubMenu title="Setting" icon={<GoSettings className="fs-5" />}>
+                            <SubMenu title="Employee">
+                                <MenuItem>
+                                    Manage Employees <Link to="/employee" />
+                                </MenuItem>
+                            </SubMenu>
                             <SubMenu title="Role">
                                 <MenuItem>
                                     Add a new Role <Link to="/role/new" />
@@ -54,7 +59,7 @@ function Sidebar() {
                             </SubMenu>
                             <SubMenu title="Site">
                                 <MenuItem>
-                                    Add a new Site <Link to="/role/new" />
+                                    Add a new Site <Link to="/site/new" />
                                 </MenuItem>
                             </SubMenu>
                             <SubMenu title="Stock">

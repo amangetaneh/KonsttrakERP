@@ -37,6 +37,8 @@ namespace ERP.Models
         public decimal TotalPurchaseCost { get; set; } = 0;
 
         public ICollection<PurchaseItem> PurchaseItems { get; set; }
+        
+        public ICollection<PurchaseItemEmployee> PurchaseItemEmployees { get; set; }
     
     }
 }

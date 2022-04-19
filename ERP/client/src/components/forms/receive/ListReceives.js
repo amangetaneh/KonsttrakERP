@@ -9,9 +9,12 @@ import { useQuery } from "react-query";
 import { fetchReceives } from "../../../api/receive";
 import ConnectionError from "../../fragments/ConnectionError";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
+import ValidDate from "../../../contexts/DateContext";
+import { useAuth } from "../../../contexts/AuthContext";
 
 function ListReceives() {
     const [receives, setReceives] = useState([]);
+    const auth = useAuth();
 
     var { data, isLoading, isError } = useQuery("receives", fetchReceives);
 
@@ -20,10 +23,8 @@ function ListReceives() {
 
             Object.keys(data).map((key, index) => {
                 //format date
-                data[key].receiveDate = new Date(
-                    data[key].receiveDate
-                ).toLocaleString();
-                
+                data[key].receiveDate = ValidDate(data[key].receiveDate)
+
                 //add status badge
                 data[key].statusBadge = ReceiveStatusBadge(data[key].status);
 

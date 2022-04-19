@@ -44,6 +44,9 @@ import ManageUser from "./components/forms/user/ManageUser";
 import NewRole from "./components/forms/user/NewRole";
 import Dashboard from "./components/forms/user/Dashboard";
 import Report from "./components/forms/report/Report";
+import ListEmployee from "./components/forms/employee/ListEmployee";
+import SingleEmployee from "./components/forms/employee/SingleEmployee";
+import NewSite from "./components/forms/site/NewSite";
 
 const App = () => {
     
@@ -81,9 +84,14 @@ const App = () => {
 
                                 <Route path="/" element={<Dashboard/>} />
                                 
+                                <Route path="employee" element={<ListEmployee />} />
+                                <Route path="employee/:id" element={<SingleEmployee />} />
+
                                 <Route path="user/manage" element={<ManageUser />} />
                                 
                                 <Route path="role/new" element={<NewRole />} />
+
+                                <Route path="site/new" element={<NewSite />} />
 
                                 <Route path="report" element={<Report />} />
 

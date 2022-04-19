@@ -36,8 +36,8 @@ namespace ERP.Controllers
 
             UserAccount = context.UserAccounts
                 .Where(u => u.Username == _userService.GetMyName())
-                .Include(u => u.UserRole)
                 .Include(u => u.Employee)
+                .ThenInclude(e => e.UserRole)
                 .FirstOrDefault();
 
             //Employee = UserAccount.Employee;
@@ -60,6 +60,7 @@ namespace ERP.Controllers
             employee.LName = registerDTO.LName;
             employee.Position = registerDTO.Position;
             employee.EmployeeSiteId = registerDTO.EmployeeSiteId;
+            employee.UserRoleId = registerDTO.UserRoleId;
             employee.Status = 0;
 
             context.Employees.Add(employee);
@@ -71,32 +72,11 @@ namespace ERP.Controllers
             CreatePasswordHash(registerDTO.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
             userAccount.Username = registerDTO.FName + employee.EmployeeId;
-            userAccount.UserRoleId = registerDTO.UserRoleId;
             userAccount.PasswordHash = passwordHash;
             userAccount.PasswordSalt = passwordSalt;
             userAccount.EmployeeId = employee.EmployeeId;
 
             context.UserAccounts.Add(userAccount);
-
-            await context.SaveChangesAsync();
-
-            return Ok(userAccount);
-        }
-
-        [HttpPost("approve")]
-        public async Task<ActionResult<UserAccount>> Approve(ApproveUserDTO approveDTO)
-        {
-            var userAccount = context.UserAccounts.Where(u => u.Username == approveDTO.Username)
-                .Include(u => u.Employee)
-                .FirstOrDefault();
-            
-            if (userAccount == null) return NotFound("User Not Found.");
-
-            userAccount.UserRoleId = approveDTO.UserRoleId;
-
-            var employee = userAccount.Employee;
-
-            employee.Status = 1;
 
             await context.SaveChangesAsync();
 
@@ -108,7 +88,7 @@ namespace ERP.Controllers
         {
             var userAccount = context.UserAccounts.Where(u => u.Username == loginDTO.Username)
                 .Include(u => u.Employee)
-                .Include(u => u.UserRole)
+                .ThenInclude(e => e.UserRole)
                 .FirstOrDefault();
 
             if (userAccount == null) return NotFound("User Not Found.");
@@ -119,16 +99,17 @@ namespace ERP.Controllers
             }
 
             var employee = userAccount.Employee;
-            var userRole = userAccount.UserRole;
+            var userRole = employee.UserRole;
 
             string token = CreateToken(userAccount, employee);
 
-            var result = new LoginReturnDTO();
-
-            result.token = token;
-            result.employee = employee;
-            result.userRole = userRole;
-            result.username = userAccount.Username;
+            var result = new LoginReturnDTO
+            {
+                token = token,
+                employee = employee,
+                userRole = userRole,
+                username = userAccount.Username
+            };
 
             return Ok(result);
         }
@@ -139,7 +120,7 @@ namespace ERP.Controllers
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, userAccount.Username.ToString()),
-                new Claim(ClaimTypes.Rsa, userAccount.UserRoleId.ToString()),
+                new Claim(ClaimTypes.Rsa, employee.UserRoleId.ToString()),
                 new Claim(ClaimTypes.Sid, employee.EmployeeId.ToString()),
                 new Claim(ClaimTypes.Role, AssignRole(employee.Status))
                 

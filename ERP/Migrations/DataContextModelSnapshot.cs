@@ -303,9 +303,14 @@ namespace ERP.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<int>("UserRoleId")
+                        .HasColumnType("int");
+
                     b.HasKey("EmployeeId");
 
                     b.HasIndex("EmployeeSiteId");
+
+                    b.HasIndex("UserRoleId");
 
                     b.ToTable("Employees");
                 });
@@ -773,9 +778,6 @@ namespace ERP.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
 
-                    b.Property<int>("RequestedById")
-                        .HasColumnType("int");
-
                     b.Property<string>("ApproveRemark")
                         .HasColumnType("nvarchar(max)");
 
@@ -800,13 +802,37 @@ namespace ERP.Migrations
                     b.Property<decimal>("TotalCost")
                         .HasColumnType("decimal(18,2)");
 
+                    b.HasKey("PurchaseId", "ItemId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("PurchaseItems");
+                });
+
+            modelBuilder.Entity("ERP.Models.PurchaseItemEmployee", b =>
+                {
+                    b.Property<int>("PurchaseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RequestedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QtyRequested")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RequestRemark")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("PurchaseId", "ItemId", "RequestedById");
 
                     b.HasIndex("ItemId");
 
                     b.HasIndex("RequestedById");
 
-                    b.ToTable("PurchaseItems");
+                    b.ToTable("PurchaseItemEmployees");
                 });
 
             modelBuilder.Entity("ERP.Models.Receive", b =>
@@ -1098,14 +1124,9 @@ namespace ERP.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<int>("UserRoleId")
-                        .HasColumnType("int");
-
                     b.HasKey("Username");
 
                     b.HasIndex("EmployeeId");
-
-                    b.HasIndex("UserRoleId");
 
                     b.ToTable("UserAccounts");
                 });
@@ -1388,7 +1409,15 @@ namespace ERP.Migrations
                         .WithMany()
                         .HasForeignKey("EmployeeSiteId");
 
+                    b.HasOne("ERP.Models.UserRole", "UserRole")
+                        .WithMany()
+                        .HasForeignKey("UserRoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("EmployeeSite");
+
+                    b.Navigation("UserRole");
                 });
 
             modelBuilder.Entity("ERP.Models.Equipment", b =>
@@ -1675,6 +1704,25 @@ namespace ERP.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Item");
+
+                    b.Navigation("Purchase");
+                });
+
+            modelBuilder.Entity("ERP.Models.PurchaseItemEmployee", b =>
+                {
+                    b.HasOne("ERP.Models.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Purchase", "Purchase")
+                        .WithMany("PurchaseItemEmployees")
+                        .HasForeignKey("PurchaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ERP.Models.Employee", "Employee")
                         .WithMany()
                         .HasForeignKey("RequestedById")
@@ -1876,15 +1924,7 @@ namespace ERP.Migrations
                         .WithMany()
                         .HasForeignKey("EmployeeId");
 
-                    b.HasOne("ERP.Models.UserRole", "UserRole")
-                        .WithMany()
-                        .HasForeignKey("UserRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Employee");
-
-                    b.Navigation("UserRole");
                 });
 
             modelBuilder.Entity("ERP.Models.Borrow", b =>
@@ -1947,6 +1987,8 @@ namespace ERP.Migrations
 
             modelBuilder.Entity("ERP.Models.Purchase", b =>
                 {
+                    b.Navigation("PurchaseItemEmployees");
+
                     b.Navigation("PurchaseItems");
                 });
 

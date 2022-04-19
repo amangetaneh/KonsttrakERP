@@ -25,5 +25,9 @@ namespace ERP.Models
 
         public int? EmployeeSiteId { get; set; }
 
+        public UserRole UserRole { get; set; }
+
+        public int UserRoleId { get; set; }
+
     }
 }

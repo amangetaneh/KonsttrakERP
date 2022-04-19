@@ -201,6 +201,13 @@
         public const int APPROVED = 3;
     }
 
+    public class EMPLOYEESTATUS
+    {
+        public const int REGISTERED = 0;
+        public const int APPROVED = 1;
+
+    }
+
     public class ITEMTYPE
     {
         public const int MATERIAL = 1;

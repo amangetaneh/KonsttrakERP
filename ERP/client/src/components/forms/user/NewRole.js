@@ -1,17 +1,59 @@
 import Header from "../../layouts/Header";
+import Role from "../../../models/Role";
+import { useState, useMemo } from "react";
 import { Form, Button, Container, InputGroup } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
-import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ToggleBox from "../../layouts/ToggleBox";
+import {ToastContainer,toast} from 'react-toastify'
+import { useMutation } from "react-query";
+import { addRole } from "../../../api/role";
+import LoadingSpinner from "../../fragments/LoadingSpinner";
+import ConnectionError from "../../fragments/ConnectionError";
+
 
 function NewRole() {
+    const [role, setRole] = useState([new Role()]);
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [isError, setIsError] = useState(false);
+
+    const toastOption={
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme:"dark"
+        // progress: undefined
+       }
+
+    const {
+        isError: isSubmitError,
+        isLoading: isSubmitLoading,
+        mutate: submitNewRole,
+    } = useMutation(addRole, {
+        onSuccess: (res) => {
+            toast.success("Role Is Successfully Added",toastOption);},
+    });
+
+    function submit(e) {
+        e.preventDefault();
+        if (isSubmitLoading) return;
+
+        var data = role;
+
+        submitNewRole(data);
+    }
+
+    if (isError || isSubmitError) return <ConnectionError/>;
 
     return (
         <>
             <Header title="Add New Role" />
 
             <Container className="my-3">
-                <Form >
+                <Form onSubmit={submit} >
                     <div>
                         <div className="row">
                             <div className="mx-4 col">
@@ -36,7 +78,7 @@ function NewRole() {
                                             <Form.Check
                                             inline
                                             label="Can Approve User Acconunt"
-                                            name="bool"
+                                            value='1'
                                             type="checkbox">
                                             </Form.Check>
                                     </Form.Group>
@@ -362,7 +404,7 @@ function NewRole() {
                             </div>
                         </div>
                         <div className="my-4">
-                            <h5 className="px-4">Notificatioj</h5>
+                            <h5 className="px-4">Notification</h5>
                             <div className="row mx-4">
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
@@ -385,6 +427,7 @@ function NewRole() {
                         </div>
                     </div>
                 </Form>
+                <ToastContainer/>
             </Container>
         </>
     );

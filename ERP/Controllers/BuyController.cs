@@ -29,8 +29,8 @@ namespace ERP.Controllers
 
             UserAccount = context.UserAccounts
                 .Where(u => u.Username == _userService.GetMyName())
-                .Include(u => u.UserRole)
                 .Include(u => u.Employee)
+                .ThenInclude(e => e.UserRole)
                 .FirstOrDefault();
 
             Employee = UserAccount.Employee;
@@ -61,7 +61,9 @@ namespace ERP.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Buy>>> Get()
         {
-            var buys = await context.Buys.ToListAsync();
+            var buys = await context.Buys
+                .OrderByDescending(buy => buy.BuyId)
+                .ToListAsync();
 
             return Ok(buys);
         }
@@ -142,9 +144,11 @@ namespace ERP.Controllers
             var purchase = context.Purchases
                .Where(purchase => purchase.Status == PURCHASESTATUS.QUEUED && purchase.ReceivingSiteId == Employee.EmployeeSiteId)
                .Include(purchase => purchase.PurchaseItems)
+               .Include(purchase => purchase.PurchaseItemEmployees)
                .FirstOrDefault();
 
             ICollection<PurchaseItem>? purchaseItems;
+            ICollection<PurchaseItemEmployee>? purchaseItemEmployees;
 
             if (purchase == null)
             {
@@ -156,16 +160,46 @@ namespace ERP.Controllers
                 };
 
                 purchaseItems = new List<PurchaseItem>();
+                purchase.PurchaseItems = purchaseItems;
+
+                purchaseItemEmployees = new List<PurchaseItemEmployee>();
+                purchase.PurchaseItemEmployees = purchaseItemEmployees;
             }
             else
             {
                 purchaseItems = purchase.PurchaseItems;
+                purchaseItemEmployees = purchase.PurchaseItemEmployees;
             }
 
             foreach (var buyItem in buy.BuyItems)
             {
+                var purchaseItemEmployee = purchase.PurchaseItemEmployees
+                    .Where(pItem => pItem.PurchaseId == purchase.PurchaseId && pItem.ItemId == buyItem.ItemId && pItem.RequestedById == buy.RequestedById)
+                    .FirstOrDefault();
+
+                if (purchaseItemEmployee != null)
+                {
+                    purchaseItemEmployee.QtyRequested += buyItem.QtyRequested;
+                }
+                else
+                {
+                    purchaseItemEmployee = new PurchaseItemEmployee
+                    {
+                        ItemId = buyItem.ItemId,
+                        RequestedById = buy.RequestedById,
+                        QtyRequested = buyItem.QtyRequested,
+                        RequestRemark = buyItem.RequestRemark
+                    };
+                }
+
+                if (purchaseItemEmployee.QtyRequested == buyItem.QtyRequested)
+                {
+                    purchaseItemEmployees.Add(purchaseItemEmployee);
+
+                }
+
                 var purchaseItem = purchase.PurchaseItems
-                    .Where(purchaseItem => purchaseItem.PurchaseId == purchase.PurchaseId && purchaseItem.ItemId == buyItem.ItemId && purchaseItem.RequestedById == buy.RequestedById)
+                    .Where(pItem => pItem.PurchaseId == purchase.PurchaseId && pItem.ItemId == buyItem.ItemId)
                     .FirstOrDefault();
 
                 if (purchaseItem != null)
@@ -177,9 +211,7 @@ namespace ERP.Controllers
                     purchaseItem = new PurchaseItem
                     {
                         ItemId = buyItem.ItemId,
-                        RequestedById = buy.RequestedById,
-                        QtyRequested = buyItem.QtyRequested,
-                        RequestRemark = buyItem.RequestRemark
+                        QtyRequested = buyItem.QtyRequested
                     };
 
                     var itemTemp = context.Items.Where(item => item.ItemId == buyItem.ItemId).
@@ -194,6 +226,7 @@ namespace ERP.Controllers
                         purchaseItem.Cost = itemTemp.Material.Cost;
                     }
                 }
+
                 purchaseItem.TotalCost = purchaseItem.Cost * purchaseItem.QtyRequested;
 
                 if (purchaseItem.QtyRequested == buyItem.QtyRequested)
@@ -204,6 +237,7 @@ namespace ERP.Controllers
             }
 
             purchase.PurchaseItems = purchaseItems;
+            purchase.PurchaseItemEmployees = purchaseItemEmployees;
 
             buy.CheckDate = DateTime.Now;
             buy.CheckedById = Employee.EmployeeId;

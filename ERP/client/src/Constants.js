@@ -225,6 +225,13 @@ export const RECEIVESTATUS = {
     3: "Approved",
 };
 
+export const EMPLOYEESTATUS = {
+    REGISTERED: 0,
+    APPROVED: 1,
+    0: "Registered",
+    1: "Approved"
+}
+
 export const ITEMTYPE = {
     MATERIAL: 1,
     EQUIPMENT: 2,
