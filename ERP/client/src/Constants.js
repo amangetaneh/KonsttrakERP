@@ -137,8 +137,8 @@ export const NOTIFICATIONROUTE = {
     [NOTIFICATIONTYPE.MAINTENANCE]: "/maintenance",
     [NOTIFICATIONTYPE.RETURN]: "/return",
     [NOTIFICATIONTYPE.BUY]: "/buy",
-    [NOTIFICATIONTYPE.MINEQUIPMENT]: "/purchase",
-    [NOTIFICATIONTYPE.MINMATERIAL]: "/purchase",
+    [NOTIFICATIONTYPE.MINEQUIPMENT]: "/purchase/equipment",
+    [NOTIFICATIONTYPE.MINMATERIAL]: "/purchase/material",
 };
 
 export const MAINTENANCESTATUS = {

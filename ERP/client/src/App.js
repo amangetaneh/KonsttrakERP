@@ -46,6 +46,7 @@ import Dashboard from "./components/forms/Dashboard";
 import Report from "./components/forms/report/Report";
 import NewRent from "./components/forms/rent/NewRent";
 import AdminNotification from "./components/forms/AdminNotification";
+import MinimumStock from "./components/forms/item/MinimumStock";
 
 const App = () => {
     const contextData = useAuth();
@@ -90,6 +91,7 @@ const App = () => {
 
                             <Route path="report" element={<Report />} />
 
+                            <Route path="item/minimum-stock" element={<MinimumStock />} />
                             <Route path="item/material/new" element={<MaterialItem />} />
                             <Route path="item/equipment/new" element={<EquipmentItem />} />
                             <Route path="item/equipment/model/new" element={<EquipmentModel />} />

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery } from "react-query";
-import { fetchEquipmentModel } from "../../../../api/item";
+import { fetchEquipmentModel, fetchEquipmentAssets} from "../../../../api/item";
 import { Form, InputGroup, Row, Col } from "react-bootstrap";
 import PropTypes from "prop-types";
 import Select from "react-select";
@@ -15,14 +15,20 @@ function BorrowHandEquipment({ addedItems, setAddedItems, index }) {
             addedItems[index].equipmentModelId &&
             fetchEquipmentModel(addedItems[index].equipmentModelId)
     );
+    
+    var assetsQuery = useQuery(
+        ["assets", addedItems[index].equipmentModelId],
+        () => addedItems[index].equipmentModelId &&
+        fetchEquipmentAssets(addedItems[index].equipmentModelId)
+    )
   
 
     useEffect(() => {
-        if (!modelQuery?.data?.equipmentAssets) return setAssetNumbers([]);
+        if (!assetsQuery?.data) return setAssetNumbers([]);
 
         var data = [];
 
-        for (var equipmentAsset of modelQuery.data.equipmentAssets) {
+        for (var equipmentAsset of assetsQuery?.data) {
             data.push({
                 value: equipmentAsset.equipmentAssetId,
                 label: equipmentAsset.assetNo,
@@ -30,7 +36,7 @@ function BorrowHandEquipment({ addedItems, setAddedItems, index }) {
         }
 
         setAssetNumbers(data);
-    }, [modelQuery.data]);
+    }, [assetsQuery.data]);
 
     function valueChanged(e) {
         const addedItemsCpy = [...addedItems];

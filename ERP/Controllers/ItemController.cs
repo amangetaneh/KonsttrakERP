@@ -31,6 +31,30 @@ namespace ERP.Controllers
             return Ok(items);
         }
 
+        [HttpGet("asset")]
+        public async Task<ActionResult<List<EquipmentAsset>>> GetAssets(int modelId)
+        {
+            var items = await _itemService.GetAssets(modelId);
+
+            return Ok(items);
+        }
+
+        [HttpPost("minimum-stock")]
+        public async Task<ActionResult<List<MinimumStockItemDTO>>> GetMinimumStock(GetMinimumStockItemsDTO minimumStockDTO)
+        {
+            var items = await _itemService.GetMinimumStockItems(minimumStockDTO);
+
+            return Ok(items);
+        }
+
+        [HttpPost("minimum-stock/update")]
+        public async Task<ActionResult<bool>> UpdateMinimumStock(List<MinimumStockItemDTO> minimumStockItems)
+        {
+            var result = await _itemService.UpdateMinimumStockItems(minimumStockItems);
+
+            return Ok(result);
+        }
+
         [HttpGet("{ItemId}")]
         public async Task<ActionResult<Item>> GetOne(int ItemId)
         {

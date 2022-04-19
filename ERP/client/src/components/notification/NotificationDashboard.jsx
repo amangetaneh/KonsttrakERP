@@ -4,7 +4,7 @@ import { FaBell } from "react-icons/fa";
 import SingleNotification from "./SingleNotification";
 import { useQuery } from "react-query";
 import { fetchNotifications, fetchNow } from "../../api/notification";
-import { NOTIFICATIONROUTE } from "../../Constants";
+import { NOTIFICATIONROUTE, NOTIFICATIONTYPE } from "../../Constants";
 import LoadingSpinner from "../fragments/LoadingSpinner";
 import ConnectionError from "../fragments/ConnectionError";
 
@@ -67,7 +67,12 @@ function NotificationDashboard() {
                         content={notification.content}
                         date={notification.date}
                         now={now || ""}
-                        target={`${NOTIFICATIONROUTE[notification.type]}/${notification.actionId}`}
+                        target={
+                            (notification.type === NOTIFICATIONTYPE.MINEQUIPMENT ||
+                            notification.type === NOTIFICATIONTYPE.MINMATERIAL)
+                                ? `${NOTIFICATIONROUTE[notification.type]}`
+                                : `${NOTIFICATIONROUTE[notification.type]}/${notification.actionId}`
+                        }
                     />
                 ))}
             </div>

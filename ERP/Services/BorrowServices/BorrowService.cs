@@ -1,6 +1,7 @@
 ﻿using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
+using ERP.Services.EquipmentAssetServices;
 using ERP.Services.ItemSiteQtyServices;
 using ERP.Services.NotificationServices;
 using ERP.Services.User;
@@ -14,13 +15,15 @@ namespace ERP.Services.BorrowServices
         private readonly INotificationService _notificationService;
         private readonly IUserService _userService;
         private readonly IItemSiteQtyService _itemSiteQtyService;
+        private readonly IEquipmentAssetService _equipmentAssetService;
 
-        public BorrowService(DataContext context, INotificationService notificationService, IUserService userService, IItemSiteQtyService itemSiteQtyService)
+        public BorrowService(DataContext context, INotificationService notificationService, IUserService userService, IItemSiteQtyService itemSiteQtyService, IEquipmentAssetService equipmentAssetService)
         {
             _context = context;
             _notificationService = notificationService;
             _userService = userService;
             _itemSiteQtyService = itemSiteQtyService;
+            _equipmentAssetService = equipmentAssetService;
         }
 
 
@@ -227,6 +230,8 @@ namespace ERP.Services.BorrowServices
                         equipmentAsset.EquipmentAssetId = requestAssetId;
 
                         borrowItem.BorrowEquipmentAssets.Add(equipmentAsset);
+
+                        await _equipmentAssetService.SetEmployee(requestAssetId, _userService.Employee.EmployeeId);
                     }
                 }
 
@@ -237,6 +242,8 @@ namespace ERP.Services.BorrowServices
             borrow.Status = BORROWSTATUS.HANDED;
 
             await _context.SaveChangesAsync();
+
+            await _equipmentAssetService.SaveChangesAsync();
 
             await _notificationService.Add(type: NOTIFICATIONTYPE.BORROW,
                 status: borrow.Status,

@@ -1,4 +1,5 @@
-﻿using ERP.DTOs.Item;
+﻿using ERP.DTOs;
+using ERP.DTOs.Item;
 using ERP.Models;
 
 namespace ERP.Services.ItemServices
@@ -18,5 +19,8 @@ namespace ERP.Services.ItemServices
 
         Task<EquipmentModel> GetModel(int modelId);
         Task<List<Item>> GetTransferableMaterials();
+        Task<List<EquipmentAsset>> GetAssets(int modelId);
+        Task<List<MinimumStockItemDTO>> GetMinimumStockItems(GetMinimumStockItemsDTO requestDTO);
+        Task<bool> UpdateMinimumStockItems(List<MinimumStockItemDTO> requestDTO);
     }
 }

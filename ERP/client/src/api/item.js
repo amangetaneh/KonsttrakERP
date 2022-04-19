@@ -7,8 +7,14 @@ export const fetchTransferableMaterials = () =>
 
 export const fetchEquipments = () => api.get("/item/equipment").then((res) => res.data);
 
+export const fetchMinimumStockItems = (data) =>
+    api.post("/item/minimum-stock", data).then((res) => res.data);
+
 export const fetchEquipmentCategories = () =>
     api.get("/item/equipmentcategory").then((res) => res.data);
+
+export const fetchEquipmentAssets = (data) =>
+    api.get(`/item/asset?modelId=${data}`).then((res) => res.data);
 
 export const fetchItem = (itemId) => api.get(`/item/${itemId}`).then((res) => res.data);
 
@@ -24,3 +30,6 @@ export const addEquipment = (data) => api.post("/item/equipment/add", data);
 export const addEquipmentCategory = (data) => api.post("/item/equipmentcategory/add", data);
 
 export const addEquipmentModel = (data) => api.post("/item/equipmentmodel/add", data);
+
+export const updateMinimumStockItems = (data) =>
+    api.post("/item/minimum-stock/update", data).then((res) => res.data);

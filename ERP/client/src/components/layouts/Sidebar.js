@@ -73,6 +73,10 @@ function Sidebar() {
                                         <Link to="/item/equipment/category/new" />
                                     </MenuItem>
                                 </SubMenu>
+
+                                <MenuItem>
+                                    Minimum Stock <Link to="/item/minimum-stock" />
+                                </MenuItem>
                             </SubMenu>
                             <MenuItem>
                                 Reports <Link to="/report" />

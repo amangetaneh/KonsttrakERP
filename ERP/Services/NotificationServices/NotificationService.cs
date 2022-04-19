@@ -47,6 +47,7 @@ namespace ERP.Services.NotificationServices
             notifications.AddRange(await GetMaintenanceNotifications(siteId, employeeId));
             notifications.AddRange(await GetBuyNotifications(siteId, employeeId));
             notifications.AddRange(await GetStockNotifications(siteId, employeeId));
+            notifications.AddRange(await GetReturnNotifications(siteId, employeeId));
 
             return notifications.OrderByDescending(n => n.Date).ToList();
         }
@@ -93,6 +94,18 @@ namespace ERP.Services.NotificationServices
                         noti.Status == MAINTENANCESTATUS.APPROVED &&
                         noti.SiteId == siteId)
                     .ToListAsync());
+
+            return notifications;
+        }
+
+        private async Task<List<Notification>> GetReturnNotifications(int siteId, int employeeId)
+        {
+
+            List<Notification> notifications = await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.RETURN &&
+                        noti.EmployeeId == employeeId)
+                    .ToListAsync();
 
             return notifications;
         }

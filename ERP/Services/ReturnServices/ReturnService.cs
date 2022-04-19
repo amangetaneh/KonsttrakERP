@@ -1,6 +1,7 @@
 ﻿using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
+using ERP.Services.EquipmentAssetServices;
 using ERP.Services.ItemSiteQtyServices;
 using ERP.Services.NotificationServices;
 using ERP.Services.User;
@@ -14,13 +15,15 @@ namespace ERP.Services.ReturnServices
         private readonly IUserService _userService;
         private readonly INotificationService _notificationService;
         private readonly IItemSiteQtyService _itemSiteQtyService;
+        private readonly IEquipmentAssetService _equipmentAssetService;
 
-        public ReturnService(DataContext context, IUserService userService, INotificationService notificationService, IItemSiteQtyService itemSiteQtyService)
+        public ReturnService(DataContext context, IUserService userService, INotificationService notificationService, IItemSiteQtyService itemSiteQtyService, IEquipmentAssetService equipmentAssetService)
         {
             _context = context;
             _userService = userService;
             _notificationService = notificationService;
             _itemSiteQtyService = itemSiteQtyService;
+            _equipmentAssetService = equipmentAssetService;
         }
 
         public async Task<Return> GetById(int id){
@@ -65,6 +68,7 @@ namespace ERP.Services.ReturnServices
                         ea.EquipmentModelId == requestAsset.EquipmentModelId &&
                         ea.EquipmentAssetId == requestAsset.EquipmentAssetId &&
                         ea.ReturnId == null)
+                    .Include(ea => ea.Borrow)
                     .FirstOrDefaultAsync();
 
                 if (asset == null)
@@ -77,6 +81,8 @@ namespace ERP.Services.ReturnServices
 
 
                 await _itemSiteQtyService.AddEquipmentModel(asset.EquipmentModelId, (int)_userService.Employee.EmployeeSiteId, 1);
+                await _equipmentAssetService.ReturnToSite(asset.EquipmentAssetId, (int)_userService.Employee.EmployeeSiteId, asset.AssetDamageId);
+                
             }
 
             Return borrowReturn = new();
@@ -87,6 +93,13 @@ namespace ERP.Services.ReturnServices
 
             _context.Returns.Add(borrowReturn);
             await _context.SaveChangesAsync();
+            await _equipmentAssetService.SaveChangesAsync();
+
+            await _notificationService.Add(type: NOTIFICATIONTYPE.RETURN,
+                status: 0,
+                actionId:borrowReturn.ReturnId,
+                siteId: borrowReturn.SiteId,
+                employeeId: equipmentAssets.First().Borrow.RequestedById);
 
             return borrowReturn;
         }
