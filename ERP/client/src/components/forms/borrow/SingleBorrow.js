@@ -235,9 +235,9 @@ function SingleBorrow() {
         []
     );
 
-    if (isLoading) return <LoadingSpinner />;
-
     if (query.isError) return <ConnectionError status={query.error?.response?.status} />;
+
+    if (isLoading) return <LoadingSpinner />;
 
     return (
         <>

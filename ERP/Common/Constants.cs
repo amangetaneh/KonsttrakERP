@@ -2,7 +2,8 @@
 {
     public class GENERALREPORTSELECTION
     {
-        public const string INSTOCK = "InStock";
+        public const string INSTOCK = "InStock"; 
+        public const string MINSTOCK = "MinStock";
         public const string PURCHASED = "Purchased";
         public const string RECEIVED = "Received";
         public const string ISSUED = "Issued";
@@ -10,6 +11,7 @@
         public const string RETURNED = "Returned";
         public const string TRANSFERREDIN = "TransferredIn";
         public const string TRANSFERREDOUT = "TransferredOut";
+        public const string DAMAGED = "Damaged";
    
     }
 

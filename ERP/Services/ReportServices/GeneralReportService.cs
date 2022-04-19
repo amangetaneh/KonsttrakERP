@@ -14,6 +14,497 @@ namespace ERP.Services.ReportServices
         }
 
 
+        public async Task<IEnumerable<ReportSingleItem>> GetReceiveReport(GeneralReportDTO reportDTO)
+        {
+            var transferOutItems = await _context.ReceiveItems
+                .Where(ii => ii.Receive.Status >= RECEIVESTATUS.RECEIVED &&
+                //date
+                (reportDTO.DateFrom == null || ii.Receive.ReceiveDate >= reportDTO.DateFrom) &&
+                (reportDTO.DateTo == null || ii.Receive.ReceiveDate <= reportDTO.DateTo) &&
+                //site
+                (reportDTO.SiteId == -1 || ii.Receive.ReceivingSiteId == reportDTO.SiteId) &&
+                //item type
+                (reportDTO.ItemType == -1 || ii.Item.Type == reportDTO.ItemType) &&
+                //equipment category
+                (reportDTO.ItemType != ITEMTYPE.EQUIPMENT || reportDTO.EquipmentCategoryId == -1 || ii.Item.Type != ITEMTYPE.EQUIPMENT || ii.Item.Equipment.EquipmentCategoryId == reportDTO.EquipmentCategoryId) &&
+                //item
+                (reportDTO.ItemId == -1 || ii.ItemId == reportDTO.ItemId) &&
+                //employee
+                (reportDTO.EmployeeId == -1 || ii.Receive.ReceivedById == reportDTO.EmployeeId)
+                )
+                .Include(ii => ii.Receive)
+                .Include(ii => ii.Item.Material)
+                .Include(ii => ii.Item.Equipment.EquipmentModels)
+                .Include(ii => ii.Item.Equipment.EquipmentCategory)
+                .Include(ii => ii.Receive.ReceivedBy)
+                .Include(ii => ii.Receive.ReceivingSite)
+                .ToListAsync();
+
+            IEnumerable<ReportSingleItem>? groupedTransfer = new List<ReportSingleItem>();
+
+            switch (reportDTO.GroupBy)
+            {
+                case GENERALREPORTGROUPBY.ITEM:
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.ItemId)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.First().Item.Name,
+                            Qty = s.Sum(ii => ii.QtyReceived),
+                            Cost = s.Sum(ii => ii.QtyReceived * ii.Cost),
+                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
+                                ii.QtyReceived * ii.Item.Material.Cost :
+                                ii.QtyReceived * ii.Item.Equipment.EquipmentModels
+                                    .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost)
+                        });
+                    break;
+
+                case GENERALREPORTGROUPBY.CATEGORY:
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Item.Equipment != null ? ii.Item.Equipment.EquipmentCategoryId : 0)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.Key == 0 ? "Materials" : s.First().Item.Equipment.EquipmentCategory.Name,
+                            Qty = s.Sum(ii => ii.QtyReceived),
+                            Cost = s.Sum(ii => ii.QtyReceived * ii.Cost),
+                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
+                                ii.QtyReceived * ii.Item.Material.Cost :
+                                ii.QtyReceived * ii.Item.Equipment.EquipmentModels
+                                    .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost)
+                        });
+                    break;
+
+                case GENERALREPORTGROUPBY.MODEL:
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.EquipmentModelId)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.Key == 0 ? "Materials" :
+                                $"{s.First().Item.Name}, " +
+                                $"{s.First().Item.Equipment.EquipmentModels.Where(em => em.EquipmentModelId == s.First().EquipmentModelId).First().Name}",
+                            Qty = s.Sum(ii => ii.QtyReceived),
+                            Cost = s.Sum(ii => ii.QtyReceived * ii.Cost),
+                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
+                                ii.QtyReceived * ii.Item.Material.Cost :
+                                ii.QtyReceived * ii.Item.Equipment.EquipmentModels
+                                    .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost)
+                        });
+                    break;
+
+
+
+                case GENERALREPORTGROUPBY.DATE:
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Receive.ReceiveDate.Value.Date)
+                       .Select(s => new ReportSingleItem
+                       {
+                           Key = s.First().Receive.ReceiveDate.Value.Date,
+                           Label = s.Key.ToShortDateString(),
+                           Qty = s.Sum(ii => ii.QtyReceived),
+                           Cost = s.Sum(ii => ii.QtyReceived * ii.Cost),
+                           CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
+                               ii.QtyReceived * ii.Item.Material.Cost :
+                               ii.QtyReceived * ii.Item.Equipment.EquipmentModels
+                                   .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost)
+
+                       });
+                    break;
+
+                case GENERALREPORTGROUPBY.WEEK:
+                    groupedTransfer = transferOutItems.GroupBy(ii =>
+                    new
+                    {
+                        Week = ii.Receive.ReceiveDate.Value.DayOfYear / 7,
+                        Year = ii.Receive.ReceiveDate.Value.Year
+                    })
+                       .Select(s => new ReportSingleItem
+                       {
+                           Key = s.First().Receive.ReceiveDate.Value.Date,
+                           Label = $"Week{s.Key.Week}, {s.Key.Year}",
+                           Qty = s.Sum(ii => ii.QtyReceived),
+                           Cost = s.Sum(ii => ii.QtyReceived * ii.Cost),
+                           CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
+                               ii.QtyReceived * ii.Item.Material.Cost :
+                               ii.QtyReceived * ii.Item.Equipment.EquipmentModels
+                                   .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost)
+
+                       });
+                    break;
+
+                case GENERALREPORTGROUPBY.MONTH:
+                    groupedTransfer = transferOutItems.GroupBy(ii =>
+                    new
+                    {
+                        Month = ii.Receive.ReceiveDate.Value.Month,
+                        Year = ii.Receive.ReceiveDate.Value.Year
+                    })
+                       .Select(s => new ReportSingleItem
+                       {
+                           Key = s.First().Receive.ReceiveDate.Value.Date,
+                           Label = $"{s.First().Receive.ReceiveDate.Value.ToString("MMMM")}, {s.Key.Year}",
+                           Qty = s.Sum(ii => ii.QtyReceived),
+                           Cost = s.Sum(ii => ii.QtyReceived * ii.Cost),
+                           CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
+                               ii.QtyReceived * ii.Item.Material.Cost :
+                               ii.QtyReceived * ii.Item.Equipment.EquipmentModels
+                                   .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost)
+
+                       });
+                    break;
+
+                case GENERALREPORTGROUPBY.YEAR:
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Receive.ReceiveDate.Value.Year)
+                       .Select(s => new ReportSingleItem
+                       {
+                           Key = s.First().Receive.ReceiveDate.Value.Date,
+                           Label = $"{s.Key}",
+                           Qty = s.Sum(ii => ii.QtyReceived),
+                           Cost = s.Sum(ii => ii.QtyReceived * ii.Cost),
+                           CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
+                               ii.QtyReceived * ii.Item.Material.Cost :
+                               ii.QtyReceived * ii.Item.Equipment.EquipmentModels
+                                   .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost)
+
+                       });
+                    break;
+
+                case GENERALREPORTGROUPBY.EMPLOYEE:
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Receive.ReceivedById ?? 0)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.Key == 0 ? "N/A" :
+                                $"{s.First().Receive.ReceivedBy.FName} {s.First().Receive.ReceivedBy.MName}",
+                            Qty = s.Sum(ii => ii.QtyReceived),
+                            Cost = s.Sum(ii => ii.QtyReceived * ii.Cost),
+                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
+                                ii.QtyReceived * ii.Item.Material.Cost :
+                                ii.QtyReceived * ii.Item.Equipment.EquipmentModels
+                                    .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost)
+                        });
+                    break;
+
+                case GENERALREPORTGROUPBY.SITE:
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Receive.ReceivingSiteId)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.First().Receive.ReceivingSite.Name,
+                            Qty = s.Sum(ii => ii.QtyReceived),
+                            Cost = s.Sum(ii => ii.QtyReceived * ii.Cost),
+                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
+                                ii.QtyReceived * ii.Item.Material.Cost :
+                                ii.QtyReceived * ii.Item.Equipment.EquipmentModels
+                                    .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost)
+                        });
+                    break;
+            }
+
+            return groupedTransfer;
+        }
+
+
+        public async Task<IEnumerable<ReportSingleItem>> GetMinStockReport(GeneralReportDTO reportDTO)
+        {
+            var materialItems = await _context.MaterialSiteQties
+                .Where(ii =>
+                //site
+                (reportDTO.SiteId == -1 || ii.SiteId == reportDTO.SiteId) &&
+                //item type
+                (reportDTO.ItemType == -1 || ii.Item.Type == reportDTO.ItemType) &&
+                //item
+                (reportDTO.ItemId == -1 || ii.ItemId == reportDTO.ItemId)
+                )
+                .Include(ii => ii.Item.Material)
+                .Include(ii => ii.Site)
+                .ToListAsync();
+
+            IEnumerable<ReportSingleItem>? groupedMaterial = new List<ReportSingleItem>();
+
+            switch (reportDTO.GroupBy)
+            {
+                case GENERALREPORTGROUPBY.ITEM:
+                    groupedMaterial = materialItems.GroupBy(ii => ii.ItemId)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.First().Item.Name,
+                            Qty = s.Sum(ii => ii.MinimumQty),
+                            Cost = s.First().Item.Material.Cost,
+                            CurrentValue = s.Sum(ii => ii.MinimumQty * ii.Item.Material.Cost)
+                        });
+                    break;
+
+                case GENERALREPORTGROUPBY.SITE:
+                    groupedMaterial = materialItems.GroupBy(ii => ii.SiteId)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.First().Site.Name,
+                            Qty = s.Sum(ii => ii.MinimumQty),
+                            Cost = s.First().Item.Material.Cost,
+                            CurrentValue = s.Sum(ii => ii.MinimumQty * ii.Item.Material.Cost)
+                        });
+                    break;
+
+                case GENERALREPORTGROUPBY.MODEL:
+                case GENERALREPORTGROUPBY.CATEGORY:
+                    groupedMaterial = materialItems.GroupBy(ii => 0)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = "Material",
+                            Qty = s.Sum(ii => ii.MinimumQty),
+                            Cost = s.First().Item.Material.Cost,
+                            CurrentValue = s.Sum(ii => ii.MinimumQty * ii.Item.Material.Cost)
+                        });
+                    break;
+            }
+
+            /////////////////////////////////////////////////////////////////////////////Equipments
+            var transferOutItems = await _context.EquipmentSiteQties
+               .Where(ii =>
+               //site
+               (reportDTO.SiteId == -1 || ii.SiteId == reportDTO.SiteId) &&
+               //item type
+               (reportDTO.ItemType == -1 || ii.EquipmentModel.Equipment.Item.Type == reportDTO.ItemType) &&
+               //equipment category
+               (reportDTO.ItemType != ITEMTYPE.EQUIPMENT || reportDTO.EquipmentCategoryId == -1 || ii.EquipmentModel.Equipment.Item.Type != ITEMTYPE.EQUIPMENT ||
+                    ii.EquipmentModel.Equipment.EquipmentCategoryId == reportDTO.EquipmentCategoryId) &&
+               //item
+               (reportDTO.ItemId == -1 || ii.EquipmentModel.ItemId == reportDTO.ItemId)
+               )
+               .Include(ii => ii.EquipmentModel.Equipment.Item)
+               .Include(ii => ii.Site)
+               .ToListAsync();
+
+            IEnumerable<ReportSingleItem>? groupedEquipment = new List<ReportSingleItem>();
+
+            switch (reportDTO.GroupBy)
+            {
+                case GENERALREPORTGROUPBY.ITEM:
+                    groupedEquipment = transferOutItems.GroupBy(ii => ii.EquipmentModel.ItemId)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.First().EquipmentModel.Equipment.Item.Name,
+                            Qty = s.Sum(ii => ii.MinimumQty),
+                            Cost = s.First().EquipmentModel.Cost,
+                            CurrentValue = s.Sum(ii => ii.MinimumQty * ii.EquipmentModel.Cost)
+                        });
+                    break;
+
+                case GENERALREPORTGROUPBY.CATEGORY:
+                    groupedEquipment = transferOutItems.GroupBy(ii => ii.EquipmentModel.Equipment.EquipmentCategoryId)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.First().EquipmentModel.Equipment.EquipmentCategory.Name,
+                            Qty = s.Sum(ii => ii.MinimumQty),
+                            Cost = s.First().EquipmentModel.Cost,
+                            CurrentValue = s.Sum(ii => ii.MinimumQty * ii.EquipmentModel.Cost)
+                        });
+                    break;
+
+                case GENERALREPORTGROUPBY.MODEL:
+                    groupedEquipment = transferOutItems.GroupBy(ii => ii.EquipmentModelId)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = $"{s.First().EquipmentModel.Equipment.Item.Name}, {s.First().EquipmentModel.Name}",
+                            Qty = s.Sum(ii => ii.MinimumQty),
+                            Cost = s.First().EquipmentModel.Cost,
+                            CurrentValue = s.Sum(ii => ii.MinimumQty * ii.EquipmentModel.Cost)
+                        });
+                    break;
+
+
+                case GENERALREPORTGROUPBY.SITE:
+                    groupedEquipment = transferOutItems.GroupBy(ii => ii.SiteId)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.First().Site.Name,
+                            Qty = s.Sum(ii => ii.MinimumQty),
+                            Cost = s.First().EquipmentModel.Cost,
+                            CurrentValue = s.Sum(ii => ii.MinimumQty * ii.EquipmentModel.Cost)
+                        });
+                    break;
+            }
+
+            List<ReportSingleItem> result = new();
+            result.AddRange(groupedEquipment);
+            result.AddRange(groupedMaterial);
+
+            return result;
+        }
+
+        public async Task<IEnumerable<ReportSingleItem>> GetDamageReport(GeneralReportDTO reportDTO)
+        {
+            var transferOutItems = await _context.BorrowItemEquipmentAssets
+                .Where(ii => ii.ReturnId != null && ii.AssetDamageId != null &&
+                //date
+                (reportDTO.DateFrom == null || ii.Return.ReturnDate >= reportDTO.DateFrom) &&
+                (reportDTO.DateTo == null || ii.Return.ReturnDate <= reportDTO.DateTo) &&
+                //site
+                (reportDTO.SiteId == -1 || ii.Return.SiteId == reportDTO.SiteId) &&
+                //equipment category
+                (reportDTO.ItemType != ITEMTYPE.EQUIPMENT || reportDTO.EquipmentCategoryId == -1 || ii.BorrowItem.Item.Type != ITEMTYPE.EQUIPMENT || ii.BorrowItem.Item.Equipment.EquipmentCategoryId == reportDTO.EquipmentCategoryId) &&
+                //item
+                (reportDTO.ItemId == -1 || ii.ItemId == reportDTO.ItemId) &&
+                //employee
+                (reportDTO.EmployeeId == -1 || ii.Borrow.RequestedById == reportDTO.EmployeeId)
+                )
+                .Include(ii => ii.Return)
+                .Include(ii => ii.BorrowItem.Item.Equipment.EquipmentModels)
+                .Include(ii => ii.BorrowItem.Item.Equipment.EquipmentCategory)
+                .Include(ii => ii.Return)
+                .Include(ii => ii.Borrow.RequestedBy)
+                .Include(ii => ii.Return.Site)
+                .Include(ii => ii.AssetDamage)
+                .ToListAsync();
+
+            IEnumerable<ReportSingleItem>? groupedTransfer = new List<ReportSingleItem>();
+
+            switch (reportDTO.GroupBy)
+            {
+                case GENERALREPORTGROUPBY.ITEM:
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.ItemId)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.First().BorrowItem.Item.Name,
+                            Qty = s.Sum(ii => 1),
+                            Cost = s.Sum(ii => ii.BorrowItem.Cost * ii.AssetDamage.PenalityPercentage),
+                            CurrentValue = s.Sum(ii => ii.BorrowItem.Item.Equipment.EquipmentModels
+                                    .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost * ii.AssetDamage.PenalityPercentage)
+                        });
+                    break;
+
+                case GENERALREPORTGROUPBY.CATEGORY:
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.BorrowItem.Item.Equipment.EquipmentCategoryId)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.First().BorrowItem.Item.Equipment.EquipmentCategory.Name,
+                            Qty = s.Sum(ii => 1),
+                            Cost = s.Sum(ii => ii.BorrowItem.Cost * ii.AssetDamage.PenalityPercentage),
+                            CurrentValue = s.Sum(ii => ii.BorrowItem.Item.Equipment.EquipmentModels
+                                    .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost * ii.AssetDamage.PenalityPercentage)
+                        });
+                    break;
+
+                case GENERALREPORTGROUPBY.MODEL:
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.EquipmentModelId)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = $"{s.First().BorrowItem.Item.Equipment.EquipmentModels.Where(em => em.EquipmentModelId == s.First().EquipmentModelId).First().Name}",
+                            Qty = s.Sum(ii => 1),
+                            Cost = s.Sum(ii => ii.BorrowItem.Cost * ii.AssetDamage.PenalityPercentage),
+                            CurrentValue = s.Sum(ii => ii.BorrowItem.Item.Equipment.EquipmentModels
+                                    .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost * ii.AssetDamage.PenalityPercentage)
+                        });
+                    break;
+
+
+
+                case GENERALREPORTGROUPBY.DATE:
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Return.ReturnDate.Date)
+                       .Select(s => new ReportSingleItem
+                       {
+                           Key = s.First().Return.ReturnDate.Date,
+                           Label = s.Key.ToShortDateString(),
+                           Qty = s.Sum(ii => 1),
+                           Cost = s.Sum(ii => ii.BorrowItem.Cost * ii.AssetDamage.PenalityPercentage),
+                           CurrentValue = s.Sum(ii => ii.BorrowItem.Item.Equipment.EquipmentModels
+                                   .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost * ii.AssetDamage.PenalityPercentage)
+
+                       });
+                    break;
+
+                case GENERALREPORTGROUPBY.WEEK:
+                    groupedTransfer = transferOutItems.GroupBy(ii =>
+                    new
+                    {
+                        Week = ii.Return.ReturnDate.DayOfYear / 7,
+                        Year = ii.Return.ReturnDate.Year
+                    })
+                       .Select(s => new ReportSingleItem
+                       {
+                           Key = s.First().Return.ReturnDate.Date,
+                           Label = $"Week{s.Key.Week}, {s.Key.Year}",
+                           Qty = s.Sum(ii => 1),
+                           Cost = s.Sum(ii => ii.BorrowItem.Cost * ii.AssetDamage.PenalityPercentage),
+                           CurrentValue = s.Sum(ii => ii.BorrowItem.Item.Equipment.EquipmentModels
+                                   .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost * ii.AssetDamage.PenalityPercentage)
+
+                       });
+                    break;
+
+                case GENERALREPORTGROUPBY.MONTH:
+                    groupedTransfer = transferOutItems.GroupBy(ii =>
+                    new
+                    {
+                        Month = ii.Return.ReturnDate.Month,
+                        Year = ii.Return.ReturnDate.Year
+                    })
+                       .Select(s => new ReportSingleItem
+                       {
+                           Key = s.First().Return.ReturnDate.Date,
+                           Label = $"{s.First().Return.ReturnDate.ToString("MMMM")}, {s.Key.Year}",
+                           Qty = s.Sum(ii => 1),
+                           Cost = s.Sum(ii => ii.BorrowItem.Cost * ii.AssetDamage.PenalityPercentage),
+                           CurrentValue = s.Sum(ii => ii.BorrowItem.Item.Equipment.EquipmentModels
+                                   .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost * ii.AssetDamage.PenalityPercentage)
+
+                       });
+                    break;
+
+                case GENERALREPORTGROUPBY.YEAR:
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Return.ReturnDate.Year)
+                       .Select(s => new ReportSingleItem
+                       {
+                           Key = s.First().Return.ReturnDate.Date,
+                           Label = $"{s.Key}",
+                           Qty = s.Sum(ii => 1),
+                           Cost = s.Sum(ii => ii.BorrowItem.Cost * ii.AssetDamage.PenalityPercentage),
+                           CurrentValue = s.Sum(ii => ii.BorrowItem.Item.Equipment.EquipmentModels
+                                   .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost * ii.AssetDamage.PenalityPercentage)
+
+                       });
+                    break;
+
+                case GENERALREPORTGROUPBY.EMPLOYEE:
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Borrow.RequestedById)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.Key == 0 ? "N/A" :
+                                $"{s.First().Borrow.RequestedBy.FName} {s.First().Borrow.RequestedBy.MName}",
+                            Qty = s.Sum(ii => 1),
+                            Cost = s.Sum(ii => ii.BorrowItem.Cost * ii.AssetDamage.PenalityPercentage),
+                            CurrentValue = s.Sum(ii => ii.BorrowItem.Item.Equipment.EquipmentModels
+                                    .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost * ii.AssetDamage.PenalityPercentage)
+                        });
+                    break;
+
+                case GENERALREPORTGROUPBY.SITE:
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Return.SiteId)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.First().Return.Site.Name,
+                            Qty = s.Sum(ii => 1),
+                            Cost = s.Sum(ii => ii.BorrowItem.Cost * ii.AssetDamage.PenalityPercentage),
+                            CurrentValue = s.Sum(ii => ii.BorrowItem.Item.Equipment.EquipmentModels
+                                    .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost * ii.AssetDamage.PenalityPercentage)
+                        });
+                    break;
+            }
+
+            return groupedTransfer;
+        }
+
         public async Task<IEnumerable<ReportSingleItem>> GetStockReport(GeneralReportDTO reportDTO)
         {
             var materialItems = await _context.MaterialSiteQties

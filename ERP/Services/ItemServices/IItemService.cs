@@ -11,10 +11,12 @@ namespace ERP.Services.ItemServices
         
         Task<List<Item>> GetEquipments();
         Task<int> GetItemQty(GetQtyDTO qtyDTO);
+        
         Task<List<Item>> GetMaterials();
         
         Task<List<EquipmentCategory>> GetEquipmentCategories();
 
         Task<EquipmentModel> GetModel(int modelId);
+        Task<List<Item>> GetTransferableMaterials();
     }
 }

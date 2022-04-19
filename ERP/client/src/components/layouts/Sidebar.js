@@ -16,11 +16,11 @@ import { useAuth, useAuthUpdate } from "../../contexts/AuthContext";
 import { useQueryClient } from "react-query";
 
 function Sidebar() {
-    const navigate = useNavigate()
-    const updateAuthContext = useAuthUpdate()
+    const navigate = useNavigate();
+    const updateAuthContext = useAuthUpdate();
 
-    const {data}= useAuth()
- 
+    const { data } = useAuth();
+
     const [collapsed, setCollapsed] = useState(false);
 
     return (
@@ -74,54 +74,59 @@ function Sidebar() {
                                         Add a new Model <Link to="/item/equipment/model/new" />
                                     </MenuItem>
                                     <MenuItem>
-                                        Add a new Category <Link to="/item/equipment/category/new" />
+                                        Add a new Category{" "}
+                                        <Link to="/item/equipment/category/new" />
                                     </MenuItem>
                                 </SubMenu>
                             </SubMenu>
+                            <MenuItem>
+                                Reports <Link to="/report" />
+                            </MenuItem>
+                            <MenuItem>
+                                Notifications <Link to="/notification" />
+                            </MenuItem>
                         </SubMenu>
-                        <SubMenu title="Inventory" icon={<FaList className="fs-5" />}>
-                            
+                        <SubMenu
+                            title="Inventory"
+                            icon={<FaList className="fs-5" />}
+                            defaultOpen={true}
+                        >
                             <SubMenu title="Buy">
-                                {data.userRole?.canRequestBuy &&
-                                <MenuItem>
-                                    Buy an Item <Link to="/buy/material" />
-                                </MenuItem>
-                                }
+                                {data.userRole?.canRequestBuy && (
+                                    <MenuItem>
+                                        Buy an Item <Link to="/buy/material" />
+                                    </MenuItem>
+                                )}
                                 <MenuItem>
                                     Buy Requests <Link to="/buy" />
                                 </MenuItem>
                             </SubMenu>
-                            {data.userRole.canViewPurchase &&
-                            <SubMenu title="Purchase">
-                                {
-                                data.userRole?.canRequestPurchase &&
-                                <MenuItem>
-                                    Purchase an Item <Link to="/purchase/material" />
-                                </MenuItem>
-                                }
-                                
-                                <MenuItem>
-                                    List Purchase Requests <Link to="/purchase" />
-                                </MenuItem>
-                                
-                            </SubMenu>
-                            }
-                            {data.userRole.canViewReceive &&
-                            <SubMenu title="Receive">
-                                {
-                                data.userRole?.canReceive &&
-                                
-                                <MenuItem>
-                                    Receive an Item <Link to="/receive/material" />
-                                </MenuItem>
-                                }
-                                
-                                <MenuItem>
-                                    List Received Items <Link to="/receive" />
-                                </MenuItem>
-                            
-                            </SubMenu>
-                            }
+                            {data.userRole.canViewPurchase && (
+                                <SubMenu title="Purchase">
+                                    {data.userRole?.canRequestPurchase && (
+                                        <MenuItem>
+                                            Purchase an Item <Link to="/purchase/material" />
+                                        </MenuItem>
+                                    )}
+
+                                    <MenuItem>
+                                        List Purchase Requests <Link to="/purchase" />
+                                    </MenuItem>
+                                </SubMenu>
+                            )}
+                            {data.userRole.canViewReceive && (
+                                <SubMenu title="Receive">
+                                    {data.userRole?.canReceive && (
+                                        <MenuItem>
+                                            Receive an Item <Link to="/receive/material" />
+                                        </MenuItem>
+                                    )}
+
+                                    <MenuItem>
+                                        List Received Items <Link to="/receive" />
+                                    </MenuItem>
+                                </SubMenu>
+                            )}
                             <SubMenu title="Transfer">
                                 <MenuItem>
                                     New Material Transfer
@@ -172,9 +177,10 @@ function Sidebar() {
                                     Maintenance Requests <Link to="/maintenance" />
                                 </MenuItem>
                             </SubMenu>
-                            <SubMenu title="Settings">
+                            <SubMenu title="Rent">
                                 <MenuItem>
-                                    Report <Link to="/report" />
+                                    New Rent Request
+                                    <Link to="/rent/new" />
                                 </MenuItem>
                             </SubMenu>
                         </SubMenu>
@@ -186,12 +192,16 @@ function Sidebar() {
                             <MenuItem>
                                 Manage Account <Link to="/user/manage" />
                             </MenuItem>
-                            <MenuItem onClick={()=>{
-                                localStorage.removeItem('token')
-                                localStorage.removeItem('data')
-                                updateAuthContext({token:"",data:"",username:""})
-                                navigate('/login')
-                            }} >Logout</MenuItem>
+                            <MenuItem
+                                onClick={() => {
+                                    localStorage.removeItem("token");
+                                    localStorage.removeItem("data");
+                                    updateAuthContext({ token: "", data: "", username: "" });
+                                    navigate("/login");
+                                }}
+                            >
+                                Logout
+                            </MenuItem>
                         </SubMenu>
                     </Menu>
                 </SidebarFooter>

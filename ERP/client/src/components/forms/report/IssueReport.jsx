@@ -338,7 +338,7 @@ function IssueReport() {
                         }
                         valueR={null}
                     />
-                    
+
                     <FormRow
                         labelL="Group By"
                         valueL={
@@ -388,9 +388,9 @@ function IssueReport() {
                     </div>
                 </Form>
 
-                {(isLoading || isFetching) && <LoadingSpinner />}
+                {isError && <ConnectionError status={error?.response?.status} />}
 
-                {isError && <ConnectionError status={error?.response?.status}/>}
+                {(isLoading || isFetching) && <LoadingSpinner />}
 
                 {chartData && (
                     <>

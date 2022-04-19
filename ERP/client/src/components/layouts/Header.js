@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { FaArrowLeft } from "react-icons/fa";
 import NotificationCanvas from "../notification/NotificationCanvas";
 
-function Header({ title }) {
+function Header({ title, showNotification }) {
     const navigate = useNavigate();
 
     function goBack() {
@@ -18,9 +18,8 @@ function Header({ title }) {
                     <FaArrowLeft />
                 </Button>
                 <Navbar.Brand>{title}</Navbar.Brand>
-                <Nav className="ms-auto">
-                    <NotificationCanvas />
-                </Nav>
+
+                <Nav className="ms-auto">{showNotification && <NotificationCanvas />}</Nav>
             </Container>
         </Navbar>
     );
@@ -28,6 +27,10 @@ function Header({ title }) {
 
 Header.propTypes = {
     title: PropTypes.string.isRequired,
+};
+
+Header.defaultProps = {
+    showNotification: true,
 };
 
 export default Header;

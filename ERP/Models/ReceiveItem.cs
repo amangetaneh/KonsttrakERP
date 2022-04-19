@@ -12,6 +12,12 @@ namespace ERP.Models
         [Key]
         public int ItemId { get; set; }
 
+        [Key]
+        public int EquipmentModelId { get; set; } = 0;
+
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal Cost { get; set; }
+
         public int QtyPurchased { get; set; }
 
         public int QtyReceived { get; set; } = 0;

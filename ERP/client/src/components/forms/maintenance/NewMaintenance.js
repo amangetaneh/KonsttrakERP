@@ -15,25 +15,6 @@ function NewMaintenance() {
     const [sendSite, setSendSite] = useState(0);
     const [addedItems, setAddedItems] = useState([new Item()]);
 
-    const [allSites, setAllSites] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isError, setIsError] = useState(false);
-
-    const sitesQuery = useQuery("sites", fetchSites, {
-        onSuccess: (data) => {
-            setAllSites(data);
-            setSendSite(data[0].siteId);
-        },
-    });
-
-    useEffect(() => {
-        setIsLoading(sitesQuery.isLoading);
-    }, [sitesQuery.isLoading]);
-
-    useEffect(() => {
-        setIsError(sitesQuery.isError);
-    }, [sitesQuery.isError]);
-
     const {
         isError: isSubmitError,
         isLoading: isSubmitLoading,
@@ -77,9 +58,8 @@ function NewMaintenance() {
         setScroll(true);
     }
 
-    if (isLoading) return <LoadingSpinner />;
 
-    if (isError || isSubmitError)
+    if (isSubmitError)
         return (
             <ConnectionError
                 status={submitError?.response?.status ?? sitesQuery?.error?.response?.status}
@@ -92,24 +72,6 @@ function NewMaintenance() {
 
             <Container className="my-3">
                 <Form onSubmit={submit}>
-                    <div className="row mx-2">
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Issue Site</Form.Label>
-                                <Form.Select
-                                    value={sendSite}
-                                    onChange={(e) => setSendSite(e.target.value)}
-                                >
-                                    {allSites.map((site) => (
-                                        <option key={site.siteId} value={site.siteId}>
-                                            {site.name}
-                                        </option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
-                        </div>
-                    </div>
-
                     {addedItems.map((item, index) => (
                         <MaintenanceRequestEquipment
                             key={item.key}

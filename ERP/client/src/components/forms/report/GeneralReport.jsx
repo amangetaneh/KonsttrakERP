@@ -90,6 +90,22 @@ function GeneralReport() {
                     ),
                 });
 
+            summary.minStockSummary &&
+                data.datasets.push({
+                    label: "Minimum Stock",
+                    data: summary.keys.map(
+                        (key) => summary.minStockSummary[key]?.[chartDataType] ?? 0
+                    ),
+                });
+
+            summary.receiveSummary &&
+                data.datasets.push({
+                    label: "Received",
+                    data: summary.keys.map(
+                        (key) => summary.receiveSummary[key]?.[chartDataType] ?? 0
+                    ),
+                });
+
             summary.issueSummary &&
                 data.datasets.push({
                     label: "Issued",
@@ -111,6 +127,14 @@ function GeneralReport() {
                     label: "Returned",
                     data: summary.keys.map(
                         (key) => summary.returnSummary[key]?.[chartDataType] ?? 0
+                    ),
+                });
+
+            summary.damageSummary &&
+                data.datasets.push({
+                    label: "Damaged",
+                    data: summary.keys.map(
+                        (key) => summary.damageSummary[key]?.[chartDataType] ?? 0
                     ),
                 });
 
@@ -363,7 +387,7 @@ function GeneralReport() {
 
                 {(isLoading || isFetching) && <LoadingSpinner />}
 
-                {isError && <ConnectionError status={error?.response?.status}/>}
+                {isError && <ConnectionError status={error?.response?.status} />}
 
                 {chartData && (
                     <Container fluid className="px-4">
@@ -377,6 +401,22 @@ function GeneralReport() {
                         title="In Stock Summary"
                         groupBy={formValues.groupBy}
                         data={queryResult.stockSummary}
+                    />
+                )}
+
+                {queryResult?.minStockSummary && (
+                    <SimpleReportTable
+                        title="Minimum Stock Summary"
+                        groupBy={formValues.groupBy}
+                        data={queryResult.minStockSummary}
+                    />
+                )}
+
+                {queryResult?.receiveSummary && (
+                    <SimpleReportTable
+                        title="Received Items Summary"
+                        groupBy={formValues.groupBy}
+                        data={queryResult.receiveSummary}
                     />
                 )}
 
@@ -401,6 +441,14 @@ function GeneralReport() {
                         title="Returned Items Summary"
                         groupBy={formValues.groupBy}
                         data={queryResult.returnSummary}
+                    />
+                )}
+
+                {queryResult?.damageSummary && (
+                    <SimpleReportTable
+                        title="Damaged Items Expense Summary"
+                        groupBy={formValues.groupBy}
+                        data={queryResult.damageSummary}
                     />
                 )}
 

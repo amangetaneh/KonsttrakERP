@@ -7,7 +7,7 @@ import Header from "../../layouts/Header";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { fetchSites } from "../../../api/site";
-import { fetchMaterials } from "../../../api/item";
+import { fetchTransferableMaterials } from "../../../api/item";
 import { requestMaterialTransfer } from "../../../api/transfer";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
@@ -29,7 +29,7 @@ function MaterialTransfer() {
         },
     });
 
-    const itemQuery = useQuery("materials", fetchMaterials, {
+    const itemQuery = useQuery("materials", fetchTransferableMaterials, {
         onSuccess: (data) => setAllItems(data),
     });
 
@@ -89,8 +89,6 @@ function MaterialTransfer() {
         setScroll(true);
     }
 
-    if (isLoading) return <LoadingSpinner />;
-
     if (isError || isSubmitError)
         return (
             <ConnectionError
@@ -101,6 +99,8 @@ function MaterialTransfer() {
                 }
             />
         );
+
+    if (isLoading) return <LoadingSpinner />;
 
     return (
         <>

@@ -44,11 +44,13 @@ export const GENERALREPORTGROUPBY = {
 
 export const GENERALREPORTSELECTION = {
     INSTOCK: { value: "InStock", label: "In Stock" },
+    MINSTOCK: { value: "MinStock", label: "Minimum Stock" },
     PURCHASED: { value: "Purchased", label: "Purchased" },
     RECEIVED: { value: "Received", label: "Received" },
     ISSUED: { value: "Issued", label: "Issued" },
     BORROWED: { value: "Borrowed", label: "Borrowed" },
     RETURNED: { value: "Returned", label: "Returned" },
+    DAMAGED: { value: "Damaged", label: "Damaged" },
     TRANSFERREDIN: { value: "TransferredIn", label: "Transferred In" },
     TRANSFERREDOUT: { value: "TransferredOut", label: "Transferred Out" },
 };
