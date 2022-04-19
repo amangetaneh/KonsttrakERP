@@ -9,7 +9,6 @@ namespace ERP.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Employee")]
     public class SiteController : Controller
     {
         private readonly DataContext context;

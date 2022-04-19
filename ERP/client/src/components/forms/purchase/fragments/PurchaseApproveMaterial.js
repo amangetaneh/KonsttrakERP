@@ -101,7 +101,8 @@ function PurchaseApproveMaterial({ addedItems, setAddedItems, index }) {
                             <Form.Group className="mb-3">
                                 <Form.Label>Quantity Approved</Form.Label>
                                 <Form.Control
-                                    min="0"
+                                    min="1"
+                                    max={addedItems[index].qtyRequested}
                                     type="number"
                                     name="qtyApproved"
                                     value={addedItems[index].qtyApproved}

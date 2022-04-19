@@ -44,6 +44,9 @@ import ManageUser from "./components/forms/user/ManageUser";
 import NewRole from "./components/forms/user/NewRole";
 import Dashboard from "./components/forms/Dashboard";
 import Report from "./components/forms/report/Report";
+import ListEmployee from "./components/forms/employee/ListEmployee";
+import SingleEmployee from "./components/forms/employee/SingleEmployee";
+import NewSite from "./components/forms/site/NewSite";
 import NewRent from "./components/forms/rent/NewRent";
 import AdminNotification from "./components/forms/AdminNotification";
 import MinimumStock from "./components/forms/item/MinimumStock";
@@ -61,7 +64,8 @@ const App = () => {
     }, []);
     useEffect(() => {
         if (contextData.token) {
-            axios.defaults.headers.common["Authorization"] = "bearer " + contextData.token;
+            axios.defaults.headers.common["Authorization"] =
+                "bearer " + contextData.token;
         }
     });
     return (
@@ -85,16 +89,27 @@ const App = () => {
 
                             <Route path="/" element={<Dashboard />} />
 
+                            <Route path="employee" element={<ListEmployee />} />
+                            <Route path="employee/:id" element={<SingleEmployee />} />
+
                             <Route path="user/manage" element={<ManageUser />} />
 
                             <Route path="role/new" element={<NewRole />} />
+
+                            <Route path="site/new" element={<NewSite />} />
 
                             <Route path="report" element={<Report />} />
 
                             <Route path="item/minimum-stock" element={<MinimumStock />} />
                             <Route path="item/material/new" element={<MaterialItem />} />
-                            <Route path="item/equipment/new" element={<EquipmentItem />} />
-                            <Route path="item/equipment/model/new" element={<EquipmentModel />} />
+                            <Route
+                                path="item/equipment/new"
+                                element={<EquipmentItem />}
+                            />
+                            <Route
+                                path="item/equipment/model/new"
+                                element={<EquipmentModel />}
+                            />
                             <Route
                                 path="item/equipment/category/new"
                                 element={<EquipmentCategory />}
@@ -113,18 +128,29 @@ const App = () => {
                             <Route path="return/new" element={<NewReturn />} />
 
                             <Route path="maintenance" element={<ListMaintenance />} />
-                            <Route path="maintenance/:id" element={<SingleMaintenance />} />
+                            <Route
+                                path="maintenance/:id"
+                                element={<SingleMaintenance />}
+                            />
                             <Route path="maintenance/new" element={<NewMaintenance />} />
 
-                            <Route path="transfer/material" element={<MaterialTransfer />} />
-                            <Route path="transfer/equipment" element={<EquipmentTransfer />} />
+                            <Route
+                                path="transfer/material"
+                                element={<MaterialTransfer />}
+                            />
+                            <Route
+                                path="transfer/equipment"
+                                element={<EquipmentTransfer />}
+                            />
                             <Route
                                 path="transfer/in"
                                 element={<ListTransfers title="Transfer In" type="in" />}
                             />
                             <Route
                                 path="transfer/out"
-                                element={<ListTransfers title="Transfer Out" type="out" />}
+                                element={
+                                    <ListTransfers title="Transfer Out" type="out" />
+                                }
                             />
                             <Route path="transfer/:id" element={<SingleTransfer />} />
 
@@ -134,11 +160,17 @@ const App = () => {
 
                             <Route path="purchase" element={<ListPurchases />} />
                             <Route path="purchase/:id" element={<SinglePurchase />} />
-                            <Route path="purchase/material" element={<MaterialPurchase />} />
+                            <Route
+                                path="purchase/material"
+                                element={<MaterialPurchase />}
+                            />
 
                             <Route path="receive" element={<ListReceives />} />
                             <Route path="receive/:id" element={<SingleReceive />} />
-                            <Route path="receive/material" element={<ListMySiteReceives />} />
+                            <Route
+                                path="receive/material"
+                                element={<ListMySiteReceives />}
+                            />
 
                             <Route path="notification" element={<AdminNotification />} />
 

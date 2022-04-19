@@ -19,13 +19,14 @@ namespace ERP.Services.User
 
             var UserAccount = context.UserAccounts
                 .Where(u => u.Username == GetMyName())
-                .Include(u => u.UserRole)
+                .Include(u => u.Employee)
+                .ThenInclude(e => e.UserRole)
                 .Include(u => u.Employee)
                 .ThenInclude(e => e.EmployeeSite)
                 .FirstOrDefault();
 
-            UserRole = UserAccount == null ? null : UserAccount.UserRole;
             Employee = UserAccount == null ? null : UserAccount.Employee;
+            UserRole = Employee == null ? null : Employee.UserRole;
         }
 
         public string GetMyName()

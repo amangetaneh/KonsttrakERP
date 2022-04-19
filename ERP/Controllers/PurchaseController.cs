@@ -32,8 +32,8 @@ namespace ERP.Controllers
 
             UserAccount = context.UserAccounts
                 .Where(u => u.Username == _userService.GetMyName())
-                .Include(u => u.UserRole)
                 .Include(u => u.Employee)
+                .ThenInclude(e => e.UserRole)
                 .FirstOrDefault();
 
             Employee = UserAccount.Employee;
@@ -68,6 +68,7 @@ namespace ERP.Controllers
 
             var purchases = await context.Purchases
                 .Include(purchase => purchase.ReceivingSite)
+                .OrderByDescending(purchase => purchase.PurchaseId)
                 .ToListAsync();
 
             return Ok(purchases);
@@ -83,12 +84,12 @@ namespace ERP.Controllers
             purchase.ReceivingSiteId = purchaseDTO.ReceivingSiteId;
 
             ICollection<PurchaseItem> purchaseItems = new List<PurchaseItem>();
-
+            ICollection<PurchaseItemEmployee> purchaseItemEmployees = new List<PurchaseItemEmployee>();
+            
             foreach (var requestItem in purchaseDTO.PurchaseItems)
             {
                 PurchaseItem purchaseItem = new();
                 purchaseItem.ItemId = requestItem.ItemId;
-                purchaseItem.RequestedById = Employee.EmployeeId;
                 purchaseItem.QtyRequested = requestItem.QtyRequested;
                 purchaseItem.RequestRemark = requestItem.RequestRemark;
 
@@ -108,9 +109,19 @@ namespace ERP.Controllers
                 purchaseItems.Add(purchaseItem);
 
                 purchase.TotalPurchaseCost += purchaseItem.TotalCost;
+            
+                PurchaseItemEmployee purchaseItemEmployee = new();
+                purchaseItemEmployee.ItemId = requestItem.ItemId;
+
+                purchaseItemEmployee.RequestedById = Employee.EmployeeId;
+                purchaseItemEmployee.QtyRequested = requestItem.QtyRequested;
+                purchaseItemEmployee.RequestRemark = requestItem.RequestRemark;
+                purchaseItemEmployees.Add(purchaseItemEmployee);
+
             }
 
             purchase.PurchaseItems = purchaseItems;
+            purchase.PurchaseItemEmployees = purchaseItemEmployees;
 
             context.Purchases.Add(purchase);
 
@@ -249,7 +260,6 @@ namespace ERP.Controllers
                 purchaseItem.PurchaseRemark = requestItem.PurchaseRemark;
                 purchaseItem.TotalCost = purchaseItem.Cost * purchaseItem.QtyPurchased;
 
-                
             }
 
             purchase.TotalPurchaseCost = 0;

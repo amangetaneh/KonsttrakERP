@@ -31,8 +31,8 @@ namespace ERP.Controllers
 
             UserAccount = context.UserAccounts
                 .Where(u => u.Username == _userService.GetMyName())
-                .Include(u => u.UserRole)
                 .Include(u => u.Employee)
+                .ThenInclude(e => e.UserRole)
                 .FirstOrDefault();
 
             Employee = UserAccount.Employee;
@@ -42,7 +42,9 @@ namespace ERP.Controllers
         public async Task<ActionResult<List<Receive>>> Get()
         {
 
-            var receives = await context.Receives.ToListAsync();
+            var receives = await context.Receives
+                .OrderByDescending(receive => receive.ReceiveId)
+                .ToListAsync();
 
             return Ok(receives);
         }
@@ -80,6 +82,7 @@ namespace ERP.Controllers
               .ThenInclude(item => item.Material)
               .Include(receive => receive.ReceiveItems)
               .ThenInclude(receiveItem => receiveItem.Item.Equipment)
+              .OrderByDescending(receive => receive.ReceiveId)
               .ToListAsync();
 
             if (receives == null) return NotFound("Not Found.");
@@ -119,12 +122,12 @@ namespace ERP.Controllers
 
             receive.Status = RECEIVESTATUS.RECEIVED;
 
-            var buy = context.Buys.Where(buy => buy.PurchaseId == receive.PurchaseId && buy.Status == BUYSTATUS.QUEUED)
-                            .Include(buy => buy.BuyItems)
-                            .FirstOrDefault();
-
-            if (buy != null) buy.Status = BUYSTATUS.BOUGHT;
-
+            
+            foreach (var buy in context.Buys.Where(buy => buy.PurchaseId == receive.PurchaseId && buy.Status == BUYSTATUS.QUEUED))
+            {
+                buy.Status = BUYSTATUS.BOUGHT;
+            }
+            
             //Notify employees who requested the purchase here
 
             await context.SaveChangesAsync();

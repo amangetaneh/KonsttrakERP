@@ -1,6 +1,7 @@
 ﻿using ERP.Context;
 using ERP.DTOs.User;
 using ERP.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,7 @@ namespace ERP.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Employee")]
     public class EmployeeController : Controller
     {
         private readonly DataContext context;
@@ -17,12 +19,24 @@ namespace ERP.Controllers
             this.context = context;
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Employee>> GetById(int id)
+        {
+            var employee = context.Employees
+                .Where(employee => employee.EmployeeId == id)
+                .FirstOrDefault();
+
+            return Ok(employee);
+        }
+
         [HttpGet]
         public async Task<ActionResult<List<Employee>>> Get()
         {
-            var stores = await context.Employees.ToListAsync();
+            var employees = await context.Employees
+                .Include(employee => employee.UserRole) 
+                .ToListAsync();
 
-            return Ok(stores);
+            return Ok(employees);
         }
 
         [HttpPost("changesite")]
@@ -34,7 +48,7 @@ namespace ERP.Controllers
 
             if (employee == null) return NotFound("Employee Not Found.");
 
-            employee.EmployeeSiteId = userDTO.SiteId;
+            employee.EmployeeSiteId = userDTO.EmployeeSiteId;
 
             await context.SaveChangesAsync();
 
@@ -44,17 +58,55 @@ namespace ERP.Controllers
         [HttpPost("changerole")]
         public async Task<ActionResult<Employee>> ChangeEmployeeRole(UpdateUserDTO userDTO)
         {
-            var userAccount = context.UserAccounts
+            var employee = context.Employees
                 .Where(e => e.EmployeeId == userDTO.EmployeeId)
                 .FirstOrDefault();
 
-            if (userAccount == null) return NotFound("Employee Not Found.");
+            if (employee == null) return NotFound("Employee Not Found.");
 
-            userAccount.UserRoleId = userDTO.RoleId;
+            employee.UserRoleId = userDTO.UserRoleId;
 
             await context.SaveChangesAsync();
 
-            return Ok(userAccount);
+            return Ok(employee);
+        }
+
+        [HttpPost("update")]
+        public async Task<ActionResult<Employee>> UpdateEmployee(UpdateUserDTO userDTO)
+        {
+            var employee = context.Employees
+                .Where(e => e.EmployeeId == userDTO.EmployeeId)
+                .FirstOrDefault();
+
+            if (employee == null) return NotFound("Employee Not Found.");
+
+            employee.FName = userDTO.FName;
+            employee.MName = userDTO.MName;
+            employee.LName = userDTO.LName;
+            employee.Position = userDTO.Position;
+            employee.EmployeeSiteId = userDTO.EmployeeSiteId;
+            employee.UserRoleId = userDTO.UserRoleId;
+
+            await context.SaveChangesAsync();
+
+            return Ok(employee);
+        }
+
+        [HttpPost("approve")]
+        public async Task<ActionResult<UserAccount>> Approve(ApproveUserDTO approveDTO)
+        {
+            var employee = context.Employees.Where(employee => employee.EmployeeId == approveDTO.EmployeeId)
+                .FirstOrDefault();
+
+            if (employee == null) return NotFound("User Not Found.");
+
+            employee.UserRoleId = approveDTO.UserRoleId;
+
+            employee.Status = EMPLOYEESTATUS.APPROVED;
+
+            await context.SaveChangesAsync();
+
+            return Ok(employee);
         }
     }
 }

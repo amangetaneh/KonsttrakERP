@@ -15,8 +15,5 @@ namespace ERP.Models
 
         public int? EmployeeId { get; set; }
 
-        public UserRole UserRole { get; set; }
-
-        public int UserRoleId { get; set; }
     }
 }

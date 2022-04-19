@@ -97,6 +97,7 @@ function PurchaseRequestMaterial({
                         <InputGroup className="mb-3">
                             <Form.Control
                                 min="1"
+                                max="10"
                                 type="number"
                                 name="qtyRequested"
                                 value={addedItems[index].qtyRequested}

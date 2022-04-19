@@ -12,9 +12,6 @@ namespace ERP.Models
         [Key]
         public int ItemId { get; set; }
 
-        [Key]
-        public int RequestedById { get; set; }
-
         public int QtyRequested { get; set; } = 0;
 
         public int QtyApproved { get; set; } = 0;
@@ -39,8 +36,5 @@ namespace ERP.Models
 
         [ForeignKey("ItemId")]
         public Item Item { get; set; }
-
-        [ForeignKey("RequestedById")]
-        public Employee Employee { get; set; }
     }
 }
