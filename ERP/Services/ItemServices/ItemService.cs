@@ -73,7 +73,7 @@ namespace ERP.Services.ItemServices
             {
                 var items = await _context.MaterialSiteQties
                     .Where(msq => msq.SiteId == siteId &&
-                        requestDTO.ItemId == -1 || msq.ItemId == requestDTO.ItemId)
+                        (requestDTO.ItemId == -1 || msq.ItemId == requestDTO.ItemId))
                     .Include(msq => msq.Item)
                     .ToListAsync();
 
@@ -95,8 +95,8 @@ namespace ERP.Services.ItemServices
             {
                 var items = await _context.EquipmentSiteQties
                     .Where(msq => msq.SiteId == siteId &&
-                        requestDTO.ItemId == -1 || msq.EquipmentModel.ItemId == requestDTO.ItemId &&
-                        requestDTO.EquipmentCategoryId == -1 || msq.EquipmentModel.Equipment.EquipmentCategoryId == requestDTO.EquipmentCategoryId)
+                        (requestDTO.ItemId == -1 || msq.EquipmentModel.ItemId == requestDTO.ItemId) &&
+                        (requestDTO.EquipmentCategoryId == -1 || msq.EquipmentModel.Equipment.EquipmentCategoryId == requestDTO.EquipmentCategoryId))
                     .Include(msq => msq.EquipmentModel.Equipment.Item)
                     .ToListAsync();
 

@@ -2,6 +2,7 @@
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services.User;
+using ERP.Services.ItemSiteQtyServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,7 @@ namespace ERP.Controllers
     public class ReceiveController : Controller
     {
         private readonly DataContext context;
+        private readonly IItemSiteQtyService _itemSiteQtyService;
         private readonly IUserService _userService;
 
         public UserAccount? UserAccount { get; }
@@ -23,8 +25,9 @@ namespace ERP.Controllers
         public Employee Employee { get; }
 
 
-        public ReceiveController(DataContext context, IUserService userService)
+        public ReceiveController(IItemSiteQtyService itemSiteQtyService, DataContext context, IUserService userService)
         {
+            _itemSiteQtyService = itemSiteQtyService;
             this.context = context;
 
             _userService = userService;
@@ -118,10 +121,11 @@ namespace ERP.Controllers
                 receiveItem.ReceiveRemark = requestItem.ReceiveRemark;
 
                 receiveItems.Add(receiveItem);
+                
+                await _itemSiteQtyService.AddMaterial(requestItem.ItemId, (int)Employee.EmployeeSiteId, requestItem.QtyReceived);
             }
 
             receive.Status = RECEIVESTATUS.RECEIVED;
-
             
             foreach (var buy in context.Buys.Where(buy => buy.PurchaseId == receive.PurchaseId && buy.Status == BUYSTATUS.QUEUED))
             {

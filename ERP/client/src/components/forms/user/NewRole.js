@@ -4,12 +4,12 @@ import { useState, useMemo } from "react";
 import { Form, Button, Container, InputGroup } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
 import ToggleBox from "../../layouts/ToggleBox";
-import {ToastContainer,toast} from 'react-toastify'
+import { ToastContainer, toast } from "react-toastify";
 import { useMutation } from "react-query";
 import { addRole } from "../../../api/role";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
-
+import AlertNotification from "../../fragments/AlertNotification";
 
 function NewRole() {
     const [role, setRole] = useState([new Role()]);
@@ -17,16 +17,16 @@ function NewRole() {
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
 
-    const toastOption={
+    const toastOption = {
         position: "bottom-right",
         autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
-        theme:"dark"
+        theme: "dark",
         // progress: undefined
-       }
+    };
 
     const {
         isError: isSubmitError,
@@ -34,34 +34,36 @@ function NewRole() {
         mutate: submitNewRole,
     } = useMutation(addRole, {
         onSuccess: (res) => {
-            toast.success("Role Is Successfully Added",toastOption);},
+            toast.success("Role Is Successfully Added", toastOption);
+        },
     });
 
     function submit(e) {
         e.preventDefault();
-        if (isSubmitLoading) return;
-
-        var data = role;
-
-        submitNewRole(data);
+        toast.success("Role Is Successfully Added", toastOption);
     }
 
-    if (isError || isSubmitError) return <ConnectionError/>;
+    if (isError || isSubmitError) return <ConnectionError />;
 
     return (
         <>
             <Header title="Add New Role" />
 
             <Container className="my-3">
-                <Form onSubmit={submit} >
+                <AlertNotification
+                    title="Feature Under Construction"
+                    content="Adding Role Feature is Under Construction. It Will Be Available Once Development Is Completed."
+                />
+                <Form onSubmit={submit}>
                     <div>
                         <div className="row">
                             <div className="mx-4 col">
                                 <Form.Group>
                                     <InputGroup className="mb-3">
-                                        <Form.Label className="col-3 pt-2 h5">Role Name</Form.Label>
-                                        <Form.Control
-                                            type="text"/>
+                                        <Form.Label className="col-3 pt-2 h5">
+                                            Role Name
+                                        </Form.Label>
+                                        <Form.Control type="text" />
                                     </InputGroup>
                                 </Form.Group>
                             </div>
@@ -75,22 +77,22 @@ function NewRole() {
                             <div className="row mx-4">
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Approve User Acconunt"
-                                            value='1'
-                                            type="checkbox">
-                                            </Form.Check>
+                                            value="1"
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Delete User Account"
                                             name="bool1"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                             </div>
@@ -100,56 +102,56 @@ function NewRole() {
                             <div className="row mx-4">
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can View Purchase Requests"
                                             name="bool"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Request Purchase"
                                             name="bool1"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                             </div>
                             <div className="row mx-4">
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Check Purchase"
                                             name="bool"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Approve Purchase"
                                             name="bool1"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                             </div>
                             <div className="row mx-4">
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Confirm Purchase"
                                             name="bool"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                             </div>
@@ -159,56 +161,56 @@ function NewRole() {
                             <div className="row mx-4">
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can View Buy Requests"
                                             name="bool"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Request Buy"
                                             name="bool1"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                             </div>
                             <div className="row mx-4">
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Check Buy"
                                             name="bool"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Approve Buy"
                                             name="bool1"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                             </div>
                             <div className="row mx-4">
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Confirm Buy"
                                             name="bool"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                             </div>
@@ -218,34 +220,34 @@ function NewRole() {
                             <div className="row mx-4">
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can View Receive Requests"
                                             name="bool"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Receive Item"
                                             name="bool1"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                             </div>
                             <div className="row mx-4">
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Approve Receive"
                                             name="bool"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                             </div>
@@ -255,44 +257,44 @@ function NewRole() {
                             <div className="row mx-4">
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can View Issue Requests"
                                             name="bool"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Request An Issue"
                                             name="bool1"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                             </div>
                             <div className="row mx-4">
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Approve An Issue Buy"
                                             name="bool"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Hand An Issue"
                                             name="bool1"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                             </div>
@@ -302,56 +304,56 @@ function NewRole() {
                             <div className="row mx-4">
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can View Borrow Requests"
                                             name="bool"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Request Borrow"
                                             name="bool1"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                             </div>
                             <div className="row mx-4">
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Approve Borrow"
                                             name="bool"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Hand Borrow"
                                             name="bool1"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                             </div>
                             <div className="row mx-4">
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Return Borrow"
                                             name="bool"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                             </div>
@@ -361,44 +363,44 @@ function NewRole() {
                             <div className="row mx-4">
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can View Maintenance Requests"
                                             name="bool"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Request Maintenance"
                                             name="bool1"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                             </div>
                             <div className="row mx-4">
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Fix Maintenance"
                                             name="bool"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Approve Maintenance"
                                             name="bool1"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                             </div>
@@ -408,12 +410,12 @@ function NewRole() {
                             <div className="row mx-4">
                                 <div className="col-6">
                                     <Form.Group className="mb-3">
-                                            <Form.Check
+                                        <Form.Check
                                             inline
                                             label="Can Get Stock Notification"
                                             name="bool"
-                                            type="checkbox">
-                                            </Form.Check>
+                                            type="checkbox"
+                                        ></Form.Check>
                                     </Form.Group>
                                 </div>
                             </div>
@@ -427,7 +429,7 @@ function NewRole() {
                         </div>
                     </div>
                 </Form>
-                <ToastContainer/>
+                <ToastContainer />
             </Container>
         </>
     );

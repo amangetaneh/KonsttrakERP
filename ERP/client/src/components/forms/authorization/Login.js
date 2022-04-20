@@ -9,12 +9,8 @@ import { useAuth, useAuthUpdate } from "../../../contexts/AuthContext";
 
 const Login = () => {
     const navigate = useNavigate();
-    // const token=useSelector(state=>state.auth.token)
     const contextData = useAuth();
     const updateAuthContext = useAuthUpdate();
-    //console.log("pppppppppppppp", contextData)
-    // const storUsername=useSelector(state=>state.auth.username)
-    // const dispatch = useDispatch()
     const [value, setValue] = useState({
         username: "",
         password: "",
@@ -28,7 +24,6 @@ const Login = () => {
         pauseOnHover: true,
         draggable: true,
         theme: "dark",
-        // progress: undefined
     };
 
     const handleLogin = async (e) => {
@@ -41,11 +36,16 @@ const Login = () => {
             try {
                 const res = await api.post("Authorization/login", value);
                 console.log(res);
-                updateAuthContext({ ...contextData, token: res.data.token, data: res.data });
+                updateAuthContext({
+                    ...contextData,
+                    token: res.data.token,
+                    data: res.data,
+                });
                 localStorage.setItem("token", res.data.token);
                 localStorage.setItem("data", JSON.stringify(res.data));
 
-                axios.defaults.headers.common["Authorization"] = "bearer " + res.data.token;
+                axios.defaults.headers.common["Authorization"] =
+                    "bearer " + res.data.token;
 
                 navigate("/");
             } catch (err) {
@@ -59,9 +59,13 @@ const Login = () => {
         <div className="loginAndRegistration">
             {contextData?.username && (
                 <div style={{ maxWidth: "600px", margin: "auto" }}>
-                    <div style={{ marginTop: "30px" }} className="alert alert-success" role="alert">
-                        You have successfully registered. Use username: {contextData.username} to
-                        login.
+                    <div
+                        style={{ marginTop: "30px" }}
+                        className="alert alert-success"
+                        role="alert"
+                    >
+                        You have successfully registered. Use username:{" "}
+                        {contextData.username} to login.
                     </div>
                 </div>
             )}
@@ -70,7 +74,11 @@ const Login = () => {
                 <form className="login" style={{ backgroundColor: "#f1f1f1" }}>
                     <h3 style={{ color: "grey", paddingTop: "10px" }}>
                         <FcFlowChart
-                            style={{ width: "40px", height: "40px", marginBottom: "10px" }}
+                            style={{
+                                width: "40px",
+                                height: "40px",
+                                marginBottom: "10px",
+                            }}
                         />{" "}
                         ERP
                     </h3>
@@ -78,7 +86,9 @@ const Login = () => {
                     <div className="form-group">
                         <label>Username</label>
                         <input
-                            onChange={(e) => setValue({ ...value, username: e.target.value })}
+                            onChange={(e) =>
+                                setValue({ ...value, username: e.target.value })
+                            }
                             value={value.username}
                             type="username"
                             className="form-control"
@@ -88,7 +98,9 @@ const Login = () => {
                     <div className="form-group">
                         <label>Password</label>
                         <input
-                            onChange={(e) => setValue({ ...value, password: e.target.value })}
+                            onChange={(e) =>
+                                setValue({ ...value, password: e.target.value })
+                            }
                             value={value.password}
                             type="password"
                             className="form-control"

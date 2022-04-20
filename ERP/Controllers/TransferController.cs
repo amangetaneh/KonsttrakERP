@@ -41,8 +41,6 @@ namespace ERP.Controllers
             //if (UserAccount != null && UserAccount.UserRole.CanViewTransfer != 1) return Forbid();
 
             //if(_userService == null || !_userService.UserRole.CanViewTransfer)
-            return Unauthorized();
-
             try
             {
                 Transfer transfer = await _transferService.GetById(id);

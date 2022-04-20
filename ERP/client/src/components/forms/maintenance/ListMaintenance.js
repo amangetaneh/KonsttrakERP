@@ -81,7 +81,7 @@ function ListMaintenance() {
 
     return (
         <>
-            <Header title="Issues" />
+            <Header title="Maintenances" />
 
             <Container className="my-3">
                 <Table columns={columns} data={maintenances} />

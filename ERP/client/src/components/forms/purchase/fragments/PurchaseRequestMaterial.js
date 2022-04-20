@@ -2,12 +2,7 @@ import { Form, Button, InputGroup } from "react-bootstrap";
 import { FaTrash } from "react-icons/fa";
 import PropTypes from "prop-types";
 
-function PurchaseRequestMaterial({
-    allItems,
-    addedItems,
-    setAddedItems,
-    index,
-}) {
+function PurchaseRequestMaterial({ allItems, addedItems, setAddedItems, index }) {
     function selectedItemChanged(e) {
         const selectedId = e.target.value;
 
@@ -80,10 +75,7 @@ function PurchaseRequestMaterial({
                                             ).length === 0
                                     )
                                     .map((item) => (
-                                        <option
-                                            key={item.itemId}
-                                            value={item.itemId}
-                                        >
+                                        <option key={item.itemId} value={item.itemId}>
                                             {item.name}
                                         </option>
                                     ))
@@ -97,7 +89,6 @@ function PurchaseRequestMaterial({
                         <InputGroup className="mb-3">
                             <Form.Control
                                 min="1"
-                                max="10"
                                 type="number"
                                 name="qtyRequested"
                                 value={addedItems[index].qtyRequested}

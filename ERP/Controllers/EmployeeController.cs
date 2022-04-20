@@ -80,6 +80,7 @@ namespace ERP.Controllers
 
             if (employee == null) return NotFound("Employee Not Found.");
 
+            employee.Status = userDTO.Status;
             employee.FName = userDTO.FName;
             employee.MName = userDTO.MName;
             employee.LName = userDTO.LName;

@@ -60,7 +60,10 @@ function Dashboard() {
                                             to: "/transfer/equipment",
                                             label: "New Equipment Transfer",
                                         },
-                                        { to: "/transfer/in", label: "View Transfer In Requests" },
+                                        {
+                                            to: "/transfer/in",
+                                            label: "View Transfer In Requests",
+                                        },
                                         {
                                             to: "/transfer/out",
                                             label: "View Transfer Out Requests",
@@ -77,7 +80,10 @@ function Dashboard() {
                                             to: "/maintenance/new",
                                             label: "New Maintenance Request",
                                         },
-                                        { to: "/maintenance", label: "View Maintenance Requests" },
+                                        {
+                                            to: "/maintenance",
+                                            label: "View Maintenance Requests",
+                                        },
                                     ]}
                                 />
                             </Col>
@@ -87,10 +93,13 @@ function Dashboard() {
                                     title="Purchase"
                                     links={[
                                         {
-                                            to: "/maintenance/new",
-                                            label: "New Maintenance Request",
+                                            to: "/purchase/material",
+                                            label: "Buy Material Request",
                                         },
-                                        { to: "/maintenance", label: "View Maintenance Requests" },
+                                        {
+                                            to: "/purchase",
+                                            label: "View Purchase Requests",
+                                        },
                                     ]}
                                 />
                             </Col>
@@ -100,10 +109,10 @@ function Dashboard() {
                                     title="Buy"
                                     links={[
                                         {
-                                            to: "/maintenance/new",
-                                            label: "New Maintenance Request",
+                                            to: "/buy/material",
+                                            label: "Purchase Material Request",
                                         },
-                                        { to: "/maintenance", label: "View Maintenance Requests" },
+                                        { to: "/buy", label: "View Buy Requests" },
                                     ]}
                                 />
                             </Col>
@@ -113,10 +122,10 @@ function Dashboard() {
                                     title="Receive"
                                     links={[
                                         {
-                                            to: "/maintenance/new",
-                                            label: "New Maintenance Request",
+                                            to: "/receive/material",
+                                            label: "Receive Material Request",
                                         },
-                                        { to: "/maintenance", label: "View Maintenance Requests" },
+                                        { to: "/receive", label: "View Receives" },
                                     ]}
                                 />
                             </Col>
