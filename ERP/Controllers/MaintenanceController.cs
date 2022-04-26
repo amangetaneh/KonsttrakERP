@@ -47,9 +47,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<List<Maintenance>>> Get()
         {
 
-            var maintenance = await context.Maintenances
-                .Include(maintenance => maintenance.Site)
-                .ToListAsync();
+            var maintenance = await _maintenanceService.GetByCondition();
 
             return Ok(maintenance);
         }

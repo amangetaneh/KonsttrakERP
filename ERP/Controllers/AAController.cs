@@ -3,11 +3,13 @@ using ERP.DTOs;
 using ERP.Models;
 using ERP.Services.AssetNumberServices;
 using ERP.Services.EquipmentAssetServices;
+using ERP.Services.FileServices;
 using ERP.Services.ItemSiteQtyServices;
 using ERP.Services.ReportServices;
 using ERP.Services.SiteServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace ERP.Controllers
 {
@@ -15,34 +17,41 @@ namespace ERP.Controllers
     [ApiController]
     public class AAController : Controller
     {
+        private readonly IFileService _fileService;
         private readonly DataContext context;
         private readonly IEquipmentAssetService _equipmentAssetService;
         private readonly IItemSiteQtyService _itemSiteQtyService;
         private readonly IReportService _reportService;
         private readonly IAssetNumberService _assetNumberService;
+        private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _env;
         private readonly ISiteService _siteService;
 
-        public AAController(DataContext context, IEquipmentAssetService equipmentAssetService, IItemSiteQtyService itemSiteQtyService, IReportService reportService, IAssetNumberService assetNumberService)
+        public AAController(IFileService fileService, DataContext context, IEquipmentAssetService equipmentAssetService, IItemSiteQtyService itemSiteQtyService, IReportService reportService, IAssetNumberService assetNumberService, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
         {
+            _fileService = fileService;
             this.context = context;
             _equipmentAssetService = equipmentAssetService;
             _itemSiteQtyService = itemSiteQtyService;
             _reportService = reportService;
             _assetNumberService = assetNumberService;
+            _env = env;
         }
 
         [HttpGet("a")]
-        public async Task<ActionResult> GetA()
+        public async Task<FileContentResult> GetA(string fileName)
         {
+            FileContentResult file = await _fileService.GetFile(fileName, this);
+            
+            return (file);
 
-            return Ok();
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(GeneralReportDTO reportDTO)
-        {           
+        public async Task<ActionResult<IFormFile>> Post(IFormFile file)
+        {
+            var name = await _fileService.SaveFile(file);          
             
-            return Ok(await _reportService.GetGeneralReport(reportDTO));
+            return Ok(name);
         }
 
         [HttpGet]

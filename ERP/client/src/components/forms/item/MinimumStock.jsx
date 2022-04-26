@@ -44,7 +44,18 @@ function MinimumStock() {
     );
 
     function valueChanged(e) {
-        setFormValues({ ...formValues, [e.target.name]: e.target.value });
+        const data = { ...formValues };
+
+        data[e.target.name] = e.target.value;
+
+        if (e.target.name === "itemType") {
+            data.equipmentCategoryId = "-1";
+            data.itemId = "-1";
+        }
+
+        if (e.target.name === "equipmentCategoryId") data.itemId = "-1";
+
+        setFormValues(data);
     }
 
     const {
@@ -81,10 +92,7 @@ function MinimumStock() {
         isFetching,
         isError,
         error,
-        refetch,
-    } = useQuery(["minimumstock", formValues], () => fetchMinimumStockItems(formValues), {
-        enabled: false,
-    });
+    } = useQuery(["minimumstock", formValues], () => fetchMinimumStockItems(formValues));
 
     useEffect(() => {
         if (queryResultData == undefined) return;
@@ -169,24 +177,6 @@ function MinimumStock() {
                         }
                     />
                 )}
-                <Row>
-                    <Col xs={10} className=" d-grid">
-                        <Button className="btn-teal-dark" onClick={refetch}>
-                            Select Items
-                        </Button>
-                    </Col>
-                    <Col className="d-grid">
-                        <Button
-                            variant="outline-danger"
-                            onClick={() => {
-                                setFormValues(initFormValues());
-                                setStockValues([]);
-                            }}
-                        >
-                            Reset
-                        </Button>
-                    </Col>
-                </Row>
 
                 {isError || isSubmitError ? (
                     <ConnectionError

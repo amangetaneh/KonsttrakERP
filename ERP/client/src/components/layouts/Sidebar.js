@@ -89,6 +89,9 @@ function Sidebar() {
                             <MenuItem>
                                 Notifications <Link to="/notification" />
                             </MenuItem>
+                            <MenuItem>
+                                Company Name / Prefix <Link to="/misc/company" />
+                            </MenuItem>
                         </SubMenu>
                         <SubMenu
                             title="Inventory"

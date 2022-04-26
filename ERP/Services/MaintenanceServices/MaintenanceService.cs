@@ -37,7 +37,7 @@ namespace ERP.Services.MaintenanceServices
             return maintenance;
         }
 
-        public async Task<List<Maintenance>> GetByCondition(GetMaintenancesDTO getMaintenanceDTO)
+        public async Task<List<Maintenance>> GetByCondition()
         {
             checkEmployeeSiteIsAvailable();
             UserRole userRole = _userService.UserRole;
