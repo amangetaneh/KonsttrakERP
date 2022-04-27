@@ -40,7 +40,7 @@ namespace ERP.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Purchase>> Get(int id)
+        public async Task<ActionResult<Purchase>> GetById(int id)
         {
             //if (UserAccount != null && UserAccount.UserRole.CanViewPurchase != 1) return Forbid();
 
@@ -74,8 +74,8 @@ namespace ERP.Controllers
             return Ok(purchases);
         }
 
-        [HttpPost("request")]
-        public async Task<ActionResult<List<Purchase>>> Post(CreatePurchaseDTO purchaseDTO)
+        [HttpPost("request/material")]
+        public async Task<ActionResult<List<Purchase>>> RequestMaterial(CreateMaterialPurchaseDTO purchaseDTO)
         {
             //if (UserAccount != null && UserAccount.UserRole.CanRequestPurchase != 1) return Forbid();
 
@@ -100,11 +100,7 @@ namespace ERP.Controllers
 
                 if (itemTemp == null) return NotFound($"Purchase Item with Id {requestItem.ItemId} Not Found");
 
-                if (itemTemp.Type == ITEMTYPE.MATERIAL)
-                {
-                    purchaseItem.Cost = itemTemp.Material.Cost;
-                    purchaseItem.TotalCost = itemTemp.Material.Cost * purchaseItem.QtyRequested;
-                }
+                if (itemTemp.Type != ITEMTYPE.EQUIPMENT) return BadRequest("Item type is not material");
                
                 purchaseItems.Add(purchaseItem);
 
@@ -130,6 +126,56 @@ namespace ERP.Controllers
             return Ok(purchase.PurchaseId);
         }
 
+        [HttpPost("request/equipment")]
+        public async Task<ActionResult<List<Purchase>>> RequestEquipment(CreateMaterialPurchaseDTO purchaseDTO)
+        {
+            Purchase purchase = new();
+            purchase.RequestedById = Employee.EmployeeId;
+            purchase.ReceivingSiteId = purchaseDTO.ReceivingSiteId;
+
+            ICollection<PurchaseItem> purchaseItems = new List<PurchaseItem>();
+            ICollection<PurchaseItemEmployee> purchaseItemEmployees = new List<PurchaseItemEmployee>();
+
+            foreach (var requestItem in purchaseDTO.PurchaseItems)
+            {
+                PurchaseItem purchaseItem = new();
+                purchaseItem.ItemId = requestItem.ItemId;
+                purchaseItem.QtyRequested = requestItem.QtyRequested;
+                purchaseItem.RequestRemark = requestItem.RequestRemark;
+
+                var itemTemp = context.Items.Where(item => item.ItemId == requestItem.ItemId).
+                    Include(i => i.Equipment).
+                    Include(i => i.Material).
+                    FirstOrDefault();
+
+                if (itemTemp == null) return NotFound($"Purchase Item with Id {requestItem.ItemId} Not Found");
+
+                if (itemTemp.Type != ITEMTYPE.EQUIPMENT) return BadRequest("Item type is not equipment");
+
+                purchaseItems.Add(purchaseItem);
+
+                purchase.TotalPurchaseCost += purchaseItem.TotalCost;
+
+                PurchaseItemEmployee purchaseItemEmployee = new();
+                purchaseItemEmployee.ItemId = requestItem.ItemId;
+
+                purchaseItemEmployee.RequestedById = Employee.EmployeeId;
+                purchaseItemEmployee.QtyRequested = requestItem.QtyRequested;
+                purchaseItemEmployee.RequestRemark = requestItem.RequestRemark;
+                purchaseItemEmployees.Add(purchaseItemEmployee);
+
+            }
+
+            purchase.PurchaseItems = purchaseItems;
+            purchase.PurchaseItemEmployees = purchaseItemEmployees;
+
+            context.Purchases.Add(purchase);
+
+            await context.SaveChangesAsync();
+
+            return Ok(purchase.PurchaseId);
+        }
+        
         [HttpPost("approve")]
         public async Task<ActionResult<Purchase>> Approve(ApprovePurchaseDTO approveDTO)
         {
