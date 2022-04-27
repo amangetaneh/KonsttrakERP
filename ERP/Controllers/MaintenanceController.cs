@@ -52,6 +52,14 @@ namespace ERP.Controllers
             return Ok(maintenance);
         }
 
+        [HttpGet("assets")]
+        public async Task<ActionResult<List<EquipmentAsset>>> GetItems(int modelId)
+        {
+            var items = await _maintenanceService.GetItems(modelId);
+
+            return Ok(items);
+        }
+
         [HttpPost("request")]
         public async Task<ActionResult<int>> Post(CreateMaintenanceDTO maintenanceDTO)
         {

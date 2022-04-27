@@ -255,7 +255,10 @@ function SingleTransfer() {
 
     return (
         <>
-            <Header title={titles[transfer.status]} />
+            <Header
+                title={titles[transfer.status]}
+                showPrint={transfer.status === TRANSFERSTATUS.RECEIVED || viewOnly}
+            />
 
             <Container className="my-3">
                 <>

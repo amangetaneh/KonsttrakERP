@@ -166,6 +166,9 @@ namespace ERP.Migrations
                     b.Property<int?>("AssetDamageId")
                         .HasColumnType("int");
 
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("ReturnId")
                         .HasColumnType("int");
 
