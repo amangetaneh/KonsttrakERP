@@ -1,10 +1,10 @@
 import { Navbar, Container, Nav, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaPrint } from "react-icons/fa";
 import NotificationCanvas from "../notification/NotificationCanvas";
 
-function Header({ title, showNotification }) {
+function Header({ title, showNotification, showPrint }) {
     const navigate = useNavigate();
 
     function goBack() {
@@ -20,7 +20,13 @@ function Header({ title, showNotification }) {
                 <Navbar.Brand>{title}</Navbar.Brand>
 
                 <Nav className="ms-auto">
-                    {showNotification && <NotificationCanvas className="" />}
+                    {showPrint && (
+                        <Button className="btn-teal-dark me-3" onClick={() => window.print()}>
+                            <FaPrint className="me-2" />
+                            Print
+                        </Button>
+                    )}
+                    {showNotification && <NotificationCanvas />}
                 </Nav>
             </Container>
         </Navbar>
@@ -29,10 +35,13 @@ function Header({ title, showNotification }) {
 
 Header.propTypes = {
     title: PropTypes.string.isRequired,
+    showNotification: PropTypes.bool,
+    showPrint: PropTypes.bool,
 };
 
 Header.defaultProps = {
     showNotification: true,
+    showPrint: false,
 };
 
 export default Header;

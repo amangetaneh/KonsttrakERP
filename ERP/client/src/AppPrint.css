@@ -23,7 +23,7 @@
         border-right: 0;
         background-color: transparent;
         border-radius: 0;
-        padding-top: 0;
+        padding-top: 0.2rem;
         margin-bottom: 0.3rem;
     }
     .input-group {
@@ -54,5 +54,8 @@
 
     .table {
         padding-bottom: 4px !important;
+    }
+    .d-print-table-row-group {
+        display: table-row-group !important;
     }
 }

@@ -118,7 +118,7 @@ function SingleReturn() {
 
     return (
         <>
-            <Header title={"Returned Assets"} />
+            <Header title={"Returned Assets"} showPrint/>
 
             <Container className="my-3">
                 <TopForm />
