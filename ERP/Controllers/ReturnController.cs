@@ -46,9 +46,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<List<Borrow>>> Get()
         {
 
-            var returns = await context.Returns
-                .Include(ret => ret.Site)
-                .ToListAsync();
+            var returns = await _returnService.GetByCondition();
 
             return Ok(returns);
         }

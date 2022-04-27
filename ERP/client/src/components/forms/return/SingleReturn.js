@@ -32,6 +32,7 @@ function SingleReturn() {
             itemObj.description = returnItem.equipmentAsset.equipmentModel.equipment.description;
             itemObj.assetDamageId = returnItem.assetDamageId;
             itemObj.assetDamage = returnItem.assetDamage?.name ?? "No Damage";
+            itemObj.fileName = returnItem.fileName;
             itemObj.name = returnItem.equipmentAsset.equipmentModel.equipment.item.name;
 
             itemObj.requestedBy = returnItem.borrow.requestedBy;

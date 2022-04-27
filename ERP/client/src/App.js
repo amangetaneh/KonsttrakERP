@@ -1,8 +1,9 @@
 import React, { Component, useEffect } from "react";
 import axios from "./api/api";
 
-import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
+import "./AppPrint.css";
 import ContextProviders from "./contexts/ContextProviders";
 import Sidebar from "./components/layouts/Sidebar";
 import MaterialTransfer from "./components/forms/transfer/MaterialTransfer";
@@ -79,7 +80,7 @@ const App = () => {
                         minWidth: "900px",
                     }}
                 >
-                    <div className="col-auto p-0">
+                    <div className="col-auto p-0 d-print-none">
                         <Sidebar />
                     </div>
                     <div className="col p-0">

@@ -1,7 +1,9 @@
-import { Form, InputGroup, Table } from "react-bootstrap";
+import { Form, InputGroup, Table, Card } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { useQuery } from "react-query";
 import { fetchEquipmentModel } from "../../../../api/item";
+import { FaFolderOpen, FaDownload } from "react-icons/fa";
+import { url as host } from "../../../../api/api";
 
 function ReturnViewEquipment({ addedItems, index }) {
     var modelQuery = useQuery(
@@ -93,6 +95,33 @@ function ReturnViewEquipment({ addedItems, index }) {
                     </Form.Group>
                 </div>
             </div>
+
+            {addedItems[index].fileName ? (
+                <div className="row d-flex flex-row justify-content-between pb-3">
+                    <div className="col">
+                        <Form.Label className="mt-2 ms-3">Asset Damage Attachment</Form.Label>
+                    </div>
+                    <div className="col d-grid">
+                        <a
+                            className="btn btn-teal"
+                            href={`${host}file/${addedItems[index].fileName}`}
+                            target="_blank"
+                        >
+                            <FaFolderOpen className="me-2 mb-1" />
+                            Open
+                        </a>
+                    </div>
+                    <div className="col d-grid">
+                        <a
+                            className="btn btn-teal mx-2"
+                            href={`${host}file/download/${addedItems[index].fileName}`}
+                        >
+                            <FaDownload className="me-2 mb-1" />
+                            Download
+                        </a>
+                    </div>
+                </div>
+            ) : null}
         </div>
     );
 }

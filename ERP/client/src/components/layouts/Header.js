@@ -15,11 +15,13 @@ function Header({ title, showNotification }) {
         <Navbar className="navbar-dark bg-teal" expand="sm">
             <Container>
                 <Button className="text-white" variant="transparent" onClick={goBack}>
-                    <FaArrowLeft />
+                    <FaArrowLeft className="d-print-none" />
                 </Button>
                 <Navbar.Brand>{title}</Navbar.Brand>
 
-                <Nav className="ms-auto">{showNotification && <NotificationCanvas />}</Nav>
+                <Nav className="ms-auto">
+                    {showNotification && <NotificationCanvas className="" />}
+                </Nav>
             </Container>
         </Navbar>
     );

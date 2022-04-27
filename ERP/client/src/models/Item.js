@@ -23,6 +23,8 @@ class Item {
         this.reason = "";
         this.returnRemark = "";
         this.assetDamageId = "-1";
+        this.file = null;
+        this.fileName = "";
 
         this.equipmentModelId = 0;
 

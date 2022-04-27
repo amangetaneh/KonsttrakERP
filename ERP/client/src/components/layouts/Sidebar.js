@@ -169,7 +169,7 @@ function Sidebar() {
                                     Borrow Requests <Link to="/borrow" />
                                 </MenuItem>
                                 <MenuItem>
-                                    Retrun Assets <Link to="/return/new" />
+                                    Return Assets <Link to="/return/new" />
                                 </MenuItem>
                                 <MenuItem>
                                     Returned Assets <Link to="/return" />
