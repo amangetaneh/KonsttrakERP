@@ -1,14 +1,14 @@
 ﻿namespace ERP.DTOs
 {
-    public class CreatePurchaseDTO
+    public class CreateMaterialPurchaseDTO
     {
         public int ReceivingSiteId { get; set; }
 
-        public ICollection<CreatePurchaseItem> PurchaseItems { get; set; }
+        public ICollection<CreateMaterialPurchaseItem> PurchaseItems { get; set; }
 
     }
 
-    public class CreatePurchaseItem
+    public class CreateMaterialPurchaseItem
     {
         public int ItemId { get; set; }
 

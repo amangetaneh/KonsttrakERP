@@ -7,6 +7,8 @@ using ERP.Services.IssueServices;
 using ERP.Services.ItemServices;
 using ERP.Services.MaintenanceServices;
 using ERP.Services.NotificationServices;
+using ERP.Services.PurchaseServices;
+using ERP.Services.ReceiveServices;
 using ERP.Services.ReturnServices;
 using ERP.Services.SiteServices;
 using ERP.Services.TransferServices;
@@ -37,6 +39,8 @@ namespace ERP
             services.AddScoped<IGeneralReportService, GeneralReportService>();
             services.AddScoped<IMiscService, MiscService>();
             services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IPurchaseService, PurchaseService>();
+            services.AddScoped<IReceiveService, ReceiveService>();
 
         }
     }
