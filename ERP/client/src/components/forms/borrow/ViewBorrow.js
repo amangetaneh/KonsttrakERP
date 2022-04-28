@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import { Button } from "react-bootstrap";
-import IssueViewMaterial from "./fragments/BorrowViewEquipment";
+import BorrowViewEquipment from "./fragments/BorrowViewEquipment";
 import { useNavigate } from "react-router-dom";
 
 function ViewBorrow({ addedItems }) {
@@ -30,7 +30,7 @@ function ViewBorrow({ addedItems }) {
                 </thead>
                 <tbody className="d-block d-print-table-row-group">
                     {addedItems.map((item, index) => (
-                        <IssueViewMaterial key={index} addedItems={addedItems} index={index} />
+                        <BorrowViewEquipment key={index} addedItems={addedItems} index={index} />
                     ))}
                 </tbody>
             </table>

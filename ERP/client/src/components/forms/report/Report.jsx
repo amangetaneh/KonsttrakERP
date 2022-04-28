@@ -10,7 +10,7 @@ import TransferReport from "./TransferReport";
 function Report() {
     return (
         <>
-            <Header title="Generate Reports" />
+            <Header title="Reports" showPrint />
             <Tabs defaultActiveKey="general" className="ms-1 mb-3 mt-2">
                 <Tab eventKey="general" title="General">
                     <GeneralReport />

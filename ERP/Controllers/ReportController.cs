@@ -63,5 +63,12 @@ namespace ERP.Controllers
             return Ok(result);
         }
 
+        [HttpPost("general")]
+        public async Task<ActionResult<GeneralReportReturnDTO>> Post(GeneralReportDTO reportDTO)
+        {
+
+            return Ok(await _reportService.GetGeneralReport(reportDTO));
+        }
+
     }
 }

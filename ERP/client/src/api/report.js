@@ -5,7 +5,8 @@ export const fetchTransferReport = (data) =>
 
 export const fetchIssueReport = (data) => api.post("/report/issue", data).then((res) => res.data);
 
-export const fetchGeneralReport = (data) => api.post("/aa", data).then((res) => res.data);
+export const fetchGeneralReport = (data) =>
+    api.post("/report/general", data).then((res) => res.data);
 
 export const fetchBorrowReport = (data) => api.post("/report/borrow", data).then((res) => res.data);
 

@@ -1,4 +1,14 @@
 @media print {
+    .nav-tabs,
+    .css-xb97g8,
+    .css-1hb7zxy-IndicatorsContainer {
+        display: none !important;
+    }
+    .asset-select > * {
+        border-top: 0 !important;
+        border-left: 0 !important;
+        border-right: 0 !important;
+    }
     textarea {
         max-height: 6.1rem;
     }
@@ -15,6 +25,7 @@
         width: 15rem;
         margin-bottom: 0 !important;
     }
+
     .form-control,
     .form-control:read-only,
     .form-select {
@@ -57,5 +68,10 @@
     }
     .d-print-table-row-group {
         display: table-row-group !important;
+    }
+
+    canvas {
+        width: 100% !important;
+        height: auto !important;
     }
 }
