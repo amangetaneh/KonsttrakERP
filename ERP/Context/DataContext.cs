@@ -30,6 +30,8 @@ namespace ERP.Context
         public DbSet<PurchaseItem> PurchaseItems { get; set; }
         
         public DbSet<PurchaseItemEmployee> PurchaseItemEmployees { get; set; }
+        
+        public DbSet<PurchaseItemSite> PurchaseItemSites { get; set; }
 
         public DbSet<Receive> Receives { get; set; }
 
@@ -112,6 +114,9 @@ namespace ERP.Context
 
             modelBuilder.Entity<PurchaseItemEmployee>()
                 .HasKey(o => new { o.PurchaseId, o.ItemId, o.RequestedById });
+            
+            modelBuilder.Entity<PurchaseItemSite>()
+                .HasKey(o => new { o.PurchaseId, o.ItemId, o.RequestSiteId });
 
             modelBuilder.Entity<ReceiveItem>()
                 .HasKey(o => new { o.ReceiveId, o.ItemId });

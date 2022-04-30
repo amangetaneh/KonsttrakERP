@@ -15,7 +15,6 @@ namespace ERP.Controllers
 
     [Route("/api/[controller]")]
     [ApiController]
-    //comment out the line below to disable the authorization
     [Authorize(Roles = "Employee")]
     public class TransferController : Controller
     {
