@@ -186,6 +186,15 @@
         public const int PURCHASED = 5;
     }
 
+    public class BULKPURCHASESTATUS
+    {
+        public const int DECLINED = 0;
+        public const int QUEUED = 1;
+        public const int REQUESTED = 2;
+        public const int APPROVED = 3;
+        public const int PURCHASED = 4;
+    }
+
     public class BUYSTATUS
     {
         public const int DECLINED = 0;

@@ -29,10 +29,12 @@ namespace ERP.Context
 
         public DbSet<PurchaseItem> PurchaseItems { get; set; }
         
+        public DbSet<BulkPurchase> BulkPurchases { get; set; }
+        
+        public DbSet<BulkPurchaseItem> BulkPurchaseItems { get; set; }
+                
         public DbSet<PurchaseItemEmployee> PurchaseItemEmployees { get; set; }
         
-        public DbSet<PurchaseItemSite> PurchaseItemSites { get; set; }
-
         public DbSet<Receive> Receives { get; set; }
 
         public DbSet<ReceiveItem> ReceiveItems { get; set; }
@@ -79,7 +81,6 @@ namespace ERP.Context
 
         public DbSet<AssetNumberId> AssetNumberIds { get; set; }
 
-
         public DbSet<Miscellaneous> Miscellaneouses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -99,7 +100,7 @@ namespace ERP.Context
 
             modelBuilder.Entity<TransferItemEquipmentAsset>()
                 .HasKey(o => new { o.TransferId, o.ItemId, o.EquipmentModelId, o.EquipmentAssetId });
-
+            
             modelBuilder.Entity<BorrowItem>()
                 .HasKey(o => new { o.BorrowId, o.ItemId, o.EquipmentModelId });
 
@@ -110,16 +111,16 @@ namespace ERP.Context
                 .HasKey(o => new { o.IssueId, o.ItemId });
 
             modelBuilder.Entity<PurchaseItem>()
-                .HasKey(o => new { o.PurchaseId, o.ItemId });
+                .HasKey(o => new { o.PurchaseId, o.ItemId, o.EquipmentModelId });
+            
+            modelBuilder.Entity<BulkPurchaseItem>()
+                .HasKey(o => new { o.BulkPurchaseId, o.ItemId });
 
             modelBuilder.Entity<PurchaseItemEmployee>()
-                .HasKey(o => new { o.PurchaseId, o.ItemId, o.RequestedById });
+                .HasKey(o => new { o.PurchaseId, o.ItemId, o.EquipmentModelId, o.RequestedById });
             
-            modelBuilder.Entity<PurchaseItemSite>()
-                .HasKey(o => new { o.PurchaseId, o.ItemId, o.RequestSiteId });
-
             modelBuilder.Entity<ReceiveItem>()
-                .HasKey(o => new { o.ReceiveId, o.ItemId });
+                .HasKey(o => new { o.ReceiveId, o.ItemId, o.EquipmentModelId });
 
             modelBuilder.Entity<BuyItem>()
                 .HasKey(o => new { o.BuyId, o.ItemId });
@@ -251,6 +252,18 @@ namespace ERP.Context
                    .HasOne(i => i.ReceivingSite)
                    .WithMany()
                    .OnDelete(DeleteBehavior.Restrict);
+
+            //BulkPurchase
+            modelBuilder.Entity<BulkPurchase>()
+                  .HasOne(i => i.RequestedBy)
+                  .WithMany()
+                  .OnDelete(DeleteBehavior.Restrict);
+            
+            modelBuilder.Entity<BulkPurchase>()
+                   .HasOne(i => i.ApprovedBy)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .IsRequired(false);
 
             //Receive
             modelBuilder.Entity<Receive>()

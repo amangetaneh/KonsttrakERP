@@ -83,7 +83,7 @@ namespace ERP.Controllers
         {
             try
             {
-                Receive receive = await _receiveService.ReceiveItem(receiveDTO);
+                var receive = await _receiveService.ReceiveItem(receiveDTO);
                 return Ok(receive);
             }
             catch (KeyNotFoundException ex)
@@ -98,7 +98,7 @@ namespace ERP.Controllers
         {
             try
             {
-                Receive receive = await _receiveService.ApproveReceive(approveDTO);
+                var receive = await _receiveService.ApproveReceive(approveDTO);
                 return Ok(receive);
             }
             catch (KeyNotFoundException ex)

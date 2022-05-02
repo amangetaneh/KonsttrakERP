@@ -119,14 +119,17 @@ namespace ERP.Services.PurchaseServices
                 purchaseItem.QtyRequested = requestItem.QtyRequested;
                 purchaseItem.RequestRemark = requestItem.RequestRemark;
 
-                var itemTemp = _context.Items.Where(item => item.ItemId == requestItem.ItemId).
-                    Include(i => i.Equipment).
-                    Include(i => i.Material).
-                    FirstOrDefault();
+                var itemTemp = _context.Items
+                    .Where(item => item.ItemId == requestItem.ItemId)
+                    .Include(i => i.Equipment)
+                    .Include(i => i.Material)
+                    .FirstOrDefault();
 
                 if (itemTemp == null) throw new KeyNotFoundException($"Purchase Item with Id {requestItem.ItemId} Not Found");
 
                 if (itemTemp.Type != ITEMTYPE.EQUIPMENT) throw new InvalidOperationException($"Purchase Item with Id {requestItem.ItemId} Is Not Type of Equipment");
+
+                purchaseItem.EquipmentModelId = requestItem.EquipmentModelId;
 
                 var purchaseEquipmentModel = await _context.EquipmentModels
                     .Where(equipModel => equipModel.EquipmentModelId == requestItem.EquipmentModelId)
@@ -144,10 +147,11 @@ namespace ERP.Services.PurchaseServices
 
                 PurchaseItemEmployee purchaseItemEmployee = new();
                 purchaseItemEmployee.ItemId = requestItem.ItemId;
-
+                purchaseItemEmployee.EquipmentModelId = requestItem.EquipmentModelId;
                 purchaseItemEmployee.RequestedById = _userService.Employee.EmployeeId; ;
                 purchaseItemEmployee.QtyRequested = requestItem.QtyRequested;
                 purchaseItemEmployee.RequestRemark = requestItem.RequestRemark;
+                
                 purchaseItemEmployees.Add(purchaseItemEmployee);
 
             }
@@ -183,7 +187,7 @@ namespace ERP.Services.PurchaseServices
                     .Where(purchaseItem => purchaseItem.ItemId == requestItem.ItemId)
                     .FirstOrDefault();
 
-                if (purchaseItem == null) throw new KeyNotFoundException($"Transfer Item with Id {requestItem.ItemId} Not Found");
+                if (purchaseItem == null) throw new KeyNotFoundException($"Purchase Item with Id {requestItem.ItemId} Not Found");
 
                 purchaseItem.QtyApproved = requestItem.QtyApproved;
                 purchaseItem.TotalCost = purchaseItem.Cost * purchaseItem.QtyApproved;
@@ -246,6 +250,90 @@ namespace ERP.Services.PurchaseServices
             return purchase;
         }
 
+        public async Task<Purchase> QueuePurchase(CheckPurchaseDTO checkDTO)
+        {
+            var purchase = _context.Purchases
+               .Where(purchase => purchase.PurchaseId == checkDTO.PurchaseId)
+               .Include(purchase => purchase.PurchaseItems)
+               .Include(purchase => purchase.PurchaseItemEmployees)
+               .FirstOrDefault();
+            
+            if (purchase == null) throw new KeyNotFoundException("Purchase Not Found");
+
+            var bulkPurchase = _context.BulkPurchases
+               .Where(bulk => bulk.Status == BULKPURCHASESTATUS.QUEUED)
+               .Include(bulk => bulk.BulkPurchaseItems)
+               .FirstOrDefault();
+
+            ICollection<BulkPurchaseItem>? bulkPurchaseItems;
+
+            if (bulkPurchase == null)
+            {
+                bulkPurchase = new BulkPurchase
+                {
+                    Status = BULKPURCHASESTATUS.QUEUED,
+                    RequestedById = _userService.Employee.EmployeeId,
+                };
+
+                bulkPurchaseItems = new List<BulkPurchaseItem>();
+                bulkPurchase.BulkPurchaseItems = bulkPurchaseItems;
+
+            }
+            else
+            {
+                bulkPurchaseItems = bulkPurchase.BulkPurchaseItems;
+            }
+
+            foreach (var purchaseItem in purchase.PurchaseItems)
+            {
+                var bulkPurchaseItem = bulkPurchase.BulkPurchaseItems
+                    .Where(bItem => bItem.BulkPurchaseId == bulkPurchase.BulkPurchaseId && bItem.ItemId == purchaseItem.ItemId)
+                    .FirstOrDefault();
+
+                if (bulkPurchaseItem != null)
+                {
+                    bulkPurchaseItem.QtyRequested += purchaseItem.QtyRequested;
+                }
+                else
+                {
+                    bulkPurchaseItem = new BulkPurchaseItem
+                    {
+                        ItemId = purchaseItem.ItemId,
+                        QtyRequested = purchaseItem.QtyRequested,
+                        Cost = purchaseItem.Cost
+                    };
+                }
+
+                bulkPurchaseItem.TotalCost = bulkPurchaseItem.Cost * bulkPurchaseItem.QtyRequested;
+
+                if (bulkPurchaseItem.QtyRequested == purchaseItem.QtyRequested)
+                {
+                    bulkPurchaseItems.Add(bulkPurchaseItem);
+                }
+            }
+
+            bulkPurchase.BulkPurchaseItems = bulkPurchaseItems;
+
+            purchase.CheckDate = DateTime.Now;
+            purchase.CheckedById = _userService.Employee.EmployeeId;
+            purchase.Status = PURCHASESTATUS.QUEUED;
+
+            if (bulkPurchase.BulkPurchaseId == 0)
+            {
+                _context.BulkPurchases.Add(bulkPurchase);
+            }
+
+            bulkPurchase.TotalPurchaseCost = calculateTotalCost(bulkPurchase.BulkPurchaseItems);
+
+            await _context.SaveChangesAsync();
+
+            purchase.BulkPurchaseId = bulkPurchase.BulkPurchaseId;
+
+            await _context.SaveChangesAsync();
+
+            return purchase;
+        }
+
         public async Task<Purchase> RequestQueuedPurchase(CheckPurchaseDTO checkDTO)
         {
             //if (UserAccount != null && UserAccount.UserRole.CanCheckPurchase != 1) return Forbid();
@@ -302,7 +390,7 @@ namespace ERP.Services.PurchaseServices
             {
                 ReceiveItem receiveItem = new();
                 receiveItem.ItemId = requestItem.ItemId;
-                receiveItem.QtyPurchased = requestItem.QtyPurchased;
+                receiveItem.Cost = requestItem.Cost;
 
                 receiveItems.Add(receiveItem);
             }
@@ -324,6 +412,18 @@ namespace ERP.Services.PurchaseServices
             foreach (var purchaseItem in Items)
             {
                 totalCost += purchaseItem.TotalCost;
+            }
+
+            return totalCost;
+        }
+
+        private decimal calculateTotalCost(ICollection<BulkPurchaseItem> Items)
+        {
+            var totalCost = (decimal)0;
+
+            foreach (var bulkPurchaseItem in Items)
+            {
+                totalCost += bulkPurchaseItem.TotalCost;
             }
 
             return totalCost;

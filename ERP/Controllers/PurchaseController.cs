@@ -151,6 +151,23 @@ namespace ERP.Controllers
             }
         }
 
+        [HttpPost("queue")]
+        public async Task<ActionResult<Purchase>> Queue(CheckPurchaseDTO checkDTO)
+        {
+            //if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
+
+            try
+            {
+                var purchase = await _purchaseService.QueuePurchase(checkDTO);
+                return Ok(purchase);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+
         [HttpPost("requestqueued")]
         public async Task<ActionResult<Purchase>> RequestQueuedPurchase(CheckPurchaseDTO checkDTO)
         {
