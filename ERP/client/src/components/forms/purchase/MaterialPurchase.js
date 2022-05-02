@@ -25,7 +25,7 @@ function MaterialPurchase() {
   const sitesQuery = useQuery("sites", fetchSites, {
     onSuccess: (data) => {
       setAllSites(data)
-      setReceivingSite(data[0].siteId) // Select Defalut Sites
+      setReceivingSite(data[0].siteId)
     },
   })
 

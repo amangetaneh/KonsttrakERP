@@ -20,4 +20,6 @@ export const declinePurchase = (data) => api.post("/purchase/decline", data)
 
 export const checkPurchase = (data) => api.post("/purchase/check", data)
 
+export const queuePurchase = (data) => api.post("/purchase/queue", data)
+
 export const confirmPurchase = (data) => api.post("/purchase/confirm", data)

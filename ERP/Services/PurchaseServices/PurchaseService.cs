@@ -78,7 +78,6 @@ namespace ERP.Services.PurchaseServices
                 
                 purchaseItems.Add(purchaseItem);
 
-
                 PurchaseItemEmployee purchaseItemEmployee = new();
                 purchaseItemEmployee.ItemId = requestItem.ItemId;
 
