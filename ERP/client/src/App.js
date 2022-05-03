@@ -14,9 +14,11 @@ import ListMySiteReceives from "./components/forms/receive/ListMySiteReceives"
 import MaterialBuy from "./components/forms/buy/MaterialBuy"
 import EquipmentTransfer from "./components/forms/transfer/EquipmentTransfer"
 import ListTransfers from "./components/forms/transfer/ListTransfers"
+import ListBulkPurchases from "./components/forms/bulkPurchase/ListBulkPurchases"
 import ListPurchases from "./components/forms/purchase/ListPurchases"
 import ListBuys from "./components/forms/buy/ListBuys"
 import SingleTransfer from "./components/forms/transfer/SingleTransfer"
+import SingleBulkPurchase from "./components/forms/bulkPurchase/SingleBulkPurchase"
 import SinglePurchase from "./components/forms/purchase/SinglePurchase"
 import SingleBuy from "./components/forms/buy/SingleBuy"
 import SingleReceive from "./components/forms/receive/SingleReceive"
@@ -154,6 +156,9 @@ const App = () => {
               <Route path="buy" element={<ListBuys />} />
               <Route path="buy/:id" element={<SingleBuy />} />
               <Route path="buy/material" element={<MaterialBuy />} />
+
+              <Route path="bulkPurchase" element={<ListBulkPurchases />} />
+              <Route path="bulkPurchase/:id" element={<SingleBulkPurchase />} />
 
               <Route path="purchase" element={<ListPurchases />} />
               <Route path="purchase/:id" element={<SinglePurchase />} />

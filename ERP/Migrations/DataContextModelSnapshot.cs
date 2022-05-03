@@ -229,6 +229,9 @@ namespace ERP.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
 
+                    b.Property<int>("EquipmentModelId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ApproveRemark")
                         .HasColumnType("nvarchar(max)");
 
@@ -253,7 +256,7 @@ namespace ERP.Migrations
                     b.Property<decimal>("TotalCost")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("BulkPurchaseId", "ItemId");
+                    b.HasKey("BulkPurchaseId", "ItemId", "EquipmentModelId");
 
                     b.HasIndex("ItemId");
 

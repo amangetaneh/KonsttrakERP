@@ -205,6 +205,20 @@ export const PURCHASESTATUS = {
   6: "Purchased",
 }
 
+export const BULKPURCHASESTATUS = {
+  DECLINED: 0,
+  QUEUED: 1,
+  REQUESTED: 2,
+  APPROVED: 3,
+  PURCHASED: 4,
+
+  0: "Declined",
+  1: "Queued",
+  2: "Requested",
+  3: "Approved",
+  4: "Purchased",
+}
+
 export const BUYSTATUS = {
   DECLINED: 0,
   REQUESTED: 1,

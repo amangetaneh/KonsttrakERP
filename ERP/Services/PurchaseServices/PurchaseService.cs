@@ -307,7 +307,7 @@ namespace ERP.Services.PurchaseServices
             foreach (var purchaseItem in purchase.PurchaseItems)
             {
                 var bulkPurchaseItem = bulkPurchase.BulkPurchaseItems
-                    //.Where(bItem => bItem.ItemId == purchaseItem.ItemId && bItem.EquipmentModelId == purchaseItem.EquipmentModelId)
+                    .Where(bItem => bItem.ItemId == purchaseItem.ItemId && bItem.EquipmentModelId == purchaseItem.EquipmentModelId)
                     .FirstOrDefault();
 
                 if (bulkPurchaseItem != null)
@@ -320,7 +320,8 @@ namespace ERP.Services.PurchaseServices
                     {
                         ItemId = purchaseItem.ItemId,
                         QtyRequested = purchaseItem.QtyRequested,
-                        Cost = purchaseItem.Cost
+                        Cost = purchaseItem.Cost,
+                        EquipmentModelId = purchaseItem.EquipmentModelId
                     };
                 }
 

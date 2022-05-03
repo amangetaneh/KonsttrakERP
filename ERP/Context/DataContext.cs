@@ -114,7 +114,7 @@ namespace ERP.Context
                 .HasKey(o => new { o.PurchaseId, o.ItemId, o.EquipmentModelId });
             
             modelBuilder.Entity<BulkPurchaseItem>()
-                .HasKey(o => new { o.BulkPurchaseId, o.ItemId });
+                .HasKey(o => new { o.BulkPurchaseId, o.ItemId, o.EquipmentModelId });
 
             modelBuilder.Entity<PurchaseItemEmployee>()
                 .HasKey(o => new { o.PurchaseId, o.ItemId, o.EquipmentModelId, o.RequestedById });

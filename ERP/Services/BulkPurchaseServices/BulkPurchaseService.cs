@@ -72,7 +72,7 @@ namespace ERP.Services.BulkPurchaseServices
             foreach (var requestItem in approveDTO.BulkPurchaseItems)
             {
                 var bulkPurchaseItem = bulkPurchase.BulkPurchaseItems
-                    .Where(bulkPurchaseItem => bulkPurchaseItem.ItemId == requestItem.ItemId)
+                    .Where(bulkPurchaseItem => bulkPurchaseItem.ItemId == requestItem.ItemId && bulkPurchaseItem.EquipmentModelId == requestItem.EquipmentModelId)
                     .FirstOrDefault();
 
                 if (bulkPurchaseItem == null) throw new KeyNotFoundException($"Bulk Purchase Item with Id {requestItem.ItemId} Not Found");
@@ -135,7 +135,7 @@ namespace ERP.Services.BulkPurchaseServices
             foreach (var requestItem in confirmDTO.BulkPurchaseItems)
             {
                 var bulkPurchaseItem = bulkPurchase.BulkPurchaseItems
-                    .Where(bulkPurchaseItem => bulkPurchaseItem.ItemId == requestItem.ItemId)
+                    .Where(bulkPurchaseItem => bulkPurchaseItem.ItemId == requestItem.ItemId && bulkPurchaseItem.EquipmentModelId == requestItem.EquipmentModelId)
                     .FirstOrDefault();
 
                 if (bulkPurchaseItem == null) throw new KeyNotFoundException($"Purchase Item with Id {requestItem.ItemId} Not Found");

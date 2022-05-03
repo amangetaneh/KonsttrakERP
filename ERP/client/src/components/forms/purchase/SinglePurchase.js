@@ -132,7 +132,7 @@ function SinglePurchase() {
       case PURCHASESTATUS.REQUESTED:
         return (
           <AlertNotification
-            title="Purchase Needs Approval"
+            title="Purchase Needs Check"
             content="Purchase Has Been Requested and Needs Check to Continue."
           />
         )
@@ -140,7 +140,7 @@ function SinglePurchase() {
       case PURCHASESTATUS.CHECKED:
         return (
           <AlertNotification
-            title="Purchase Needs Check"
+            title="Purchase Needs Approval"
             content="Purchase Has Been Requested and Needs Approval to Continue."
           />
         )

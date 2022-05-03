@@ -108,6 +108,14 @@ function Sidebar() {
                   Buy Requests <Link to="/buy" />
                 </MenuItem>
               </SubMenu>
+              <SubMenu title="BulkPurchase">
+                {data.userRole?.canRequestPurchase && (
+                  <MenuItem>
+                    Bulk Purchase
+                    <Link to="/bulkPurchase" />
+                  </MenuItem>
+                )}
+              </SubMenu>
               {data.userRole.canViewPurchase && (
                 <SubMenu title="Purchase">
                   {data.userRole?.canRequestPurchase && (
