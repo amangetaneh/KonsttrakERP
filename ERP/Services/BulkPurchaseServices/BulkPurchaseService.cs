@@ -161,6 +161,7 @@ namespace ERP.Services.BulkPurchaseServices
                 //Add receive
                 Receive receive = new();
                 receive.PurchaseId = purchase.PurchaseId;
+                receive.PurchaseDate = purchase.PurchaseDate;
                 receive.ReceivingSiteId = purchase.ReceivingSiteId;
                 ICollection<ReceiveItem> receiveItems = new List<ReceiveItem>();
                 

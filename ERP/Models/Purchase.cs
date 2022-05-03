@@ -31,6 +31,8 @@ namespace ERP.Models
 
         public Site ReceivingSite { get; set; }
 
+        public DateTime? PurchaseDate { get; set; }
+
         public int ReceivingSiteId { get; set; }
 
         [Column(TypeName = "decimal(18, 2)")]

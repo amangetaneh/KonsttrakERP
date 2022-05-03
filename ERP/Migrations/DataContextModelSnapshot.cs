@@ -831,6 +831,9 @@ namespace ERP.Migrations
                     b.Property<int?>("CheckedById")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("PurchaseDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("ReceivingSiteId")
                         .HasColumnType("int");
 
@@ -951,6 +954,9 @@ namespace ERP.Migrations
 
                     b.Property<int?>("DeliveredById")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("PurchaseDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PurchaseId")
                         .HasColumnType("int");

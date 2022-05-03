@@ -2,24 +2,27 @@ import React from "react"
 import PropTypes from "prop-types"
 import BulkPurchaseApprove from "./fragments/BulkPurchaseApprove"
 import { Button, Spinner, Form } from "react-bootstrap"
-import { approvePurchase, declinePurchase } from "../../../api/purchase"
+import {
+  approveBulkPurchase,
+  declineBulkPurchase,
+} from "../../../api/bulkPurchase"
 import { useMutation, useQueryClient } from "react-query"
 import ConnectionError from "../../fragments/ConnectionError"
 import { ITEMTYPE } from "../../../Constants"
 
-function ApprovePurchase({ addedItems, setAddedItems, purchase }) {
+function ApproveBulkPurchase({ addedItems, setAddedItems, bulkPurchase }) {
   const queryClient = useQueryClient()
 
   const {
     isLoading: isApproveLoading,
     isError: isApproveError,
     error: approveError,
-    mutate: submitApprovePurchase,
-  } = useMutation(approvePurchase, {
+    mutate: submitApproveBulkPurchase,
+  } = useMutation(approveBulkPurchase, {
     onSuccess: (res) =>
       queryClient.invalidateQueries([
-        "purchase",
-        purchase.purchaseId.toString(),
+        "bulkPurchase",
+        bulkPurchase.bulkPurchaseId.toString(),
       ]),
   })
 
@@ -27,12 +30,12 @@ function ApprovePurchase({ addedItems, setAddedItems, purchase }) {
     isLoading: isDeclineLoading,
     isError: isDeclineError,
     error: declineError,
-    mutate: submitDeclinePurchase,
-  } = useMutation(declinePurchase, {
+    mutate: submitDeclineBulkPurchase,
+  } = useMutation(declineBulkPurchase, {
     onSuccess: (res) =>
       queryClient.invalidateQueries([
-        "purchase",
-        purchase.purchaseId.toString(),
+        "bulkPurchase",
+        bulkPurchase.bulkPurchaseId.toString(),
       ]),
   })
 
@@ -42,8 +45,8 @@ function ApprovePurchase({ addedItems, setAddedItems, purchase }) {
     const type = e.nativeEvent.submitter.name
 
     const data = {
-      purchaseId: purchase.purchaseId,
-      purchaseItems: [],
+      bulkPurchaseId: bulkPurchase.bulkPurchaseId,
+      bulkPurchaseItems: [],
     }
 
     for (let item of addedItems) {
@@ -56,11 +59,11 @@ function ApprovePurchase({ addedItems, setAddedItems, purchase }) {
       if (item.type === ITEMTYPE.EQUIPMENT)
         tempItem.equipmentModelId = item.equipmentModelId
 
-      data.purchaseItems.push(tempItem)
+      data.bulkPurchaseItems.push(tempItem)
     }
 
-    if (type === "decline") submitDeclinePurchase(data)
-    else submitApprovePurchase(data)
+    if (type === "decline") submitDeclineBulkPurchase(data)
+    else submitApproveBulkPurchase(data)
   }
 
   if (isApproveError || isDeclineError)
@@ -74,23 +77,14 @@ function ApprovePurchase({ addedItems, setAddedItems, purchase }) {
 
   return (
     <Form onSubmit={submit}>
-      {addedItems.map((item, index) =>
-        item.type == ITEMTYPE.MATERIAL ? (
-          <PurchaseApproveMaterial
-            key={index}
-            addedItems={addedItems}
-            setAddedItems={setAddedItems}
-            index={index}
-          />
-        ) : (
-          <PurchaseApproveEquipment
-            key={index}
-            addedItems={addedItems}
-            setAddedItems={setAddedItems}
-            index={index}
-          />
-        )
-      )}
+      {addedItems.map((item, index) => (
+        <BulkPurchaseApprove
+          key={index}
+          addedItems={addedItems}
+          setAddedItems={setAddedItems}
+          index={index}
+        />
+      ))}
 
       <div className="row">
         <div className="col-8 d-grid">
@@ -114,10 +108,10 @@ function ApprovePurchase({ addedItems, setAddedItems, purchase }) {
   )
 }
 
-ApprovePurchase.propTypes = {
+ApproveBulkPurchase.propTypes = {
   addedItems: PropTypes.array.isRequired,
   setAddedItems: PropTypes.func.isRequired,
-  purchase: PropTypes.object.isRequired,
+  bulkPurchase: PropTypes.object.isRequired,
 }
 
-export default ApprovePurchase
+export default ApproveBulkPurchase

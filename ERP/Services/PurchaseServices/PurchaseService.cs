@@ -398,12 +398,14 @@ namespace ERP.Services.PurchaseServices
             purchase.TotalPurchaseCost = calculateTotalCost(purchase.PurchaseItems); ;
 
             purchase.Status = PURCHASESTATUS.PURCHASED;
-
+            purchase.PurchaseDate = DateTime.Now;
+            
             await _context.SaveChangesAsync();
 
             //Add receive
             Receive receive = new();
             receive.PurchaseId = purchase.PurchaseId;
+            receive.PurchaseDate = purchase.PurchaseDate;
             receive.ReceivingSiteId = purchase.ReceivingSiteId;
             ICollection<ReceiveItem> receiveItems = new List<ReceiveItem>();
 

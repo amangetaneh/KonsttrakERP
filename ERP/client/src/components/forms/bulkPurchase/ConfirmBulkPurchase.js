@@ -2,24 +2,24 @@ import React from "react"
 import PropTypes from "prop-types"
 import BulkPurchaseConfirm from "./fragments/BulkPurchaseConfirm"
 import { Button, Form, Spinner } from "react-bootstrap"
-import { confirmPurchase } from "../../../api/purchase"
+import { confirmBulkPurchase } from "../../../api/bulkPurchase"
 import { useMutation, useQueryClient } from "react-query"
 import ConnectionError from "../../fragments/ConnectionError"
 import { ITEMTYPE } from "../../../Constants"
 
-function ConfirmPurchase({ addedItems, setAddedItems, purchase }) {
+function ConfirmBulkPurchase({ addedItems, setAddedItems, bulkPurchase }) {
   const queryClient = useQueryClient()
 
   const {
     isLoading: isConfirmLoading,
     isError: isConfirmError,
     error: confirmError,
-    mutate: submitConfirmPurchase,
-  } = useMutation(confirmPurchase, {
+    mutate: submitConfirmBulkPurchase,
+  } = useMutation(confirmBulkPurchase, {
     onSuccess: (res) =>
       queryClient.invalidateQueries([
-        "purchase",
-        purchase.purchaseId.toString(),
+        "bulkPurchase",
+        bulkPurchase.bulkPurchaseId.toString(),
       ]),
   })
 
@@ -28,8 +28,8 @@ function ConfirmPurchase({ addedItems, setAddedItems, purchase }) {
     if (isConfirmLoading) return
 
     const data = {
-      purchaseId: purchase.purchaseId,
-      purchaseItems: [],
+      bulkPurchaseId: bulkPurchase.bulkPurchaseId,
+      bulkPurchaseItems: [],
     }
 
     for (let item of addedItems) {
@@ -42,10 +42,10 @@ function ConfirmPurchase({ addedItems, setAddedItems, purchase }) {
       if (item.type === ITEMTYPE.EQUIPMENT)
         tempItem.equipmentModelId = item.equipmentModelId
 
-      data.purchaseItems.push(tempItem)
+      data.bulkPurchaseItems.push(tempItem)
     }
 
-    submitConfirmPurchase(data)
+    submitConfirmBulkPurchase(data)
   }
 
   if (isConfirmError)
@@ -54,30 +54,21 @@ function ConfirmPurchase({ addedItems, setAddedItems, purchase }) {
   return (
     <>
       <Form onSubmit={submit}>
-        {addedItems.map((item, index) =>
-          item.type == ITEMTYPE.MATERIAL ? (
-            <PurchaseConfirmMaterial
-              key={index}
-              addedItems={addedItems}
-              setAddedItems={setAddedItems}
-              index={index}
-            />
-          ) : (
-            <PurchaseConfirmEquipment
-              key={index}
-              addedItems={addedItems}
-              setAddedItems={setAddedItems}
-              index={index}
-            />
-          )
-        )}
+        {addedItems.map((item, index) => (
+          <BulkPurchaseConfirm
+            key={index}
+            addedItems={addedItems}
+            setAddedItems={setAddedItems}
+            index={index}
+          />
+        ))}
 
         <div className="d-grid">
           <Button className="btn-teal-dark" type="submit">
             {isConfirmLoading && (
               <Spinner className="me-2" animation="grow" size="sm" />
             )}
-            Confirm Purchase
+            Confirm BulkPurchase
           </Button>
         </div>
       </Form>
@@ -85,10 +76,10 @@ function ConfirmPurchase({ addedItems, setAddedItems, purchase }) {
   )
 }
 
-ConfirmPurchase.propTypes = {
+ConfirmBulkPurchase.propTypes = {
   addedItems: PropTypes.array.isRequired,
   setAddedItems: PropTypes.func.isRequired,
-  purchase: PropTypes.object.isRequired,
+  bulkPurchase: PropTypes.object.isRequired,
 }
 
-export default ConfirmPurchase
+export default ConfirmBulkPurchase
