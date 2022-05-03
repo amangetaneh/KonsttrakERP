@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from "react"
 import {
     ProSidebar,
     Menu,
@@ -15,12 +15,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth, useAuthUpdate } from "../../contexts/AuthContext";
 
 function Sidebar() {
-    const navigate = useNavigate();
-    const updateAuthContext = useAuthUpdate();
+  const navigate = useNavigate()
+  const updateAuthContext = useAuthUpdate()
 
-    const { data } = useAuth();
+  const { data } = useAuth()
 
-    const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(false)
 
     return (
         <>
@@ -45,38 +45,38 @@ function Sidebar() {
                             Home <Link to="/" />
                         </MenuItem>
 
-                        <SubMenu title="Setting" icon={<GoSettings className="fs-5" />}>
-                            <SubMenu title="Employee">
-                                <MenuItem>
-                                    Manage Employees <Link to="/employee" />
-                                </MenuItem>
-                            </SubMenu>
-                            <SubMenu title="Role">
-                                <MenuItem>
-                                    Add a new Role <Link to="/role/new" />
-                                </MenuItem>
-                            </SubMenu>
-                            <SubMenu title="Site">
-                                <MenuItem>
-                                    Add a new Site <Link to="/site/new" />
-                                </MenuItem>
-                            </SubMenu>
-                            <SubMenu title="Stock">
-                                <MenuItem>
-                                    Add a new Material <Link to="/item/material/new" />
-                                </MenuItem>
-                                <SubMenu title="Equipment">
-                                    <MenuItem>
-                                        Add a new Equipment <Link to="/item/equipment/new" />
-                                    </MenuItem>
-                                    <MenuItem>
-                                        Add a new Model <Link to="/item/equipment/model/new" />
-                                    </MenuItem>
-                                    <MenuItem>
-                                        Add a new Category{" "}
-                                        <Link to="/item/equipment/category/new" />
-                                    </MenuItem>
-                                </SubMenu>
+            <SubMenu title="Setting" icon={<GoSettings className="fs-5" />}>
+              <SubMenu title="Employee">
+                <MenuItem>
+                  Manage Employees <Link to="/employee" />
+                </MenuItem>
+              </SubMenu>
+              <SubMenu title="Role">
+                <MenuItem>
+                  Add a new Role <Link to="/role/new" />
+                </MenuItem>
+              </SubMenu>
+              <SubMenu title="Site">
+                <MenuItem>
+                  Add a new Site <Link to="/site/new" />
+                </MenuItem>
+              </SubMenu>
+              <SubMenu title="Stock">
+                <MenuItem>
+                  Add a new Material <Link to="/item/material/new" />
+                </MenuItem>
+                <SubMenu title="Equipment">
+                  <MenuItem>
+                    Add a new Equipment <Link to="/item/equipment/new" />
+                  </MenuItem>
+                  <MenuItem>
+                    Add a new Model <Link to="/item/equipment/model/new" />
+                  </MenuItem>
+                  <MenuItem>
+                    Add a new Category{" "}
+                    <Link to="/item/equipment/category/new" />
+                  </MenuItem>
+                </SubMenu>
 
                                 <MenuItem>
                                     Minimum Stock <Link to="/item/minimum-stock" />
@@ -252,4 +252,4 @@ function Sidebar() {
     );
 }
 
-export default Sidebar;
+export default Sidebar

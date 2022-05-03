@@ -1,5 +1,6 @@
 ﻿using ERP.Context;
 using ERP.DTOs;
+using ERP.DTOs.Purchase;
 using ERP.Models;
 using ERP.Services.ItemSiteQtyServices;
 using ERP.Services.NotificationServices;
@@ -23,325 +24,431 @@ namespace ERP.Services.PurchaseServices
             _itemSiteQtyService = itemSiteQtyService;
         }
 
-        public async Task<Transfer> GetById(int id)
+        public async Task<Purchase> GetById(int id)
         {
-            var transfer = await _context.Transfers.Where(transfer => transfer.TransferId == id)
-                .Include(transfer => transfer.SendSite)
-                .Include(transfer => transfer.ReceiveSite)
-                .Include(transfer => transfer.RequestedBy)
-                .Include(transfer => transfer.SentBy)
-                .Include(transfer => transfer.ReceivedBy)
-                .Include(transfer => transfer.ApprovedBy)
-                .Include(transfer => transfer.TransferItems)
-                .ThenInclude(transferItem => transferItem.Item)
-                .ThenInclude(item => item.Material)
-                .Include(transfer => transfer.TransferItems)
-                .ThenInclude(transferItem => transferItem.Item.Equipment)
-                .Include(transfer => transfer.TransferItems)
-                .ThenInclude(transferItem => transferItem.TransferEquipmentAssets)
-                .ThenInclude(transferEquipmentAsset => transferEquipmentAsset.EquipmentAsset)
-                .FirstOrDefaultAsync();
+            //if (UserAccount != null && UserAccount.UserRole.CanViewPurchase != 1) return Forbid();
 
-            if (transfer == null) throw new KeyNotFoundException("Transfer Not Found.");
+            var purchase = _context.Purchases.Where(purchase => purchase.PurchaseId == id)
+               .Include(purchase => purchase.RequestedBy)
+               .Include(purchase => purchase.CheckedBy)
+               .Include(purchase => purchase.ApprovedBy)
+               .Include(purchase => purchase.ReceivingSite)
+               .Include(purchase => purchase.PurchaseItems)
+               .ThenInclude(purchaseItem => purchaseItem.Item)
+               .ThenInclude(item => item.Material)
+               .Include(purchase => purchase.PurchaseItems)
+               .ThenInclude(purchaseItem => purchaseItem.Item.Equipment)
+               .FirstOrDefault();
 
-            return transfer;
+            if (purchase == null) throw new KeyNotFoundException("Purchase Not Found.");
+
+            return purchase;
         }
-       
 
-        public async Task<List<Transfer>> GetByCondition(GetTransfersDTO getTransfersDTO)
+        public async Task<List<Purchase>> GetByCondition(GetPurchasesDTO getPurchasesDTO)
         {
             UserRole userRole = _userService.UserRole;
             int employeeId = _userService.Employee.EmployeeId;
 
-            var transfers = await _context.Transfers
-                .Where(transfer =>(
-                    (getTransfersDTO.SendSiteId == -1 || transfer.SendSiteId == getTransfersDTO.SendSiteId) &&
-                    (getTransfersDTO.ReceiveSiteId == -1 || transfer.ReceiveSiteId == getTransfersDTO.ReceiveSiteId) &&
-                    ((userRole.CanRequestTransfer == true && transfer.RequestedById == employeeId) ||
-                    (userRole.CanApproveTransfer == true && transfer.Status == TRANSFERSTATUS.REQUESTED) ||
-                    (userRole.CanSendTransfer == true && transfer.Status == TRANSFERSTATUS.APPROVED) ||
-                    (userRole.CanReceiveTransfer == true && transfer.Status == TRANSFERSTATUS.SENT))))
-                .Include(transfer => transfer.SendSite)
-                .Include(transfer => transfer.ReceiveSite)
-                .OrderByDescending(transfer => transfer.TransferId)
+            var purchases = await _context.Purchases
+                .Where(purchase => (
+                    (getPurchasesDTO.ReceivingSiteId == -1 || purchase.ReceivingSiteId == getPurchasesDTO.ReceivingSiteId) &&
+                    ((userRole.CanViewPurchase == true && (purchase.Status == PURCHASESTATUS.DECLINED || 
+                    purchase.Status == PURCHASESTATUS.BULKQUEUED || purchase.Status == PURCHASESTATUS.PURCHASED)) ||
+                    (userRole.CanRequestPurchase == true && purchase.Status == PURCHASESTATUS.QUEUED) ||
+                    (userRole.CanCheckPurchase == true && purchase.Status == PURCHASESTATUS.REQUESTED) ||
+                    (userRole.CanApprovePurchase == true && purchase.Status == PURCHASESTATUS.CHECKED) ||
+                    (userRole.CanConfirmPurchase == true && purchase.Status == PURCHASESTATUS.APPROVED))))
+                .Include(purchase => purchase.ReceivingSite)
+                .OrderByDescending(purchase => purchase.PurchaseId)
                 .ToListAsync();
 
-            return transfers;
-        }
-        private void checkEmployeeSiteIsAvailable()
-        {
-            if (_userService.Employee.EmployeeSite == null)
-                throw new InvalidOperationException("Borrowing Employee Does Not Have A Site");
+            return purchases;
         }
 
-        public async Task<Transfer> RequestEquipment (CreateEquipmentTransferDTO transferDTO)
+        public async Task<Purchase> RequestMaterial(CreateMaterialPurchaseDTO purchaseDTO)
         {
-            checkEmployeeSiteIsAvailable();
+            //if (UserAccount != null && UserAccount.UserRole.CanRequestPurchase != 1) return Forbid();
 
-            Transfer transfer = new();
-            transfer.SendSiteId = transferDTO.SendSiteId;
-            transfer.ReceiveSiteId = (int)_userService.Employee.EmployeeSiteId;
-            transfer.RequestedById = _userService.Employee.EmployeeId;
+            Purchase purchase = new();
+            purchase.RequestedById = _userService.Employee.EmployeeId;
+            purchase.ReceivingSiteId = purchaseDTO.ReceivingSiteId;
 
-            ICollection<TransferItem> transferItems = new List<TransferItem>();
+            ICollection<PurchaseItem> purchaseItems = new List<PurchaseItem>();
+            ICollection<PurchaseItemEmployee> purchaseItemEmployees = new List<PurchaseItemEmployee>();
 
-            foreach (var requestItem in transferDTO.TransferItems)
+            foreach (var requestItem in purchaseDTO.PurchaseItems)
             {
-                TransferItem transferItem = new();
-                transferItem.ItemId = requestItem.ItemId;
-                transferItem.QtyRequested = requestItem.QtyRequested;
-                transferItem.RequestRemark = requestItem.RequestRemark;
+                PurchaseItem purchaseItem = new();
+                purchaseItem.ItemId = requestItem.ItemId;
+                purchaseItem.QtyRequested = requestItem.QtyRequested;
+                purchaseItem.RequestRemark = requestItem.RequestRemark;
 
-                var itemTemp = await _context.Items.Where(item => item.ItemId == requestItem.ItemId)
+                var itemTemp = _context.Items.Where(item => item.ItemId == requestItem.ItemId).
+                    Include(i => i.Equipment).
+                    Include(i => i.Material).
+                    FirstOrDefault();
+
+                if (itemTemp == null) throw new KeyNotFoundException($"Purchase Item with Id {requestItem.ItemId} Not Found");
+
+                if (itemTemp.Type != ITEMTYPE.MATERIAL) throw new InvalidOperationException($"Purchase Item with Id {requestItem.ItemId} Is Not Type of Material");
+
+                purchaseItem.Cost = itemTemp.Material.Cost;
+                purchaseItem.TotalCost = purchaseItem.QtyRequested * purchaseItem.Cost;
+                purchase.TotalPurchaseCost += purchaseItem.TotalCost;
+                
+                purchaseItems.Add(purchaseItem);
+
+                PurchaseItemEmployee purchaseItemEmployee = new();
+                purchaseItemEmployee.ItemId = requestItem.ItemId;
+
+                purchaseItemEmployee.RequestedById = _userService.Employee.EmployeeId; ;
+                purchaseItemEmployee.QtyRequested = requestItem.QtyRequested;
+                purchaseItemEmployee.RequestRemark = requestItem.RequestRemark;
+                purchaseItemEmployees.Add(purchaseItemEmployee);
+
+            }
+
+            purchase.PurchaseItems = purchaseItems;
+            purchase.PurchaseItemEmployees = purchaseItemEmployees;
+
+            _context.Purchases.Add(purchase);
+
+            await _context.SaveChangesAsync();
+
+            //Notification
+
+            return purchase;
+        }
+
+        public async Task<Purchase> RequestEquipment(CreateEquipmentPurchaseDTO purchaseDTO)
+        {
+            //if (UserAccount != null && UserAccount.UserRole.CanRequestPurchase != 1) return Forbid();
+
+            Purchase purchase = new();
+            purchase.RequestedById = _userService.Employee.EmployeeId;
+            purchase.ReceivingSiteId = purchaseDTO.ReceivingSiteId;
+
+            ICollection<PurchaseItem> purchaseItems = new List<PurchaseItem>();
+            ICollection<PurchaseItemEmployee> purchaseItemEmployees = new List<PurchaseItemEmployee>();
+
+            foreach (var requestItem in purchaseDTO.PurchaseItems)
+            {
+                PurchaseItem purchaseItem = new();
+                purchaseItem.ItemId = requestItem.ItemId;
+                purchaseItem.QtyRequested = requestItem.QtyRequested;
+                purchaseItem.RequestRemark = requestItem.RequestRemark;
+
+                var itemTemp = _context.Items
+                    .Where(item => item.ItemId == requestItem.ItemId)
                     .Include(i => i.Equipment)
                     .Include(i => i.Material)
-                    .FirstOrDefaultAsync();
+                    .FirstOrDefault();
 
-                if (itemTemp == null) throw new KeyNotFoundException($"Transfer Item with Id {requestItem.ItemId} Not Found");
+                if (itemTemp == null) throw new KeyNotFoundException($"Purchase Item with Id {requestItem.ItemId} Not Found");
 
-                if (itemTemp.Type != ITEMTYPE.EQUIPMENT) throw new InvalidOperationException($"Transfer Item with Id {requestItem.ItemId} Is Not Type of Equipment");
+                if (itemTemp.Type != ITEMTYPE.EQUIPMENT) throw new InvalidOperationException($"Purchase Item with Id {requestItem.ItemId} Is Not Type of Equipment");
 
-                transferItem.EquipmentModelId = requestItem.EquipmentModelId;
+                purchaseItem.EquipmentModelId = requestItem.EquipmentModelId;
 
-                var transferEquipmentModel = await _context.EquipmentModels
+                var purchaseEquipmentModel = await _context.EquipmentModels
                     .Where(equipModel => equipModel.EquipmentModelId == requestItem.EquipmentModelId)
                     .FirstOrDefaultAsync();
 
-                if (transferEquipmentModel == null) throw new KeyNotFoundException($"Transfer Item Model with Id {requestItem.EquipmentModelId} Not Found");
+                if (purchaseEquipmentModel == null) throw new KeyNotFoundException($"Purchase Item Model with Id {requestItem.EquipmentModelId} Not Found");
 
-                transferItem.Cost = transferEquipmentModel.Cost;
+                purchaseItem.Cost = purchaseEquipmentModel.Cost;
+                purchaseItem.TotalCost = purchaseItem.QtyRequested * purchaseItem.Cost;
+                purchase.TotalPurchaseCost += purchaseItem.TotalCost;
 
-                transferItems.Add(transferItem);
+                purchaseItems.Add(purchaseItem);
+
+                purchase.TotalPurchaseCost += purchaseItem.TotalCost;
+
+                PurchaseItemEmployee purchaseItemEmployee = new();
+                purchaseItemEmployee.ItemId = requestItem.ItemId;
+                purchaseItemEmployee.EquipmentModelId = requestItem.EquipmentModelId;
+                purchaseItemEmployee.RequestedById = _userService.Employee.EmployeeId; ;
+                purchaseItemEmployee.QtyRequested = requestItem.QtyRequested;
+                purchaseItemEmployee.RequestRemark = requestItem.RequestRemark;
+                
+                purchaseItemEmployees.Add(purchaseItemEmployee);
+
             }
 
-            transfer.TransferItems = transferItems;
+            purchase.PurchaseItems = purchaseItems;
+            purchase.PurchaseItemEmployees = purchaseItemEmployees;
 
-            _context.Transfers.Add(transfer);
+            _context.Purchases.Add(purchase);
+
             await _context.SaveChangesAsync();
 
-            await _notificationService.Add(type: NOTIFICATIONTYPE.TRANSFER,
-                status: transfer.Status,
-                actionId: transfer.TransferId,
-                siteId: transfer.SendSiteId,
-                employeeId: transfer.RequestedById);
+            //Notification
 
-            return transfer;
+            return purchase;
         }
 
-        public async Task<Transfer> RequestMaterial (CreateMaterialTransferDTO transferDTO)
+        public async Task<Purchase> ApprovePurchase(ApprovePurchaseDTO approveDTO)
         {
-            checkEmployeeSiteIsAvailable();
+            //if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
 
-            Transfer transfer = new();
-            transfer.SendSiteId = transferDTO.SendSiteId;
-            transfer.ReceiveSiteId = (int)_userService.Employee.EmployeeSiteId;
-            transfer.RequestedById = _userService.Employee.EmployeeId;
+            var purchase = _context.Purchases
+                 .Where(t => t.PurchaseId == approveDTO.PurchaseId)
+                 .Include(t => t.PurchaseItems)
+                 .FirstOrDefault();
+            if (purchase == null) throw new KeyNotFoundException("Purchase Not Found.");
 
-            ICollection<TransferItem> transferItems = new List<TransferItem>();
+            purchase.ApproveDate = DateTime.Now;
+            purchase.ApprovedById = _userService.Employee.EmployeeId;
 
-            foreach (var requestItem in transferDTO.TransferItems)
+            foreach (var requestItem in approveDTO.PurchaseItems)
             {
-                TransferItem transferItem = new();
-                transferItem.ItemId = requestItem.ItemId;
-                transferItem.QtyRequested = requestItem.QtyRequested;
-                transferItem.RequestRemark = requestItem.RequestRemark;
-
-                var itemTemp = await _context.Items.Where(item => item.ItemId == requestItem.ItemId).
-                    Include(i => i.Equipment).
-                    Include(i => i.Material).
-                    FirstOrDefaultAsync();
-
-                if (itemTemp == null) throw new KeyNotFoundException($"Transfer Item with Id {requestItem.ItemId} Not Found");
-
-                if (itemTemp.Type != ITEMTYPE.MATERIAL) throw new InvalidOperationException($"Transfer Item with Id {requestItem.ItemId} Is Not Type of Material");
-
-                transferItem.Cost = itemTemp.Material.Cost;
-
-                transferItems.Add(transferItem);
-            }
-
-            transfer.TransferItems = transferItems;
-
-            _context.Transfers.Add(transfer);
-            await _context.SaveChangesAsync();
-
-            await _notificationService.Add(type: NOTIFICATIONTYPE.TRANSFER,
-                 status: transfer.Status,
-                 actionId: transfer.TransferId,
-                 siteId: transfer.SendSiteId,
-                 employeeId: transfer.RequestedById);
-
-            return transfer;
-        }
-
-        public async Task<Transfer> ApproveTransfer(ApproveTransferDTO approveDTO)
-        {
-            var transfer = await _context.Transfers
-               .Where(t => t.TransferId == approveDTO.TransferId)
-               .Include(t => t.TransferItems)
-               .ThenInclude(ti => ti.Item)
-               .FirstOrDefaultAsync();
-            if (transfer == null) throw new KeyNotFoundException("Transfer Not Found.");
-
-            transfer.ApproveDate = DateTime.Now;
-            transfer.ApprovedById = _userService.Employee.EmployeeId;
-
-            foreach (var requestItem in approveDTO.TransferItems)
-            {
-                var transferItem = transfer.TransferItems
-                    .Where(ti => ti.ItemId == requestItem.ItemId && ti.EquipmentModelId == requestItem.EquipmentModelId)
+                var purchaseItem = purchase.PurchaseItems
+                    .Where(purchaseItem => purchaseItem.ItemId == requestItem.ItemId && purchaseItem.EquipmentModelId == requestItem.EquipmentModelId)
                     .FirstOrDefault();
 
-                if (transferItem == null) throw new KeyNotFoundException($"Transfer Item with Id {requestItem.ItemId} Not Found");
+                if (purchaseItem == null) throw new KeyNotFoundException($"Purchase Item with Id {requestItem.ItemId} Not Found");
 
-                transferItem.QtyApproved = requestItem.QtyApproved;
-                transferItem.ApproveRemark = requestItem.ApproveRemark;
+                purchaseItem.QtyApproved = requestItem.QtyApproved;
+                purchaseItem.TotalCost = purchaseItem.Cost * purchaseItem.QtyApproved;
+                purchaseItem.ApproveRemark = requestItem.ApproveRemark;
+
             }
 
-            transfer.Status = TRANSFERSTATUS.APPROVED;
+            purchase.TotalPurchaseCost = calculateTotalCost(purchase.PurchaseItems); ;
+
+            purchase.Status = PURCHASESTATUS.APPROVED;
 
             await _context.SaveChangesAsync();
 
-            await _notificationService.Add(type: NOTIFICATIONTYPE.TRANSFER,
-                 status: transfer.Status,
-                 actionId: transfer.TransferId,
-                 siteId: transfer.SendSiteId,
-                 employeeId: transfer.RequestedById);
-
-            return transfer;
+            return purchase;
         }
 
-        public async Task<Transfer> DeclineTransfer(DeclineTransferDTO declineDTO)
+        public async Task<Purchase> DeclinePurchase(ApprovePurchaseDTO declineDTO)
         {
-            var transfer = await _context.Transfers
-               .Where(t => t.TransferId == declineDTO.TransferId)
-               .Include(t => t.TransferItems)
-               .FirstOrDefaultAsync();
-            if (transfer == null) throw new KeyNotFoundException("Transfer Not Found.");
+            //if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
 
-            transfer.ApproveDate = DateTime.Now;
-            transfer.ApprovedById = _userService.Employee.EmployeeId;
+            var purchase = _context.Purchases
+                  .Where(t => t.PurchaseId == declineDTO.PurchaseId)
+                  .Include(t => t.PurchaseItems)
+                  .FirstOrDefault();
 
-            foreach (var requestItem in declineDTO.TransferItems)
+            if (purchase == null) throw new KeyNotFoundException("Purchase Not Found.");
+
+            purchase.ApproveDate = DateTime.Now;
+            purchase.ApprovedById = _userService.Employee.EmployeeId;
+            purchase.TotalPurchaseCost = 0;
+
+            foreach (var purchaseItem in purchase.PurchaseItems)
             {
-                var transferItem = transfer.TransferItems
-                    .Where(ti => ti.ItemId == requestItem.ItemId && ti.EquipmentModelId == requestItem.EquipmentModelId)
-                    .FirstOrDefault();
-                if (transferItem == null) throw new KeyNotFoundException($"Transfer Item with Id {requestItem.ItemId} Not Found");
+                purchaseItem.QtyApproved = 0;
 
-                transferItem.ApproveRemark = requestItem.ApproveRemark;
+                purchaseItem.TotalCost = 0;
             }
 
-            transfer.Status = TRANSFERSTATUS.DECLINED;
+            purchase.Status = PURCHASESTATUS.DECLINED;
 
             await _context.SaveChangesAsync();
 
-            await _notificationService.Add(type: NOTIFICATIONTYPE.TRANSFER,
-                status: transfer.Status,
-                actionId: transfer.TransferId,
-                siteId: transfer.SendSiteId,
-                employeeId: transfer.RequestedById);
+            return purchase;
+        }
+        
+        public async Task<Purchase> CheckPurchase(CheckPurchaseDTO checkDTO)
+        {
+            //if (UserAccount != null && UserAccount.UserRole.CanCheckPurchase != 1) return Forbid();
 
-            return transfer;
+            var purchase = await _context.Purchases.FindAsync(checkDTO.PurchaseId);
+
+            if (purchase == null) throw new KeyNotFoundException("Purchase Not Found.");
+
+            purchase.CheckDate = DateTime.Now;
+            purchase.CheckedById = _userService.Employee.EmployeeId;
+            purchase.Status = PURCHASESTATUS.CHECKED;
+
+            await _context.SaveChangesAsync();
+
+            return purchase;
         }
 
-        public async Task<Transfer> SendTransfer(SendTransferDTO sendDTO)
+        public async Task<Purchase> QueuePurchase(CheckPurchaseDTO checkDTO)
         {
-
-            var transfer = _context.Transfers
-               .Where(t => t.TransferId == sendDTO.TransferId)
-               .Include(t => t.TransferItems)
-               .ThenInclude(ti => ti.Item)
+            var purchase = _context.Purchases
+               .Where(purchase => purchase.PurchaseId == checkDTO.PurchaseId)
+               .Include(purchase => purchase.PurchaseItems)
+               .Include(purchase => purchase.PurchaseItemEmployees)
                .FirstOrDefault();
-            if (transfer == null) throw new KeyNotFoundException("Transfer Not Found.");
+            
+            if (purchase == null) throw new KeyNotFoundException("Purchase Not Found");
 
-            transfer.SendDate = DateTime.Now;
-            transfer.SentById = _userService.Employee.EmployeeId;
+            var bulkPurchase = _context.BulkPurchases
+               .Where(bulk => bulk.Status == BULKPURCHASESTATUS.QUEUED)
+               .Include(bulk => bulk.BulkPurchaseItems)
+               .FirstOrDefault();
 
-            foreach (var requestItem in sendDTO.TransferItems)
+            ICollection<BulkPurchaseItem>? bulkPurchaseItems;
+
+            if (bulkPurchase == null)
             {
-                var transferItem = transfer.TransferItems
-                    .Where(ti => ti.ItemId == requestItem.ItemId && ti.EquipmentModelId == requestItem.EquipmentModelId)
-                    .FirstOrDefault();
-                if (transferItem == null)
-                    throw new KeyNotFoundException($"Transfer Item with Item Id {requestItem.ItemId} and Model Id {requestItem.EquipmentModelId} Not Found");
-
-                transferItem.SendRemark = requestItem.SendRemark;
-
-                if (transferItem.Item.Type == ITEMTYPE.EQUIPMENT)
-                    await _itemSiteQtyService.SubtractEquipmentModel(transferItem.EquipmentModelId, transfer.SendSiteId, (int)transferItem.QtyApproved);
-                else
-                    await _itemSiteQtyService.SubtractMaterial(transferItem.ItemId, transfer.SendSiteId, (int)transferItem.QtyApproved);
-
-
-                if (transferItem.Item.Type == ITEMTYPE.EQUIPMENT && requestItem.EquipmentAssetIds != null)
+                bulkPurchase = new BulkPurchase
                 {
-                    transferItem.TransferEquipmentAssets = new List<TransferItemEquipmentAsset>();
+                    Status = BULKPURCHASESTATUS.QUEUED,
+                    RequestedById = _userService.Employee.EmployeeId,
+                };
 
-                    foreach (var requestAssetId in requestItem.EquipmentAssetIds)
+                bulkPurchaseItems = new List<BulkPurchaseItem>();
+                bulkPurchase.BulkPurchaseItems = bulkPurchaseItems;
+
+            }
+            else
+            {
+                bulkPurchaseItems = bulkPurchase.BulkPurchaseItems;
+            }
+
+            foreach (var purchaseItem in purchase.PurchaseItems)
+            {
+                var bulkPurchaseItem = bulkPurchase.BulkPurchaseItems
+                    .Where(bItem => bItem.ItemId == purchaseItem.ItemId && bItem.EquipmentModelId == purchaseItem.EquipmentModelId)
+                    .FirstOrDefault();
+
+                if (bulkPurchaseItem != null)
+                {
+                    bulkPurchaseItem.QtyRequested += purchaseItem.QtyRequested;
+                }
+                else
+                {
+                    bulkPurchaseItem = new BulkPurchaseItem
                     {
-                        TransferItemEquipmentAsset equipmentAsset = new();
-                        equipmentAsset.EquipmentAssetId = requestAssetId;
+                        ItemId = purchaseItem.ItemId,
+                        QtyRequested = purchaseItem.QtyRequested,
+                        Cost = purchaseItem.Cost,
+                        EquipmentModelId = purchaseItem.EquipmentModelId
+                    };
+                }
 
-                        transferItem.TransferEquipmentAssets.Add(equipmentAsset);
-                    }
+                bulkPurchaseItem.TotalCost = bulkPurchaseItem.Cost * bulkPurchaseItem.QtyRequested;
+
+                if (bulkPurchaseItem.QtyRequested == purchaseItem.QtyRequested)
+                {
+                    bulkPurchaseItems.Add(bulkPurchaseItem);
                 }
             }
 
-            transfer.Status = TRANSFERSTATUS.SENT;
+            bulkPurchase.BulkPurchaseItems = bulkPurchaseItems;
 
-            await _context.SaveChangesAsync();
+            purchase.CheckDate = DateTime.Now;
+            purchase.CheckedById = _userService.Employee.EmployeeId;
+            purchase.Status = PURCHASESTATUS.BULKQUEUED;
 
-            await _notificationService.Add(type: NOTIFICATIONTYPE.TRANSFER,
-                status: transfer.Status,
-                actionId: transfer.TransferId,
-                siteId: transfer.ReceiveSiteId,
-                employeeId: transfer.RequestedById);
-
-            return transfer;
-        }
-
-        public async Task<Transfer> ReceiveTransfer(ReceiveTransferDTO receiveDTO)
-        {
-            var transfer = _context.Transfers
-               .Where(t => t.TransferId == receiveDTO.TransferId)
-               .Include(t => t.TransferItems)
-               .ThenInclude(ti => ti.Item)
-               .FirstOrDefault();
-            if (transfer == null) throw new KeyNotFoundException("Transfer Not Found.");
-
-            transfer.ReceiveDate = DateTime.Now;
-            transfer.ReceivedById = _userService.Employee.EmployeeId;
-            transfer.DeliveredById = receiveDTO.DeliveredById;
-            transfer.VehiclePlateNo = receiveDTO.VehiclePlateNo;
-
-
-            foreach (var requestItem in receiveDTO.TransferItems)
+            if (bulkPurchase.BulkPurchaseId == 0)
             {
-                var transferItem = transfer.TransferItems
-                    .Where(ti => ti.ItemId == requestItem.ItemId && ti.EquipmentModelId == requestItem.EquipmentModelId)
-                    .FirstOrDefault();
-                if (transferItem == null) throw new KeyNotFoundException($"Transfer Item with Id {requestItem.ItemId} and Model Id {requestItem.EquipmentModelId} Not Found");
-
-                transferItem.ReceiveRemark = requestItem.ReceiveRemark;
-
-                if (transferItem.Item.Type == ITEMTYPE.EQUIPMENT)
-                    await _itemSiteQtyService.AddEquipmentModel(transferItem.EquipmentModelId, transfer.ReceiveSiteId, (int)transferItem.QtyApproved);
-                else
-                    await _itemSiteQtyService.AddMaterial(transferItem.ItemId, transfer.ReceiveSiteId, (int)transferItem.QtyApproved);
+                _context.BulkPurchases.Add(bulkPurchase);
             }
 
-            transfer.Status = TRANSFERSTATUS.RECEIVED;
+            bulkPurchase.TotalPurchaseCost = calculateTotalCost(bulkPurchase.BulkPurchaseItems);
 
             await _context.SaveChangesAsync();
 
-            await _notificationService.Add(type: NOTIFICATIONTYPE.TRANSFER,
-                status: transfer.Status,
-                actionId: transfer.TransferId,
-                siteId: transfer.SendSiteId,
-                employeeId: transfer.RequestedById);
+            purchase.BulkPurchaseId = bulkPurchase.BulkPurchaseId;
 
-            return transfer;
+            await _context.SaveChangesAsync();
+
+            return purchase;
+        }
+
+        public async Task<Purchase> RequestQueuedPurchase(CheckPurchaseDTO checkDTO)
+        {
+            //if (UserAccount != null && UserAccount.UserRole.CanCheckPurchase != 1) return Forbid();
+
+            var purchase = await _context.Purchases.FindAsync(checkDTO.PurchaseId);
+
+            if (purchase == null) throw new KeyNotFoundException("Purchase Not Found.");
+
+            purchase.Status = PURCHASESTATUS.REQUESTED;
+
+            await _context.SaveChangesAsync();
+
+            return purchase;
+        }
+
+        public async Task<Purchase> ConfirmPurchase(ConfirmPurchaseDTO confirmDTO)
+        {
+            //if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
+
+            var purchase = _context.Purchases
+                 .Where(t => t.PurchaseId == confirmDTO.PurchaseId)
+                 .Include(t => t.PurchaseItems)
+                 .FirstOrDefault();
+
+            if (purchase == null) throw new KeyNotFoundException("Purchase Not Found.");
+
+            foreach (var requestItem in confirmDTO.PurchaseItems)
+            {
+                var purchaseItem = purchase.PurchaseItems
+                    .Where(purchaseItem => purchaseItem.ItemId == requestItem.ItemId && purchaseItem.EquipmentModelId == requestItem.EquipmentModelId)
+                    .FirstOrDefault();
+
+                if (purchaseItem == null) throw new KeyNotFoundException($"Purchase Item with Id {requestItem.ItemId} Not Found");
+
+                purchaseItem.QtyPurchased = requestItem.QtyPurchased;
+                purchaseItem.PurchaseRemark = requestItem.PurchaseRemark;
+                purchaseItem.TotalCost = purchaseItem.Cost * purchaseItem.QtyPurchased;
+
+            }
+
+            purchase.TotalPurchaseCost = calculateTotalCost(purchase.PurchaseItems); ;
+
+            purchase.Status = PURCHASESTATUS.PURCHASED;
+
+            await _context.SaveChangesAsync();
+
+            //Add receive
+            Receive receive = new();
+            receive.PurchaseId = purchase.PurchaseId;
+            receive.ReceivingSiteId = purchase.ReceivingSiteId;
+            ICollection<ReceiveItem> receiveItems = new List<ReceiveItem>();
+
+            foreach (var requestItem in purchase.PurchaseItems)
+            {
+                ReceiveItem receiveItem = new();
+                receiveItem.ItemId = requestItem.ItemId;
+                receiveItem.Cost = requestItem.Cost;
+                receiveItem.EquipmentModelId = requestItem.EquipmentModelId;
+
+                receiveItems.Add(receiveItem);
+            }
+
+            receive.ReceiveItems = receiveItems;
+            receive.Status = RECEIVESTATUS.PURCHASED;
+
+            _context.Receives.Add(receive);
+
+            await _context.SaveChangesAsync();
+
+            return purchase;
+        }
+
+        private decimal calculateTotalCost (ICollection<PurchaseItem> Items)
+        {
+            var totalCost = (decimal)0;
+            
+            foreach (var purchaseItem in Items)
+            {
+                totalCost += purchaseItem.TotalCost;
+            }
+
+            return totalCost;
+        }
+
+        private decimal calculateTotalCost(ICollection<BulkPurchaseItem> Items)
+        {
+            var totalCost = (decimal)0;
+
+            foreach (var bulkPurchaseItem in Items)
+            {
+                totalCost += bulkPurchaseItem.TotalCost;
+            }
+
+            return totalCost;
         }
     }
 }

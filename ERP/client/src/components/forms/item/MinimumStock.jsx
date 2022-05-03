@@ -30,7 +30,7 @@ function MinimumStock() {
         pauseOnHover: true,
         draggable: true,
         theme: "dark",
-        // progress: undefined
+    
     };
 
     const materialsQuery = useQuery(["materials"], fetchMaterials);

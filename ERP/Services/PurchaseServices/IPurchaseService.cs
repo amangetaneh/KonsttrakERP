@@ -1,17 +1,20 @@
 ﻿using ERP.DTOs;
+using ERP.DTOs.Purchase;
 using ERP.Models;
 
 namespace ERP.Services.PurchaseServices
 {
     public interface IPurchaseService
     {
-        public Task<Transfer> GetById(int id);
-        public Task<List<Transfer>> GetByCondition(GetTransfersDTO getTransfersDTO);
-        public Task<Transfer> RequestEquipment(CreateEquipmentTransferDTO transferDTO);
-        Task<Transfer> RequestMaterial(CreateMaterialTransferDTO transferDTO);
-        Task<Transfer> ApproveTransfer(ApproveTransferDTO approveDTO);
-        Task<Transfer> DeclineTransfer(DeclineTransferDTO declineDTO);
-        Task<Transfer> SendTransfer(SendTransferDTO sendDTO);
-        Task<Transfer> ReceiveTransfer(ReceiveTransferDTO receiveDTO);
+        public Task<Purchase> GetById(int id);
+        public Task<List<Purchase>> GetByCondition(GetPurchasesDTO getPurchasesDTO);
+        public Task<Purchase> RequestEquipment(CreateEquipmentPurchaseDTO purchaseDTO);
+        Task<Purchase> RequestMaterial(CreateMaterialPurchaseDTO purchaseDTO);
+        Task<Purchase> ApprovePurchase(ApprovePurchaseDTO approveDTO);
+        Task<Purchase> DeclinePurchase(ApprovePurchaseDTO declineDTO);
+        Task<Purchase> CheckPurchase(CheckPurchaseDTO checkDTO);
+        public Task<Purchase> QueuePurchase(CheckPurchaseDTO checkDTO);
+        Task<Purchase> RequestQueuedPurchase(CheckPurchaseDTO checkDTO);
+        Task<Purchase> ConfirmPurchase(ConfirmPurchaseDTO confirmDTO);
     }
 }

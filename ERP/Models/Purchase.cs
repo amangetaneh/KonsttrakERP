@@ -36,6 +36,10 @@ namespace ERP.Models
         [Column(TypeName = "decimal(18, 2)")]
         public decimal TotalPurchaseCost { get; set; } = 0;
 
+        public BulkPurchase BulkPurchase { get; set; }
+
+        public int? BulkPurchaseId { get; set; }
+
         public ICollection<PurchaseItem> PurchaseItems { get; set; }
         
         public ICollection<PurchaseItemEmployee> PurchaseItemEmployees { get; set; }

@@ -181,9 +181,19 @@
         public const int DECLINED = 0;
         public const int QUEUED = 1;
         public const int REQUESTED = 2;
-        public const int CHECKED = 3;
-        public const int APPROVED = 4;
-        public const int PURCHASED = 5;
+        public const int BULKQUEUED = 3;
+        public const int CHECKED = 4;
+        public const int APPROVED = 5;
+        public const int PURCHASED = 6;
+    }
+
+    public class BULKPURCHASESTATUS
+    {
+        public const int DECLINED = 0;
+        public const int QUEUED = 1;
+        public const int REQUESTED = 2;
+        public const int APPROVED = 3;
+        public const int PURCHASED = 4;
     }
 
     public class BUYSTATUS

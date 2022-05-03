@@ -63,15 +63,15 @@ function EquipmentCategory() {
         fileRef.current.value = "";
         setName("");
 
-        submitEquipmentCategoryRequest(data);
-    }
+    submitEquipmentCategoryRequest(data)
+  }
 
     if (isUploadError || isSubmitError)
         return <ConnectionError status={submitError?.response?.status} />;
 
-    return (
-        <>
-            <Header title="New Equipment Category" />
+  return (
+    <>
+      <Header title="New Equipment Category" />
 
             <Container className="my-3 align-self-center">
                 <Form onSubmit={submit}>
@@ -116,4 +116,4 @@ function EquipmentCategory() {
     );
 }
 
-export default EquipmentCategory;
+export default EquipmentCategory
