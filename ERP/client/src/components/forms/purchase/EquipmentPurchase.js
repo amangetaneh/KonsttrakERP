@@ -4,13 +4,13 @@ import { FaPlus } from "react-icons/fa"
 import Item from "../../../models/Item"
 import PurchaseRequestEquipment from "./fragments/PurchaseRequestEquipment"
 import Header from "../../layouts/Header"
-import { useNavigate } from "react-router-dom"
 import { useQuery, useMutation } from "react-query"
 import { fetchSites } from "../../../api/site"
 import { fetchEquipments } from "../../../api/item"
 import { requestEquipmentPurchase } from "../../../api/purchase"
 import LoadingSpinner from "../../fragments/LoadingSpinner"
 import ConnectionError from "../../fragments/ConnectionError"
+import { useNavigate } from "react-router-dom"
 
 function EquipmentPurchase() {
   const navigate = useNavigate()

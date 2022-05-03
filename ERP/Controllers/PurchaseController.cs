@@ -63,8 +63,17 @@ namespace ERP.Controllers
             return Ok(purchases);
         }
 
+        [HttpPost]
+        public async Task<ActionResult<List<Purchase>>> GetByParams(GetPurchasesDTO getPurchasesDTO)
+        {
+
+            var purchases = await _purchaseService.GetByCondition(getPurchasesDTO);
+
+            return Ok(purchases);
+        }
+
         [HttpPost("request/material")]
-        public async Task<ActionResult<List<Purchase>>> RequestMaterial(CreateMaterialPurchaseDTO purchaseDTO)
+        public async Task<ActionResult<int>> RequestMaterial(CreateMaterialPurchaseDTO purchaseDTO)
         {
             //if (UserAccount != null && UserAccount.UserRole.CanRequestPurchase != 1) return Forbid();
 

@@ -165,13 +165,14 @@ namespace ERP.Services.BulkPurchaseServices
                 ICollection<ReceiveItem> receiveItems = new List<ReceiveItem>();
                 
                 foreach (var requestItem in purchase.PurchaseItems)
-                    {
-                        ReceiveItem receiveItem = new();
-                        receiveItem.ItemId = requestItem.ItemId;
-                        receiveItem.Cost = requestItem.Cost;
+                {
+                    ReceiveItem receiveItem = new();
+                    receiveItem.ItemId = requestItem.ItemId;
+                    receiveItem.Cost = requestItem.Cost;
+                    receiveItem.EquipmentModelId = requestItem.EquipmentModelId;
 
-                        receiveItems.Add(receiveItem);
-                    }
+                    receiveItems.Add(receiveItem);
+                }
                 
                 receive.ReceiveItems = receiveItems;
                 receive.Status = RECEIVESTATUS.PURCHASED;

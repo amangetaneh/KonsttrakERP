@@ -111,7 +111,7 @@ function MaterialItem() {
                 <Form.Group className="mb-3">
                   <Form.Label>Item Cost</Form.Label>
                   <Form.Control
-                    min="1"
+                    min="0"
                     type="number"
                     value={cost}
                     onChange={(e) => setCost(e.target.value)}

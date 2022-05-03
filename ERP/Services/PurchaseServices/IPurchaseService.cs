@@ -7,7 +7,7 @@ namespace ERP.Services.PurchaseServices
     public interface IPurchaseService
     {
         public Task<Purchase> GetById(int id);
-        //public Task<List<Purchase>> GetByCondition(GetPurchasesDTO getPurchasesDTO);
+        public Task<List<Purchase>> GetByCondition(GetPurchasesDTO getPurchasesDTO);
         public Task<Purchase> RequestEquipment(CreateEquipmentPurchaseDTO purchaseDTO);
         Task<Purchase> RequestMaterial(CreateMaterialPurchaseDTO purchaseDTO);
         Task<Purchase> ApprovePurchase(ApprovePurchaseDTO approveDTO);

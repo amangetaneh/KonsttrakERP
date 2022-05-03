@@ -43,6 +43,7 @@ function MaterialPurchase() {
 
   const {
     isError: isSubmitError,
+    error: submitError,
     isLoading: isSubmitLoading,
     mutate: submitPurchaseRequest,
   } = useMutation(requestMaterialPurchase, {
@@ -87,9 +88,18 @@ function MaterialPurchase() {
     setScroll(true)
   }
 
-  if (isLoading) return <LoadingSpinner />
+  if (isError || isSubmitError)
+    return (
+      <ConnectionError
+        status={
+          itemQuery?.error?.response?.status ??
+          sitesQuery?.error?.response?.status ??
+          submitError?.response?.status
+        }
+      />
+    )
 
-  if (isError || isSubmitError) return <ConnectionError />
+  if (isLoading) return <LoadingSpinner />
 
   return (
     <>

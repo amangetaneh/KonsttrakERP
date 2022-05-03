@@ -12,9 +12,9 @@
     {
         public int ItemId { get; set; }
 
-        public int QtyRequested { get; set; }
-
         public int EquipmentModelId { get; set; }
+
+        public int QtyRequested { get; set; }
 
         public string RequestRemark { get; set; } = string.Empty;
 

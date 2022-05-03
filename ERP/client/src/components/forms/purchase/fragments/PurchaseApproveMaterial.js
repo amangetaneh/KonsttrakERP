@@ -96,12 +96,11 @@ function PurchaseApproveMaterial({ addedItems, setAddedItems, index }) {
               <Form.Group className="mb-3">
                 <Form.Label>Quantity Approved</Form.Label>
                 <Form.Control
-                  min="1"
+                  min="0"
                   type="number"
                   name="qtyApproved"
                   value={addedItems[index].qtyApproved}
                   onChange={(e) => {
-                    console.log(e.target.value)
                     if (e.target.value <= addedItems[index].qtyRequested)
                       valueChanged(e)
                   }}

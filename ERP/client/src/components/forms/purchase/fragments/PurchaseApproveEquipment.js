@@ -1,7 +1,16 @@
 import { useEffect } from "react"
 import { Form, InputGroup } from "react-bootstrap"
+import { useQuery } from "react-query"
+import { fetchEquipmentModel } from "../../../../api/item"
 
-function PurchaseApproveMaterial({ addedItems, setAddedItems, index }) {
+function PurchaseApproveEquipment({ addedItems, setAddedItems, index }) {
+  var modelQuery = useQuery(
+    ["model", addedItems[index].equipmentModelId],
+    () =>
+      addedItems[index].equipmentModelId &&
+      fetchEquipmentModel(addedItems[index].equipmentModelId)
+  )
+
   //set approved qty to requested as default
   useEffect(() => {
     const addedItemsCpy = [...addedItems]
@@ -19,7 +28,7 @@ function PurchaseApproveMaterial({ addedItems, setAddedItems, index }) {
     <div className="shadow pt-3 px-4 mb-4 rounded">
       <div className=" row justify-content-between">
         <div className="col-auto">
-          <h1 className="display-6 fs-4">Material {index + 1}</h1>
+          <h1 className="display-6 fs-4">Equipment {index + 1}</h1>
         </div>
       </div>
 
@@ -54,12 +63,11 @@ function PurchaseApproveMaterial({ addedItems, setAddedItems, index }) {
       <div className="row">
         <div className="col">
           <Form.Group className="mb-3">
-            <Form.Label>Specification</Form.Label>
+            <Form.Label>Model</Form.Label>
             <Form.Control
-              as="textarea"
-              name="spec"
-              rows={5}
-              value={addedItems[index].spec}
+              type="text"
+              name="cost"
+              value={modelQuery?.data?.name || ""}
               readOnly
             />
           </Form.Group>
@@ -91,17 +99,33 @@ function PurchaseApproveMaterial({ addedItems, setAddedItems, index }) {
               </Form.Group>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col">
+          <Form.Group className="mb-3">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              as="textarea"
+              name="spec"
+              rows={1}
+              value={addedItems[index].description}
+              readOnly
+            />
+          </Form.Group>
+        </div>
+        <div className="col">
           <div className="row">
             <div className="col">
               <Form.Group className="mb-3">
                 <Form.Label>Quantity Approved</Form.Label>
                 <Form.Control
-                  min="1"
+                  min="0"
                   type="number"
                   name="qtyApproved"
                   value={addedItems[index].qtyApproved}
                   onChange={(e) => {
-                    console.log(e.target.value)
                     if (e.target.value <= addedItems[index].qtyRequested)
                       valueChanged(e)
                   }}
@@ -150,4 +174,4 @@ function PurchaseApproveMaterial({ addedItems, setAddedItems, index }) {
   )
 }
 
-export default PurchaseApproveMaterial
+export default PurchaseApproveEquipment

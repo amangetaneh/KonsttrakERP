@@ -45,6 +45,27 @@ namespace ERP.Services.PurchaseServices
             return purchase;
         }
 
+        public async Task<List<Purchase>> GetByCondition(GetPurchasesDTO getPurchasesDTO)
+        {
+            UserRole userRole = _userService.UserRole;
+            int employeeId = _userService.Employee.EmployeeId;
+
+            var purchases = await _context.Purchases
+                .Where(purchase => (
+                    (getPurchasesDTO.ReceivingSiteId == -1 || purchase.ReceivingSiteId == getPurchasesDTO.ReceivingSiteId) &&
+                    ((userRole.CanViewPurchase == true && (purchase.Status == PURCHASESTATUS.DECLINED || 
+                    purchase.Status == PURCHASESTATUS.BULKQUEUED || purchase.Status == PURCHASESTATUS.PURCHASED)) ||
+                    (userRole.CanRequestPurchase == true && purchase.Status == PURCHASESTATUS.QUEUED) ||
+                    (userRole.CanCheckPurchase == true && purchase.Status == PURCHASESTATUS.REQUESTED) ||
+                    (userRole.CanApprovePurchase == true && purchase.Status == PURCHASESTATUS.CHECKED) ||
+                    (userRole.CanConfirmPurchase == true && purchase.Status == PURCHASESTATUS.APPROVED))))
+                .Include(purchase => purchase.ReceivingSite)
+                .OrderByDescending(purchase => purchase.PurchaseId)
+                .ToListAsync();
+
+            return purchases;
+        }
+
         public async Task<Purchase> RequestMaterial(CreateMaterialPurchaseDTO purchaseDTO)
         {
             //if (UserAccount != null && UserAccount.UserRole.CanRequestPurchase != 1) return Forbid();
@@ -183,7 +204,7 @@ namespace ERP.Services.PurchaseServices
             foreach (var requestItem in approveDTO.PurchaseItems)
             {
                 var purchaseItem = purchase.PurchaseItems
-                    .Where(purchaseItem => purchaseItem.ItemId == requestItem.ItemId)
+                    .Where(purchaseItem => purchaseItem.ItemId == requestItem.ItemId && purchaseItem.EquipmentModelId == requestItem.EquipmentModelId)
                     .FirstOrDefault();
 
                 if (purchaseItem == null) throw new KeyNotFoundException($"Purchase Item with Id {requestItem.ItemId} Not Found");
@@ -286,7 +307,7 @@ namespace ERP.Services.PurchaseServices
             foreach (var purchaseItem in purchase.PurchaseItems)
             {
                 var bulkPurchaseItem = bulkPurchase.BulkPurchaseItems
-                    .Where(bItem => bItem.BulkPurchaseId == bulkPurchase.BulkPurchaseId && bItem.ItemId == purchaseItem.ItemId)
+                    //.Where(bItem => bItem.ItemId == purchaseItem.ItemId && bItem.EquipmentModelId == purchaseItem.EquipmentModelId)
                     .FirstOrDefault();
 
                 if (bulkPurchaseItem != null)
@@ -315,7 +336,7 @@ namespace ERP.Services.PurchaseServices
 
             purchase.CheckDate = DateTime.Now;
             purchase.CheckedById = _userService.Employee.EmployeeId;
-            purchase.Status = PURCHASESTATUS.QUEUED;
+            purchase.Status = PURCHASESTATUS.BULKQUEUED;
 
             if (bulkPurchase.BulkPurchaseId == 0)
             {
@@ -362,7 +383,7 @@ namespace ERP.Services.PurchaseServices
             foreach (var requestItem in confirmDTO.PurchaseItems)
             {
                 var purchaseItem = purchase.PurchaseItems
-                    .Where(purchaseItem => purchaseItem.ItemId == requestItem.ItemId)
+                    .Where(purchaseItem => purchaseItem.ItemId == requestItem.ItemId && purchaseItem.EquipmentModelId == requestItem.EquipmentModelId)
                     .FirstOrDefault();
 
                 if (purchaseItem == null) throw new KeyNotFoundException($"Purchase Item with Id {requestItem.ItemId} Not Found");
@@ -390,6 +411,7 @@ namespace ERP.Services.PurchaseServices
                 ReceiveItem receiveItem = new();
                 receiveItem.ItemId = requestItem.ItemId;
                 receiveItem.Cost = requestItem.Cost;
+                receiveItem.EquipmentModelId = requestItem.EquipmentModelId;
 
                 receiveItems.Add(receiveItem);
             }

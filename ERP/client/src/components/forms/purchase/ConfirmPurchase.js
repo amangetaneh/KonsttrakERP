@@ -1,10 +1,12 @@
 import React from "react"
 import PropTypes from "prop-types"
 import PurchaseConfirmMaterial from "./fragments/PurchaseConfirmMaterial"
+import PurchaseConfirmEquipment from "./fragments/PurchaseConfirmEquipment"
 import { Button, Form, Spinner } from "react-bootstrap"
 import { confirmPurchase } from "../../../api/purchase"
 import { useMutation, useQueryClient } from "react-query"
 import ConnectionError from "../../fragments/ConnectionError"
+import { ITEMTYPE } from "../../../Constants"
 
 function ConfirmPurchase({ addedItems, setAddedItems, purchase }) {
   const queryClient = useQueryClient()
@@ -12,6 +14,7 @@ function ConfirmPurchase({ addedItems, setAddedItems, purchase }) {
   const {
     isLoading: isConfirmLoading,
     isError: isConfirmError,
+    error: confirmError,
     mutate: submitConfirmPurchase,
   } = useMutation(confirmPurchase, {
     onSuccess: (res) =>
@@ -37,25 +40,38 @@ function ConfirmPurchase({ addedItems, setAddedItems, purchase }) {
         purchaseRemark: item.purchaseRemark,
       }
 
+      if (item.type === ITEMTYPE.EQUIPMENT)
+        tempItem.equipmentModelId = item.equipmentModelId
+
       data.purchaseItems.push(tempItem)
     }
 
     submitConfirmPurchase(data)
   }
 
-  if (isConfirmError) return <ConnectionError />
+  if (isConfirmError)
+    return <ConnectionError status={confirmError?.response?.status} />
 
   return (
     <>
       <Form onSubmit={submit}>
-        {addedItems.map((item, index) => (
-          <PurchaseConfirmMaterial
-            key={index}
-            addedItems={addedItems}
-            setAddedItems={setAddedItems}
-            index={index}
-          />
-        ))}
+        {addedItems.map((item, index) =>
+          item.type == ITEMTYPE.MATERIAL ? (
+            <PurchaseConfirmMaterial
+              key={index}
+              addedItems={addedItems}
+              setAddedItems={setAddedItems}
+              index={index}
+            />
+          ) : (
+            <PurchaseConfirmEquipment
+              key={index}
+              addedItems={addedItems}
+              setAddedItems={setAddedItems}
+              index={index}
+            />
+          )
+        )}
 
         <div className="d-grid">
           <Button className="btn-teal-dark" type="submit">

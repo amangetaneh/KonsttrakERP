@@ -8,6 +8,7 @@ import ContextProviders from "./contexts/ContextProviders"
 import Sidebar from "./components/layouts/Sidebar"
 import MaterialTransfer from "./components/forms/transfer/MaterialTransfer"
 import MaterialPurchase from "./components/forms/purchase/MaterialPurchase"
+import EquipmentPurchase from "./components/forms/purchase/EquipmentPurchase"
 import MaterialItem from "./components/forms/item/MaterialItem"
 import ListMySiteReceives from "./components/forms/receive/ListMySiteReceives"
 import MaterialBuy from "./components/forms/buy/MaterialBuy"
@@ -157,6 +158,10 @@ const App = () => {
               <Route path="purchase" element={<ListPurchases />} />
               <Route path="purchase/:id" element={<SinglePurchase />} />
               <Route path="purchase/material" element={<MaterialPurchase />} />
+              <Route
+                path="purchase/equipment"
+                element={<EquipmentPurchase />}
+              />
 
               <Route path="receive" element={<ListReceives />} />
               <Route path="receive/:id" element={<SingleReceive />} />

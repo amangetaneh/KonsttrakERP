@@ -12,17 +12,22 @@ import CheckPurchase from "./CheckPurchase"
 import ViewPurchase from "./ViewPurchase"
 import DeclinedPurchase from "./DeclinedPurchase"
 import { useQuery } from "react-query"
+import FormRow from "../../fragments/FormRow"
 import { fetchPurchase } from "../../../api/purchase"
 import { useAuth } from "../../../contexts/AuthContext"
 import LoadingSpinner from "../../fragments/LoadingSpinner"
 import ConnectionError from "../../fragments/ConnectionError"
+import AlertNotification from "../../fragments/AlertNotification"
 
 function SinglePurchase() {
   const { id } = useParams()
-  const { data } = useAuth()
   const [purchase, setPurchase] = useState({})
   const [addedItems, setAddedItems] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [viewOnly, setViewOnly] = useState()
+  const [notificationType, setNotificationType] = useState(null)
+
+  const auth = useAuth()
 
   var query = useQuery(["purchase", id], () => fetchPurchase(id))
 
@@ -63,7 +68,6 @@ function SinglePurchase() {
         itemObj.description = purchaseItem.item.equipment.description
         itemObj.units = [purchaseItem.item.equipment.unit]
         itemObj.equipmentModelId = purchaseItem.equipmentModelId
-        itemObj.equipmentAssets = purchaseItem.transferEquipmentAssets
       }
 
       items.push(itemObj)
@@ -73,44 +77,85 @@ function SinglePurchase() {
     setIsLoading(false)
   }, [query.data])
 
-  function FormRow({ labelL, labelR, valueL, valueR }) {
-    //defines layout of each row
-    return (
-      <div className="row mx-2">
-        <div className="col">
-          <Form.Group className="mb-3">
-            <div className="row">
-              <div className="col-3 mt-1">
-                <Form.Label>{labelL}</Form.Label>
-              </div>
-              <div className="col">
-                {typeof valueL === "object" ? (
-                  valueL
-                ) : (
-                  <Form.Control type="text" readOnly value={valueL} />
-                )}
-              </div>
-            </div>
-          </Form.Group>
-        </div>
-        <div className="col">
-          <Form.Group className="mb-3">
-            <div className="row">
-              <div className="col-3 mt-1">
-                <Form.Label>{labelR}</Form.Label>
-              </div>
-              <div className="col">
-                {typeof valueR === "object" ? (
-                  valueR
-                ) : (
-                  <Form.Control type="text" readOnly value={valueR} />
-                )}
-              </div>
-            </div>
-          </Form.Group>
-        </div>
-      </div>
-    )
+  useEffect(() => {
+    if (purchase.status === undefined) return
+    if (
+      purchase.status === PURCHASESTATUS.QUEUED &&
+      (auth.data.employee.employeeSiteId !== purchase.receivingSiteId ||
+        !auth.data.userRole.canRequestPurchase)
+    ) {
+      setViewOnly(true)
+      return setNotificationType(PURCHASESTATUS.QUEUED)
+    }
+
+    if (
+      purchase.status === PURCHASESTATUS.REQUESTED &&
+      (auth.data.employee.employeeSiteId !== purchase.receivingSiteId ||
+        !auth.data.userRole.canCheckPurchase)
+    ) {
+      setViewOnly(true)
+      return setNotificationType(PURCHASESTATUS.REQUESTED)
+    }
+
+    if (
+      purchase.status === PURCHASESTATUS.CHECKED &&
+      (auth.data.employee.employeeSiteId !== purchase.receivingSiteId ||
+        !auth.data.userRole.canApprovePurchase)
+    ) {
+      setViewOnly(true)
+      return setNotificationType(PURCHASESTATUS.CHECKED)
+    }
+
+    if (
+      purchase.status === PURCHASESTATUS.APPROVED &&
+      (auth.data.employee.employeeSiteId !== purchase.receivingSiteId ||
+        !auth.data.userRole.canConfirmPurchase)
+    ) {
+      setViewOnly(true)
+      return setNotificationType(PURCHASESTATUS.APPROVED)
+    }
+
+    setViewOnly(false)
+    setNotificationType(null)
+  }, [purchase])
+
+  function PurchaseNotificaion() {
+    switch (notificationType) {
+      case PURCHASESTATUS.QUEUED:
+        return (
+          <AlertNotification
+            title="Purchase Needs Request"
+            content="Purchase Has Been Queued and Needs Request to Continue."
+          />
+        )
+
+      case PURCHASESTATUS.REQUESTED:
+        return (
+          <AlertNotification
+            title="Purchase Needs Approval"
+            content="Purchase Has Been Requested and Needs Check to Continue."
+          />
+        )
+
+      case PURCHASESTATUS.CHECKED:
+        return (
+          <AlertNotification
+            title="Purchase Needs Check"
+            content="Purchase Has Been Requested and Needs Approval to Continue."
+          />
+        )
+
+      case PURCHASESTATUS.APPROVED:
+        return (
+          <AlertNotification
+            title="Purchase Confirmation Pending"
+            content="Purchase Has Been Approved but Hasn't Been Purchased Yet."
+          />
+        )
+
+      default:
+        return <></>
+    }
   }
 
   function TopForm() {
@@ -131,6 +176,7 @@ function SinglePurchase() {
           labelR="Requested On"
           valueR={new Date(purchase.requestDate).toLocaleString()}
         />
+
         {purchase.status >= PURCHASESTATUS.CHECKED && (
           <>
             <FormRow
@@ -149,6 +195,7 @@ function SinglePurchase() {
             />
           </>
         )}
+
         {purchase.status >= PURCHASESTATUS.APPROVED && (
           <>
             <FormRow
@@ -176,6 +223,7 @@ function SinglePurchase() {
       "Declined Purchase",
       "Request Purchase",
       "Check Purchase",
+      "Queued For Bulk Purchase",
       "Approve Purchase",
       "Confirm Purchase",
       "Item Purchased",
@@ -183,16 +231,22 @@ function SinglePurchase() {
     []
   )
 
-  if (query.isError) return <ConnectionError />
+  if (query.isError)
+    return <ConnectionError status={query.error?.response?.status} />
 
   if (isLoading) return <LoadingSpinner />
 
   return (
     <>
-      <Header title={titles[purchase.status]} />
+      <Header
+        title={titles[purchase.status]}
+        showPrint={purchase.status === PURCHASESTATUS.PURCHASED || viewOnly}
+      />
 
       <Container className="my-3">
         <>
+          <PurchaseNotificaion />
+
           <TopForm />
 
           {purchase.status === PURCHASESTATUS.DECLINED && (
@@ -203,7 +257,7 @@ function SinglePurchase() {
             />
           )}
 
-          {purchase.status === PURCHASESTATUS.QUEUED && (
+          {purchase.status === PURCHASESTATUS.QUEUED && !viewOnly && (
             <RequestQueuedPurchase
               addedItems={addedItems}
               setAddedItems={setAddedItems}
@@ -211,34 +265,31 @@ function SinglePurchase() {
             />
           )}
 
-          {purchase.status === PURCHASESTATUS.REQUESTED &&
-            data.userRole.canCheckPurchase && (
-              <CheckPurchase
-                addedItems={addedItems}
-                setAddedItems={setAddedItems}
-                purchase={purchase}
-              />
-            )}
+          {purchase.status === PURCHASESTATUS.REQUESTED && !viewOnly && (
+            <CheckPurchase
+              addedItems={addedItems}
+              setAddedItems={setAddedItems}
+              purchase={purchase}
+            />
+          )}
 
-          {purchase.status === PURCHASESTATUS.CHECKED &&
-            data.userRole.canApprovePurchase && (
-              <ApprovePurchase
-                addedItems={addedItems}
-                setAddedItems={setAddedItems}
-                purchase={purchase}
-              />
-            )}
+          {purchase.status === PURCHASESTATUS.CHECKED && !viewOnly && (
+            <ApprovePurchase
+              addedItems={addedItems}
+              setAddedItems={setAddedItems}
+              purchase={purchase}
+            />
+          )}
 
-          {purchase.status === PURCHASESTATUS.APPROVED &&
-            data.userRole.canConfirmPurchase && (
-              <ConfirmPurchase
-                addedItems={addedItems}
-                setAddedItems={setAddedItems}
-                purchase={purchase}
-              />
-            )}
+          {purchase.status === PURCHASESTATUS.APPROVED && !viewOnly && (
+            <ConfirmPurchase
+              addedItems={addedItems}
+              setAddedItems={setAddedItems}
+              purchase={purchase}
+            />
+          )}
 
-          {purchase.status === PURCHASESTATUS.PURCHASED && (
+          {(purchase.status === PURCHASESTATUS.PURCHASED || viewOnly) && (
             <ViewPurchase addedItems={addedItems} purchase={purchase} />
           )}
         </>

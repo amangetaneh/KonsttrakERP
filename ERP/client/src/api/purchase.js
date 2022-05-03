@@ -1,6 +1,10 @@
 import api from "./api"
 
-export const fetchPurchases = () => api.get("/purchase").then((res) => res.data)
+export const fetchAllPurchases = () =>
+  api.get("/purchase").then((res) => res.data)
+
+export const fetchPurchases = (data) =>
+  api.post("/purchase", data).then((res) => res.data)
 
 export const fetchPurchase = (id) =>
   api.get(`/purchase/${id}`).then((res) => res.data)

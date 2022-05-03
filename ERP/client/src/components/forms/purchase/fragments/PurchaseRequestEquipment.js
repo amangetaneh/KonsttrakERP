@@ -10,7 +10,7 @@ import { useQuery } from "react-query"
 import { useState, useEffect } from "react"
 import ConnectionError from "../../../fragments/ConnectionError"
 
-function PurchaseRequestMaterial({ addedItems, setAddedItems, index }) {
+function PurchaseRequestEquipment({ addedItems, setAddedItems, index }) {
   const [categoryId, setCategoryId] = useState(0)
   const [itemId, setItemId] = useState(0)
   const [modelId, setModelId] = useState(0)
@@ -263,10 +263,10 @@ function PurchaseRequestMaterial({ addedItems, setAddedItems, index }) {
   )
 }
 
-PurchaseRequestMaterial.propTypes = {
+PurchaseRequestEquipment.propTypes = {
   addedItems: PropTypes.array.isRequired,
   setAddedItems: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
 }
 
-export default PurchaseRequestMaterial
+export default PurchaseRequestEquipment

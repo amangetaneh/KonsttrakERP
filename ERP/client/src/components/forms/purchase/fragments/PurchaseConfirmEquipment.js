@@ -1,7 +1,16 @@
 import { useEffect } from "react"
-import { Form, InputGroup } from "react-bootstrap"
+import { Form, InputGroup, Table } from "react-bootstrap"
+import { useQuery } from "react-query"
+import { fetchEquipmentModel } from "../../../../api/item"
 
-function PurchaseConfirmMaterial({ addedItems, setAddedItems, index }) {
+function PurchaseConfirmEquipment({ addedItems, setAddedItems, index }) {
+  var modelQuery = useQuery(
+    ["model", addedItems[index].equipmentModelId],
+    () =>
+      addedItems[index].equipmentModelId &&
+      fetchEquipmentModel(addedItems[index].equipmentModelId)
+  )
+
   //set purchased qty to approved as default
   useEffect(() => {
     const addedItemsCpy = [...addedItems]
@@ -19,7 +28,7 @@ function PurchaseConfirmMaterial({ addedItems, setAddedItems, index }) {
     <div className="shadow pt-3 px-4 mb-4 rounded">
       <div className=" row justify-content-between">
         <div className="col-auto">
-          <h1 className="display-6 fs-4">Material {index + 1}</h1>
+          <h1 className="display-6 fs-4">Equipment {index + 1}</h1>
         </div>
       </div>
 
@@ -50,16 +59,14 @@ function PurchaseConfirmMaterial({ addedItems, setAddedItems, index }) {
           </Form.Group>
         </div>
       </div>
-
       <div className="row">
         <div className="col">
           <Form.Group className="mb-3">
-            <Form.Label>Specification</Form.Label>
+            <Form.Label>Model</Form.Label>
             <Form.Control
-              as="textarea"
-              name="spec"
-              rows={5}
-              value={addedItems[index].spec}
+              type="text"
+              name="cost"
+              value={modelQuery?.data?.name || ""}
               readOnly
             />
           </Form.Group>
@@ -91,6 +98,22 @@ function PurchaseConfirmMaterial({ addedItems, setAddedItems, index }) {
               </Form.Group>
             </div>
           </div>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col">
+          <Form.Group className="mb-3">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              as="textarea"
+              name="spec"
+              rows={1}
+              value={addedItems[index].description}
+              readOnly
+            />
+          </Form.Group>
+        </div>
+        <div className="col">
           <div className="row">
             <div className="col">
               <Form.Group className="mb-3">
@@ -121,7 +144,10 @@ function PurchaseConfirmMaterial({ addedItems, setAddedItems, index }) {
                   type="number"
                   name="qtyPurchased"
                   value={addedItems[index].qtyPurchased}
-                  onChange={valueChanged}
+                  onChange={(e) => {
+                    if (e.target.value <= addedItems[index].qtyApproved)
+                      valueChanged(e)
+                  }}
                   required
                 />
               </Form.Group>
@@ -179,4 +205,4 @@ function PurchaseConfirmMaterial({ addedItems, setAddedItems, index }) {
   )
 }
 
-export default PurchaseConfirmMaterial
+export default PurchaseConfirmEquipment
