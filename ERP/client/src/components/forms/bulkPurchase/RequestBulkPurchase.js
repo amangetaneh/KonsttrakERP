@@ -31,7 +31,7 @@ function RequestBulkPurchase({ addedItems, setAddedItems, bulkPurchase }) {
       bulkPurchaseId: bulkPurchase.bulkPurchaseId,
     }
 
-    submitRequestPurchase(data)
+    submitRequestBulkPurchase(data)
   }
 
   if (isRequestError)

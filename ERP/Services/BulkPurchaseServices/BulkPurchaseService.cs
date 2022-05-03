@@ -85,7 +85,7 @@ namespace ERP.Services.BulkPurchaseServices
 
             bulkPurchase.TotalPurchaseCost = calculateTotalCost(bulkPurchase.BulkPurchaseItems); ;
 
-            bulkPurchase.Status = PURCHASESTATUS.APPROVED;
+            bulkPurchase.Status = BULKPURCHASESTATUS.APPROVED;
 
             await _context.SaveChangesAsync();
 
@@ -114,7 +114,7 @@ namespace ERP.Services.BulkPurchaseServices
                 bulkPurchaseItem.TotalCost = 0;
             }
 
-            bulkPurchase.Status = PURCHASESTATUS.DECLINED;
+            bulkPurchase.Status = BULKPURCHASESTATUS.DECLINED;
 
             await _context.SaveChangesAsync();
 
@@ -153,15 +153,15 @@ namespace ERP.Services.BulkPurchaseServices
             await _context.SaveChangesAsync();
 
             foreach (var purchase in _context.Purchases
-            .Where(purchase => purchase.BulkPurchaseId == bulkPurchase.BulkPurchaseId && purchase.Status == PURCHASESTATUS.QUEUED)
+            .Where(purchase => purchase.BulkPurchaseId == bulkPurchase.BulkPurchaseId && purchase.Status == PURCHASESTATUS.BULKQUEUED)
             .Include(purchase => purchase.PurchaseItems))
             {
                 purchase.Status = PURCHASESTATUS.PURCHASED;
-                
+                                
                 //Add receive
                 Receive receive = new();
                 receive.PurchaseId = purchase.PurchaseId;
-                receive.PurchaseDate = purchase.PurchaseDate;
+                receive.PurchaseDate = DateTime.Now;
                 receive.ReceivingSiteId = purchase.ReceivingSiteId;
                 ICollection<ReceiveItem> receiveItems = new List<ReceiveItem>();
                 

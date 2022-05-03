@@ -26,6 +26,14 @@ namespace ERP.Models
         public bool CanViewPurchase { get; set; } = false;
 
         public bool CanConfirmPurchase { get; set; } = false;
+         
+        public bool CanViewBulkPurchase { get; set; } = false;
+
+        public bool CanRequestBulkPurchase { get; set; } = false;
+
+        public bool CanApproveBulkPurchase { get; set; } = false;
+
+        public bool CanConfirmBulkPurchase { get; set; } = false;
 
         public bool CanRequestBuy { get; set; } = false;
 

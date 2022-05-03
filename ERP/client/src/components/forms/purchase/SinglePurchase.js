@@ -79,6 +79,10 @@ function SinglePurchase() {
 
   useEffect(() => {
     if (purchase.status === undefined) return
+    if (purchase.status === PURCHASESTATUS.BULKQUEUED) {
+      setViewOnly(true)
+      return setNotificationType(PURCHASESTATUS.BULKQUEUED)
+    }
     if (
       purchase.status === PURCHASESTATUS.QUEUED &&
       (auth.data.employee.employeeSiteId !== purchase.receivingSiteId ||
@@ -134,6 +138,14 @@ function SinglePurchase() {
           <AlertNotification
             title="Purchase Needs Check"
             content="Purchase Has Been Requested and Needs Check to Continue."
+          />
+        )
+
+      case PURCHASESTATUS.BULKQUEUED:
+        return (
+          <AlertNotification
+            title="Purchase Pending"
+            content="Purchase Has Been Queued For Bulk Purchase, Wait For Bulk Purchase."
           />
         )
 

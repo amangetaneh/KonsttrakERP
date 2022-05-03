@@ -1,6 +1,7 @@
 import { Form, InputGroup } from "react-bootstrap"
 import { useQuery } from "react-query"
 import { fetchEquipmentModel } from "../../../../api/item"
+import { ITEMTYPE } from "../../../../Constants"
 
 function PurchaseDeclinedEquipment({ addedItems, index }) {
   var modelQuery = useQuery(
@@ -14,7 +15,11 @@ function PurchaseDeclinedEquipment({ addedItems, index }) {
     <div className="shadow pt-3 px-4 mb-4 rounded">
       <div className=" row justify-content-between">
         <div className="col-auto">
-          <h1 className="display-6 fs-4">Equipment {index + 1}</h1>
+          {addedItems[index].type == ITEMTYPE.MATERIAL ? (
+            <h1 className="display-6 fs-4">Material {index + 1}</h1>
+          ) : (
+            <h1 className="display-6 fs-4">Equipment {index + 1}</h1>
+          )}
         </div>
       </div>
 
@@ -46,17 +51,19 @@ function PurchaseDeclinedEquipment({ addedItems, index }) {
         </div>
       </div>
       <div className="row">
-        <div className="col">
-          <Form.Group className="mb-3">
-            <Form.Label>Model</Form.Label>
-            <Form.Control
-              type="text"
-              name="cost"
-              value={modelQuery?.data?.name || ""}
-              readOnly
-            />
-          </Form.Group>
-        </div>
+        {addedItems[index].type == ITEMTYPE.EQUIPMENT && (
+          <div className="col">
+            <Form.Group className="mb-3">
+              <Form.Label>Model</Form.Label>
+              <Form.Control
+                type="text"
+                name="cost"
+                value={modelQuery?.data?.name || ""}
+                readOnly
+              />
+            </Form.Group>
+          </div>
+        )}
         <div className="col">
           <div className="row">
             <div className="col">
@@ -87,18 +94,33 @@ function PurchaseDeclinedEquipment({ addedItems, index }) {
         </div>
       </div>
       <div className="row">
-        <div className="col">
-          <Form.Group className="mb-3">
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              as="textarea"
-              name="spec"
-              rows={1}
-              value={addedItems[index].description}
-              readOnly
-            />
-          </Form.Group>
-        </div>
+        {addedItems[index].type == ITEMTYPE.MATERIAL ? (
+          <div className="col">
+            <Form.Group className="mb-3">
+              <Form.Label>Specification</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="spec"
+                rows={3}
+                value={addedItems[index].spec}
+                readOnly
+              />
+            </Form.Group>
+          </div>
+        ) : (
+          <div className="col">
+            <Form.Group className="mb-3">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="spec"
+                rows={3}
+                value={addedItems[index].description}
+                readOnly
+              />
+            </Form.Group>
+          </div>
+        )}
         <div className="col">
           <div className="col">
             <Form.Group className="mb-3">
