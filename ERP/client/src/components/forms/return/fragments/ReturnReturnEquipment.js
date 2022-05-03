@@ -321,7 +321,6 @@ function ReturnReturnEquipment({ addedItems, setAddedItems, index, employee }) {
                             <Form.Control
                                 type="file"
                                 name="fileName"
-                                value={addedItems[index].fileName}
                                 onChange={valueChanged}
                                 required
                                 accept=".docx, .doc, .pdf, .png, .jpeg, .jpg"

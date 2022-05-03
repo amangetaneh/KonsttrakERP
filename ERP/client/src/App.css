@@ -25,6 +25,13 @@
         background-color: var(--color-teal) !important;
     }
 
+    .help-teal-dark {
+        background-color: var(--color-teal) !important;
+        border-color: var(--color-teal) !important;
+        color: white !important;
+        border-radius: 5px !important;
+    }
+
     .btn-teal-dark {
         background-color: var(--color-teal) !important;
         border-color: var(--color-teal) !important;

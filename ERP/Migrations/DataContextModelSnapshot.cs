@@ -390,6 +390,9 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EquipmentCategoryId"), 1L, 1);
 
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1254,6 +1257,9 @@ namespace ERP.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFinance")
                         .HasColumnType("bit");
 
                     b.Property<string>("Role")

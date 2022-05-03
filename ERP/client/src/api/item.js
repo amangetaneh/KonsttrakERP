@@ -33,3 +33,5 @@ export const addEquipmentModel = (data) => api.post("/item/equipmentmodel/add", 
 
 export const updateMinimumStockItems = (data) =>
     api.post("/item/minimum-stock/update", data).then((res) => res.data);
+
+export const importAssets = (data) => api.post("/item/import-asset", data).then((res) => res.data);

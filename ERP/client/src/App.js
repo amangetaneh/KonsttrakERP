@@ -52,6 +52,8 @@ import NewRent from "./components/forms/rent/NewRent";
 import AdminNotification from "./components/forms/AdminNotification";
 import MinimumStock from "./components/forms/item/MinimumStock";
 import ComanyNamePrefix from "./components/forms/misc/ComanyNamePrefix";
+import AssetNumberImport from "./components/forms/item/AssetNumberImport";
+import UserGuide from "./components/forms/guide/UserGuide";
 
 const App = () => {
     const contextData = useAuth();
@@ -101,6 +103,10 @@ const App = () => {
 
                             <Route path="report" element={<Report />} />
 
+                            <Route
+                                path="item/import-asset-numbers"
+                                element={<AssetNumberImport />}
+                            />
                             <Route path="item/minimum-stock" element={<MinimumStock />} />
                             <Route path="item/material/new" element={<MaterialItem />} />
                             <Route path="item/equipment/new" element={<EquipmentItem />} />
@@ -152,6 +158,8 @@ const App = () => {
 
                             <Route path="notification" element={<AdminNotification />} />
                             <Route path="misc/company" element={<ComanyNamePrefix />} />
+
+                            <Route path="help" element={<UserGuide />} />
 
                             <Route path="rent/new" element={<NewRent />} />
                         </Routes>

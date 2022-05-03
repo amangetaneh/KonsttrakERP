@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using ERP.DTOs.Item;
 using ERP.Services.ItemServices;
 using Microsoft.AspNetCore.Authorization;
+using ERP.Services.User;
 
 namespace ERP.Controllers
 {
@@ -16,11 +17,24 @@ namespace ERP.Controllers
     {
         private readonly DataContext context;
         private readonly IItemService _itemService;
+        private readonly IUserService _userService;
 
-        public ItemController(DataContext context, IItemService itemService)
+        public ItemController(DataContext context, IItemService itemService, IUserService userService)
         {
             this.context = context;
             _itemService = itemService;
+            _userService = userService;
+        }
+
+        [HttpPost("import-asset")]
+        public async Task<ActionResult<int>> ImportAssetNumbers(ImportAssetNoDTO importDTO)
+        {
+            if (!_userService.UserRole.IsAdmin)
+                return Forbid();
+
+            var result = await _itemService.ImportAssetNumbers(importDTO);
+
+            return Ok(result);
         }
 
         [HttpGet]
@@ -42,6 +56,10 @@ namespace ERP.Controllers
         [HttpPost("minimum-stock")]
         public async Task<ActionResult<List<MinimumStockItemDTO>>> GetMinimumStock(GetMinimumStockItemsDTO minimumStockDTO)
         {
+            if (!_userService.UserRole.IsAdmin || !_userService.UserRole.CanGetStockNotification)
+                return Forbid();
+
+
             var items = await _itemService.GetMinimumStockItems(minimumStockDTO);
 
             return Ok(items);
@@ -151,6 +169,7 @@ namespace ERP.Controllers
             item.Type = ITEMTYPE.EQUIPMENT;
             item.Name = equipmentItemDTO.Name;
 
+
             context.Items.Add(item);
 
             await context.SaveChangesAsync();
@@ -173,6 +192,7 @@ namespace ERP.Controllers
         {
             EquipmentCategory equipmentCategory = new();
             equipmentCategory.Name = equipmentCategoryDTO.Name;
+            equipmentCategory.FileName = equipmentCategoryDTO.FileName;
 
             context.EquipmentCategories.Add(equipmentCategory);
 

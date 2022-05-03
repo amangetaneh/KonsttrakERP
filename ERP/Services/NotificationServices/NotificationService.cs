@@ -28,6 +28,15 @@ namespace ERP.Services.NotificationServices
             return notifications.OrderByDescending(n => n.Date).ToList();
         }
 
+        public async Task<Notification> GetNotification(int id)
+        {
+            var notification = await _context.Notifications
+                .Where(noti => noti.NotificationId == id)
+                .FirstOrDefaultAsync();
+
+            return notification;
+        }
+
         public async Task<List<Notification>> GetUserNotifications()
         {
 

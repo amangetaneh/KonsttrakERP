@@ -7,6 +7,7 @@ import maintenanceImg from "../../icons/maintenance.jpg";
 import issueImg from "../../icons/issue.jpg";
 import borrowImg from "../../icons/borrow.jpg";
 import transferImg from "../../icons/transfer.jpg";
+import helpImg from "../../icons/help.jpg";
 
 function Dashboard() {
     return (
@@ -126,6 +127,18 @@ function Dashboard() {
                                             label: "Receive Material Request",
                                         },
                                         { to: "/receive", label: "View Receives" },
+                                    ]}
+                                />
+                            </Col>
+                            <Col>
+                                <DashboardCard
+                                    img={helpImg}
+                                    title="Help"
+                                    links={[
+                                        {
+                                            to: "/help",
+                                            label: "User Guide",
+                                        },
                                     ]}
                                 />
                             </Col>

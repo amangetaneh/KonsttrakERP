@@ -19,14 +19,12 @@ function NewReturn() {
     const [requestedBy, setRequestedBy] = useState(0);
     const [addedItems, setAddedItems] = useState([new Item()]);
 
-    const [allSites, setAllSites] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
     const [isUploadError, setIsUploadError] = useState(false);
 
     const sitesQuery = useQuery("sites", fetchSites, {
         onSuccess: (data) => {
-            setAllSites(data);
             setReturnSite(data[0].siteId);
         },
     });
