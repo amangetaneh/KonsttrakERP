@@ -7,6 +7,7 @@ namespace ERP.Services.BuyServices
     public interface IBuyService
     {
         public Task<Buy> GetById(int id);
+        public Task<List<Buy>> GetByCondition();
         public Task<Buy> RequestBuy(CreateBuyDTO buyDTO);
         public Task<Buy> CheckBuy(CheckBuyDTO checkDTO);
         public Task<Buy> QueueBuy(QueueBuyDTO queueDTO);

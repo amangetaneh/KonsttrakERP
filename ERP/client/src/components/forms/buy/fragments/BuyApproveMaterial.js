@@ -100,7 +100,10 @@ function BuyApproveMaterial({ addedItems, setAddedItems, index }) {
                   type="number"
                   name="qtyApproved"
                   value={addedItems[index].qtyApproved}
-                  onChange={valueChanged}
+                  onChange={(e) => {
+                    if (e.target.value <= addedItems[index].qtyRequested)
+                      valueChanged(e)
+                  }}
                   required
                 />
               </Form.Group>

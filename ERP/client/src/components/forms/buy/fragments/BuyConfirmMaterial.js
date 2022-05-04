@@ -121,7 +121,10 @@ function BuyConfirmMaterial({ addedItems, setAddedItems, index }) {
                   type="number"
                   name="qtyBought"
                   value={addedItems[index].qtyBought}
-                  onChange={valueChanged}
+                  onChange={(e) => {
+                    if (e.target.value <= addedItems[index].qtyRequested)
+                      valueChanged(e)
+                  }}
                   required
                 />
               </Form.Group>

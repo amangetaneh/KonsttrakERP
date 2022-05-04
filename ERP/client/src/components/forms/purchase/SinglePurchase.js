@@ -153,7 +153,7 @@ function SinglePurchase() {
         return (
           <AlertNotification
             title="Purchase Needs Approval"
-            content="Purchase Has Been Requested and Needs Approval to Continue."
+            content="Purchase Has Been Checked and Needs Approval to Continue."
           />
         )
 

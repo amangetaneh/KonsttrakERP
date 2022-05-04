@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReceiveItem = ERP.Models.ReceiveItem;
+using ERP.DTOs.Receive;
 
 namespace ERP.Controllers
 {
@@ -60,6 +61,15 @@ namespace ERP.Controllers
             {
                 return NotFound(ex.Message);
             }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<List<Receive>>> GetByParams(GetReceivesDTO getReceivesDTO)
+        {
+
+            var receives = await _receiveService.GetByCondition(getReceivesDTO);
+
+            return Ok(receives);
         }
 
         [HttpGet("mysite")]

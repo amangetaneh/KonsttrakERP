@@ -280,6 +280,9 @@ namespace ERP.Migrations
                     b.Property<DateTime?>("BuyDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("BuySiteId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("CheckDate")
                         .HasColumnType("datetime2");
 
@@ -304,6 +307,8 @@ namespace ERP.Migrations
                     b.HasKey("BuyId");
 
                     b.HasIndex("ApprovedById");
+
+                    b.HasIndex("BuySiteId");
 
                     b.HasIndex("CheckedById");
 
@@ -443,7 +448,6 @@ namespace ERP.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("SerialNo")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("EquipmentAssetId");
@@ -1520,6 +1524,12 @@ namespace ERP.Migrations
                         .HasForeignKey("ApprovedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("ERP.Models.Site", "BuySite")
+                        .WithMany()
+                        .HasForeignKey("BuySiteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("ERP.Models.Employee", "CheckedBy")
                         .WithMany()
                         .HasForeignKey("CheckedById")
@@ -1537,6 +1547,8 @@ namespace ERP.Migrations
                         .IsRequired();
 
                     b.Navigation("ApprovedBy");
+
+                    b.Navigation("BuySite");
 
                     b.Navigation("CheckedBy");
 
