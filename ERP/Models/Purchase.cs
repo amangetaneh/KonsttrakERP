@@ -29,6 +29,8 @@ namespace ERP.Models
 
         public int? ApprovedById { get; set; }
 
+        public DateTime? PurchaseDate { get; set; }
+
         public Site ReceivingSite { get; set; }
 
         public int ReceivingSiteId { get; set; }

@@ -5,7 +5,7 @@ import { ITEMTYPE } from "../../../Constants"
 import { Button } from "react-bootstrap"
 import { useNavigate } from "react-router-dom"
 
-function ViewPurchase({ addedItems }) {
+function ViewBulkPurchase({ addedItems }) {
   const navigate = useNavigate()
   function goBack() {
     navigate(-1)
@@ -47,21 +47,13 @@ function ViewPurchase({ addedItems }) {
           )}
         </thead>
         <tbody className="d-block d-print-table-row-group">
-          {addedItems.map((item, index) =>
-            item.type === ITEMTYPE.MATERIAL ? (
-              <PurchaseViewMaterial
-                key={index}
-                addedItems={addedItems}
-                index={index}
-              />
-            ) : (
-              <PurchaseViewEquipment
-                key={index}
-                addedItems={addedItems}
-                index={index}
-              />
-            )
-          )}
+          {addedItems.map((item, index) => (
+            <BulkPurchaseView
+              key={index}
+              addedItems={addedItems}
+              index={index}
+            />
+          ))}
         </tbody>
       </table>
       <div className="d-grid">
@@ -73,8 +65,8 @@ function ViewPurchase({ addedItems }) {
   )
 }
 
-ViewPurchase.propTypes = {
+ViewBulkPurchase.propTypes = {
   addedItems: PropTypes.array.isRequired,
 }
 
-export default ViewPurchase
+export default ViewBulkPurchase

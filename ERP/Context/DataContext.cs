@@ -320,6 +320,11 @@ namespace ERP.Context
                    .OnDelete(DeleteBehavior.Restrict)
                    .IsRequired(false);
 
+            modelBuilder.Entity<Buy>()
+                   .HasOne(i => i.BuySite)
+                   .WithMany()
+                   .OnDelete(DeleteBehavior.Restrict);
+
             //AssetNumberIds
             modelBuilder.Entity<AssetNumberId>()
                 .HasOne(a => a.Item)

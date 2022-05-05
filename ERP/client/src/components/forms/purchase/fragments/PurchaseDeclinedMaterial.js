@@ -44,7 +44,7 @@ function PurchaseDeclinedMaterial({ addedItems, index }) {
             <Form.Control
               as="textarea"
               name="spec"
-              rows={5}
+              rows={3}
               value={addedItems[index].spec}
               readOnly
             />

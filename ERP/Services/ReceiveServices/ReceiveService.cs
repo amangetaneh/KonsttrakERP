@@ -1,6 +1,8 @@
 ﻿using ERP.Context;
 using ERP.DTOs;
+using ERP.DTOs.Receive;
 using ERP.Models;
+using ERP.Services.AssetNumberServices;
 using ERP.Services.ItemSiteQtyServices;
 using ERP.Services.NotificationServices;
 using ERP.Services.User;
@@ -13,13 +15,15 @@ namespace ERP.Services.ReceiveServices
         private readonly DataContext _context;
         private readonly INotificationService _notificationService;
         private readonly IUserService _userService;
+        private readonly IAssetNumberService _assetNumberService;
         private readonly IItemSiteQtyService _itemSiteQtyService;
 
-        public ReceiveService(DataContext context, INotificationService notificationService, IUserService userService, IItemSiteQtyService itemSiteQtyService)
+        public ReceiveService(DataContext context, INotificationService notificationService, IUserService userService, IAssetNumberService assetNumberService, IItemSiteQtyService itemSiteQtyService)
         {
             _context = context;
             _notificationService = notificationService;
             _userService = userService;
+            _assetNumberService = assetNumberService;
             _itemSiteQtyService = itemSiteQtyService;
         }
 
@@ -62,6 +66,24 @@ namespace ERP.Services.ReceiveServices
             return receives;
         }
 
+        public async Task<List<Receive>> GetByCondition(GetReceivesDTO getReceivesDTO)
+        {
+            UserRole userRole = _userService.UserRole;
+            int employeeId = _userService.Employee.EmployeeId;
+
+            var receives = await _context.Receives
+                .Where(receive => (
+                    (getReceivesDTO.ReceivingSiteId == -1 || receive.ReceivingSiteId == getReceivesDTO.ReceivingSiteId) &&
+                    ((userRole.CanViewReceive == true && receive.Status == RECEIVESTATUS.APPROVED) ||
+                    (userRole.CanReceive == true && receive.Status == RECEIVESTATUS.PURCHASED) ||
+                    (userRole.CanApproveReceive == true && receive.Status == RECEIVESTATUS.RECEIVED))))
+                .Include(receive => receive.ReceivingSite)
+                .OrderByDescending(receive => receive.ReceiveId)
+                .ToListAsync();
+
+            return receives;
+        }
+
         public async Task<Receive> ReceiveItem(CreateReceiveDTO receiveDTO)
         {
 
@@ -80,17 +102,48 @@ namespace ERP.Services.ReceiveServices
             foreach (var requestItem in receiveDTO.ReceiveItems)
             {
                 var receiveItem = receive.ReceiveItems
-                    .Where(rItem => rItem.ItemId == requestItem.ItemId)
+                    .Where(rItem => rItem.ItemId == requestItem.ItemId && rItem.EquipmentModelId == requestItem.EquipmentModelId)
                     .FirstOrDefault();
 
                 if (receiveItem == null) throw new KeyNotFoundException($"Receive Item with Id {requestItem.ItemId} Not Found");
 
                 receiveItem.QtyReceived = requestItem.QtyReceived;
                 receiveItem.ReceiveRemark = requestItem.ReceiveRemark;
+                
+                var itemTemp = _context.Items
+                    .Where(item => item.ItemId == requestItem.ItemId)
+                    .FirstOrDefault();
 
+                if (itemTemp == null) throw new KeyNotFoundException($"Item with Id {requestItem.ItemId} Not Found");
+
+
+                if (itemTemp.Type == ITEMTYPE.EQUIPMENT)
+                {
+                    await _itemSiteQtyService.AddEquipmentModel(requestItem.EquipmentModelId, (int)_userService.Employee.EmployeeSiteId, requestItem.QtyReceived);
+                    
+                    List<string> assetNumbers = await _assetNumberService.GenerateAssetNumbers(requestItem.ItemId, receiveItem.QtyReceived);
+                    
+                    foreach (var assetNumber in assetNumbers)
+                    {
+                        EquipmentAsset equipmentAsset = new();
+                        equipmentAsset.EquipmentModelId = requestItem.EquipmentModelId;
+                        equipmentAsset.AssetNo = assetNumber;
+                        equipmentAsset.CurrentSiteId = (int)_userService.Employee.EmployeeSiteId;
+                        equipmentAsset.CurrentEmployeeId = _userService.Employee.EmployeeId;
+
+                        _context.EquipmentAssets.Add(equipmentAsset);
+                    }
+
+                    await _context.SaveChangesAsync();
+
+                }
+                else
+                {
+                    await _itemSiteQtyService.AddMaterial(requestItem.ItemId, (int)_userService.Employee.EmployeeSiteId, requestItem.QtyReceived);
+                }
+                
                 receiveItems.Add(receiveItem);
 
-                await _itemSiteQtyService.AddMaterial(requestItem.ItemId, (int)_userService.Employee.EmployeeSiteId, requestItem.QtyReceived);
             }
 
             receive.Status = RECEIVESTATUS.RECEIVED;
@@ -116,7 +169,6 @@ namespace ERP.Services.ReceiveServices
             receive.ApproveDate = DateTime.Now;
             receive.ApprovedById = _userService.Employee.EmployeeId;
             receive.Status = RECEIVESTATUS.APPROVED;
-            receive.ApproveRemark = approveDTO.ApproveRemark;
 
             await _context.SaveChangesAsync();
 

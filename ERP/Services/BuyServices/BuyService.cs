@@ -33,6 +33,7 @@ namespace ERP.Services.BuyServices
                .Include(buy => buy.RequestedBy)
                .Include(buy => buy.CheckedBy)
                .Include(buy => buy.ApprovedBy)
+               .Include(buy => buy.BuySite)
                .Include(buy => buy.BuyItems)
                .ThenInclude(buyItem => buyItem.Item)
                .ThenInclude(item => item.Material)
@@ -45,12 +46,34 @@ namespace ERP.Services.BuyServices
             return buy;
         }
 
+        public async Task<List<Buy>> GetByCondition()
+        {
+            UserRole userRole = _userService.UserRole;
+            int employeeId = _userService.Employee.EmployeeId;
+            int employeeSiteId = (int)_userService.Employee.EmployeeSiteId;
+
+            var buys = await _context.Buys
+                .Where(buy => (
+                    (buy.BuySiteId == employeeSiteId) &&
+                    ((userRole.CanViewBuy == true && (buy.Status == BUYSTATUS.DECLINED ||
+                    buy.Status == BUYSTATUS.QUEUED || buy.Status == BUYSTATUS.BOUGHT)) ||
+                    (userRole.CanCheckBuy == true && buy.Status == BUYSTATUS.REQUESTED) ||
+                    (userRole.CanApproveBuy == true && buy.Status == BUYSTATUS.CHECKED) ||
+                    (userRole.CanConfirmBuy == true && buy.Status == BUYSTATUS.APPROVED))))
+                .Include(buy => buy.BuySite)
+                .OrderByDescending(buy => buy.BuyId)
+                .ToListAsync();
+
+            return buys;
+        }
+
         public async Task<Buy> RequestBuy(CreateBuyDTO buyDTO)
         {
             //if (UserAccount != null && UserAccount.UserRole.CanRequestBuy != 1) return Forbid();
 
             Buy buy = new();
             buy.RequestedById = _userService.Employee.EmployeeId;
+            buy.BuySiteId = (int)_userService.Employee.EmployeeSiteId;
 
             ICollection<BuyItem> buyItems = new List<BuyItem>();
 

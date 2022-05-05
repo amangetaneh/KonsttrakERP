@@ -49,7 +49,6 @@ const Login = () => {
 
         navigate("/")
       } catch (err) {
-        console.log(err)
         toast.error("incorrect username or password", toastOption)
       }
     }

@@ -1,11 +1,10 @@
 import React from "react"
 import PropTypes from "prop-types"
 import BulkPurchaseDeclined from "./fragments/BulkPurchaseDeclined"
-import { ITEMTYPE } from "../../../Constants"
 import { Button } from "react-bootstrap"
 import { useNavigate } from "react-router-dom"
 
-function DeclinedPurchase({ purchase, addedItems, FormRow }) {
+function DeclinedBulkPurchase({ bulkPurchase, addedItems, FormRow }) {
   const navigate = useNavigate()
   const goBack = () => navigate(-1)
   return (
@@ -13,37 +12,29 @@ function DeclinedPurchase({ purchase, addedItems, FormRow }) {
       <FormRow
         labelL="Declined By"
         valueL={
-          purchase.approvedBy
-            ? `${purchase.approvedBy.fName} ${purchase.approvedBy.mName}`
+          bulkPurchase.approvedBy
+            ? `${bulkPurchase.approvedBy.fName} ${bulkPurchase.approvedBy.mName}`
             : ""
         }
         labelR="Declined On"
         valueR={
-          purchase.approveDate
-            ? new Date(purchase.approveDate).toLocaleString()
+          bulkPurchase.approveDate
+            ? new Date(bulkPurchase.approveDate).toLocaleString()
             : ""
         }
       />
 
       <h1 className="display-6 text-center mt-2 mb-4">
-        Purchase Request Has Been Declined
+        BulkPurchase Request Has Been Declined
       </h1>
 
-      {addedItems.map((item, index) =>
-        item.type === ITEMTYPE.MATERIAL ? (
-          <PurchaseDeclinedMaterial
-            key={index}
-            addedItems={addedItems}
-            index={index}
-          />
-        ) : (
-          <PurchaseDeclinedEquipment
-            key={index}
-            addedItems={addedItems}
-            index={index}
-          />
-        )
-      )}
+      {addedItems.map((item, index) => (
+        <BulkPurchaseDeclined
+          key={index}
+          addedItems={addedItems}
+          index={index}
+        />
+      ))}
 
       <div className="d-grid">
         <Button className="btn-teal" onClick={goBack}>
@@ -54,9 +45,9 @@ function DeclinedPurchase({ purchase, addedItems, FormRow }) {
   )
 }
 
-DeclinedPurchase.propTypes = {
-  purchase: PropTypes.object.isRequired,
+DeclinedBulkPurchase.propTypes = {
+  bulkPurchase: PropTypes.object.isRequired,
   addedItems: PropTypes.array.isRequired,
 }
 
-export default DeclinedPurchase
+export default DeclinedBulkPurchase

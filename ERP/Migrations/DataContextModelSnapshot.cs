@@ -280,6 +280,9 @@ namespace ERP.Migrations
                     b.Property<DateTime?>("BuyDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("BuySiteId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("CheckDate")
                         .HasColumnType("datetime2");
 
@@ -304,6 +307,8 @@ namespace ERP.Migrations
                     b.HasKey("BuyId");
 
                     b.HasIndex("ApprovedById");
+
+                    b.HasIndex("BuySiteId");
 
                     b.HasIndex("CheckedById");
 
@@ -443,7 +448,6 @@ namespace ERP.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("SerialNo")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("EquipmentAssetId");
@@ -831,6 +835,9 @@ namespace ERP.Migrations
                     b.Property<int?>("CheckedById")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("PurchaseDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("ReceivingSiteId")
                         .HasColumnType("int");
 
@@ -951,6 +958,9 @@ namespace ERP.Migrations
 
                     b.Property<int?>("DeliveredById")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("PurchaseDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PurchaseId")
                         .HasColumnType("int");
@@ -1240,6 +1250,9 @@ namespace ERP.Migrations
                     b.Property<bool>("CanApproveBorrow")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("CanApproveBulkPurchase")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("CanApproveBuy")
                         .HasColumnType("bit");
 
@@ -1265,6 +1278,9 @@ namespace ERP.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("CanCheckPurchase")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanConfirmBulkPurchase")
                         .HasColumnType("bit");
 
                     b.Property<bool>("CanConfirmBuy")
@@ -1297,6 +1313,9 @@ namespace ERP.Migrations
                     b.Property<bool>("CanRequestBorrow")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("CanRequestBulkPurchase")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("CanRequestBuy")
                         .HasColumnType("bit");
 
@@ -1319,6 +1338,9 @@ namespace ERP.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("CanViewBorrow")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanViewBulkPurchase")
                         .HasColumnType("bit");
 
                     b.Property<bool>("CanViewBuy")
@@ -1500,6 +1522,12 @@ namespace ERP.Migrations
                         .HasForeignKey("ApprovedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("ERP.Models.Site", "BuySite")
+                        .WithMany()
+                        .HasForeignKey("BuySiteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("ERP.Models.Employee", "CheckedBy")
                         .WithMany()
                         .HasForeignKey("CheckedById")
@@ -1517,6 +1545,8 @@ namespace ERP.Migrations
                         .IsRequired();
 
                     b.Navigation("ApprovedBy");
+
+                    b.Navigation("BuySite");
 
                     b.Navigation("CheckedBy");
 

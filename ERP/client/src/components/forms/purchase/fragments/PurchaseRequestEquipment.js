@@ -216,7 +216,7 @@ function PurchaseRequestEquipment({ addedItems, setAddedItems, index }) {
               readOnly
               as="textarea"
               name="description"
-              rows={5}
+              rows={3}
               value={addedItems[index].description}
             />
           </Form.Group>

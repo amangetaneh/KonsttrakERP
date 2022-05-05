@@ -2,24 +2,24 @@ import React from "react"
 import PropTypes from "prop-types"
 import BulkPurchaseRequest from "./fragments/BulkPurchaseRequest"
 import { Button, Form, Spinner } from "react-bootstrap"
-import { requestQueuedPurchase } from "../../../api/purchase"
+import { requestBulkPurchase } from "../../../api/bulkPurchase"
 import { useMutation, useQueryClient } from "react-query"
 import ConnectionError from "../../fragments/ConnectionError"
 import { ITEMTYPE } from "../../../Constants"
 
-function RequestQueuedPurchase({ addedItems, setAddedItems, purchase }) {
+function RequestBulkPurchase({ addedItems, setAddedItems, bulkPurchase }) {
   const queryClient = useQueryClient()
 
   const {
     isLoading: isRequestLoading,
     isError: isRequestError,
     error: requestError,
-    mutate: submitRequestQueuedPurchase,
-  } = useMutation(requestQueuedPurchase, {
+    mutate: submitRequestBulkPurchase,
+  } = useMutation(requestBulkPurchase, {
     onSuccess: (res) =>
       queryClient.invalidateQueries([
-        "purchase",
-        purchase.purchaseId.toString(),
+        "bulkPurchase",
+        bulkPurchase.bulkPurchaseId.toString(),
       ]),
   })
 
@@ -28,10 +28,10 @@ function RequestQueuedPurchase({ addedItems, setAddedItems, purchase }) {
     if (isRequestLoading) return
 
     const data = {
-      purchaseId: purchase.purchaseId,
+      bulkPurchaseId: bulkPurchase.bulkPurchaseId,
     }
 
-    submitRequestQueuedPurchase(data)
+    submitRequestBulkPurchase(data)
   }
 
   if (isRequestError)
@@ -44,30 +44,21 @@ function RequestQueuedPurchase({ addedItems, setAddedItems, purchase }) {
   return (
     <>
       <Form onSubmit={submit}>
-        {addedItems.map((item, index) =>
-          item.type == ITEMTYPE.MATERIAL ? (
-            <PurchaseRequestQueuedMaterial
-              key={index}
-              addedItems={addedItems}
-              setAddedItems={setAddedItems}
-              index={index}
-            />
-          ) : (
-            <PurchaseRequestQueuedEquipment
-              key={index}
-              addedItems={addedItems}
-              setAddedItems={setAddedItems}
-              index={index}
-            />
-          )
-        )}
+        {addedItems.map((item, index) => (
+          <BulkPurchaseRequest
+            key={index}
+            addedItems={addedItems}
+            setAddedItems={setAddedItems}
+            index={index}
+          />
+        ))}
 
         <div className="d-grid">
           <Button className="btn-teal-dark" type="submit">
             {isRequestLoading && (
               <Spinner className="me-2" animation="grow" size="sm" />
             )}
-            Request Purchase
+            Request BulkPurchase
           </Button>
         </div>
       </Form>
@@ -75,10 +66,10 @@ function RequestQueuedPurchase({ addedItems, setAddedItems, purchase }) {
   )
 }
 
-RequestQueuedPurchase.propTypes = {
+RequestBulkPurchase.propTypes = {
   addedItems: PropTypes.array.isRequired,
   setAddedItems: PropTypes.func.isRequired,
-  purchase: PropTypes.object.isRequired,
+  bulkPurchase: PropTypes.object.isRequired,
 }
 
-export default RequestQueuedPurchase
+export default RequestBulkPurchase

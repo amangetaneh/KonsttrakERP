@@ -59,6 +59,15 @@ namespace ERP.Controllers
             return Ok(buys);
         }
 
+        [HttpPost]
+        public async Task<ActionResult<List<Buy>>> GetByParams()
+        {
+
+            var buys = await _buyService.GetByCondition();
+
+            return Ok(buys);
+        }
+
         [HttpPost("request")]
         public async Task<ActionResult<List<Buy>>> Request(CreateBuyDTO buyDTO)
         {

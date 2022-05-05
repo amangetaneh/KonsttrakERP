@@ -56,6 +56,11 @@ namespace ERP.Controllers
             userRole.CanApprovePurchase = role.CanApprovePurchase;
             userRole.CanConfirmPurchase = role.CanConfirmPurchase;
             userRole.CanViewPurchase = role.CanViewPurchase;
+            
+            userRole.CanRequestBulkPurchase = role.CanRequestBulkPurchase;
+            userRole.CanApproveBulkPurchase = role.CanApproveBulkPurchase;
+            userRole.CanConfirmBulkPurchase = role.CanConfirmBulkPurchase;
+            userRole.CanViewBulkPurchase = role.CanViewBulkPurchase;
 
             userRole.CanFixMaintenance = role.CanFixMaintenance;
             userRole.CanApproveMaintenance = role.CanApproveMaintenance;

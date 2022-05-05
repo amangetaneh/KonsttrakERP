@@ -100,7 +100,7 @@ function PurchaseViewEquipment({ addedItems, index }) {
               <Form.Control
                 as="textarea"
                 name="spec"
-                rows={1}
+                rows={3}
                 value={addedItems[index].description}
                 readOnly
               />

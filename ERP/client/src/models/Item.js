@@ -9,6 +9,7 @@ class Item {
     this.units = []
     this.qtyRequested = 0
     this.qtyApproved = 0
+    this.qtyBought = 0
     this.qtyPurchased = 0
     this.qtySent = 0
     this.qtyReceived = 0
@@ -17,6 +18,7 @@ class Item {
     this.totalCost = 0
     this.total = 0
     this.approveRemark = ""
+    this.buyRemark = ""
     this.requestRemark = ""
     this.sendRemark = ""
     this.receiveRemark = ""
