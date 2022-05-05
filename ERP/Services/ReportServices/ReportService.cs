@@ -16,6 +16,198 @@ namespace ERP.Services.ReportServices
             _context = context;
             _generalReportService = generalReportService;
         }
+        /*
+        public async Task<ReportReturnDTO<Issue>> GetReceiveReport(IssueReportDTO issueDTO)
+        {
+            issueDTO.SetDates(); // parse request data to set what date is given
+            issueDTO.SetEmployees();
+
+            var issues = _context.Receives
+                .Where(issue =>
+                //dates
+                (issueDTO.RequestDateFrom == null || issue.ReceiveDate >= issueDTO.RequestDateFrom) &&
+                (issueDTO.RequestDateTo == null || issue.ReceiveDate <= issueDTO.RequestDateTo) &&
+                (issueDTO.ApproveDateFrom == null || issue.ApproveDate >= issueDTO.ApproveDateFrom) &&
+                (issueDTO.ApproveDateTo == null || issue.ApproveDate <= issueDTO.ApproveDateTo) &&
+                (issueDTO.HandDateFrom == null || issue.HandDate >= issueDTO.HandDateFrom) &&
+                (issueDTO.HandDateTo == null || issue.HandDate <= issueDTO.HandDateTo) &&
+                //sites
+                (issueDTO.SiteId == -1 || issue.SiteId == issueDTO.SiteId) &&
+                //status
+                (issueDTO.Status == -1 || issue.Status == issueDTO.Status) &&
+                //single role one user
+                (issueDTO.EmployeeRole == -1 || issueDTO.RequestedById == null || issue.RequestedById == issueDTO.RequestedById) &&
+                (issueDTO.EmployeeRole == -1 || issueDTO.ApprovedById == null || issue.ApprovedById == issueDTO.ApprovedById) &&
+                (issueDTO.EmployeeRole == -1 || issueDTO.HandedById == null || issue.HandedById == issueDTO.HandedById) &&
+                //multiple role one user
+                (issueDTO.EmployeeRole != -1 || issueDTO.EmployeeId == -1 || issue.RequestedById == issueDTO.RequestedById || issue.ApprovedById == issueDTO.ApprovedById || issue.HandedById == issueDTO.HandedById) &&
+                //item
+                (issueDTO.ItemId == -1 || issue.IssueItems.Any(ti => ti.ItemId == issueDTO.ItemId))
+                )
+                .Include(transfer => transfer.Site)
+                .Include(transfer => transfer.RequestedBy)
+                .Include(transfer => transfer.HandedBy)
+                .Include(transfer => transfer.ApprovedBy);
+
+            IQueryable? summary = null;
+
+            switch (issueDTO.GroupBy)
+            {
+                //status
+                case ISSUEREPORTGROUPBY.STATUS:
+                    summary = issues.GroupBy(transfer => transfer.Status)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().Status });
+                    break;
+
+                //date
+                case ISSUEREPORTGROUPBY.REQUESTDATE:
+                    summary = issues.GroupBy(transfer => transfer.RequestDate.Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().RequestDate.ToShortDateString() });
+                    break;
+
+                case ISSUEREPORTGROUPBY.APPROVEDATE:
+                    summary = issues.GroupBy(transfer => transfer.ApproveDate == null ? DateTime.MinValue.Date : transfer.ApproveDate.Value.Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ApproveDate.Value.ToShortDateString() ?? "N/A" });
+                    break;
+
+                case ISSUEREPORTGROUPBY.HANDDATE:
+                    summary = issues.GroupBy(transfer => transfer.HandDate == null ? DateTime.MinValue.Date : transfer.HandDate.Value.Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().HandDate.Value.ToShortDateString() ?? "N/A" });
+                    break;
+
+                //week
+                case ISSUEREPORTGROUPBY.REQUESTWEEK:
+                    summary = issues.GroupBy(transfer => new { Week = transfer.RequestDate.DayOfYear / 7, transfer.RequestDate.Year })
+                         .Select(s => new { key = s.Key, count = s.Count(), value = $"Week {s.Key.Week}, {s.Key.Year}" });
+                    break;
+
+                case ISSUEREPORTGROUPBY.APPROVEWEEK:
+                    summary = issues.GroupBy(transfer =>
+                            new
+                            {
+                                Week = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.DayOfYear / 7,
+                                Year = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year
+                            })
+                         .Select(s => new
+                         {
+                             key = s.Key,
+                             count = s.Count(),
+                             value = s.First().ApproveDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                         });
+                    break;
+
+                case ISSUEREPORTGROUPBY.HANDWEEK:
+                    summary = issues.GroupBy(transfer =>
+                            new
+                            {
+                                Week = transfer.HandDate.Value == null ? -1 : transfer.HandDate.Value.DayOfYear / 7,
+                                Year = transfer.HandDate.Value == null ? -1 : transfer.HandDate.Value.Year
+                            })
+                         .Select(s => new
+                         {
+                             key = s.Key,
+                             count = s.Count(),
+                             value = s.First().HandDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                         });
+                    break;
+
+                //month
+                case ISSUEREPORTGROUPBY.REQUESTMONTH:
+                    summary = issues.GroupBy(transfer => new { Month = transfer.RequestDate.Month, transfer.RequestDate.Year })
+                         .Select(s => new { key = s.Key, count = s.Count(), value = $"{s.First().RequestDate.ToString("MMMM")}, {s.Key.Year}" });
+                    break;
+
+                case ISSUEREPORTGROUPBY.APPROVEMONTH:
+                    summary = issues.GroupBy(transfer =>
+                            new
+                            {
+                                Month = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Month,
+                                Year = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year
+                            })
+                         .Select(s => new
+                         {
+                             key = s.Key,
+                             count = s.Count(),
+                             value = s.First().ApproveDate.Value == null ? "N/A" : $"{s.First().ApproveDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                         });
+                    break;
+
+                case ISSUEREPORTGROUPBY.HANDMONTH:
+                    summary = issues.GroupBy(transfer =>
+                            new
+                            {
+                                Month = transfer.HandDate.Value == null ? -1 : transfer.HandDate.Value.Month,
+                                Year = transfer.HandDate.Value == null ? -1 : transfer.HandDate.Value.Year
+                            })
+                         .Select(s => new
+                         {
+                             key = s.Key,
+                             count = s.Count(),
+                             value = s.First().HandDate.Value == null ? "N/A" : $"{s.First().HandDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                         });
+                    break;
+
+                //year
+                case ISSUEREPORTGROUPBY.REQUESTYEAR:
+                    summary = issues.GroupBy(transfer => transfer.RequestDate.Year)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = $"{s.Key}" });
+                    break;
+
+                case ISSUEREPORTGROUPBY.APPROVEYEAR:
+                    summary = issues.GroupBy(transfer =>
+                            transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year)
+                        .Select(s => new
+                        {
+                            key = s.Key,
+                            count = s.Count(),
+                            value = s.First().ApproveDate.Value == null ? "N/A" : $"{s.Key}"
+                        });
+                    break;
+
+                case ISSUEREPORTGROUPBY.HANDYEAR:
+                    summary = issues.GroupBy(transfer =>
+                            transfer.HandDate.Value == null ? -1 : transfer.HandDate.Value.Year)
+                        .Select(s => new
+                        {
+                            key = s.Key,
+                            count = s.Count(),
+                            value = s.First().HandDate.Value == null ? "N/A" : $"{s.Key}"
+                        });
+                    break;
+
+                //employee
+                case ISSUEREPORTGROUPBY.REQUESTEDBY:
+                    summary = issues.GroupBy(transfer => transfer.RequestedById)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().RequestedBy });
+                    break;
+
+                case ISSUEREPORTGROUPBY.APPROVEDBY:
+                    summary = issues.GroupBy(transfer => transfer.ApprovedById == null ? 0 : transfer.ApprovedById)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ApprovedBy });
+                    break;
+
+                case ISSUEREPORTGROUPBY.HANDEDBY:
+                    summary = issues.GroupBy(transfer => transfer.HandedById == null ? 0 : transfer.HandedById)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().HandedBy });
+                    break;
+
+                //site
+                case ISSUEREPORTGROUPBY.SITE:
+                    summary = issues.GroupBy(transfer => transfer.SiteId)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().Site });
+                    break;
+            }
+
+
+            var result = new ReportReturnDTO<Issue>();
+
+            result.Summary = summary;
+            result.Data = await issues.ToListAsync();
+
+            return result;
+        }
+
+        */
         public async Task<ReportReturnDTO<Issue>> GetIssueReport(IssueReportDTO issueDTO)
         {
             issueDTO.SetDates(); // parse request data to set what date is given

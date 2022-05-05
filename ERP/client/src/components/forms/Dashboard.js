@@ -137,7 +137,7 @@ function Dashboard() {
                                     links={[
                                         {
                                             to: "/help",
-                                            label: "User Guide",
+                                            label: "User's Guide",
                                         },
                                     ]}
                                 />

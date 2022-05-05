@@ -187,6 +187,8 @@ const App = () => {
                             <Route path="/" element={<Navigate to={"/login"} />} />
 
                             <Route path="/registration" element={<SignUp />} />
+
+                            <Route path="help" element={<UserGuide />} />
                         </Routes>
                     </div>
                 </div>
