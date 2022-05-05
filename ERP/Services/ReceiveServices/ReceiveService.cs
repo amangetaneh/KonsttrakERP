@@ -169,7 +169,6 @@ namespace ERP.Services.ReceiveServices
             receive.ApproveDate = DateTime.Now;
             receive.ApprovedById = _userService.Employee.EmployeeId;
             receive.Status = RECEIVESTATUS.APPROVED;
-            receive.ApproveRemark = approveDTO.ApproveRemark;
 
             await _context.SaveChangesAsync();
 

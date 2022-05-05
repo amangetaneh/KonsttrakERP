@@ -1,11 +1,25 @@
 import { Form, InputGroup } from "react-bootstrap"
+import { useQuery } from "react-query"
+import { fetchEquipmentModel } from "../../../../api/item"
+import { ITEMTYPE } from "../../../../Constants"
 
-function ReceiveApprove({ addedItems, setAddedItems, index }) {
+function ReceiveApproveItem({ addedItems, setAddedItems, index }) {
+  var modelQuery = useQuery(
+    ["model", addedItems[index].equipmentModelId],
+    () =>
+      addedItems[index].equipmentModelId &&
+      fetchEquipmentModel(addedItems[index].equipmentModelId)
+  )
+
   return (
     <div className="shadow pt-3 px-4 mb-4 rounded">
       <div className=" row justify-content-between">
         <div className="col-auto">
-          <h1 className="display-6 fs-4">Material {index + 1}</h1>
+          {addedItems[index].type == ITEMTYPE.MATERIAL ? (
+            <h1 className="display-6 fs-4">Material {index + 1}</h1>
+          ) : (
+            <h1 className="display-6 fs-4">Equipment {index + 1}</h1>
+          )}
         </div>
       </div>
 
@@ -14,25 +28,6 @@ function ReceiveApprove({ addedItems, setAddedItems, index }) {
           <Form.Group className="mb-3">
             <Form.Label>Item</Form.Label>
             <Form.Control type="text" readOnly value={addedItems[index].name} />
-          </Form.Group>
-        </div>
-        <div className="col">
-          <Form.Group className="mb-3">
-            <Form.Label>Quantity Purchased</Form.Label>
-            <InputGroup className="mb-3">
-              <Form.Control
-                type="text"
-                name="qty"
-                readOnly
-                value={addedItems[index].qtyPurchased}
-              />
-              <Form.Control
-                name="unit"
-                type="text"
-                readOnly
-                value={addedItems[index].units[0]}
-              />
-            </InputGroup>
           </Form.Group>
         </div>
       </div>
@@ -79,4 +74,4 @@ function ReceiveApprove({ addedItems, setAddedItems, index }) {
   )
 }
 
-export default ReceiveApprove
+export default ReceiveApproveItem
