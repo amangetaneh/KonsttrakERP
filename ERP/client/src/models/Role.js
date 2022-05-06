@@ -18,8 +18,7 @@ class Role {
     this.CanApproveReceive = false
     this.CanViewReceive = false
 
-    this.CanApproveUser = false
-    this.CanDeleteUser = false
+    this.CanEditUser = false
 
     this.CanRequestPurchase = false
     this.CanCheckPurchase = false
@@ -48,7 +47,7 @@ class Role {
     this.CanSendTransfer = false
     this.CanViewTransfer = false
 
-    this.CanGetStockNotification
+    this.CanGetStockNotification = false
   }
 }
 

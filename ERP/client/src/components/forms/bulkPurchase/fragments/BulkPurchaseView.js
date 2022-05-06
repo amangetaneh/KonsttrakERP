@@ -218,20 +218,36 @@ function PurchaseViewEquipment({ addedItems, index }) {
           </div>
         </div>
       </div>
-      <tr className="d-none d-print-table-row">
-        <th>{index + 1}</th>
-        <td>{addedItems[index].name}</td>
-        <td>{modelQuery?.data?.name || ""}</td>
-        <td>{addedItems[index].desc}</td>
-        <td>{addedItems[index].qtyRequested}</td>
-        <td>{addedItems[index].qtyApproved}</td>
-        <td>{addedItems[index].qtyPurchased}</td>
-        <td>{addedItems[index].cost}</td>
-        <td>{addedItems[index].totalCost}</td>
-        <td>{addedItems[index].requestRemark}</td>
-        <td>{addedItems[index].approveRemark}</td>
-        <td>{addedItems[index].purchaseRemark}</td>
-      </tr>
+      {addedItems[index].type == ITEMTYPE.MATERIAL ? (
+        <tr className="d-none d-print-table-row">
+          <th>{index + 1}</th>
+          <td>{addedItems[index].name}</td>
+          <td>{addedItems[index].spec}</td>
+          <td>{addedItems[index].qtyRequested}</td>
+          <td>{addedItems[index].qtyApproved}</td>
+          <td>{addedItems[index].qtyPurchased}</td>
+          <td>{addedItems[index].cost}</td>
+          <td>{addedItems[index].totalCost}</td>
+          <td>{addedItems[index].requestRemark}</td>
+          <td>{addedItems[index].approveRemark}</td>
+          <td>{addedItems[index].purchaseRemark}</td>
+        </tr>
+      ) : (
+        <tr className="d-none d-print-table-row">
+          <th>{index + 1}</th>
+          <td>{addedItems[index].name}</td>
+          <td>{modelQuery?.data?.name || ""}</td>
+          <td>{addedItems[index].desc}</td>
+          <td>{addedItems[index].qtyRequested}</td>
+          <td>{addedItems[index].qtyApproved}</td>
+          <td>{addedItems[index].qtyPurchased}</td>
+          <td>{addedItems[index].cost}</td>
+          <td>{addedItems[index].totalCost}</td>
+          <td>{addedItems[index].requestRemark}</td>
+          <td>{addedItems[index].approveRemark}</td>
+          <td>{addedItems[index].purchaseRemark}</td>
+        </tr>
+      )}
     </>
   )
 }

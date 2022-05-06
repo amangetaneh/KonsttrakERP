@@ -5,6 +5,7 @@ import { Button, Form, Spinner } from "react-bootstrap"
 import { requestReceive } from "../../../api/receive"
 import { useMutation, useQueryClient } from "react-query"
 import ConnectionError from "../../fragments/ConnectionError"
+import { ITEMTYPE } from "../../../Constants"
 
 function RequestReceive({ addedItems, setAddedItems, receive }) {
   const queryClient = useQueryClient()
@@ -35,9 +36,13 @@ function RequestReceive({ addedItems, setAddedItems, receive }) {
         receiveRemark: item.receiveRemark,
       }
 
+      if (item.type === ITEMTYPE.EQUIPMENT)
+        tempItem.equipmentModelId = item.equipmentModelId
+
       data.receiveItems.push(tempItem)
     }
 
+    console.log(data)
     submitRequestReceive(data)
   }
 

@@ -13,9 +13,7 @@ namespace ERP.Models
 
         public bool IsFinance { get; set; } = false;
 
-        public bool CanApproveUser { get; set; } = false;
-
-        public bool CanDeleteUser { get; set; } = false;
+        public bool CanEditUser { get; set; } = false;
 
         public bool CanRequestPurchase { get; set; } = false;
 
