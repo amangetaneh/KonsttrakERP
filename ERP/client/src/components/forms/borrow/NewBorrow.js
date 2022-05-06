@@ -31,7 +31,6 @@ function NewBorrow() {
         if (isSubmitLoading) return;
 
         var data = {
-            requestedById: 1, ////////////////////////////////////////////////////////////////////////////////
             borrowItems: [],
         };
 

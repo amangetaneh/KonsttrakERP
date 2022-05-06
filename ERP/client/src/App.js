@@ -124,12 +124,26 @@ const App = () => {
     }
   }, [])
 
+  const backup = console.error
+
+  console.error = function filterWarnings(msg) {
+    const supressedWarnings = [
+      "Warning: validateDOMNesting(...): %s cannot appear as a child of <%s>.%s%s%s",
+    ]
+
+    if (!supressedWarnings.some((entry) => msg.includes(entry))) {
+      backup.apply(console, arguments)
+      console.log(msg)
+    }
+  }
+
   useEffect(() => {
     if (contextData.token) {
       axios.defaults.headers.common["Authorization"] =
         "bearer " + contextData.token
     }
   })
+
   return (
     <Router>
       {contextData?.token ? (
