@@ -3,6 +3,12 @@ import api from "./api";
 export const fetchTransferReport = (data) =>
     api.post("/report/transfer", data).then((res) => res.data);
 
+export const fetchReceiveReport = (data) =>
+    api.post("/report/receive", data).then((res) => res.data);
+
+export const fetchPurchaseReport = (data) =>
+    api.post("/report/purchase", data).then((res) => res.data);
+
 export const fetchIssueReport = (data) => api.post("/report/issue", data).then((res) => res.data);
 
 export const fetchGeneralReport = (data) =>

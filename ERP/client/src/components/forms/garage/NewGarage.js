@@ -38,12 +38,12 @@ function NewGarage() {
 
     return (
         <>
-            <Header title="New Rent Request" />
+            <Header title="New Garage Maintenance Request" />
 
             <Container className="my-3">
                 <AlertNotification
                     title="Feature Under Construction"
-                    content="An Equipment Rental Feature is Under Construction. It Will Be Available Once Development Is Completed."
+                    content="An Equipment Garage Maintenance Feature is Under Construction. It Will Be Available Once Development Is Completed."
                 />
                 <Form onSubmit={submit}>
                     {addedItems.map((item, index) => (
@@ -58,7 +58,7 @@ function NewGarage() {
                     <div className="row">
                         <div className="col-9 d-grid">
                             <Button type="submit" className="btn-teal-dark">
-                                Request Rent
+                                Request Maintenance
                             </Button>
                         </div>
                         <div className="col-3 d-grid">
