@@ -1,8 +1,8 @@
-import { Badge } from "react-bootstrap";
-import { RECEIVESTATUS } from "../../../../Constants";
+import { Badge } from "react-bootstrap"
+import { RECEIVESTATUS } from "../../../../Constants"
 
 function ReceiveStatusBadge(status) {
-    const color = ["secondary", "success", "info"];
+  const color = ["", "secondary", "info", "success"]
 
     return (
         <Badge pill className="mt-1" bg={color[status]} style={{ width: "90px", fontSize: "14px" }}>
@@ -11,4 +11,4 @@ function ReceiveStatusBadge(status) {
     );
 }
 
-export default ReceiveStatusBadge;
+export default ReceiveStatusBadge

@@ -24,9 +24,10 @@ function ApproveReceive({ addedItems, setAddedItems, receive }) {
     if (isApproveLoading) return
 
     const data = {
-      receiveId: receive.receiveId,
+      receiveId: Number(receive.receiveId),
     }
 
+    console.log(data)
     submitApproveReceive(data)
   }
 

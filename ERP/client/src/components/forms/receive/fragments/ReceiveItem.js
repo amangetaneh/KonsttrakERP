@@ -1,7 +1,18 @@
 import { useEffect, useState } from "react"
-import { Form, InputGroup } from "react-bootstrap"
+import { Form, InputGroup, Table } from "react-bootstrap"
+import PropTypes from "prop-types"
+import { useQuery } from "react-query"
+import { fetchEquipmentModel } from "../../../../api/item"
+import { ITEMTYPE } from "../../../../Constants"
 
-function ReceiveRequest({ addedItems, setAddedItems, index }) {
+function ReceiveItem({ addedItems, setAddedItems, index }) {
+  var modelQuery = useQuery(
+    ["model", addedItems[index].equipmentModelId],
+    () =>
+      addedItems[index].equipmentModelId &&
+      fetchEquipmentModel(addedItems[index].equipmentModelId)
+  )
+
   useEffect(() => {
     const addedItemsCpy = [...addedItems]
     addedItemsCpy[index].qtyReceived = addedItemsCpy[index].qtyPurchased
@@ -18,7 +29,11 @@ function ReceiveRequest({ addedItems, setAddedItems, index }) {
     <div className="shadow pt-3 px-4 mb-4 rounded">
       <div className=" row justify-content-between">
         <div className="col-auto">
-          <h1 className="display-6 fs-4">Material {index + 1}</h1>
+          {addedItems[index].type == ITEMTYPE.MATERIAL ? (
+            <h1 className="display-6 fs-4">Material {index + 1}</h1>
+          ) : (
+            <h1 className="display-6 fs-4">Equipment {index + 1}</h1>
+          )}
         </div>
       </div>
 
@@ -29,40 +44,49 @@ function ReceiveRequest({ addedItems, setAddedItems, index }) {
             <Form.Control type="text" readOnly value={addedItems[index].name} />
           </Form.Group>
         </div>
-        <div className="col">
-          <Form.Group className="mb-3">
-            <Form.Label>Quantity Purchased</Form.Label>
-            <InputGroup className="mb-3">
+        {addedItems[index].type == ITEMTYPE.EQUIPMENT && (
+          <div className="col">
+            <Form.Group className="mb-3">
+              <Form.Label>Model</Form.Label>
               <Form.Control
                 type="text"
-                name="qty"
+                name="cost"
+                value={modelQuery?.data?.name || ""}
                 readOnly
-                value={addedItems[index].qtyPurchased}
               />
-              <Form.Control
-                name="unit"
-                type="text"
-                readOnly
-                value={addedItems[index].units[0]}
-              />
-            </InputGroup>
-          </Form.Group>
-        </div>
+            </Form.Group>
+          </div>
+        )}
       </div>
 
       <div className="row">
-        <div className="col">
-          <Form.Group className="mb-3">
-            <Form.Label>Specification</Form.Label>
-            <Form.Control
-              as="textarea"
-              name="spec"
-              rows={3}
-              value={addedItems[index].spec}
-              readOnly
-            />
-          </Form.Group>
-        </div>
+        {addedItems[index].type == ITEMTYPE.MATERIAL ? (
+          <div className="col">
+            <Form.Group className="mb-3">
+              <Form.Label>Specification</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="spec"
+                rows={3}
+                value={addedItems[index].spec}
+                readOnly
+              />
+            </Form.Group>
+          </div>
+        ) : (
+          <div className="col">
+            <Form.Group className="mb-3">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="spec"
+                rows={3}
+                value={addedItems[index].description}
+                readOnly
+              />
+            </Form.Group>
+          </div>
+        )}
         <div className="col">
           <div className="row">
             <Form.Group className="mb-3">
@@ -95,4 +119,9 @@ function ReceiveRequest({ addedItems, setAddedItems, index }) {
   )
 }
 
-export default ReceiveRequest
+ReceiveItem.propTypes = {
+  addedItems: PropTypes.array.isRequired,
+  index: PropTypes.number.isRequired,
+}
+
+export default ReceiveItem

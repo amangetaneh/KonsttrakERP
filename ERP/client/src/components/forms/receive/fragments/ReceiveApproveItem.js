@@ -1,4 +1,5 @@
-import { Form, InputGroup } from "react-bootstrap"
+import { Form, InputGroup, Table } from "react-bootstrap"
+import PropTypes from "prop-types"
 import { useQuery } from "react-query"
 import { fetchEquipmentModel } from "../../../../api/item"
 import { ITEMTYPE } from "../../../../Constants"
@@ -30,21 +31,49 @@ function ReceiveApproveItem({ addedItems, setAddedItems, index }) {
             <Form.Control type="text" readOnly value={addedItems[index].name} />
           </Form.Group>
         </div>
+        {addedItems[index].type == ITEMTYPE.EQUIPMENT && (
+          <div className="col">
+            <Form.Group className="mb-3">
+              <Form.Label>Model</Form.Label>
+              <Form.Control
+                type="text"
+                name="cost"
+                value={modelQuery?.data?.name || ""}
+                readOnly
+              />
+            </Form.Group>
+          </div>
+        )}
       </div>
 
       <div className="row">
-        <div className="col">
-          <Form.Group className="mb-3">
-            <Form.Label>Specification</Form.Label>
-            <Form.Control
-              as="textarea"
-              name="spec"
-              rows={3}
-              value={addedItems[index].spec}
-              readOnly
-            />
-          </Form.Group>
-        </div>
+        {addedItems[index].type == ITEMTYPE.MATERIAL ? (
+          <div className="col">
+            <Form.Group className="mb-3">
+              <Form.Label>Specification</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="spec"
+                rows={3}
+                value={addedItems[index].spec}
+                readOnly
+              />
+            </Form.Group>
+          </div>
+        ) : (
+          <div className="col">
+            <Form.Group className="mb-3">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="spec"
+                rows={3}
+                value={addedItems[index].description}
+                readOnly
+              />
+            </Form.Group>
+          </div>
+        )}
         <div className="col">
           <div className="row">
             <Form.Group className="mb-3">
@@ -72,6 +101,11 @@ function ReceiveApproveItem({ addedItems, setAddedItems, index }) {
       </div>
     </div>
   )
+}
+
+ReceiveApproveItem.propTypes = {
+  addedItems: PropTypes.array.isRequired,
+  index: PropTypes.number.isRequired,
 }
 
 export default ReceiveApproveItem

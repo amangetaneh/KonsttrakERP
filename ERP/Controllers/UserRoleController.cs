@@ -48,8 +48,7 @@ namespace ERP.Controllers
             userRole.CanApproveReceive = role.CanApproveReceive;
             userRole.CanViewReceive = role.CanViewReceive;
 
-            userRole.CanApproveUser = role.CanApproveUser;
-            userRole.CanDeleteUser = role.CanDeleteUser;
+            userRole.CanEditUser = role.CanEditUser;
 
             userRole.CanRequestPurchase = role.CanRequestPurchase;
             userRole.CanCheckPurchase = role.CanCheckPurchase;
