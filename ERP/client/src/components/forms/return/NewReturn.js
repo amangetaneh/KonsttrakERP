@@ -69,7 +69,6 @@ function NewReturn() {
         var data = {
             siteId: returnSite,
             requestedById: requestedBy,
-            returnedById: 1, ////////////////////////////////////////////////////////////////////////////////
             borrowAssets: [],
         };
 

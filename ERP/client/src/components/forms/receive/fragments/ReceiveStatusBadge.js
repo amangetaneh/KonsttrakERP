@@ -5,11 +5,7 @@ function ReceiveStatusBadge(status) {
     const color = ["secondary", "success", "info"];
 
     return (
-        <Badge
-            className="mt-1"
-            bg={color[status]}
-            style={{ width: "90px", fontSize: "14px" }}
-        >
+        <Badge pill className="mt-1" bg={color[status]} style={{ width: "90px", fontSize: "14px" }}>
             {RECEIVESTATUS[status]}
         </Badge>
     );

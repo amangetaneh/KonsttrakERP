@@ -56,7 +56,6 @@ function MaterialTransfer() {
 
         var data = {
             sendSiteId: Number(sendSite),
-            requestedById: 1, ////////////////////////////////////////////////////////////////////////////////
             transferItems: [],
         };
 
