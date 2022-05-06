@@ -17,6 +17,17 @@ namespace ERP.Controllers
             this.context = context;
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<UserRole>> Get(int id)
+        {
+            var role = context.UserRoles.Where(role => role.RoleId == id)
+               .FirstOrDefault();
+
+            if (role == null) return NotFound("Role Not Found.");
+
+            return Ok(role);
+        }
+
         [HttpGet]
         public async Task<ActionResult<List<UserRole>>> Get()
         {
@@ -78,12 +89,27 @@ namespace ERP.Controllers
             userRole.CanViewTransfer = role.CanViewTransfer;
 
             userRole.CanGetStockNotification = role.CanGetStockNotification;
+            userRole.IsFinance = role.IsFinance;
 
             context.UserRoles.Add(userRole);
 
             await context.SaveChangesAsync();
 
             return Ok(userRole);
+        }
+
+        [Authorize(Roles = "Employee")]
+        [HttpPost("edit")]
+        public async Task<ActionResult<UserRole>> EditRole(UserRole role)
+        {
+            var editRole = context.UserRoles.Where(role => role.RoleId == role.RoleId)
+               .FirstOrDefault();
+
+            if (editRole == null) return NotFound("Role Not Found.");
+
+            editRole = role;
+
+            return Ok(editRole);
         }
     }
 }

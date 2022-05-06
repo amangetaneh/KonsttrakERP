@@ -48,6 +48,9 @@ class Role {
     this.CanViewTransfer = false
 
     this.CanGetStockNotification = false
+
+    this.IsAdmin = false
+    this.IsFinance = false
   }
 }
 

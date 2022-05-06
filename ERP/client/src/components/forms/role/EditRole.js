@@ -1,24 +1,23 @@
+import React from "react"
 import Header from "../../layouts/Header"
 import Role from "../../../models/Role"
 import { useState, useMemo, useEffect } from "react"
 import { Form, Button, Container, InputGroup } from "react-bootstrap"
-import { FaPlus } from "react-icons/fa"
-import ToggleBox from "../../layouts/ToggleBox"
+import { useParams } from "react-router-dom"
+import { FaEdit } from "react-icons/fa"
 import { ToastContainer, toast } from "react-toastify"
-import { useMutation } from "react-query"
-import { addRole } from "../../../api/role"
+import { useQuery, useMutation } from "react-query"
+import { fetchRole, editRole } from "../../../api/role"
 import LoadingSpinner from "../../fragments/LoadingSpinner"
 import ConnectionError from "../../fragments/ConnectionError"
-import AlertNotification from "../../fragments/AlertNotification"
-import { useNavigate } from "react-router-dom"
 
-function NewRole() {
-  const tempRole = new Role()
-  const [role, setRole] = useState([new Role()])
-  const navigate = useNavigate()
+function EditRole() {
+  const { id } = useParams()
 
-  const [isLoading, setIsLoading] = useState(false)
+  const [role, setRole] = useState(new Role())
   const [isError, setIsError] = useState(false)
+
+  var query = useQuery(["role", id], () => fetchRole(id))
 
   const toastOption = {
     position: "bottom-right",
@@ -30,36 +29,49 @@ function NewRole() {
     theme: "dark",
   }
 
-  const {
-    isError: isSubmitError,
-    isLoading: isSubmitLoading,
-    mutate: submitNewRole,
-  } = useMutation(addRole, {
-    onSuccess: (res) => {
-      toast.success("Role Is Successfully Added", toastOption)
-    },
-  })
-
-  function valueChanged(e) {
-    tempRole[e.target.name] = e.target.checked
-    setRole = { tempRole }
+  useEffect(() => {
+    if (query.data === undefined) return
+    setRole(query.data)
     console.log(role)
-    console.log(tempRole)
+  }, [])
+
+  const { isError: isEditError, mutate: submitEditRole } = useMutation(
+    editRole,
+    {
+      onSuccess: (res) => {
+        toast.success("Role Is Successfully Updated", toastOption)
+      },
+    }
+  )
+
+  const handleChange = (event) => {
+    setRole((state) => {
+      let newRole = { ...state }
+      newRole[event.target.name] = event.target.checked
+      return newRole
+    })
+  }
+
+  const valueChange = (event) => {
+    setRole((state) => {
+      let newRole = { ...state }
+      newRole[event.target.name] = event.target.value
+      return newRole
+    })
   }
 
   function submit(e) {
     e.preventDefault()
+    if (isEditLoading) return
 
-    console.log(role)
-
-    submitNewRole(role)
+    submitEditRole(role)
   }
 
-  //if (isError || isSubmitError) return <ConnectionError />
+  if (isError) return <ConnectionError />
 
   return (
     <>
-      <Header title="Add New Role" />
+      <Header title="Edit Role" />
 
       <Container className="my-3">
         <Form onSubmit={submit}>
@@ -71,10 +83,10 @@ function NewRole() {
                     <Form.Label className="col-3 pt-2 h5">Role Name</Form.Label>
                     <Form.Control
                       type="text"
-                      onChange={(e) => {
-                        console.log(e.target.value)
-                        role.Role = e.target.value
-                      }}
+                      name="Role"
+                      value={role.Role}
+                      onChange={valueChange}
+                      required
                     />
                   </InputGroup>
                 </Form.Group>
@@ -95,7 +107,19 @@ function NewRole() {
                       type="checkbox"
                       name="CanEditUser"
                       checked={role.CanEditUser}
-                      onChange={valueChanged}
+                      onChange={handleChange}
+                    ></Form.Check>
+                  </Form.Group>
+                </div>
+                <div className="col-6">
+                  <Form.Group className="mb-3">
+                    <Form.Check
+                      inline
+                      label="Can View Reports (Is User Finance)"
+                      type="checkbox"
+                      name="IsFinance"
+                      checked={role.IsFinance}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -109,11 +133,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can View Purchase Requests"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanViewPurchase = e.target.checked)
-                      }
+                      name="CanViewPurchase"
+                      checked={role.CanViewPurchase}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -122,11 +145,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Request Purchase"
-                      name="bool1"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanRequestPurchase = e.target.checked)
-                      }
+                      name="CanRequestPurchase"
+                      checked={role.CanRequestPurchase}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -137,11 +159,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Check Purchase"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanCheckPurchase = e.target.checked)
-                      }
+                      name="CanCheckPurchase"
+                      checked={role.CanCheckPurchase}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -150,11 +171,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Approve Purchase"
-                      name="bool1"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanApprovePurchase = e.target.checked)
-                      }
+                      name="CanApprovePurchase"
+                      checked={role.CanApprovePurchase}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -165,11 +185,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Confirm Purchase"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanConfirmPurchase = e.target.checked)
-                      }
+                      name="CanConfirmPurchase"
+                      checked={role.CanConfirmPurchase}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -183,11 +202,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can View Bulk Purchase Requests"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanViewBulkPurchase = e.target.checked)
-                      }
+                      name="CanViewBulkPurchase"
+                      checked={role.CanViewBulkPurchase}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -196,11 +214,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Request Bulk Purchase"
-                      name="bool1"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanRequestBulkPurchase = e.target.checked)
-                      }
+                      name="CanRequestBulkPurchase"
+                      checked={role.CanRequestBulkPurchase}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -211,11 +228,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Approve Bulk Purchase"
-                      name="bool1"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanApproveBulkPurchase = e.target.checked)
-                      }
+                      name="CanApproveBulkPurchase"
+                      checked={role.CanApproveBulkPurchase}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -224,11 +240,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Confirm Bulk Purchase"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanConfirmBulkPurchase = e.target.checked)
-                      }
+                      name="CanConfirmBulkPurchase"
+                      checked={role.CanConfirmBulkPurchase}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -242,9 +257,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can View Buy Requests"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) => (role.CanViewBuy = e.target.checked)}
+                      name="CanViewBuy"
+                      checked={role.CanViewBuy}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -253,9 +269,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Request Buy"
-                      name="bool1"
                       type="checkbox"
-                      onChange={(e) => (role.CanRequestBuy = e.target.checked)}
+                      name="CanRequestBuy"
+                      checked={role.CanRequestBuy}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -266,9 +283,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Check Buy"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) => (role.CanCheckBuy = e.target.checked)}
+                      name="CanCheckBuy"
+                      checked={role.CanCheckBuy}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -277,9 +295,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Approve Buy"
-                      name="bool1"
                       type="checkbox"
-                      onChange={(e) => (role.CanApproveBuy = e.target.checked)}
+                      name="CanApproveBuy"
+                      checked={role.CanApproveBuy}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -290,9 +309,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Confirm Buy"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) => (role.CanConfirmBuy = e.target.checked)}
+                      name="CanConfirmBuy"
+                      checked={role.CanConfirmBuy}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -306,9 +326,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can View Receive Requests"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) => (role.CanViewReceive = e.target.checked)}
+                      name="CanViewReceive"
+                      checked={role.CanViewReceive}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -317,9 +338,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Receive Item"
-                      name="bool1"
                       type="checkbox"
-                      onChange={(e) => (role.CanReceive = e.target.checked)}
+                      name="CanReceive"
+                      checked={role.CanReceive}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -330,11 +352,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Approve Receive"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanApproveReceive = e.target.checked)
-                      }
+                      name="CanApproveReceive"
+                      checked={role.CanApproveReceive}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -348,9 +369,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can View Issue Requests"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) => (role.CanViewIssue = e.target.checked)}
+                      name="CanViewIssue"
+                      checked={role.CanViewIssue}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -359,11 +381,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Request An Issue"
-                      name="bool1"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanRequestIssue = e.target.checked)
-                      }
+                      name="CanRequestIssue"
+                      checked={role.CanRequestIssue}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -374,11 +395,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Approve An Issue"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanApproveIssue = e.target.checked)
-                      }
+                      name="CanApproveIssue"
+                      checked={role.CanApproveIssue}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -387,9 +407,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Hand An Issue"
-                      name="bool1"
                       type="checkbox"
-                      onChange={(e) => (role.CanHandIssue = e.target.checked)}
+                      name="CanHandIssue"
+                      checked={role.CanHandIssue}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -403,11 +424,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can View Transfer Requests"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanViewTransfer = e.target.checked)
-                      }
+                      name="CanViewTransfer"
+                      checked={role.CanViewTransfer}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -416,11 +436,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Request Transfer"
-                      name="bool1"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanRequestTransfer = e.target.checked)
-                      }
+                      name="CanRequestTransfer"
+                      checked={role.CanRequestTransfer}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -431,11 +450,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Receive Transfer"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanReceiveTransfer = e.target.checked)
-                      }
+                      name="CanReceiveTransfer"
+                      checked={role.CanReceiveTransfer}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -444,11 +462,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Approve Transfer"
-                      name="bool1"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanApproveTransfer = e.target.checked)
-                      }
+                      name="CanApproveTransfer"
+                      checked={role.CanApproveTransfer}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -459,11 +476,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Send Transfer"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanSendTransfer = e.target.checked)
-                      }
+                      name="CanSendTransfer"
+                      checked={role.CanSendTransfer}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -477,9 +493,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can View Borrow Requests"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) => (role.CanViewBorrow = e.target.checked)}
+                      name="CanViewBorrow"
+                      checked={role.CanViewBorrow}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -488,11 +505,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Request Borrow"
-                      name="bool1"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanRequestBorrow = e.target.checked)
-                      }
+                      name="CanRequestBorrow"
+                      checked={role.CanRequestBorrow}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -503,11 +519,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Approve Borrow"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanApproveBorrow = e.target.checked)
-                      }
+                      name="CanApproveBorrow"
+                      checked={role.CanApproveBorrow}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -516,9 +531,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Hand Borrow"
-                      name="bool1"
                       type="checkbox"
-                      onChange={(e) => (role.CanHandBorrow = e.target.checked)}
+                      name="CanHandBorrow"
+                      checked={role.CanHandBorrow}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -529,11 +545,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Return Borrow"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanReturnBorrow = e.target.checked)
-                      }
+                      name="CanReturnBorrow"
+                      checked={role.CanReturnBorrow}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -547,11 +562,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can View Maintenance Requests"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanViewMaintenance = e.target.checked)
-                      }
+                      name="CanViewMaintenance"
+                      checked={role.CanViewMaintenance}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -560,11 +574,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Request Maintenance"
-                      name="bool1"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanRequestMaintenance = e.target.checked)
-                      }
+                      name="CanRequestMaintenance"
+                      checked={role.CanRequestMaintenance}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -575,11 +588,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Fix Maintenance"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanFixMaintenance = e.target.checked)
-                      }
+                      name="CanFixMaintenance"
+                      checked={role.CanFixMaintenance}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -588,11 +600,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Approve Maintenance"
-                      name="bool1"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanApproveMaintenance = e.target.checked)
-                      }
+                      name="CanApproveMaintenance"
+                      checked={role.CanApproveMaintenance}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -606,11 +617,10 @@ function NewRole() {
                     <Form.Check
                       inline
                       label="Can Get Stock Notification"
-                      name="bool"
                       type="checkbox"
-                      onChange={(e) =>
-                        (role.CanGetStockNotification = e.target.checked)
-                      }
+                      name="CanGetStockNotification"
+                      checked={role.CanGetStockNotification}
+                      onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>
@@ -619,7 +629,7 @@ function NewRole() {
             <div className="row mx-4">
               <div className="d-grid">
                 <Button type="submit" className="btn-teal">
-                  <FaPlus className="me-2 mb-1" /> Add Role
+                  <FaEdit className="me-2 mb-1" /> Update Role
                 </Button>
               </div>
             </div>
@@ -631,4 +641,4 @@ function NewRole() {
   )
 }
 
-export default NewRole
+export default EditRole

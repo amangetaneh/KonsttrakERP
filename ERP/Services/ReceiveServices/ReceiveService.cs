@@ -129,7 +129,6 @@ namespace ERP.Services.ReceiveServices
                         equipmentAsset.EquipmentModelId = requestItem.EquipmentModelId;
                         equipmentAsset.AssetNo = assetNumber;
                         equipmentAsset.CurrentSiteId = (int)_userService.Employee.EmployeeSiteId;
-                        equipmentAsset.CurrentEmployeeId = _userService.Employee.EmployeeId;
 
                         _context.EquipmentAssets.Add(equipmentAsset);
                     }
@@ -148,14 +147,27 @@ namespace ERP.Services.ReceiveServices
 
             receive.Status = RECEIVESTATUS.RECEIVED;
 
-            foreach (var buy in _context.Buys.Where(buy => buy.PurchaseId == receive.PurchaseId && buy.Status == BUYSTATUS.QUEUED))
+            foreach (var buy in _context.Buys
+                .Where(buy => buy.PurchaseId == receive.PurchaseId && buy.Status == BUYSTATUS.QUEUED))
             {
                 buy.Status = BUYSTATUS.BOUGHT;
+
+                await _notificationService.Add(type: NOTIFICATIONTYPE.BUY,
+                    status: buy.Status,
+                    actionId: buy.BuyId,
+                    siteId: buy.BuySiteId,
+                    employeeId: buy.RequestedById);
             }
 
-            //Notify employees who requested the purchase here
-
             await _context.SaveChangesAsync();
+
+            
+
+            await _notificationService.Add(type: NOTIFICATIONTYPE.RECEIVE,
+                status: receive.Status,
+                actionId: receive.ReceiveId,
+                siteId: receive.ReceivingSiteId,
+                employeeId: receive.ReceivedById);
 
             return receive;
         }
@@ -171,6 +183,12 @@ namespace ERP.Services.ReceiveServices
             receive.Status = RECEIVESTATUS.APPROVED;
 
             await _context.SaveChangesAsync();
+
+            await _notificationService.Add(type: NOTIFICATIONTYPE.RECEIVE,
+                status: receive.Status,
+                actionId: receive.ReceiveId,
+                siteId: receive.ReceivingSiteId,
+                employeeId: receive.ReceivedById);
 
             return receive;
         }

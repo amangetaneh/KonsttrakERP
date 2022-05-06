@@ -107,6 +107,12 @@ namespace ERP.Services.BuyServices
             
             await _context.SaveChangesAsync();
 
+            await _notificationService.Add(type: NOTIFICATIONTYPE.BUY,
+                status: buy.Status,
+                actionId: buy.BuyId,
+                siteId: buy.BuySiteId,
+                employeeId: buy.RequestedById);
+
             return buy;
         }
 
@@ -123,6 +129,12 @@ namespace ERP.Services.BuyServices
             buy.Status = BUYSTATUS.CHECKED;
 
             await _context.SaveChangesAsync();
+
+            await _notificationService.Add(type: NOTIFICATIONTYPE.BUY,
+                status: buy.Status,
+                actionId: buy.BuyId,
+                siteId: buy.BuySiteId,
+                employeeId: buy.RequestedById);
 
             return buy;
         }
@@ -241,6 +253,18 @@ namespace ERP.Services.BuyServices
 
             await _context.SaveChangesAsync();
 
+            await _notificationService.Add(type: NOTIFICATIONTYPE.BUY,
+                status: buy.Status,
+                actionId: buy.BuyId,
+                siteId: buy.BuySiteId,
+                employeeId: buy.RequestedById);
+
+            await _notificationService.Add(type: NOTIFICATIONTYPE.PURCHASE,
+                status: purchase.Status,
+                actionId: purchase.PurchaseId,
+                siteId: purchase.ReceivingSiteId,
+                employeeId: purchase.RequestedById);
+
             return buy;
         }
 
@@ -281,6 +305,12 @@ namespace ERP.Services.BuyServices
 
             await _context.SaveChangesAsync();
 
+            await _notificationService.Add(type: NOTIFICATIONTYPE.BUY,
+                status: buy.Status,
+                actionId: buy.BuyId,
+                siteId: buy.BuySiteId,
+                employeeId: buy.RequestedById);
+
             return buy;
         }
 
@@ -309,6 +339,12 @@ namespace ERP.Services.BuyServices
             buy.Status = BUYSTATUS.DECLINED;
 
             await _context.SaveChangesAsync();
+
+            await _notificationService.Add(type: NOTIFICATIONTYPE.BUY,
+                status: buy.Status,
+                actionId: buy.BuyId,
+                siteId: buy.BuySiteId,
+                employeeId: buy.RequestedById);
 
             return buy;
         }
@@ -346,6 +382,12 @@ namespace ERP.Services.BuyServices
             buy.Status = BUYSTATUS.BOUGHT;
 
             await _context.SaveChangesAsync();
+
+            await _notificationService.Add(type: NOTIFICATIONTYPE.BUY,
+                status: buy.Status,
+                actionId: buy.BuyId,
+                siteId: buy.BuySiteId,
+                employeeId: buy.RequestedById);
 
             return buy;
         }

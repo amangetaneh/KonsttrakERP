@@ -2,15 +2,18 @@ import { useState } from "react"
 import { Form, Button, Container } from "react-bootstrap"
 import { FaPlus } from "react-icons/fa"
 import Header from "../../layouts/Header"
+import { addSite } from "../../../api/site"
 import { ToastContainer, toast } from "react-toastify"
-import LoadingSpinner from "../../fragments/LoadingSpinner"
+import { useMutation } from "react-query"
 import ConnectionError from "../../fragments/ConnectionError"
-import AlertNotification from "../../fragments/AlertNotification"
 
 function NewSite() {
   const [name, setName] = useState("")
   const [location, setLocation] = useState("")
   const [pettyCashLimit, setPettyCashLimit] = useState(1000)
+
+  const [isError, setIsError] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const toastOption = {
     position: "bottom-right",
@@ -22,18 +25,39 @@ function NewSite() {
     theme: "dark",
   }
 
+  const {
+    isError: isSubmitError,
+    isLoading: isSubmitLoading,
+    mutate: submitAddSite,
+  } = useMutation(addSite, {
+    onSuccess: (res) => {
+      setName("")
+      setLocation("")
+      setPettyCashLimit(1000)
+      toast.success("Site Is Successfully Added", toastOption)
+    },
+  })
+
   function submit(e) {
-    toast.success("Site Has Been Successfully Added", toastOption)
+    e.preventDefault()
+
+    var data = {
+      name: String(name),
+      location: String(location),
+      pettyCashLimit: Number(pettyCashLimit),
+    }
+
+    submitAddSite(data)
   }
+
+  if (isLoading) return <LoadingSpinner />
+
+  if (isError) return <ConnectionError />
 
   return (
     <>
       <Header title="Add new Site" />
       <Container className="my-3 align-self-center">
-        <AlertNotification
-          title="Feature Under Construction"
-          content="Adding Site Feature is Under Construction. It Will Be Available Once Development Is Completed."
-        />
         <Form onSubmit={submit}>
           <div className="col-10 mx-auto shadow py-5 px-5 rounded">
             <div className="row ">

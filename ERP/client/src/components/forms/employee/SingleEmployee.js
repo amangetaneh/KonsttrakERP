@@ -3,15 +3,13 @@ import { useEffect, useState, useMemo } from "react"
 import { useParams } from "react-router-dom"
 import { Form, Button, Container } from "react-bootstrap"
 import { FaEdit } from "react-icons/fa"
-import api from "../../../api/api"
 
 import Header from "../../layouts/Header"
-import EmployeeStatusBadge from "./fragments/EmployeeStatusBadge"
-import { EMPLOYEESTATUS } from "../../../Constants"
 import { ToastContainer, toast } from "react-toastify"
 import { useQuery, useMutation } from "react-query"
+import { fetchSites } from "../../../api/site"
+import { fetchRoles } from "../../../api/role"
 import { fetchEmployee, updateEmployee } from "../../../api/employee"
-import { useAuth } from "../../../contexts/AuthContext"
 import LoadingSpinner from "../../fragments/LoadingSpinner"
 import ConnectionError from "../../fragments/ConnectionError"
 
@@ -57,22 +55,29 @@ function SingleEmployee() {
     setIsLoading(false)
   }, [query.data])
 
+  const sitesQuery = useQuery("sites", fetchSites, {
+    onSuccess: (data) => setAllSite(data),
+  })
+  const roleQuery = useQuery("roles", fetchRoles, {
+    onSuccess: (data) => setAllUserRole(data),
+  })
+
   useEffect(() => {
-    async function fetchRole() {
-      const res = await api.get("/UserRole")
-      setAllUserRole(res.data)
-    }
-    fetchRole()
-    async function fetchSite() {
-      const res = await api.get("/site")
-      setAllSite(res.data)
-    }
-    fetchSite()
-  }, [])
+    setIsLoading(sitesQuery.isLoading || roleQuery.isLoading)
+  }, [sitesQuery.isLoading, roleQuery.isLoading])
+
+  useEffect(() => {
+    setIsError(sitesQuery.isError || roleQuery.isError)
+  }, [sitesQuery.isError, roleQuery.isError])
 
   const titles = useMemo(() => ["Registered Employee", "Approved Employee"], [])
 
-  const { mutate: submitUpdateEmployee } = useMutation(updateEmployee, {
+  const {
+    isError: isSubmitError,
+    error: submitError,
+    isLoading: isSubmitLoading,
+    mutate: submitUpdateEmployee,
+  } = useMutation(updateEmployee, {
     onSuccess: () => {
       toast.success("Employee Data Is Successfully Updated", toastOption)
     },
@@ -80,6 +85,7 @@ function SingleEmployee() {
 
   function submit(e) {
     e.preventDefault()
+    if (isSubmitLoading) return
 
     var data = {
       employeeId: employee.employeeId,
@@ -97,8 +103,16 @@ function SingleEmployee() {
 
   if (isLoading) return <LoadingSpinner />
 
-  if (query.isError) return <ConnectionError />
-
+  if (isError || isSubmitError)
+    return (
+      <ConnectionError
+        status={
+          roleQuery?.error?.response?.status ??
+          sitesQuery?.error?.response?.status ??
+          submitError?.response?.status
+        }
+      />
+    )
   return (
     <>
       <Header title={titles[employee.status]} />
