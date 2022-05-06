@@ -1105,8 +1105,8 @@ namespace ERP.Migrations
                     b.Property<int?>("ApprovedById")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DeliveredById")
-                        .HasColumnType("int");
+                    b.Property<string>("DeliveredBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ReceiveDate")
                         .HasColumnType("datetime2");
@@ -1141,8 +1141,6 @@ namespace ERP.Migrations
                     b.HasKey("TransferId");
 
                     b.HasIndex("ApprovedById");
-
-                    b.HasIndex("DeliveredById");
 
                     b.HasIndex("ReceiveSiteId");
 
@@ -2008,11 +2006,6 @@ namespace ERP.Migrations
                         .HasForeignKey("ApprovedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("ERP.Models.Employee", "DeliveredBy")
-                        .WithMany()
-                        .HasForeignKey("DeliveredById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("ERP.Models.Site", "ReceiveSite")
                         .WithMany()
                         .HasForeignKey("ReceiveSiteId")
@@ -2042,8 +2035,6 @@ namespace ERP.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ApprovedBy");
-
-                    b.Navigation("DeliveredBy");
 
                     b.Navigation("ReceiveSite");
 

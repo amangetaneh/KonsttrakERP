@@ -224,11 +224,7 @@ function SingleTransfer() {
 
                         <FormRow
                             labelL="Delivered By"
-                            valueL={
-                                transfer.deliveredBy
-                                    ? `${transfer.deliveredBy.fName} ${transfer.deliveredBy.mName}`
-                                    : ""
-                            }
+                            valueL={transfer.deliveredBy}
                             labelR="Vehicle Plate No."
                             valueR={transfer.vehiclePlateNo}
                         />

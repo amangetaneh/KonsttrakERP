@@ -24,6 +24,28 @@ namespace ERP.Controllers
             _userService = userService;
         }
 
+        [HttpPost("receive")]
+        public async Task<ActionResult<ReportReturnDTO<Transfer>>> GetReceives(ReceiveReportDTO receiveDTO)
+        {
+            if (!_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance)
+                return Forbid();
+
+            var result = await _reportService.GetReceiveReport(receiveDTO);
+
+            return Ok(result);
+        }
+
+        [HttpPost("purchase")]
+        public async Task<ActionResult<ReportReturnDTO<Transfer>>> GetPurchases(PurchaseReportDTO purchaseDTO)
+        {
+            if (!_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance)
+                return Forbid();
+
+            var result = await _reportService.GetPurchaseReport(purchaseDTO);
+
+            return Ok(result);
+        }
+
         [HttpPost("transfer")]
         public async Task<ActionResult<ReportReturnDTO<Transfer>>> GetTransfers(TransferReportDTO transferDTO)
         {

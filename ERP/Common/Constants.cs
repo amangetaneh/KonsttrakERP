@@ -56,6 +56,55 @@
         
     }
 
+    public class PURCHASEREPORTGROUPBY
+    {
+        public const string STATUS = "Status";
+        public const string REQUESTDATE = "RequestDate";
+        public const string APPROVEDATE = "ApproveDate";
+        public const string CHECKDATE = "CheckDate";
+        public const string PURCHASEDATE = "PurchaseDate";
+        public const string REQUESTWEEK = "RequestWeek";
+        public const string APPROVEWEEK = "ApproveWeek";
+        public const string CHECKWEEK = "CheckWeek";
+        public const string PURCHASEWEEK = "PurchaseWeek";
+        public const string REQUESTMONTH = "RequestMonth";
+        public const string APPROVEMONTH = "ApproveMonth";
+        public const string CHECKMONTH = "CheckMonth";
+        public const string PURCHASEMONTH = "PurchaseMonth";
+        public const string REQUESTYEAR = "RequestYear";
+        public const string APPROVEYEAR = "ApproveYear";
+        public const string CHECKYEAR = "CheckYear";
+        public const string PURCHASEYEAR = "PurchaseYear";
+        public const string REQUESTEDBY = "RequestedBy";
+        public const string APPROVEDBY = "ApprovedBy";
+        public const string CHECKEDBY = "CheckedBy";
+        public const string PURCHASEDBY = "PurchasedBy";
+        public const string SITE = "Site";
+
+    }
+
+    public class RECEIVEREPORTGROUPBY
+    {
+        public const string STATUS = "Status";
+        public const string PURCHASEDATE = "PurchaseDate";
+        public const string APPROVEDATE = "ApproveDate";
+        public const string RECEIVEDATE = "ReceiveDate";
+        public const string PURCHASEWEEK = "PurchaseWeek";
+        public const string APPROVEWEEK = "ApproveWeek";
+        public const string RECEIVEWEEK = "ReceiveWeek";
+        public const string PURCHASEMONTH = "PurchaseMonth";
+        public const string APPROVEMONTH = "ApproveMonth";
+        public const string RECEIVEMONTH = "ReceiveMonth";
+        public const string PURCHASEYEAR = "PurchaseYear";
+        public const string APPROVEYEAR = "ApproveYear";
+        public const string RECEIVEYEAR = "ReceiveYear";
+        public const string PURCHASEDBY = "PurchasedBy";
+        public const string APPROVEDBY = "ApprovedBy";
+        public const string RECEIVEDBY = "ReceivedBy";
+        public const string SITE = "Site";
+
+    }
+
     public class ISSUEREPORTGROUPBY
     {
         public const string STATUS = "Status";

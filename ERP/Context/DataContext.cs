@@ -146,12 +146,14 @@ namespace ERP.Context
                     .WithMany()
                     .OnDelete(DeleteBehavior.Restrict)
                     .IsRequired(false);
+            /*
 
             modelBuilder.Entity<Transfer>()
                     .HasOne(t => t.DeliveredBy)
                     .WithMany()
                     .OnDelete(DeleteBehavior.Restrict)
                     .IsRequired(false);
+            */
 
             modelBuilder.Entity<Transfer>()
                     .HasOne(t => t.ApprovedBy)
