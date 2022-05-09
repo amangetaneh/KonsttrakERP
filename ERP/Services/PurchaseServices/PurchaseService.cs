@@ -116,7 +116,11 @@ namespace ERP.Services.PurchaseServices
 
             await _context.SaveChangesAsync();
 
-            //Notification
+            await _notificationService.Add(type: NOTIFICATIONTYPE.PURCHASE,
+                status: purchase.Status,
+                actionId: purchase.PurchaseId,
+                siteId: purchase.ReceivingSiteId,
+                employeeId: purchase.RequestedById);
 
             return purchase;
         }
@@ -183,7 +187,11 @@ namespace ERP.Services.PurchaseServices
 
             await _context.SaveChangesAsync();
 
-            //Notification
+            await _notificationService.Add(type: NOTIFICATIONTYPE.PURCHASE,
+                status: purchase.Status,
+                actionId: purchase.PurchaseId,
+                siteId: purchase.ReceivingSiteId,
+                employeeId: purchase.RequestedById);
 
             return purchase;
         }
@@ -221,6 +229,12 @@ namespace ERP.Services.PurchaseServices
 
             await _context.SaveChangesAsync();
 
+            await _notificationService.Add(type: NOTIFICATIONTYPE.PURCHASE,
+                status: purchase.Status,
+                actionId: purchase.PurchaseId,
+                siteId: purchase.ReceivingSiteId,
+                employeeId: purchase.RequestedById);
+
             return purchase;
         }
 
@@ -250,6 +264,12 @@ namespace ERP.Services.PurchaseServices
 
             await _context.SaveChangesAsync();
 
+            await _notificationService.Add(type: NOTIFICATIONTYPE.PURCHASE,
+                status: purchase.Status,
+                actionId: purchase.PurchaseId,
+                siteId: purchase.ReceivingSiteId,
+                employeeId: purchase.RequestedById);
+
             return purchase;
         }
         
@@ -266,6 +286,12 @@ namespace ERP.Services.PurchaseServices
             purchase.Status = PURCHASESTATUS.CHECKED;
 
             await _context.SaveChangesAsync();
+
+            await _notificationService.Add(type: NOTIFICATIONTYPE.PURCHASE,
+                status: purchase.Status,
+                actionId: purchase.PurchaseId,
+                siteId: purchase.ReceivingSiteId,
+                employeeId: purchase.RequestedById);
 
             return purchase;
         }
@@ -348,9 +374,24 @@ namespace ERP.Services.PurchaseServices
 
             await _context.SaveChangesAsync();
 
+            await _notificationService.Add(type: NOTIFICATIONTYPE.PURCHASE,
+                status: purchase.Status,
+                actionId: purchase.PurchaseId,
+                siteId: purchase.ReceivingSiteId,
+                employeeId: purchase.RequestedById);
+
             purchase.BulkPurchaseId = bulkPurchase.BulkPurchaseId;
 
             await _context.SaveChangesAsync();
+            
+            var centralSite = _context.Sites
+                .FirstOrDefault();
+
+            await _notificationService.Add(type: NOTIFICATIONTYPE.BULKPURCHASE,
+                status: bulkPurchase.Status,
+                actionId: bulkPurchase.BulkPurchaseId,
+                siteId: centralSite.SiteId,
+                employeeId: bulkPurchase.RequestedById);
 
             return purchase;
         }
@@ -366,6 +407,12 @@ namespace ERP.Services.PurchaseServices
             purchase.Status = PURCHASESTATUS.REQUESTED;
 
             await _context.SaveChangesAsync();
+
+            await _notificationService.Add(type: NOTIFICATIONTYPE.PURCHASE,
+                status: purchase.Status,
+                actionId: purchase.PurchaseId,
+                siteId: purchase.ReceivingSiteId,
+                employeeId: purchase.RequestedById);
 
             return purchase;
         }
@@ -425,6 +472,20 @@ namespace ERP.Services.PurchaseServices
             _context.Receives.Add(receive);
 
             await _context.SaveChangesAsync();
+
+            await _notificationService.Add(type: NOTIFICATIONTYPE.PURCHASE,
+                status: purchase.Status,
+                actionId: purchase.PurchaseId,
+                siteId: purchase.ReceivingSiteId,
+                employeeId: purchase.RequestedById);
+
+            await _context.SaveChangesAsync();
+
+            await _notificationService.Add(type: NOTIFICATIONTYPE.RECEIVE,
+                status: receive.Status,
+                actionId: receive.ReceiveId,
+                siteId: receive.ReceivingSiteId,
+                employeeId: receive.ReceivedById);
 
             return purchase;
         }

@@ -27,6 +27,11 @@ function ListBulkPurchases() {
       //format date
       data[key].requestDate = new Date(data[key].requestDate).toLocaleString()
 
+      data[key].totalCost = data[key].totalCost.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+      })
+
       //add status badge
       data[key].statusBadge = BulkPurchaseStatusBadge(data[key].status)
 

@@ -40,13 +40,11 @@ const SignUp = () => {
     async function fetchRole() {
       const res = await api.get("/UserRole")
       setAllUserRole(res.data)
-      console.log(res)
     }
     fetchRole()
     async function fetchSite() {
       const res = await api.get("/site")
       setAllSite(res.data)
-      console.log(res)
     }
     fetchSite()
   }, [])

@@ -31,6 +31,7 @@ namespace ERP.Services.ItemServices
             return items;
         }
 
+
         public async Task<int> ImportAssetNumbers(ImportAssetNoDTO importDTO)
         {
             if(importDTO.SiteId == -1 || importDTO.EquipmentModelId == -1)

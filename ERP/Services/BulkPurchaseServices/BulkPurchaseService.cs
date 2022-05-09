@@ -52,6 +52,15 @@ namespace ERP.Services.BulkPurchaseServices
 
             await _context.SaveChangesAsync();
 
+            var centralSite = _context.Sites
+                .FirstOrDefault();
+
+            await _notificationService.Add(type: NOTIFICATIONTYPE.BULKPURCHASE,
+                status: bulkPurchase.Status,
+                actionId: bulkPurchase.BulkPurchaseId,
+                siteId: centralSite.SiteId,
+                employeeId: bulkPurchase.RequestedById);
+
             return bulkPurchase;
         }
 
@@ -88,6 +97,14 @@ namespace ERP.Services.BulkPurchaseServices
             bulkPurchase.Status = BULKPURCHASESTATUS.APPROVED;
 
             await _context.SaveChangesAsync();
+            
+            var centralSite = _context.Sites.FirstOrDefault();
+
+            await _notificationService.Add(type: NOTIFICATIONTYPE.BULKPURCHASE,
+                status: bulkPurchase.Status,
+                actionId: bulkPurchase.BulkPurchaseId,
+                siteId: centralSite.SiteId,
+                employeeId: bulkPurchase.RequestedById);
 
             return bulkPurchase;
         }
@@ -118,6 +135,14 @@ namespace ERP.Services.BulkPurchaseServices
 
             await _context.SaveChangesAsync();
 
+            var centralSite = _context.Sites.FirstOrDefault();
+
+            await _notificationService.Add(type: NOTIFICATIONTYPE.BULKPURCHASE,
+                status: bulkPurchase.Status,
+                actionId: bulkPurchase.BulkPurchaseId,
+                siteId: centralSite.SiteId,
+                employeeId: bulkPurchase.RequestedById);
+
             return bulkPurchase;
         }
 
@@ -131,7 +156,7 @@ namespace ERP.Services.BulkPurchaseServices
                  .FirstOrDefault();
 
             if (bulkPurchase == null) throw new KeyNotFoundException("BulkPurchase Not Found.");
-
+            
             foreach (var requestItem in confirmDTO.BulkPurchaseItems)
             {
                 var bulkPurchaseItem = bulkPurchase.BulkPurchaseItems
@@ -147,17 +172,18 @@ namespace ERP.Services.BulkPurchaseServices
             }
 
             bulkPurchase.TotalPurchaseCost = calculateTotalCost(bulkPurchase.BulkPurchaseItems); ;
+            
+            var centralSite = _context.Sites.FirstOrDefault();
 
             bulkPurchase.Status = BULKPURCHASESTATUS.PURCHASED;
-
-            await _context.SaveChangesAsync();
 
             foreach (var purchase in _context.Purchases
             .Where(purchase => purchase.BulkPurchaseId == bulkPurchase.BulkPurchaseId && purchase.Status == PURCHASESTATUS.BULKQUEUED)
             .Include(purchase => purchase.PurchaseItems))
             {
                 purchase.Status = PURCHASESTATUS.PURCHASED;
-                                
+                purchase.PurchaseDate = DateTime.Now;
+
                 //Add receive
                 Receive receive = new();
                 receive.PurchaseId = purchase.PurchaseId;
@@ -181,8 +207,14 @@ namespace ERP.Services.BulkPurchaseServices
                 _context.Receives.Add(receive);
 
             }
+            
             await _context.SaveChangesAsync();
-
+            
+            await _notificationService.Add(type: NOTIFICATIONTYPE.BULKPURCHASE,
+                status: bulkPurchase.Status,
+                actionId: bulkPurchase.BulkPurchaseId,
+                siteId: centralSite.SiteId,
+                employeeId: bulkPurchase.RequestedById);
             return bulkPurchase;
         }
 

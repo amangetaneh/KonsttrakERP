@@ -35,7 +35,6 @@ const Login = () => {
     } else {
       try {
         const res = await api.post("Authorization/login", value)
-        console.log(res)
         updateAuthContext({
           ...contextData,
           token: res.data.token,
