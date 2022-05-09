@@ -56,11 +56,12 @@ import AdminNotification from "./components/forms/AdminNotification";
 import MinimumStock from "./components/forms/item/MinimumStock";
 import ComanyNamePrefix from "./components/forms/misc/ComanyNamePrefix";
 import AssetNumberImport from "./components/forms/item/AssetNumberImport";
-import UserGuide from "./components/forms/guide/UserGuide";
+import UserGuide from "./components/forms/help/UserGuide";
 import jwt_decode from "jwt-decode";
 import NewGarage from "./components/forms/garage/NewGarage";
 import NewProduction from "./components/forms/production/NewProduction";
 import ConnectionError from "./components/fragments/ConnectionError";
+import FormBank from "./components/forms/help/FormBank";
 
 const App = () => {
     const contextData = useAuth();
@@ -115,7 +116,9 @@ const App = () => {
     const backup = console.error;
 
     console.error = function filterWarnings(msg) {
-        const supressedWarnings = ["Warning: validateDOMNesting(...): %s cannot appear as a child of <%s>.%s%s%s"];
+        const supressedWarnings = [
+            "Warning: validateDOMNesting(...): %s cannot appear as a child of <%s>.%s%s%s",
+        ];
 
         if (!supressedWarnings.some((entry) => msg.includes(entry))) {
             backup.apply(console, arguments);
@@ -221,6 +224,7 @@ const App = () => {
                             <Route path="misc/company" element={<ComanyNamePrefix />} />
 
                             <Route path="help" element={<UserGuide />} />
+                            <Route path="form-bank" element={<FormBank />} />
 
                             <Route path="rent/new" element={<NewRent />} />
                             <Route path="garage/new" element={<NewGarage />} />

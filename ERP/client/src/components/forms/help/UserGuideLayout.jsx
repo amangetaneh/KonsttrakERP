@@ -25,21 +25,20 @@ function UserGuideLayout({ children }) {
         <Container>
             <Row className="ps-3 g-5">
                 <Col
-                    lg={9}
                     style={{
-                        paddingBottom: "60vh",
+                        paddingBottom: "10vh",
                     }}
                 >
                     {children?.map((section, index) => (
                         <div key={index}>
                             <div ref={sectionRefs[index]}>
-                                <h1 className="display-6 fs-3 pt-3">{section.props.title}</h1>
+                                <h1 className="display-6 fs-2 pt-5">{section.props.title}</h1>
                                 {section}
                             </div>
                         </div>
                     ))}
                 </Col>
-                <Col lg={3}>
+                <Col lg={3} className="d-print-none">
                     <div
                         className="position-fixed w-25"
                         style={{

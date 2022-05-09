@@ -15,6 +15,9 @@ export const fetchEquipmentCategories = () =>
 
 export const fetchEquipmentAssets = (data) =>
     api.get(`/item/asset?modelId=${data}`).then((res) => res.data);
+    
+export const fetchCleanEquipmentAssets = (data) =>
+api.get(`/item/asset-clean?modelId=${data}`).then((res) => res.data);
 
 export const fetchItem = (itemId) => api.get(`/item/${itemId}`).then((res) => res.data);
 

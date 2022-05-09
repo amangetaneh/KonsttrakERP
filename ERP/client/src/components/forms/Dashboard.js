@@ -139,6 +139,10 @@ function Dashboard() {
                                             to: "/help",
                                             label: "User's Guide",
                                         },
+                                        {
+                                            to: "/form-bank",
+                                            label: "Form Bank",
+                                        },
                                     ]}
                                 />
                             </Col>

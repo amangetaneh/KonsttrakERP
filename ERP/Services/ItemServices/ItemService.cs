@@ -221,6 +221,18 @@ namespace ERP.Services.ItemServices
 
         }
 
+        public async Task<List<EquipmentAsset>> GetCleanAssets(int modelId)
+        {
+            var siteId = _userService.Employee.EmployeeSiteId;
+
+            var assets = await _context.EquipmentAssets
+                .Where(ea => ea.CurrentSiteId == siteId && ea.EquipmentModelId == modelId && ea.AssetDamageId == null)
+                .ToListAsync();
+
+            return assets;
+
+        }
+
         public async Task<int> GetItemQty(GetQtyDTO qtyDTO)
         {
 

@@ -3,7 +3,7 @@ import { Container, Row, Col, Form, Button, Spinner } from "react-bootstrap";
 import Header from "../../layouts/Header";
 import FormRow from "../../fragments/FormRow";
 import { ITEMTYPE } from "../../../Constants";
-import { useQuery, useMutation } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import { fetchMaterials, fetchMinimumStockItems, updateMinimumStockItems } from "../../../api/item";
 import { fetchEquipmentCategories, fetchEquipmentCategory } from "../../../api/category";
 import { ToastContainer, toast } from "react-toastify";
@@ -21,6 +21,7 @@ function initFormValues() {
 function MinimumStock() {
     const [formValues, setFormValues] = useState(initFormValues);
     const [stockValues, setStockValues] = useState([]);
+    const queryClient = useQueryClient();
 
     const toastOption = {
         position: "bottom-right",
@@ -30,7 +31,6 @@ function MinimumStock() {
         pauseOnHover: true,
         draggable: true,
         theme: "dark",
-    
     };
 
     const materialsQuery = useQuery(["materials"], fetchMaterials);
@@ -66,7 +66,7 @@ function MinimumStock() {
     } = useMutation(updateMinimumStockItems, {
         onSuccess: (res) => {
             toast.success("Minimum Stock Updated Succcessfully", toastOption);
-            setStockValues([]);
+            queryClient.invalidateQueries("minimumstock");
         },
     });
 

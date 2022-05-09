@@ -22,6 +22,7 @@ namespace ERP.Controllers
         public BorrowController(IBorrowService borrowService, IUserService userService)
         {
             _borrowService = borrowService;
+            _userService = userService;
         }
 
         [HttpGet("{id}")]
@@ -31,7 +32,7 @@ namespace ERP.Controllers
             try
             {
                 var borrow = await _borrowService.GetById(id);
-                if (_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance ||
+                if (_userService.UserRole.IsAdmin || _userService.UserRole.IsFinance ||
                         (_userService.UserRole.CanViewBorrow && _userService.Employee.EmployeeSiteId == borrow.SiteId) ||
                         _userService.Employee.EmployeeId == borrow.RequestedById)
                     return Ok(borrow);

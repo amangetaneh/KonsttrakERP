@@ -23,5 +23,6 @@ namespace ERP.Services.ItemServices
         Task<List<MinimumStockItemDTO>> GetMinimumStockItems(GetMinimumStockItemsDTO requestDTO);
         Task<bool> UpdateMinimumStockItems(List<MinimumStockItemDTO> requestDTO);
         Task<int> ImportAssetNumbers(ImportAssetNoDTO importDTO);
+        Task<List<EquipmentAsset>> GetCleanAssets(int modelId);
     }
 }

@@ -181,6 +181,7 @@ namespace ERP.Services.MaintenanceServices
         {
             var maintenance = await _context.Maintenances
                 .Where(m => m.MaintenanceId == fixDTO.MaintenanceId)
+                .Include(m=>m.EquipmentAsset)
                 .FirstOrDefaultAsync();
             if (maintenance == null) throw new KeyNotFoundException("Maintenance Request Not Found.");
 
@@ -188,6 +189,7 @@ namespace ERP.Services.MaintenanceServices
             maintenance.FixDate = DateTime.Now;
             maintenance.FixedById = _userService.Employee.EmployeeId;
             maintenance.FixRemark = fixDTO.FixRemark;
+            maintenance.EquipmentAsset.AssetDamageId = null;
 
             maintenance.Status = MAINTENANCESTATUS.FIXED;
 

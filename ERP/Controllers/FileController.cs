@@ -10,7 +10,7 @@ namespace ERP.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Employee")]
+    //[Authorize(Roles = "Employee")]
     public class FileController : Controller
     {
         private readonly IFileService _fileService;
