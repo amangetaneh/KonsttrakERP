@@ -18,6 +18,7 @@ using ERP.Services.ItemSiteQtyServices;
 using ERP.Services.EquipmentAssetServices;
 using ERP.Services.MiscServices;
 using ERP.Services.FileServices;
+using ERP.Services.DamageServices;
 
 namespace ERP
 {
@@ -45,6 +46,7 @@ namespace ERP
             services.AddScoped<IPurchaseService, PurchaseService>();
             services.AddScoped<IBulkPurchaseService, BulkPurchaseService>();
             services.AddScoped<IReceiveService, ReceiveService>();
+            services.AddScoped<IDamageService, DamageService>();
 
         }
     }
