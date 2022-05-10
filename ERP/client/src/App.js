@@ -114,7 +114,6 @@ const App = () => {
       } else {
         //set the remaining time
         time = check * 1000
-        console.log("T -", time)
       }
       //countdown from time
       setTimeout(() => {
