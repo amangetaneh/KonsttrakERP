@@ -46,17 +46,19 @@ function Sidebar() {
             </MenuItem>
 
             <SubMenu title="Setting" icon={<GoSettings className="fs-5" />}>
-              <SubMenu title="Employee">
-                <MenuItem>
-                  Manage Employees <Link to="/employee" />
-                </MenuItem>
-              </SubMenu>
+              {data.userRole.canEditUser && (
+                <SubMenu title="Employee">
+                  <MenuItem>
+                    Manage Employees <Link to="/employee" />
+                  </MenuItem>
+                </SubMenu>
+              )}
               <SubMenu title="Role">
                 <MenuItem>
                   Add a new Role <Link to="/role/new" />
                 </MenuItem>
                 <MenuItem>
-                  Edit Roles <Link to="/role" />
+                  Edit Role <Link to="/role" />
                 </MenuItem>
               </SubMenu>
               <SubMenu title="Site">
@@ -64,12 +66,15 @@ function Sidebar() {
                   Add a new Site <Link to="/site/new" />
                 </MenuItem>
                 <MenuItem>
-                  Edit Sites <Link to="/site" />
+                  Edit Site <Link to="/site" />
                 </MenuItem>
               </SubMenu>
               <SubMenu title="Stock">
                 <MenuItem>
                   Add a new Material <Link to="/item/material/new" />
+                </MenuItem>
+                <MenuItem>
+                  Edit Material <Link to="/item/material" />
                 </MenuItem>
                 <SubMenu title="Equipment">
                   <MenuItem>
@@ -81,6 +86,12 @@ function Sidebar() {
                   <MenuItem>
                     Add a new Category{" "}
                     <Link to="/item/equipment/category/new" />
+                  </MenuItem>
+                  <MenuItem>
+                    Edit Equipment <Link to="/item/equipment" />
+                  </MenuItem>
+                  <MenuItem>
+                    Edit Model <Link to="/item/equipment/model" />
                   </MenuItem>
                 </SubMenu>
 
@@ -105,17 +116,18 @@ function Sidebar() {
               icon={<FaList className="fs-5" />}
               defaultOpen={true}
             >
-              <SubMenu title="Buy">
-                {data.userRole?.canRequestBuy && (
+              {data.userRole.canViewBuy && (
+                <SubMenu title="Buy">
+                  {data.userRole?.canRequestBuy && (
+                    <MenuItem>
+                      Buy an Item <Link to="/buy/item" />
+                    </MenuItem>
+                  )}
                   <MenuItem>
-                    Buy an Item <Link to="/buy/item" />
+                    Buy Requests <Link to="/buy" />
                   </MenuItem>
-                )}
-                <MenuItem>
-                  Buy Requests <Link to="/buy" />
-                </MenuItem>
-              </SubMenu>
-
+                </SubMenu>
+              )}
               {data.userRole.canViewPurchase && (
                 <SubMenu title="Purchase">
                   {data.userRole?.canRequestPurchase && (
@@ -134,7 +146,7 @@ function Sidebar() {
                   <MenuItem>
                     List Purchase Requests <Link to="/purchase" />
                   </MenuItem>
-                  {data.userRole?.canRequestPurchase && (
+                  {data.userRole?.canRequestBulkPurchase && (
                     <MenuItem>
                       Bulk Purchase
                       <Link to="/bulkPurchase" />

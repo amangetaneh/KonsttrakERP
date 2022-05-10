@@ -46,9 +46,12 @@ import SignUp from "./components/forms/authorization/Register"
 import Login from "./components/forms/authorization/Login"
 import TransferReport from "./components/forms/report/TransferReport"
 import { useAuth, useAuthUpdate } from "./contexts/AuthContext"
-// import EditMaterial from "./components/forms/item/EditMaterial"
-// import EditEquipment from "./components/forms/item/EditEquipment"
-// import EditEquipmentModel from "./components/forms/item/EditEquipmentModel"
+import EditMaterial from "./components/forms/item/EditMaterial"
+import EditEquipment from "./components/forms/item/EditEquipment"
+import EditEquipmentModel from "./components/forms/item/EditEquipmentModel"
+import ListMaterial from "./components/forms/item/ListMaterial"
+import ListEquipment from "./components/forms/item/ListEquipment"
+import ListEquipmentModel from "./components/forms/item/ListEquipmentModel"
 import EquipmentItem from "./components/forms/item/EquipmentItem"
 import EquipmentModel from "./components/forms/item/EquipmentModel"
 import EquipmentCategory from "./components/forms/item/EquipmentCategory"
@@ -186,12 +189,21 @@ const App = () => {
                 element={<AssetNumberImport />}
               />
               <Route path="item/minimum-stock" element={<MinimumStock />} />
-              {/* <Route path="item/material/edit" element={<EditMaterial />} />
-              <Route path="item/equipment/edit" element={<EditEquipment />} />
+              <Route path="item/material" element={<ListMaterial />} />
+              <Route path="item/material/:itemId" element={<EditMaterial />} />
+              <Route path="item/equipment" element={<ListEquipment />} />
               <Route
-                path="item/equipment/model/edit"
+                path="item/equipment/:itemId"
+                element={<EditEquipment />}
+              />
+              <Route
+                path="item/equipment/model"
+                element={<ListEquipmentModel />}
+              />
+              <Route
+                path="item/equipment/model/:equipmentModelId"
                 element={<EditEquipmentModel />}
-              /> */}
+              />
 
               <Route path="item/material/new" element={<MaterialItem />} />
               <Route path="item/equipment/new" element={<EquipmentItem />} />

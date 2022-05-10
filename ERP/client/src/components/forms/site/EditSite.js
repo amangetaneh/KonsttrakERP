@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Form, Button, Container } from "react-bootstrap"
 import { FaEdit } from "react-icons/fa"
 import Header from "../../layouts/Header"
@@ -17,7 +17,7 @@ function EditSite() {
   const [pettyCashLimit, setPettyCashLimit] = useState(1000)
 
   const [isError, setIsError] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   var query = useQuery(["role", id], () => fetchSite(id))
 
@@ -36,11 +36,13 @@ function EditSite() {
     setName(query.data.name)
     setLocation(query.data.location)
     setPettyCashLimit(query.data.pettyCashLimit)
+    setIsLoading(false)
   }, [query.data])
 
   const {
     isError: isSubmitError,
     isLoading: isSubmitLoading,
+    error: submitError,
     mutate: submitEditSite,
   } = useMutation(editSite, {
     onSuccess: (res) => {
@@ -53,6 +55,7 @@ function EditSite() {
     if (isSubmitLoading) return
 
     var data = {
+      siteId: id,
       name: String(name),
       location: String(location),
       pettyCashLimit: Number(pettyCashLimit),
@@ -63,7 +66,8 @@ function EditSite() {
 
   if (isLoading) return <LoadingSpinner />
 
-  if (isError) return <ConnectionError />
+  if (isSubmitError)
+    return <ConnectionError status={submitError?.response?.status} />
 
   return (
     <>
