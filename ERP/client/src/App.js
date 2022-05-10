@@ -71,11 +71,13 @@ import AdminNotification from "./components/forms/AdminNotification"
 import MinimumStock from "./components/forms/item/MinimumStock"
 import ComanyNamePrefix from "./components/forms/misc/ComanyNamePrefix"
 import AssetNumberImport from "./components/forms/item/AssetNumberImport"
-import UserGuide from "./components/forms/guide/UserGuide"
+import UserGuide from "./components/forms/help/UserGuide"
 import jwt_decode from "jwt-decode"
 import NewGarage from "./components/forms/garage/NewGarage"
 import NewProduction from "./components/forms/production/NewProduction"
 import ConnectionError from "./components/fragments/ConnectionError"
+import FormBank from "./components/forms/help/FormBank"
+import ManageDamages from "./components/forms/item/ManageDamages"
 
 const App = () => {
   const contextData = useAuth()
@@ -136,7 +138,6 @@ const App = () => {
 
     if (!supressedWarnings.some((entry) => msg.includes(entry))) {
       backup.apply(console, arguments)
-      console.log(msg)
     }
   }
 
@@ -189,6 +190,7 @@ const App = () => {
                 element={<AssetNumberImport />}
               />
               <Route path="item/minimum-stock" element={<MinimumStock />} />
+              <Route path="item/damage" element={<ManageDamages />} />
               <Route path="item/material" element={<ListMaterial />} />
               <Route path="item/material/:itemId" element={<EditMaterial />} />
               <Route path="item/equipment" element={<ListEquipment />} />
@@ -270,6 +272,7 @@ const App = () => {
               <Route path="misc/company" element={<ComanyNamePrefix />} />
 
               <Route path="help" element={<UserGuide />} />
+              <Route path="form-bank" element={<FormBank />} />
 
               <Route path="rent/new" element={<NewRent />} />
               <Route path="garage/new" element={<NewGarage />} />

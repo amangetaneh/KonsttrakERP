@@ -37,7 +37,7 @@ namespace ERP.Controllers
             {
                 Transfer transfer = await _transferService.GetById(id);
                 
-                if( _userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance ||
+                if( _userService.UserRole.IsAdmin || _userService.UserRole.IsFinance ||
                     (_userService.UserRole.CanViewTransfer && _userService.Employee.EmployeeSiteId == transfer.SendSiteId) ||
                     (_userService.UserRole.CanViewTransfer && _userService.Employee.EmployeeSiteId == transfer.ReceiveSiteId) ||
                     _userService.Employee.EmployeeId == transfer.RequestedById)

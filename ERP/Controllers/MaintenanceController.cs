@@ -33,7 +33,7 @@ namespace ERP.Controllers
             {
                 var maintenance = await _maintenanceService.GetById(id);
 
-                if (_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance || 
+                if (_userService.UserRole.IsAdmin || _userService.UserRole.IsFinance || 
                     (_userService.UserRole.CanViewMaintenance && _userService.Employee.EmployeeSiteId == maintenance.SiteId) ||
                     _userService.Employee.EmployeeId == maintenance.RequestedById)
                 return Ok(maintenance);

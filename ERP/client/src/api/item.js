@@ -16,10 +16,12 @@ export const fetchEquipmentCategories = () =>
   api.get("/item/equipmentcategory").then((res) => res.data)
 
 export const fetchEquipmentAssets = (data) =>
-  api.get(`/item/asset?modelId=${data}`).then((res) => res.data)
+    api.get(`/item/asset?modelId=${data}`).then((res) => res.data);
+    
+export const fetchCleanEquipmentAssets = (data) =>
+api.get(`/item/asset-clean?modelId=${data}`).then((res) => res.data);
 
-export const fetchItem = (itemId) =>
-  api.get(`/item/${itemId}`).then((res) => res.data)
+export const fetchItem = (itemId) => api.get(`/item/${itemId}`).then((res) => res.data);
 
 export const fetchQty = (data) =>
   api.post("/item/qty", data).then((res) => res.data)

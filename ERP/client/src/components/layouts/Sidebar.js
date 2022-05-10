@@ -27,7 +27,7 @@ function Sidebar() {
       <ProSidebar
         className="text-light sidebar-decrease-padding"
         collapsed={collapsed}
-        width="255px"
+        width="280px"
         style={{ height: "100vh", position: "sticky", top: 0 }}
       >
         <SidebarHeader className="p-1 text-nowrap">
@@ -99,6 +99,9 @@ function Sidebar() {
                   Minimum Stock <Link to="/item/minimum-stock" />
                 </MenuItem>
                 <MenuItem>
+                  Manage Damages <Link to="/item/damage" />
+                </MenuItem>
+                <MenuItem>
                   Import Asset Numbers <Link to="/item/import-asset-numbers" />
                 </MenuItem>
               </SubMenu>
@@ -147,6 +150,57 @@ function Sidebar() {
                     List Purchase Requests <Link to="/purchase" />
                   </MenuItem>
                   {data.userRole?.canRequestBulkPurchase && (
+                    <MenuItem>
+                      Bulk Purchase
+                      <Link to="/bulkPurchase" />
+                    </MenuItem>
+                  )}
+                </SubMenu>
+              )}
+
+              <MenuItem>
+                Notifications <Link to="/notification" />
+              </MenuItem>
+              <MenuItem>
+                Company Name / Prefix <Link to="/misc/company" />
+              </MenuItem>
+            </SubMenu>
+
+            <SubMenu
+              title="Inventory"
+              icon={<FaList className="fs-5" />}
+              defaultOpen={true}
+            >
+              <SubMenu title="Buy">
+                {data.userRole?.canRequestBuy && (
+                  <MenuItem>
+                    Buy an Item <Link to="/buy/item" />
+                  </MenuItem>
+                )}
+                <MenuItem>
+                  Buy Requests <Link to="/buy" />
+                </MenuItem>
+              </SubMenu>
+
+              {data.userRole.canViewPurchase && (
+                <SubMenu title="Purchase">
+                  {data.userRole?.canRequestPurchase && (
+                    <MenuItem>
+                      Purchase Material
+                      <Link to="/purchase/material" />
+                    </MenuItem>
+                  )}
+                  {data.userRole?.canRequestPurchase && (
+                    <MenuItem>
+                      Purchase Equipment
+                      <Link to="/purchase/equipment" />
+                    </MenuItem>
+                  )}
+
+                  <MenuItem>
+                    List Purchase Requests <Link to="/purchase" />
+                  </MenuItem>
+                  {data.userRole?.canRequestPurchase && (
                     <MenuItem>
                       Bulk Purchase
                       <Link to="/bulkPurchase" />

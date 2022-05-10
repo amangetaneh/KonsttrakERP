@@ -53,6 +53,14 @@ namespace ERP.Controllers
             return Ok(items);
         }
 
+        [HttpGet("asset-clean")]
+        public async Task<ActionResult<List<EquipmentAsset>>> GetCleanAssets(int modelId)
+        {
+            var items = await _itemService.GetCleanAssets(modelId);
+
+            return Ok(items);
+        }
+
         [HttpPost("minimum-stock")]
         public async Task<ActionResult<List<MinimumStockItemDTO>>> GetMinimumStock(GetMinimumStockItemsDTO minimumStockDTO)
         {

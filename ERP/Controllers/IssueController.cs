@@ -33,7 +33,7 @@ namespace ERP.Controllers
             {
                 var issue = await _issueService.GetById(id);
 
-                if (_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance ||
+                if (_userService.UserRole.IsAdmin || _userService.UserRole.IsFinance ||
                         (_userService.UserRole.CanViewIssue && _userService.Employee.EmployeeSiteId == issue.SiteId) ||
                         _userService.Employee.EmployeeId == issue.RequestedById)
                     return Ok(issue);

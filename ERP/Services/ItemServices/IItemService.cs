@@ -26,6 +26,6 @@ namespace ERP.Services.ItemServices
         Task<EquipmentModel> EditEquipmentModel(EditEquipmentModelDTO equipmentModelDTO);
         Task<Item> EditEquipment(EditEquipmentItemDTO equipmentItemDTO);
         Task<Item> EditMaterial(EditMaterialItemDTO materialItemDTO);
-
+        Task<List<EquipmentAsset>> GetCleanAssets(int modelId);
     }
 }
