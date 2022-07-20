@@ -47,19 +47,19 @@
             {
                 DateTime fromDate = DateTime.Parse(FromDate);
 
-                if (DateOf == TRANSFERSTATUS.DECLINED)
+                if (DateOf == BORROWSTATUS.DECLINED)
                 {
-                    Status = TRANSFERSTATUS.DECLINED;
+                    Status = BORROWSTATUS.DECLINED;
                     ApproveDateFrom = fromDate;
                 }
-                else if (DateOf == TRANSFERSTATUS.REQUESTED)
+                else if (DateOf == BORROWSTATUS.REQUESTED)
                     RequestDateFrom = fromDate;
-                else if (DateOf == TRANSFERSTATUS.APPROVED)
+                else if (DateOf == BORROWSTATUS.APPROVED)
                 {
-                    Status = TRANSFERSTATUS.APPROVED;
+                    Status = BORROWSTATUS.APPROVED;
                     ApproveDateFrom = fromDate;
                 }
-                else if (DateOf == TRANSFERSTATUS.SENT)
+                else if (DateOf == BORROWSTATUS.HANDED)
                     HandDateFrom = fromDate;
             }
 
@@ -67,19 +67,19 @@
             {
                 DateTime toDate = DateTime.Parse(ToDate).AddDays(1);
 
-                if (DateOf == TRANSFERSTATUS.DECLINED)
+                if (DateOf == BORROWSTATUS.DECLINED)
                 {
-                    Status = TRANSFERSTATUS.DECLINED;
+                    Status = BORROWSTATUS.DECLINED;
                     ApproveDateTo = toDate;
                 }
-                else if (DateOf == TRANSFERSTATUS.REQUESTED)
+                else if (DateOf == BORROWSTATUS.REQUESTED)
                     RequestDateTo = toDate;
-                else if (DateOf == TRANSFERSTATUS.APPROVED)
+                else if (DateOf == BORROWSTATUS.APPROVED)
                 {
                     //Status = TRANSFERSTATUS.APPROVED;
                     ApproveDateTo = toDate;
                 }
-                else if (DateOf == TRANSFERSTATUS.SENT)
+                else if (DateOf == BORROWSTATUS.HANDED)
                     HandDateTo = toDate;
             }
         }

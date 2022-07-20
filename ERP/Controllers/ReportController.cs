@@ -27,7 +27,7 @@ namespace ERP.Controllers
         [HttpPost("receive")]
         public async Task<ActionResult<ReportReturnDTO<Transfer>>> GetReceives(ReceiveReportDTO receiveDTO)
         {
-            if (!_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance)
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.IsFinance)
                 return Forbid();
 
             var result = await _reportService.GetReceiveReport(receiveDTO);
@@ -38,7 +38,7 @@ namespace ERP.Controllers
         [HttpPost("purchase")]
         public async Task<ActionResult<ReportReturnDTO<Transfer>>> GetPurchases(PurchaseReportDTO purchaseDTO)
         {
-            if (!_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance)
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.IsFinance)
                 return Forbid();
 
             var result = await _reportService.GetPurchaseReport(purchaseDTO);
@@ -46,10 +46,21 @@ namespace ERP.Controllers
             return Ok(result);
         }
 
+        [HttpPost("return")]
+        public async Task<ActionResult<ReportReturnDTO<Return>>> GetReturns(ReturnReportDTO returnDTO)
+        {
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.IsFinance)
+                return Forbid();
+
+            var result = await _reportService.GetReturnReport(returnDTO);
+
+            return Ok(result);
+        }
+
         [HttpPost("transfer")]
         public async Task<ActionResult<ReportReturnDTO<Transfer>>> GetTransfers(TransferReportDTO transferDTO)
         {
-            if (!_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance)
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.IsFinance)
                 return Forbid();
 
             var result = await _reportService.GetTansferReport(transferDTO);
@@ -60,7 +71,7 @@ namespace ERP.Controllers
         [HttpPost("issue")]
         public async Task<ActionResult<ReportReturnDTO<Transfer>>> GetIssues(IssueReportDTO issueDTO)
         {
-            if (!_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance)
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.IsFinance)
                 return Forbid();
 
             var result = await _reportService.GetIssueReport(issueDTO);
@@ -71,7 +82,7 @@ namespace ERP.Controllers
         [HttpPost("borrow")]
         public async Task<ActionResult<ReportReturnDTO<Transfer>>> GetBorrows(BorrowReportDTO borrowDTO)
         {
-            if (!_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance)
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.IsFinance)
                 return Forbid();
 
             var result = await _reportService.GetBorrowReport(borrowDTO);
@@ -82,7 +93,7 @@ namespace ERP.Controllers
         [HttpPost("maintenance")]
         public async Task<ActionResult<ReportReturnDTO<Transfer>>> GetMaintenances(MaintenanceReportDTO maintenanceDTO)
         {
-            if (!_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance)
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.IsFinance)
                 return Forbid();
 
             var result = await _reportService.GetMaintenanceReport(maintenanceDTO);
@@ -91,10 +102,21 @@ namespace ERP.Controllers
         }
 
         [HttpPost("general")]
-        public async Task<ActionResult<GeneralReportReturnDTO>> Post(GeneralReportDTO reportDTO)
+        public async Task<ActionResult<GeneralReportReturnDTO>> GetGeneralReport(GeneralReportDTO reportDTO)
         {
-            if (!_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance)
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.IsFinance)
                 return Forbid();
+
+            return Ok(await _reportService.GetGeneralReport(reportDTO));
+        }
+
+        [HttpPost("stock")]
+        public async Task<ActionResult<GeneralReportReturnDTO>> GetStockReport(GeneralReportDTO reportDTO)
+        {
+             if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanGetStockReport)
+                 return Forbid();
+
+            reportDTO.SiteId = (int)_userService.Employee.EmployeeSiteId;
 
             return Ok(await _reportService.GetGeneralReport(reportDTO));
         }

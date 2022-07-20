@@ -87,5 +87,7 @@ namespace ERP.Models
 
         public bool CanGetStockNotification { get; set; } = false;
 
+        public bool CanGetStockReport { get; set; } = false;
+
     }
 }

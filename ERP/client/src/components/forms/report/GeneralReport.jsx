@@ -70,7 +70,7 @@ function GeneralReport() {
     );
 
     function valueChanged(e) {
-        queryClient.removeQueries(["general", formValues]);
+        queryClient.removeQueries("general");
         setFormValues({ ...formValues, [e.target.name]: e.target.value });
         setChartData(null);
     }
@@ -383,8 +383,7 @@ function GeneralReport() {
                                 onClick={() => {
                                     setFormValues(initFormValues());
                                     setChartData(null);
-                                    setTableData(null);
-                                    setReport(null);
+                                    queryClient.removeQueries("general");
                                 }}
                             >
                                 Reset

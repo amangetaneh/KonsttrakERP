@@ -78,6 +78,7 @@ import NewProduction from "./components/forms/production/NewProduction"
 import ConnectionError from "./components/fragments/ConnectionError"
 import FormBank from "./components/forms/help/FormBank"
 import ManageDamages from "./components/forms/item/ManageDamages"
+import StockReport from "./components/forms/report/StockReport"
 
 const App = () => {
   const contextData = useAuth()
@@ -183,6 +184,7 @@ const App = () => {
               <Route path="site/new" element={<NewSite />} />
 
               <Route path="report" element={<Report />} />
+              <Route path="stock-report" element={<StockReport />} />
 
               <Route
                 path="item/import-asset-numbers"

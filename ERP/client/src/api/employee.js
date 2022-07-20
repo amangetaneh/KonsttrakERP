@@ -2,6 +2,8 @@ import api from "./api"
 
 export const fetchEmployees = () => api.get("/employee").then((res) => res.data)
 
+export const fetchSiteEmployees = () => api.get("/employee/site").then((res) => res.data)
+
 export const fetchEmployee = (id) =>
   api.get(`/employee/${id}`).then((res) => res.data)
 

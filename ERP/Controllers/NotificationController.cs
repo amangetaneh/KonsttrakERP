@@ -1,4 +1,5 @@
 ﻿using ERP.Context;
+using ERP.DTOs;
 using ERP.Models;
 using ERP.Services.NotificationServices;
 using ERP.Services.User;
@@ -54,6 +55,26 @@ namespace ERP.Controllers
                 return Ok(await _notificationService.Clear(notificationId));
 
             return Forbid();
+
+        }
+
+        [HttpPost("clear")]
+        public async Task<ActionResult<bool>> ClearAll(ClearNotificationsDTO clearNotificationsDTO)
+        {
+            foreach (var notificationId in clearNotificationsDTO.NotificationIds)
+            {
+                var notification = await _notificationService.GetNotification(notificationId);
+
+                if (notification == null) continue;
+
+                if (_userService.UserRole.IsAdmin ||
+                        _userService.Employee.EmployeeSiteId == notification.SiteId ||
+                        _userService.Employee.EmployeeId == notification.EmployeeId)
+
+                    await _notificationService.Clear(notificationId);
+            }
+
+            return Ok(true);
 
         }
 

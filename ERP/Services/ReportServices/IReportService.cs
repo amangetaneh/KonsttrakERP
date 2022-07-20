@@ -12,6 +12,7 @@ namespace ERP.Services.ReportServices
         Task<ReportReturnDTO<Maintenance>> GetMaintenanceReport(MaintenanceReportDTO maintenanceDTO);
         Task<ReportReturnDTO<Purchase>> GetPurchaseReport(PurchaseReportDTO purchaseDTO);
         Task<ReportReturnDTO<Receive>> GetReceiveReport(ReceiveReportDTO receiveDTO);
+        Task<ReportReturnDTO<Return>> GetReturnReport(ReturnReportDTO returnDTO);
         Task<ReportReturnDTO<Transfer>> GetTansferReport(TransferReportDTO transferDTO);
     }
 }

@@ -7,4 +7,7 @@ export const fetchNotifications = (data) => api.get("/notification").then((res) 
 export const clearNotification = (notificationId) =>
     api.get(`/notification/clear/${notificationId}`);
 
+export const clearAllNotifications = (notificationIds) =>
+    api.post("/notification/clear", notificationIds);
+
 export const fetchNow = () => api.get("/notification/now");

@@ -7,12 +7,15 @@ import { fetchNotifications, fetchNow } from "../../api/notification";
 import { NOTIFICATIONROUTE, NOTIFICATIONTYPE } from "../../Constants";
 import LoadingSpinner from "../fragments/LoadingSpinner";
 import ConnectionError from "../fragments/ConnectionError";
+import ClearNotifications from "./ClearNotifications";
 
 function NotificationDashboard() {
     const [notificationCount, setNotificationCount] = useState(0);
     const [now, setNow] = useState("");
 
-    var notificationQuery = useQuery(["notifications"], fetchNotifications);
+    var notificationQuery = useQuery(["notifications"], fetchNotifications, {
+        refetchInterval: 60000,
+    });
     var nowQuery = useQuery(["now"], fetchNow);
 
     useEffect(() => {
@@ -75,6 +78,17 @@ function NotificationDashboard() {
                         }
                     />
                 ))}
+                {notificationCount ? (
+                    <ClearNotifications
+                        notificationIds={
+                            notificationQuery.data
+                                ? notificationQuery.data?.map((n) => n.notificationId)
+                                : []
+                        }
+                    />
+                ) : (
+                    ""
+                )}
             </div>
         </div>
     );

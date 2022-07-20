@@ -19,10 +19,12 @@ namespace ERP.Controllers
     public class EmployeeController : Controller
     {
         private readonly DataContext context;
+        private readonly IUserService _userService;
 
-        public EmployeeController(DataContext context)
+        public EmployeeController(DataContext context, IUserService userService)
         {
             this.context = context;
+            _userService = userService;
         }
 
         [Authorize(Roles = "Employee")]
@@ -49,6 +51,19 @@ namespace ERP.Controllers
         }
 
         [Authorize(Roles = "Employee")]
+        [HttpGet("site")]
+        public async Task<ActionResult<List<Employee>>> GetBySite()
+        {
+            var siteId = _userService.Employee.EmployeeSiteId;
+
+            var employees = await context.Employees
+                .Where(e => e.EmployeeSiteId == siteId)
+                .Include(employee => employee.UserRole)
+                .ToListAsync();
+
+            return Ok(employees);
+        }
+
         [HttpPost("changesite")]
         public async Task<ActionResult<Employee>> ChangeEmployeeSite(UpdateUserDTO userDTO)
         {
