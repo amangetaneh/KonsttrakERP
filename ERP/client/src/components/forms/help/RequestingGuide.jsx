@@ -33,7 +33,7 @@ function RequestingGuide() {
                 <h3>3. Requesting (Alternate)</h3>
                 <p>
                     In other way it is possible to click on Issue on the Left Side which will always
-                    be available under Inventory.
+                    be available under Property Management.
                 </p>
                 <img
                     src={`${host}file/screenshot_add645cc-2e35-45d7-a447-569d2b446e96.jpg`}

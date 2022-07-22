@@ -5,13 +5,16 @@ import SingleNotification from "./SingleNotification";
 import { useQuery } from "react-query";
 import { fetchNotifications, fetchNow } from "../../api/notification";
 import { NOTIFICATIONROUTE, NOTIFICATIONTYPE } from "../../Constants";
+import ClearNotifications from "./ClearNotifications";
 
 function NotificationCanvas() {
     const [notificationCount, setNotificationCount] = useState(0);
     const [now, setNow] = useState("");
     const [showCanvas, setShowCanvas] = useState(false);
 
-    var notificationQuery = useQuery(["notifications"], fetchNotifications);
+    var notificationQuery = useQuery(["notifications"], fetchNotifications, {
+        refetchInterval: 60000,
+    });
     var nowQuery = useQuery(["now"], fetchNow);
 
     useEffect(() => {
@@ -81,6 +84,18 @@ function NotificationCanvas() {
                             }
                         />
                     ))}
+
+                    {notificationCount ? (
+                        <ClearNotifications
+                            notificationIds={
+                                notificationQuery.data
+                                    ? notificationQuery.data?.map((n) => n.notificationId)
+                                    : []
+                            }
+                        />
+                    ) : (
+                        ""
+                    )}
                 </Offcanvas.Body>
             </Offcanvas>
         </>

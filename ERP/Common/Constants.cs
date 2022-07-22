@@ -149,6 +149,23 @@
 
     }
 
+    public class RETURNREPORTGROUPBY
+    {
+        public const string RETURNDATE = "ReturnDate";
+        public const string RETURNWEEK = "ReturnWeek";
+        public const string RETURNMONTH = "ReturnMonth";
+        public const string RETURNYEAR = "ReturnYear";
+        public const string RETURNEDBY = "ReturnedBy";
+        public const string SITE = "Site";
+
+    }
+
+    public class RETURNREPORTTYPE
+    {
+        public const int BORROW = 0;
+        public const int RETURN = 1;
+    }
+
     public class MAINTENANCEREPORTGROUPBY
     {
         public const string STATUS = "Status";

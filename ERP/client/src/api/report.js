@@ -14,7 +14,12 @@ export const fetchIssueReport = (data) => api.post("/report/issue", data).then((
 export const fetchGeneralReport = (data) =>
     api.post("/report/general", data).then((res) => res.data);
 
+export const fetchStockReport = (data) =>
+    api.post("/report/stock", data).then((res) => res.data);
+
 export const fetchBorrowReport = (data) => api.post("/report/borrow", data).then((res) => res.data);
+
+export const fetchReturnReport = (data) => api.post("/report/return", data).then((res) => res.data);
 
 export const fetchMaintenanceReport = (data) =>
     api.post("/report/maintenance", data).then((res) => res.data);

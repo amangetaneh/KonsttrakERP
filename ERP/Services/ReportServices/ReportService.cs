@@ -1308,6 +1308,100 @@ namespace ERP.Services.ReportServices
             return result;
         }
 
+        public async Task<ReportReturnDTO<Return>> GetReturnReport(ReturnReportDTO returnDTO)
+        {
+            returnDTO.SetDates(); // parse request data to set what date is given
+            returnDTO.SetEmployees();
+
+            var borrows = _context.Returns
+                .Where(borrowReturn =>
+                //dates
+                (returnDTO.ReturnDateFrom == null || borrowReturn.ReturnDate >= returnDTO.ReturnDateFrom) &&
+                (returnDTO.ReturnDateTo == null || borrowReturn.ReturnDate <= returnDTO.ReturnDateTo) &&
+                (returnDTO.BorrowDateFrom == null || borrowReturn.ReturnEquipmentAssets.Any(asset => asset.Borrow.HandDate >= returnDTO.BorrowDateFrom)) &&
+                (returnDTO.BorrowDateTo == null || borrowReturn.ReturnEquipmentAssets.Any(asset => asset.Borrow.HandDate <= returnDTO.BorrowDateTo)) &&
+                //sites
+                (returnDTO.SiteId == -1 || borrowReturn.SiteId == returnDTO.SiteId) &&
+                //status
+                //((returnDTO.DamageId == 0 && borrowReturn.ReturnEquipmentAssets.Any(asset => asset.AssetDamageId == null)) || (returnDTO.DamageId == -1 || borrowReturn.ReturnEquipmentAssets.Any(asset => asset.AssetDamageId == returnDTO.DamageId))) &&
+                //single role one user
+                (returnDTO.EmployeeRole == -1 || returnDTO.ReturnedById == null || borrowReturn.ReturnedById == returnDTO.ReturnedById) &&
+                (returnDTO.EmployeeRole == -1 || returnDTO.BorrowedById == null || borrowReturn.ReturnEquipmentAssets.Any(asset => asset.Borrow.RequestedById == returnDTO.BorrowedById)) &&
+                //multiple role one user
+                (returnDTO.EmployeeRole != -1 || returnDTO.EmployeeId == -1 || borrowReturn.ReturnedById == returnDTO.ReturnedById || borrowReturn.ReturnEquipmentAssets.Any(asset => asset.Borrow.RequestedById == returnDTO.BorrowedById)) &&
+                //equipment category
+                (returnDTO.EquipmentCategoryId == -1 || borrowReturn.ReturnEquipmentAssets.Any(ti => ti.BorrowItem.Item.Equipment.EquipmentCategoryId == returnDTO.EquipmentCategoryId)) &&
+                //item
+                (returnDTO.ItemId == -1 || borrowReturn.ReturnEquipmentAssets.Any(ti => ti.ItemId == returnDTO.ItemId))
+                )
+                .Include(transfer => transfer.Site)
+                .Include(transfer => transfer.ReturnedBy)
+                .Include(transfer => transfer.ReturnEquipmentAssets)
+                .ThenInclude(asset => asset.Borrow.RequestedBy)
+                .Include(transfer => transfer.ReturnEquipmentAssets)
+                .ThenInclude(asset => asset.BorrowItem.Item.Equipment);
+
+            foreach (var borrow in borrows)
+            {
+                borrow.ReturnedBy.UserRole = null;
+                foreach (var x in borrow.ReturnEquipmentAssets)
+                {
+                    x.Borrow.RequestedBy.UserRole = null;
+                    x.Borrow.ApprovedBy.UserRole = null;
+                    x.Borrow.HandedBy.UserRole = null;
+                }
+            }
+
+            IQueryable? summary = null;
+
+            switch (returnDTO.GroupBy)
+            {
+
+                //date
+                case RETURNREPORTGROUPBY.RETURNDATE:
+                    summary = borrows.GroupBy(transfer => transfer.ReturnDate.Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ReturnDate.ToShortDateString() });
+                    break;
+
+                //week
+                case RETURNREPORTGROUPBY.RETURNWEEK:
+                    summary = borrows.GroupBy(transfer => new { Week = transfer.ReturnDate.DayOfYear / 7, transfer.ReturnDate.Year })
+                         .Select(s => new { key = s.Key, count = s.Count(), value = $"Week {s.Key.Week}, {s.Key.Year}" });
+                    break;
+
+                //month
+                case RETURNREPORTGROUPBY.RETURNMONTH:
+                    summary = borrows.GroupBy(transfer => new { Month = transfer.ReturnDate.Month, transfer.ReturnDate.Year })
+                         .Select(s => new { key = s.Key, count = s.Count(), value = $"{s.First().ReturnDate.ToString("MMMM")}, {s.Key.Year}" });
+                    break;
+
+                //year
+                case RETURNREPORTGROUPBY.RETURNYEAR:
+                    summary = borrows.GroupBy(transfer => transfer.ReturnDate.Year)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = $"{s.Key}" });
+                    break;
+
+                //employee
+                case RETURNREPORTGROUPBY.RETURNEDBY:
+                    summary = borrows.GroupBy(transfer => transfer.ReturnedById)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ReturnedBy });
+                    break;
+
+                //site
+                case RETURNREPORTGROUPBY.SITE:
+                    summary = borrows.GroupBy(transfer => transfer.SiteId)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().Site });
+                    break;
+            }
+
+            var result = new ReportReturnDTO<Return>();
+
+            result.Summary = summary;
+            result.Data = await borrows.ToListAsync();
+
+            return result;
+        }
+
         public async Task<GeneralReportReturnDTO> GetGeneralReport(GeneralReportDTO reportDTO)
         {
             reportDTO.SetDates();
@@ -1383,12 +1477,12 @@ namespace ERP.Services.ReportServices
                 var stockSummary = await _generalReportService.GetStockReport(reportDTO);
                 foreach (var x in stockSummary) result.Keys.Add(x.Key.ToString());
                 foreach (var x in stockSummary) result.Labels.TryAdd(x.Key.ToString(), x.Label);
-                result.StockSummary = stockSummary.GroupBy(x => x.Key).Select( s => new ReportSingleItem
+                result.StockSummary = stockSummary.GroupBy(x => x.Key).Select(s => new ReportSingleItem
                 {
                     Key = s.Key,
                     Label = s.First().Label,
-                    Qty = s.Sum( i => i.Qty),
-                    Cost = s.Sum( i => i.Cost),
+                    Qty = s.Sum(i => i.Qty),
+                    Cost = s.Sum(i => i.Cost),
                     CurrentValue = s.Sum(i => i.CurrentValue)
 
                 }).ToDictionary(d => (string)d.Key.ToString(), d => d);
@@ -1414,6 +1508,114 @@ namespace ERP.Services.ReportServices
 
             return result;
         }
+
+        public async Task<GeneralReportReturnDTO> GetStockReport(GeneralReportDTO reportDTO)
+        {
+            reportDTO.SetDates();
+
+            GeneralReportReturnDTO result = new();
+            
+            if (reportDTO.Include.Contains(GENERALREPORTSELECTION.RECEIVED))
+            {
+                var receiveSummary = await _generalReportService.GetReceiveReport(reportDTO);
+                foreach (var x in receiveSummary) result.Keys.Add(x.Key.ToString());
+                foreach (var x in receiveSummary) result.Labels.TryAdd(x.Key.ToString(), x.Label);
+                result.ReceiveSummary = receiveSummary.ToDictionary(d => (string)d.Key.ToString(), d => d);
+            }
+
+            if (reportDTO.Include.Contains(GENERALREPORTSELECTION.PURCHASED))
+            {
+                var purchaseSummary = await _generalReportService.GetPurchaseReport(reportDTO);
+                foreach (var x in purchaseSummary) result.Keys.Add(x.Key.ToString());
+                foreach (var x in purchaseSummary) result.Labels.TryAdd(x.Key.ToString(), x.Label);
+                result.PurchaseSummary = purchaseSummary.ToDictionary(d => (string)d.Key.ToString(), d => d);
+            }
+
+            if (reportDTO.Include.Contains(GENERALREPORTSELECTION.TRANSFERREDOUT))
+            {
+                var transferOutSummary = await _generalReportService.GetTransferOutReport(reportDTO);
+                foreach (var x in transferOutSummary) result.Keys.Add(x.Key.ToString());
+                foreach (var x in transferOutSummary) result.Labels.TryAdd(x.Key.ToString(), x.Label);
+                result.TransferOutSummary = transferOutSummary.ToDictionary(d => (string)d.Key.ToString(), d => d);
+            }
+
+            if (reportDTO.Include.Contains(GENERALREPORTSELECTION.TRANSFERREDIN))
+            {
+                var transferInSummary = await _generalReportService.GetTransferInReport(reportDTO);
+                foreach (var x in transferInSummary) result.Keys.Add(x.Key.ToString());
+                foreach (var x in transferInSummary) result.Labels.TryAdd(x.Key.ToString(), x.Label);
+                result.TransferInSummary = transferInSummary.ToDictionary(d => (string)d.Key.ToString(), d => d);
+            }
+
+            if (reportDTO.Include.Contains(GENERALREPORTSELECTION.ISSUED))
+            {
+                var issueSummary = await _generalReportService.GetIssueReport(reportDTO);
+                foreach (var x in issueSummary) result.Keys.Add(x.Key.ToString());
+                foreach (var x in issueSummary) result.Labels.TryAdd(x.Key.ToString(), x.Label);
+                result.IssueSummary = issueSummary.ToDictionary(d => (string)d.Key.ToString(), d => d);
+            }
+
+            if (reportDTO.Include.Contains(GENERALREPORTSELECTION.BORROWED))
+            {
+                var borrowSummary = await _generalReportService.GetBorrowReport(reportDTO);
+                foreach (var x in borrowSummary) result.Keys.Add(x.Key.ToString());
+                foreach (var x in borrowSummary) result.Labels.TryAdd(x.Key.ToString(), x.Label);
+                result.BorrowSummary = borrowSummary.ToDictionary(d => (string)d.Key.ToString(), d => d);
+            }
+
+            if (reportDTO.Include.Contains(GENERALREPORTSELECTION.RETURNED))
+            {
+                var returnSummary = await _generalReportService.GetReturnReport(reportDTO);
+                foreach (var x in returnSummary) result.Keys.Add(x.Key.ToString());
+                foreach (var x in returnSummary) result.Labels.TryAdd(x.Key.ToString(), x.Label);
+                result.ReturnSummary = returnSummary.ToDictionary(d => (string)d.Key.ToString(), d => d);
+            }
+
+            if (reportDTO.Include.Contains(GENERALREPORTSELECTION.DAMAGED))
+            {
+                var damageSummary = await _generalReportService.GetDamageReport(reportDTO);
+                foreach (var x in damageSummary) result.Keys.Add(x.Key.ToString());
+                foreach (var x in damageSummary) result.Labels.TryAdd(x.Key.ToString(), x.Label);
+                result.DamageSummary = damageSummary.ToDictionary(d => (string)d.Key.ToString(), d => d);
+            }
+
+            if (reportDTO.Include.Contains(GENERALREPORTSELECTION.INSTOCK))
+            {
+                var stockSummary = await _generalReportService.GetStockReport(reportDTO);
+                foreach (var x in stockSummary) result.Keys.Add(x.Key.ToString());
+                foreach (var x in stockSummary) result.Labels.TryAdd(x.Key.ToString(), x.Label);
+                result.StockSummary = stockSummary.GroupBy(x => x.Key).Select(s => new ReportSingleItem
+                {
+                    Key = s.Key,
+                    Label = s.First().Label,
+                    Qty = s.Sum(i => i.Qty),
+                    Cost = s.Sum(i => i.Cost),
+                    CurrentValue = s.Sum(i => i.CurrentValue)
+
+                }).ToDictionary(d => (string)d.Key.ToString(), d => d);
+            }
+
+            if (reportDTO.Include.Contains(GENERALREPORTSELECTION.MINSTOCK))
+            {
+                var minStockSummary = await _generalReportService.GetMinStockReport(reportDTO);
+                foreach (var x in minStockSummary) result.Keys.Add(x.Key.ToString());
+                foreach (var x in minStockSummary) result.Labels.TryAdd(x.Key.ToString(), x.Label);
+                result.MinStockSummary = minStockSummary.GroupBy(x => x.Key).Select(s => new ReportSingleItem
+                {
+                    Key = s.Key,
+                    Label = s.First().Label,
+                    Qty = s.Sum(i => i.Qty),
+                    Cost = s.Sum(i => i.Cost),
+                    CurrentValue = s.Sum(i => i.CurrentValue)
+
+                }).ToDictionary(d => (string)d.Key.ToString(), d => d);
+            }
+
+            result.Keys = result.Keys.OrderBy(x => x).ToHashSet();
+
+            return result;
+        }
+
 
 
     }

@@ -7,6 +7,7 @@ import IssueReport from "./IssueReport";
 import MaintenanceReport from "./MaintenanceReport";
 import PurchaseReport from "./PurchaseReport";
 import ReceiveReport from "./ReceiveReport";
+import ReturnReport from "./ReturnReport";
 import TransferReport from "./TransferReport";
 
 function Report() {
@@ -31,6 +32,9 @@ function Report() {
                 </Tab>
                 <Tab eventKey="borrow" title="Borrow">
                     <BorrowReport />
+                </Tab>
+                <Tab eventKey="return" title="Return">
+                    <ReturnReport />
                 </Tab>
                 <Tab eventKey="maintenance" title="Maintenance">
                     <MaintenanceReport />

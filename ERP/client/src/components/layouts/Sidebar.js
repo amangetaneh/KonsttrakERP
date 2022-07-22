@@ -115,7 +115,7 @@ function Sidebar() {
                         </SubMenu>
 
                         <SubMenu
-                            title="Inventory"
+                            title="Property Management"
                             icon={<FaList className="fs-5" />}
                             defaultOpen={true}
                         >
@@ -267,6 +267,12 @@ function Sidebar() {
                                         </MenuItem>
                                     </SubMenu>
                                 </>
+                            )}
+
+                            {!data.userRole.isAdmin && data.userRole.canGetStockReport && (
+                                <MenuItem>
+                                    Stock Report <Link to="/stock-report" />
+                                </MenuItem>
                             )}
                         </SubMenu>
 
