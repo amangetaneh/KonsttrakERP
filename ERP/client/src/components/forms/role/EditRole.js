@@ -1,6 +1,7 @@
 import React from "react"
 import Header from "../../layouts/Header"
 import Role from "../../../models/Role"
+import SuperAdminRole from "../../../models/SuperAdminRole"
 import { useState, useEffect } from "react"
 import { Form, Button, Container, InputGroup } from "react-bootstrap"
 import { useParams } from "react-router-dom"
@@ -15,6 +16,7 @@ function EditRole() {
   const { id } = useParams()
 
   const [role, setRole] = useState(new Role())
+  const [superRole, setSuperRole] = useState(new SuperAdminRole())
   const [isError, setIsError] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -33,6 +35,14 @@ function EditRole() {
   useEffect(() => {
     if (query.data === undefined) return
     setRole(query.data)
+
+    //Only set Role Id and Name, the rest is all true
+    setSuperRole((state) => {
+      let newRole = { ...state }
+      newRole["roleId"] = query.data.roleId
+      newRole["role"] = query.data.role
+      return newRole
+    })
     setIsLoading(false)
   }, [query.data])
 
@@ -46,6 +56,24 @@ function EditRole() {
       toast.success("Role Is Successfully Updated", toastOption)
     },
   })
+
+  const handleAdminChange = (event) => {
+    if (event.target.checked) {
+      setRole(() => {
+        let newRole = superRole
+        return newRole
+      })
+    } else {
+      if (role == superRole) {
+        setRole(query.data)
+      }
+      setRole((state) => {
+        let newRole = { ...state }
+        newRole[event.target.name] = event.target.checked
+        return newRole
+      })
+    }
+  }
 
   const handleChange = (event) => {
     setRole((state) => {
@@ -126,6 +154,20 @@ function EditRole() {
                       name="isFinance"
                       checked={role.isFinance}
                       onChange={handleChange}
+                    ></Form.Check>
+                  </Form.Group>
+                </div>
+              </div>
+              <div className="row mx-4">
+                <div className="col-6">
+                  <Form.Group className="mb-3">
+                    <Form.Check
+                      inline
+                      label="Is User Admin (Super Admin)"
+                      type="checkbox"
+                      name="isAdmin"
+                      checked={role.isAdmin}
+                      onChange={handleAdminChange}
                     ></Form.Check>
                   </Form.Group>
                 </div>

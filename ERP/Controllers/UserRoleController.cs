@@ -90,6 +90,7 @@ namespace ERP.Controllers
 
             userRole.CanGetStockNotification = role.CanGetStockNotification;
             userRole.IsFinance = role.IsFinance;
+            userRole.IsAdmin = role.IsAdmin;
 
             context.UserRoles.Add(userRole);
 
@@ -156,6 +157,7 @@ namespace ERP.Controllers
 
             userRole.CanGetStockNotification = role.CanGetStockNotification;
             userRole.IsFinance = role.IsFinance;
+            userRole.IsAdmin = role.IsAdmin;
 
             await context.SaveChangesAsync();
 
