@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class ReturnBorrowDTO
     {
@@ -8,7 +8,7 @@
 
         public int SiteId { get; set; }
 
-        public ICollection<ReturnBorrowAsset> BorrowAssets { get; set; }
+        public ICollection<ReturnBorrowAsset> BorrowAssets { get; set; } = [];
 
     }
 
@@ -24,7 +24,7 @@
 
         public string FileName { get; set; } = "";
 
-        public string ReturnRemark { get; set; }
+        public string ReturnRemark { get; set; } = string.Empty;
 
 
     }

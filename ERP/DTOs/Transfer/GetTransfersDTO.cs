@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class GetTransfersDTO
     {

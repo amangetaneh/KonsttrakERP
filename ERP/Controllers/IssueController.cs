@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services.IssueServices;
@@ -19,7 +19,7 @@ namespace ERP.Controllers
         private readonly IIssueService _issueService;
         private readonly IUserService _userService;
 
-        public IssueController( IIssueService issueService, IUserService userService)
+        public IssueController(IIssueService issueService, IUserService userService)
         {
             _issueService = issueService;
             _userService = userService;
@@ -65,7 +65,7 @@ namespace ERP.Controllers
                 var issue = await _issueService.RequestIssue(issueDTO);
                 return Ok(issue.IssueId);
             }
-            catch(KeyNotFoundException ex)
+            catch (KeyNotFoundException ex)
             {
                 return NotFound(ex.Message);
             }

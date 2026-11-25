@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class CreateReceiveDTO
     {
@@ -6,7 +6,7 @@
 
         //public int DeliveredById { get; set; }
 
-        public ICollection<CreateReceiveItem> ReceiveItems { get; set; }
+        public ICollection<CreateReceiveItem> ReceiveItems { get; set; } = [];
 
     }
 

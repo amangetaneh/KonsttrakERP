@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,11 +28,12 @@ namespace ERP.Controllers
             return Ok(role);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<UserRole>>> Get()
         {
             var roles = await context.UserRoles.ToListAsync();
-            
+
             return Ok(roles);
         }
 
@@ -66,7 +67,7 @@ namespace ERP.Controllers
             userRole.CanApprovePurchase = role.CanApprovePurchase;
             userRole.CanConfirmPurchase = role.CanConfirmPurchase;
             userRole.CanViewPurchase = role.CanViewPurchase;
-            
+
             userRole.CanRequestBulkPurchase = role.CanRequestBulkPurchase;
             userRole.CanApproveBulkPurchase = role.CanApproveBulkPurchase;
             userRole.CanConfirmBulkPurchase = role.CanConfirmBulkPurchase;

@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.Models;
 using ERP.DTOs;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +40,7 @@ namespace ERP.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Item>>> GetAll()
         {
-            var items = await  _itemService.GetAll();
+            var items = await _itemService.GetAll();
 
             return Ok(items);
         }
@@ -84,7 +84,7 @@ namespace ERP.Controllers
         [HttpGet("{ItemId}")]
         public async Task<ActionResult<Item>> GetOne(int ItemId)
         {
-           
+
             try
             {
                 var item = await _itemService.GetById(ItemId);
@@ -117,7 +117,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<List<EquipmentModel>>> GetEquipmentModels()
         {
             var models = await _itemService.GetEquipmentModels();
-                
+
             return Ok(models);
 
         }

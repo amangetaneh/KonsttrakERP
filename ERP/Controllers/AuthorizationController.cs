@@ -1,4 +1,6 @@
-﻿using ERP.Context;
+using ERP.Configuration;
+using ERP.Security;
+using ERP.Context;
 using ERP.DTOs.User;
 using ERP.Models;
 using ERP.Services.User;
@@ -19,28 +21,20 @@ namespace ERP.Controllers
     public class AuthorizationController : ControllerBase
     {
         private readonly DataContext context;
-        private readonly IConfiguration _configuration;
+        private readonly RuntimeSettings _settings;
         private readonly IUserService _userService;
 
-        public UserAccount? UserAccount { get; }
-        public Employee Employee { get; }
 
-        public AuthorizationController(DataContext context, IConfiguration configuration, IUserService userService)
+        public AuthorizationController(DataContext context, RuntimeSettings settings, IUserService userService)
         {
             //classes
             this.context = context;
 
             //interfaces
-            _configuration = configuration;
+            _settings = settings;
             _userService = userService;
 
-            UserAccount = context.UserAccounts
-                .Where(u => u.Username == _userService.GetMyName())
-                .Include(u => u.Employee)
-                .ThenInclude(e => e.UserRole)
-                .FirstOrDefault();
 
-            //Employee = UserAccount.Employee;
         }
 
         [HttpGet, Authorize]
@@ -50,10 +44,11 @@ namespace ERP.Controllers
             return Ok(userName);
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<UserAccount>> Register(RegisterUserDTO registerDTO)
         {
-            
+
             Employee employee = new();
             employee.FName = registerDTO.FName;
             employee.MName = registerDTO.MName;
@@ -69,7 +64,7 @@ namespace ERP.Controllers
 
             UserAccount userAccount = new();
 
-            CreatePasswordHash(registerDTO.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            PasswordHashing.Create(registerDTO.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
             userAccount.Username = registerDTO.FName + employee.EmployeeId;
             userAccount.PasswordHash = passwordHash;
@@ -80,9 +75,10 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
-            return Ok(userAccount);
+            return Ok(new { userAccount.Username, userAccount.EmployeeId });
         }
-        
+
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<object>> Login(LoginUserDTO loginDTO)
         {
@@ -93,7 +89,7 @@ namespace ERP.Controllers
 
             if (userAccount == null) return NotFound("User Not Found.");
 
-            if (!VerifyPasswordHash(loginDTO.Password, userAccount.PasswordHash, userAccount.PasswordSalt))
+            if (!PasswordHashing.Verify(loginDTO.Password, userAccount.PasswordHash, userAccount.PasswordSalt))
             {
                 return BadRequest("Wrong password.");
             }
@@ -123,11 +119,11 @@ namespace ERP.Controllers
                 new Claim(ClaimTypes.Rsa, employee.UserRoleId.ToString()),
                 new Claim(ClaimTypes.Sid, employee.EmployeeId.ToString()),
                 new Claim(ClaimTypes.Role, AssignRole(employee.Status))
-                
+
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
-                _configuration.GetSection("AppSettings:Token").Value));
+                _settings.SigningKey));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
@@ -141,24 +137,7 @@ namespace ERP.Controllers
             return jwt;
         }
 
-        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-            using (var hmac = new HMACSHA512())
-            {
-                passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            }
-        }
 
-        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
-        {
-            using (var hmac = new HMACSHA512(passwordSalt))
-            {
-                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                return computedHash.SequenceEqual(passwordHash);
-            }
-
-        }
 
         private string AssignRole(int status)
         {

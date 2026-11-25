@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class SendTransferDTO
     {
@@ -6,7 +6,7 @@
 
         public int SentById { get; set; }
 
-        public ICollection<SendTransferItems> TransferItems { get; set; }
+        public ICollection<SendTransferItems> TransferItems { get; set; } = [];
 
     }
 
@@ -16,7 +16,7 @@
 
         public int EquipmentModelId { get; set; } = 0;
 
-        public string SendRemark { get; set; }
+        public string SendRemark { get; set; } = string.Empty;
 
         public ICollection<int>? EquipmentAssetIds { get; set; }
 

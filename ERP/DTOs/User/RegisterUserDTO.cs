@@ -1,7 +1,10 @@
-﻿namespace ERP.DTOs.User
+using System.ComponentModel.DataAnnotations;
+namespace ERP.DTOs.User
 {
     public class RegisterUserDTO
-    {        
+    {
+        [Required]
+        [MinLength(8)]
         public string Password { get; set; } = string.Empty;
 
         public int UserRoleId { get; set; }

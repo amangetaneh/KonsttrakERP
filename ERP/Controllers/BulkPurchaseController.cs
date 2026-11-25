@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs.BulkPurchase;
 using ERP.Models;
 using ERP.Services.BulkPurchaseServices;
@@ -17,7 +17,6 @@ namespace ERP.Controllers
     {
         private readonly IBulkPurchaseService _bulkPurchaseService;
         private readonly DataContext context;
-        private readonly INotificationService notificationManager;
 
         private readonly IUserService _userService;
 
@@ -25,7 +24,6 @@ namespace ERP.Controllers
         {
             _bulkPurchaseService = bulkPurchaseService;
             this.context = context;
-            this.notificationManager = notificationManager;
 
             _userService = userService;
 
@@ -59,7 +57,7 @@ namespace ERP.Controllers
         }
 
         [HttpPost("request")]
-        public async Task<ActionResult<BulkPurchase>> Request(RequestBulkPurchaseDTO requestDTO)
+        public async Task<ActionResult<BulkPurchase>> RequestTransaction(RequestBulkPurchaseDTO requestDTO)
         {
             //if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
 

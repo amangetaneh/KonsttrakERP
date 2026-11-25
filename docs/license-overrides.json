@@ -1,0 +1,7 @@
+{
+  "nuget:xunit.abstractions@2.0.3": {
+    "license": "Apache-2.0",
+    "source": "https://raw.githubusercontent.com/xunit/xunit/master/license.txt",
+    "note": "The 2.0.3 nuspec uses this legacy licenseUrl rather than an SPDX expression. Its upstream notice and the abstractions repository identify Apache-2.0. Reviewed 2026-11-25."
+  }
+}

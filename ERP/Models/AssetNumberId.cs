@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERP.Models
@@ -12,9 +12,9 @@ namespace ERP.Models
         public int ItemId { get; set; }
 
         [ForeignKey("ItemId")]
-        public Item Item { get; set; }
+        public Item Item { get; set; } = null!;
 
-        public string Prefix { get; set; }
+        public string Prefix { get; set; } = string.Empty;
 
         public int LastId { get; set; } = 0;
 

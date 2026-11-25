@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.Models;
 using ERP.Services.EquipmentCategoryServices;
 using Microsoft.AspNetCore.Authorization;
@@ -25,7 +25,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<List<EquipmentCategory>>> GetAll()
         {
             var categories = await _equipmentCategoryService.GetAll();
-            
+
             return Ok(categories);
         }
 
@@ -33,7 +33,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<List<EquipmentCategory>>> GetOne(int EquipmentCategoryId)
         {
             var category = await _equipmentCategoryService.GetById(EquipmentCategoryId);
-            
+
             return Ok(category);
         }
     }

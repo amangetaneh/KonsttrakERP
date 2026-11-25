@@ -1,8 +1,8 @@
-﻿namespace ERP.DTOs.Buy
+namespace ERP.DTOs.Buy
 {
     public class CreateBuyDTO
     {
-        public ICollection<CreateBuyItem> BuyItems { get; set; }
+        public ICollection<CreateBuyItem> BuyItems { get; set; } = [];
 
     }
 

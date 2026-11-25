@@ -1,10 +1,10 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class CreateEquipmentPurchaseDTO
     {
         public int ReceivingSiteId { get; set; }
 
-        public ICollection<CreateEquipmentPurchaseItem> PurchaseItems { get; set; }
+        public ICollection<CreateEquipmentPurchaseItem> PurchaseItems { get; set; } = [];
 
     }
 

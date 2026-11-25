@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.Models;
 using Microsoft.EntityFrameworkCore;
 

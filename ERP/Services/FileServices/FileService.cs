@@ -1,42 +1,51 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MimeTypes;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace ERP.Services.FileServices
 {
     public class FileService : IFileService
     {
-        private string _path;
+        private readonly string _path;
+        private static readonly FileExtensionContentTypeProvider ContentTypes = new();
 
-        public FileService(Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
+        public FileService(IWebHostEnvironment env)
         {
             _path = Path.Combine(env.ContentRootPath, "UploadedFiles");
+            Directory.CreateDirectory(_path);
         }
 
         public async Task<string> SaveFile(IFormFile file)
         {
-            string name = $"file{DateTime.Now.ToString("_ffffff_yyyy_MM_dd_HH_mm_ss")}{Path.GetExtension(file.FileName)}";
-            string savePath = Path.Combine(_path, name);
+            var extension = Path.GetExtension(file.FileName);
+            if (extension.Length > 16 || extension.Any(c => !char.IsLetterOrDigit(c) && c != '.'))
+                throw new ArgumentException("Invalid file extension.", nameof(file));
 
-            using (var fileStream = new FileStream(savePath, FileMode.Create, FileAccess.Write))
-                file.CopyTo(fileStream);
-
+            var name = $"file_{Guid.NewGuid():N}{extension}";
+            await using var stream = new FileStream(GetPath(name), FileMode.CreateNew, FileAccess.Write);
+            await file.CopyToAsync(stream);
             return name;
         }
 
         public async Task<FileContentResult> GetFile(string fileName, ControllerBase controller)
         {
-            string filePath = Path.Combine(_path, fileName);
-            var file = File.ReadAllBytes(filePath);
-
-            return controller.File(file, MimeTypeMap.GetMimeType(Path.GetExtension(fileName)));
+            var file = await File.ReadAllBytesAsync(GetPath(fileName));
+            return controller.File(file, GetContentType(fileName));
         }
 
         public async Task<FileContentResult> DownloadFile(string fileName, ControllerBase controller)
         {
-            string filePath = Path.Combine(_path, fileName);
-            var file = File.ReadAllBytes(filePath);
+            var file = await File.ReadAllBytesAsync(GetPath(fileName));
+            return controller.File(file, GetContentType(fileName), fileName);
+        }
 
-            return controller.File(file, MimeTypeMap.GetMimeType(Path.GetExtension(fileName)), fileName);
+        private static string GetContentType(string fileName) =>
+            ContentTypes.TryGetContentType(fileName, out var contentType) ? contentType : "application/octet-stream";
+
+        private string GetPath(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName) || fileName is "." or ".." || fileName.IndexOfAny(['/', '\\', '\0']) >= 0 || Path.IsPathRooted(fileName))
+                throw new ArgumentException("A plain file name is required.", nameof(fileName));
+            return Path.Combine(_path, fileName);
         }
     }
 }

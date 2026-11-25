@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class HandBorrowDTO
     {
@@ -6,7 +6,7 @@
 
         public int HandedById { get; set; }
 
-        public ICollection<HandBorrowItems> BorrowItems { get; set; }
+        public ICollection<HandBorrowItems> BorrowItems { get; set; } = [];
 
     }
 
@@ -16,7 +16,7 @@
 
         public int EquipmentModelId { get; set; }
 
-        public string HandRemark { get; set; }
+        public string HandRemark { get; set; } = string.Empty;
 
         public ICollection<int>? EquipmentAssetIds { get; set; }
 

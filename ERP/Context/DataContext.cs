@@ -1,4 +1,4 @@
-﻿using ERP.Models;
+using ERP.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERP.Context
@@ -24,17 +24,17 @@ namespace ERP.Context
         public DbSet<Buy> Buys { get; set; }
 
         public DbSet<BuyItem> BuyItems { get; set; }
-        
+
         public DbSet<Purchase> Purchases { get; set; }
 
         public DbSet<PurchaseItem> PurchaseItems { get; set; }
-        
+
         public DbSet<BulkPurchase> BulkPurchases { get; set; }
-        
+
         public DbSet<BulkPurchaseItem> BulkPurchaseItems { get; set; }
-                
+
         public DbSet<PurchaseItemEmployee> PurchaseItemEmployees { get; set; }
-        
+
         public DbSet<Receive> Receives { get; set; }
 
         public DbSet<ReceiveItem> ReceiveItems { get; set; }
@@ -100,7 +100,7 @@ namespace ERP.Context
 
             modelBuilder.Entity<TransferItemEquipmentAsset>()
                 .HasKey(o => new { o.TransferId, o.ItemId, o.EquipmentModelId, o.EquipmentAssetId });
-            
+
             modelBuilder.Entity<BorrowItem>()
                 .HasKey(o => new { o.BorrowId, o.ItemId, o.EquipmentModelId });
 
@@ -112,13 +112,13 @@ namespace ERP.Context
 
             modelBuilder.Entity<PurchaseItem>()
                 .HasKey(o => new { o.PurchaseId, o.ItemId, o.EquipmentModelId });
-            
+
             modelBuilder.Entity<BulkPurchaseItem>()
                 .HasKey(o => new { o.BulkPurchaseId, o.ItemId, o.EquipmentModelId });
 
             modelBuilder.Entity<PurchaseItemEmployee>()
                 .HasKey(o => new { o.PurchaseId, o.ItemId, o.EquipmentModelId, o.RequestedById });
-            
+
             modelBuilder.Entity<ReceiveItem>()
                 .HasKey(o => new { o.ReceiveId, o.ItemId, o.EquipmentModelId });
 
@@ -260,7 +260,7 @@ namespace ERP.Context
                   .HasOne(i => i.RequestedBy)
                   .WithMany()
                   .OnDelete(DeleteBehavior.Restrict);
-            
+
             modelBuilder.Entity<BulkPurchase>()
                    .HasOne(i => i.ApprovedBy)
                    .WithMany()

@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.Models;
 using ERP.Services.NotificationServices;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +18,7 @@ namespace ERP.Services.ItemSiteQtyServices
 
         public async Task<EquipmentSiteQty> AddEquipmentModel(int modelId, int siteId, int qty)
         {
+            if (qty < 0) throw new ArgumentOutOfRangeException(nameof(qty), "Quantity cannot be negative.");
             var equipmentSiteQty = _context.EquipmentSiteQties
                 .Where(esq => esq.EquipmentModelId == modelId && esq.SiteId == siteId)
                 .FirstOrDefault();
@@ -28,15 +29,16 @@ namespace ERP.Services.ItemSiteQtyServices
 
             _context.SaveChanges();
 
-            if(equipmentSiteQty.Qty > equipmentSiteQty.MinimumQty)
+            if (equipmentSiteQty.Qty >= equipmentSiteQty.MinimumQty)
                 await _notificationService.Clear(NOTIFICATIONTYPE.MINEQUIPMENT, modelId);
 
             return equipmentSiteQty;
-                
+
         }
 
         public async Task<MaterialSiteQty> AddMaterial(int itemId, int siteId, int qty)
         {
+            if (qty < 0) throw new ArgumentOutOfRangeException(nameof(qty), "Quantity cannot be negative.");
             var materialSiteQty = _context.MaterialSiteQties
                 .Where(msq => msq.ItemId == itemId && msq.SiteId == siteId)
                 .FirstOrDefault();
@@ -47,7 +49,7 @@ namespace ERP.Services.ItemSiteQtyServices
 
             _context.SaveChanges();
 
-            if (materialSiteQty.Qty > materialSiteQty.MinimumQty)
+            if (materialSiteQty.Qty >= materialSiteQty.MinimumQty)
                 await _notificationService.Clear(NOTIFICATIONTYPE.MINMATERIAL, itemId);
 
             return materialSiteQty;
@@ -56,13 +58,14 @@ namespace ERP.Services.ItemSiteQtyServices
 
         public async Task<EquipmentSiteQty> SubtractEquipmentModel(int modelId, int siteId, int qty)
         {
+            if (qty < 0) throw new ArgumentOutOfRangeException(nameof(qty), "Quantity cannot be negative.");
             var equipmentSiteQty = _context.EquipmentSiteQties
                 .Where(esq => esq.EquipmentModelId == modelId && esq.SiteId == siteId)
                 .FirstOrDefault();
 
             if (equipmentSiteQty == null) throw new KeyNotFoundException("Equipment Site Qty Entry Not Found");
 
-            
+
             equipmentSiteQty.Qty -= equipmentSiteQty.Qty >= qty ? qty : equipmentSiteQty.Qty;
 
             _context.SaveChanges();
@@ -76,6 +79,7 @@ namespace ERP.Services.ItemSiteQtyServices
 
         public async Task<MaterialSiteQty> SubtractMaterial(int itemId, int siteId, int qty)
         {
+            if (qty < 0) throw new ArgumentOutOfRangeException(nameof(qty), "Quantity cannot be negative.");
             var materialSiteQty = _context.MaterialSiteQties
                 .Where(msq => msq.ItemId == itemId && msq.SiteId == siteId)
                 .FirstOrDefault();

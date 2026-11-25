@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERP.Models
@@ -19,22 +19,22 @@ namespace ERP.Models
 
         public int? AssetDamageId { get; set; }
 
-        public AssetDamage AssetDamage { get; set; }
+        public AssetDamage AssetDamage { get; set; } = null!;
 
-        public string? ReturnRemark { get; set; } 
-               
+        public string? ReturnRemark { get; set; }
+
         public int? ReturnId { get; set; }
 
         public string? FileName { get; set; }
 
-        public Return Return { get; set; }
+        public Return Return { get; set; } = null!;
 
         [ForeignKey("BorrowId, ItemId, EquipmentModelId")]
-        public BorrowItem BorrowItem { get; set; }
+        public BorrowItem BorrowItem { get; set; } = null!;
 
         [ForeignKey("BorrowId")]
-        public Borrow Borrow { get; set; }
+        public Borrow Borrow { get; set; } = null!;
 
-        public EquipmentAsset EquipmentAsset { get; set; }
+        public EquipmentAsset EquipmentAsset { get; set; } = null!;
     }
 }

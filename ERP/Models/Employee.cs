@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace ERP.Models
 {
@@ -21,11 +21,11 @@ namespace ERP.Models
 
         public string Position { get; set; } = string.Empty;
 
-        public Site EmployeeSite { get; set; }
+        public Site EmployeeSite { get; set; } = null!;
 
         public int? EmployeeSiteId { get; set; }
 
-        public UserRole UserRole { get; set; }
+        public UserRole UserRole { get; set; } = null!;
 
         public int UserRoleId { get; set; }
 

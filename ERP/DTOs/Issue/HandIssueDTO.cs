@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class HandIssueDTO
     {
@@ -6,7 +6,7 @@
 
         public int HandedById { get; set; }
 
-        public ICollection<SendIssueItems> IssueItems { get; set; }
+        public ICollection<SendIssueItems> IssueItems { get; set; } = [];
 
     }
 
@@ -14,7 +14,7 @@
     {
         public int ItemId { get; set; }
 
-        public string HandRemark { get; set; }
+        public string HandRemark { get; set; } = string.Empty;
     }
 
 }

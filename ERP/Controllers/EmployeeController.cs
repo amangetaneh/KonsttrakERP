@@ -1,4 +1,5 @@
-﻿using ERP.Context;
+using ERP.Security;
+using ERP.Context;
 using ERP.DTOs.User;
 using ERP.Models;
 using ERP.Services.User;
@@ -27,6 +28,13 @@ namespace ERP.Controllers
             _userService = userService;
         }
 
+        [AllowAnonymous]
+        [HttpGet("initialization-status")]
+        public async Task<ActionResult<object>> InitializationStatus()
+        {
+            return Ok(new { initialized = await context.Employees.AnyAsync() });
+        }
+
         [Authorize(Roles = "Employee")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Employee>> GetById(int id)
@@ -44,7 +52,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<List<Employee>>> Get()
         {
             var employees = await context.Employees
-                .Include(employee => employee.UserRole) 
+                .Include(employee => employee.UserRole)
                 .ToListAsync();
 
             return Ok(employees);
@@ -64,6 +72,7 @@ namespace ERP.Controllers
             return Ok(employees);
         }
 
+        [Authorize(Roles = "Employee")]
         [HttpPost("changesite")]
         public async Task<ActionResult<Employee>> ChangeEmployeeSite(UpdateUserDTO userDTO)
         {
@@ -138,6 +147,7 @@ namespace ERP.Controllers
             return Ok(employee);
         }
 
+        [AllowAnonymous]
         [HttpPost("initialize")]
         public async Task<ActionResult<UserAccount>> CreateFirstUser(InitializeAdminDTO adminDTO)
         {
@@ -148,6 +158,8 @@ namespace ERP.Controllers
 
             UserRole userRole = new();
             userRole.Role = "Admin";
+            userRole.IsAdmin = true;
+            userRole.CanGetStockReport = true;
 
             userRole.CanRequestBorrow = true;
             userRole.CanApproveBorrow = true;
@@ -217,7 +229,7 @@ namespace ERP.Controllers
 
             UserAccount userAccount = new();
 
-            CreatePasswordHash(adminDTO.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            PasswordHashing.Create(adminDTO.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
             userAccount.Username = "admin";
             userAccount.PasswordHash = passwordHash;
@@ -228,16 +240,8 @@ namespace ERP.Controllers
 
             await context.SaveChangesAsync();
 
-            return Ok(userAccount);
+            return Ok(new { userAccount.Username, userAccount.EmployeeId });
         }
 
-        private void CreatePasswordHash(string pass, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-            using (var hmac = new HMACSHA512())
-            {
-                passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(pass));
-            }
-        }
     }
 }

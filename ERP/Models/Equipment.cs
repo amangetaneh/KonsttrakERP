@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERP.Models
@@ -9,7 +9,7 @@ namespace ERP.Models
         public int ItemId { get; set; }
 
         [ForeignKey("ItemId")]
-        public Item Item { get; set; }
+        public Item Item { get; set; } = null!;
 
         public string Unit { get; set; } = string.Empty;
 
@@ -17,8 +17,8 @@ namespace ERP.Models
 
         public int EquipmentCategoryId { get; set; }
 
-        public EquipmentCategory EquipmentCategory { get; set; }
+        public EquipmentCategory EquipmentCategory { get; set; } = null!;
 
-        public ICollection<EquipmentModel> EquipmentModels { get; set; }
+        public ICollection<EquipmentModel> EquipmentModels { get; set; } = [];
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class CreateMaterialTransferDTO
     {
@@ -9,7 +9,7 @@
 
         public int RequestedById { get; set; }
 
-        public ICollection<CreateMaterialTransferItem> TransferItems { get; set; }
+        public ICollection<CreateMaterialTransferItem> TransferItems { get; set; } = [];
 
     }
 

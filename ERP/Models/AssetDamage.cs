@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERP.Models
@@ -8,7 +8,7 @@ namespace ERP.Models
         [Key]
         public int AssetDamageId { get; set; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Column(TypeName = "decimal(2, 2)")]
         public decimal PenalityPercentage { get; set; }

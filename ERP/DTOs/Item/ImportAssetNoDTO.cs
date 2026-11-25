@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs.Item
+namespace ERP.DTOs.Item
 {
     public class ImportAssetNoDTO
     {
@@ -7,14 +7,15 @@
 
         public int SiteId { get; set; } = -1;
 
-        public ICollection<ImportAssetNoItem> Assets { get; set; }
+        public ICollection<ImportAssetNoItem> Assets { get; set; } = [];
 
     }
 
-    public class ImportAssetNoItem{
+    public class ImportAssetNoItem
+    {
 
-        public string AssetNo { get; set; }
+        public string AssetNo { get; set; } = string.Empty;
 
-        public string SerialNo { get; set; }
-}
+        public string SerialNo { get; set; } = string.Empty;
+    }
 }

@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +18,7 @@ namespace ERP.Services.EquipmentAssetServices
             var equipmentAsset = await SetSite(equipmentAssetId, siteId);
 
             equipmentAsset.AssetDamageId = assetDamageId;
-            
+
             return equipmentAsset;
         }
 

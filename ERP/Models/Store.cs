@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace ERP.Models
 {
@@ -9,7 +9,7 @@ namespace ERP.Models
 
         public string Name { get; set; } = string.Empty;
 
-        public Site Site { get; set; }
+        public Site Site { get; set; } = null!;
 
         public int SiteId { get; set; }
 

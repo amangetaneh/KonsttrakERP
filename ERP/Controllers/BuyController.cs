@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.DTOs.Buy;
 using ERP.Models;
@@ -18,7 +18,6 @@ namespace ERP.Controllers
     {
         private readonly IBuyService _buyService;
         private readonly DataContext context;
-        private readonly INotificationService notificationManager;
 
         private readonly IUserService _userService;
 
@@ -26,7 +25,6 @@ namespace ERP.Controllers
         {
             _buyService = buyService;
             this.context = context;
-            this.notificationManager = notificationManager;
 
             _userService = userService;
 
@@ -69,7 +67,7 @@ namespace ERP.Controllers
         }
 
         [HttpPost("request")]
-        public async Task<ActionResult<List<Buy>>> Request(CreateBuyDTO buyDTO)
+        public async Task<ActionResult<List<Buy>>> RequestTransaction(CreateBuyDTO buyDTO)
         {
             //if (UserAccount != null && UserAccount.UserRole.CanRequestBuy != 1) return Forbid();
 

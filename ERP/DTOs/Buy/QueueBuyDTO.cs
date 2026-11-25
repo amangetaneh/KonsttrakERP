@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs.Buy
+namespace ERP.DTOs.Buy
 {
     public class QueueBuyDTO
     {

@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services.ItemSiteQtyServices;
@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERP.Services.IssueServices
 {
-    public class IssueService: IIssueService
+    public class IssueService : IIssueService
     {
         private readonly DataContext _context;
         private readonly IUserService _userService;
@@ -50,7 +50,7 @@ namespace ERP.Services.IssueServices
             var issues = await _context.Issues
                 .Where(issue => (
                     (getIssuesDTO.SiteId == -1 || issue.SiteId == getIssuesDTO.SiteId) &&
-                    ((userRole.CanRequestIssue == true && issue.RequestedById == employeeId) || 
+                    ((userRole.CanRequestIssue == true && issue.RequestedById == employeeId) ||
                     (userRole.CanApproveIssue == true && issue.Status == ISSUESTATUS.REQUESTED) ||
                     (userRole.CanHandIssue == true && issue.Status == ISSUESTATUS.APPROVED))))
                 .Include(issue => issue.Site)
@@ -72,7 +72,7 @@ namespace ERP.Services.IssueServices
 
             Issue issue = new();
             issue.RequestedById = _userService.Employee.EmployeeId;
-            issue.SiteId = (int)_userService.Employee.EmployeeSiteId;
+            issue.SiteId = _userService.GetMySiteId();
 
             ICollection<IssueItem> issueItems = new List<IssueItem>();
 
@@ -199,7 +199,7 @@ namespace ERP.Services.IssueServices
 
                 issueItem.HandRemark = requestItem.HandRemark;
 
-                await _itemSiteQtyService.SubtractMaterial(issueItem.ItemId, issue.SiteId, (int)issueItem.QtyApproved);
+                await _itemSiteQtyService.SubtractMaterial(issueItem.ItemId, issue.SiteId, (issueItem.QtyApproved ?? throw new InvalidOperationException("The item must have an approved quantity before stock can be moved.")));
             }
 
             issue.Status = ISSUESTATUS.HANDED;

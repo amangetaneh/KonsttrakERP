@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.DTOs.Receive;
 using ERP.Models;
@@ -52,7 +52,7 @@ namespace ERP.Services.ReceiveServices
             //if (UserAccount != null && UserAccount.UserRole.CanViewPurchase != 1) return Forbid();
 
             var receives = await _context.Receives
-              .Where(receive => receive.ReceivingSiteId == (int)_userService.Employee.EmployeeSiteId && receive.Status == RECEIVESTATUS.PURCHASED)
+              .Where(receive => receive.ReceivingSiteId == _userService.GetMySiteId() && receive.Status == RECEIVESTATUS.PURCHASED)
               .Include(receive => receive.ReceiveItems)
               .ThenInclude(receiveItem => receiveItem.Item)
               .ThenInclude(item => item.Material)
@@ -109,7 +109,7 @@ namespace ERP.Services.ReceiveServices
 
                 receiveItem.QtyReceived = requestItem.QtyReceived;
                 receiveItem.ReceiveRemark = requestItem.ReceiveRemark;
-                
+
                 var itemTemp = _context.Items
                     .Where(item => item.ItemId == requestItem.ItemId)
                     .FirstOrDefault();
@@ -119,16 +119,16 @@ namespace ERP.Services.ReceiveServices
 
                 if (itemTemp.Type == ITEMTYPE.EQUIPMENT)
                 {
-                    await _itemSiteQtyService.AddEquipmentModel(requestItem.EquipmentModelId, (int)_userService.Employee.EmployeeSiteId, requestItem.QtyReceived);
-                    
+                    await _itemSiteQtyService.AddEquipmentModel(requestItem.EquipmentModelId, _userService.GetMySiteId(), requestItem.QtyReceived);
+
                     List<string> assetNumbers = await _assetNumberService.GenerateAssetNumbers(requestItem.ItemId, receiveItem.QtyReceived);
-                    
+
                     foreach (var assetNumber in assetNumbers)
                     {
                         EquipmentAsset equipmentAsset = new();
                         equipmentAsset.EquipmentModelId = requestItem.EquipmentModelId;
                         equipmentAsset.AssetNo = assetNumber;
-                        equipmentAsset.CurrentSiteId = (int)_userService.Employee.EmployeeSiteId;
+                        equipmentAsset.CurrentSiteId = _userService.GetMySiteId();
 
                         _context.EquipmentAssets.Add(equipmentAsset);
                     }
@@ -138,9 +138,9 @@ namespace ERP.Services.ReceiveServices
                 }
                 else
                 {
-                    await _itemSiteQtyService.AddMaterial(requestItem.ItemId, (int)_userService.Employee.EmployeeSiteId, requestItem.QtyReceived);
+                    await _itemSiteQtyService.AddMaterial(requestItem.ItemId, _userService.GetMySiteId(), requestItem.QtyReceived);
                 }
-                
+
                 receiveItems.Add(receiveItem);
 
             }
@@ -161,7 +161,7 @@ namespace ERP.Services.ReceiveServices
 
             await _context.SaveChangesAsync();
 
-            
+
 
             await _notificationService.Add(type: NOTIFICATIONTYPE.RECEIVE,
                 status: receive.Status,

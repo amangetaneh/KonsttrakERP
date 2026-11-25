@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERP.Models
@@ -15,10 +15,10 @@ namespace ERP.Models
         public int MinimumQty { get; set; }
 
         [ForeignKey("EquipmentModelId")]
-        public EquipmentModel EquipmentModel { get; set; }
+        public EquipmentModel EquipmentModel { get; set; } = null!;
 
         [ForeignKey("SiteId")]
-        public Site Site { get; set; }
+        public Site Site { get; set; } = null!;
 
     }
 }

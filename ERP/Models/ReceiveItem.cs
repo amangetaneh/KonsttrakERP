@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -24,9 +24,9 @@ namespace ERP.Models
 
         [JsonIgnore]
         [ForeignKey("ReceiveId")]
-        public Receive Receive { get; set; }
+        public Receive Receive { get; set; } = null!;
 
         [ForeignKey("ItemId")]
-        public Item Item { get; set; }
+        public Item Item { get; set; } = null!;
     }
 }

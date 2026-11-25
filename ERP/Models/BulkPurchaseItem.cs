@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -35,9 +35,9 @@ namespace ERP.Models
 
         [JsonIgnore]
         [ForeignKey("BulkPurchaseId")]
-        public BulkPurchase BulkPurchase { get; set; }
+        public BulkPurchase BulkPurchase { get; set; } = null!;
 
         [ForeignKey("ItemId")]
-        public Item Item { get; set; }
+        public Item Item { get; set; } = null!;
     }
 }

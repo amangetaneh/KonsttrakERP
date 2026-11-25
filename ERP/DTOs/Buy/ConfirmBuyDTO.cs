@@ -1,10 +1,10 @@
-﻿namespace ERP.DTOs.Buy
+namespace ERP.DTOs.Buy
 {
     public class ConfirmBuyDTO
     {
         public int BuyId { get; set; }
 
-        public ICollection<ConfirmBuyItems> BuyItems { get; set; }
+        public ICollection<ConfirmBuyItems> BuyItems { get; set; } = [];
 
     }
 
@@ -14,6 +14,6 @@
 
         public int QtyBought { get; set; }
 
-        public string BuyRemark { get; set; }
+        public string BuyRemark { get; set; } = string.Empty;
     }
 }

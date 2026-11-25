@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace ERP.Models
 {
@@ -7,11 +7,11 @@ namespace ERP.Models
         [Key]
         public int EquipmentCategoryId { get; set; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         public string? FileName { get; set; }
 
-        public ICollection<Equipment> Equipments { get; set; }
+        public ICollection<Equipment> Equipments { get; set; } = [];
 
     }
 }

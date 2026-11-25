@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services.NotificationServices;
@@ -36,8 +36,8 @@ namespace ERP.Controllers
             try
             {
                 Transfer transfer = await _transferService.GetById(id);
-                
-                if( _userService.UserRole.IsAdmin || _userService.UserRole.IsFinance ||
+
+                if (_userService.UserRole.IsAdmin || _userService.UserRole.IsFinance ||
                     (_userService.UserRole.CanViewTransfer && _userService.Employee.EmployeeSiteId == transfer.SendSiteId) ||
                     (_userService.UserRole.CanViewTransfer && _userService.Employee.EmployeeSiteId == transfer.ReceiveSiteId) ||
                     _userService.Employee.EmployeeId == transfer.RequestedById)
@@ -50,7 +50,7 @@ namespace ERP.Controllers
                 return NotFound(ex.Message);
             }
 
-            
+
         }
 
         [HttpPost]
@@ -73,11 +73,11 @@ namespace ERP.Controllers
                 var transfer = await _transferService.RequestEquipment(transferDTO);
                 return Ok(transfer.TransferId);
             }
-            catch(KeyNotFoundException ex)
+            catch (KeyNotFoundException ex)
             {
                 return NotFound(ex.Message);
             }
-            catch(InvalidOperationException ex)
+            catch (InvalidOperationException ex)
             {
                 return BadRequest(ex.Message);
             }

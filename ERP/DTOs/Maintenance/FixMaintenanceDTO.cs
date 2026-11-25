@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class FixMaintenanceDTO
     {
@@ -6,7 +6,7 @@
 
         public int FixedById { get; set; }
 
-        public string FixRemark { get; set; }
+        public string FixRemark { get; set; } = string.Empty;
     }
 
 }

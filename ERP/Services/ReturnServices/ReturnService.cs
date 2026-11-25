@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services.EquipmentAssetServices;
@@ -34,22 +34,23 @@ namespace ERP.Services.ReturnServices
             checkEmployeeSiteIsAvailable();
             UserRole userRole = _userService.UserRole;
             int employeeId = _userService.Employee.EmployeeId;
-            int siteId = (int)_userService.Employee.EmployeeSiteId;
+            int siteId = _userService.GetMySiteId();
 
             var returnResult = await _context.Returns
-                .Where(ret => ret.SiteId == siteId && 
+                .Where(ret => ret.SiteId == siteId &&
                 ((userRole.CanReturnBorrow == true) ||
                 (userRole.CanRequestBorrow == true && ret.ReturnEquipmentAssets.Any(rea => rea.Borrow.RequestedById == employeeId))))
                 .Include(ret => ret.ReturnEquipmentAssets)
                 .ThenInclude(rea => rea.Borrow)
-                .Include(ret=> ret.Site)
+                .Include(ret => ret.Site)
                 .OrderByDescending(ret => ret.ReturnId)
                 .ToListAsync();
-                       
+
             return returnResult;
         }
 
-        public async Task<Return> GetById(int id){
+        public async Task<Return> GetById(int id)
+        {
 
             var returnResult = await _context.Returns.Where(ret => ret.ReturnId == id)
                 .Include(ret => ret.ReturnedBy)
@@ -100,17 +101,17 @@ namespace ERP.Services.ReturnServices
                 asset.ReturnRemark = requestAsset.ReturnRemark;
                 asset.AssetDamageId = requestAsset.AssetDamageId == -1 ? null : requestAsset.AssetDamageId;
                 asset.FileName = requestAsset.FileName == "" ? null : requestAsset.FileName;
-                                    
+
                 equipmentAssets.Add(asset);
 
-                await _itemSiteQtyService.AddEquipmentModel(asset.EquipmentModelId, (int)_userService.Employee.EmployeeSiteId, 1);
-                await _equipmentAssetService.ReturnToSite(asset.EquipmentAssetId, (int)_userService.Employee.EmployeeSiteId, asset.AssetDamageId);
-                
+                await _itemSiteQtyService.AddEquipmentModel(asset.EquipmentModelId, _userService.GetMySiteId(), 1);
+                await _equipmentAssetService.ReturnToSite(asset.EquipmentAssetId, _userService.GetMySiteId(), asset.AssetDamageId);
+
             }
 
             Return borrowReturn = new();
             borrowReturn.ReturnedById = _userService.Employee.EmployeeId;
-            borrowReturn.SiteId = (int)_userService.Employee.EmployeeSiteId;
+            borrowReturn.SiteId = _userService.GetMySiteId();
 
             borrowReturn.ReturnEquipmentAssets = equipmentAssets;
 
@@ -120,7 +121,7 @@ namespace ERP.Services.ReturnServices
 
             await _notificationService.Add(type: NOTIFICATIONTYPE.RETURN,
                 status: 0,
-                actionId:borrowReturn.ReturnId,
+                actionId: borrowReturn.ReturnId,
                 siteId: borrowReturn.SiteId,
                 employeeId: equipmentAssets.First().Borrow.RequestedById);
 

@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.DTOs.Purchase;
 using ERP.Models;
@@ -21,7 +21,6 @@ namespace ERP.Controllers
     {
         private readonly IPurchaseService _purchaseService;
         private readonly DataContext context;
-        private readonly INotificationService notificationManager;
 
         private readonly IUserService _userService;
 
@@ -29,9 +28,8 @@ namespace ERP.Controllers
         {
             _purchaseService = purchaseService;
             this.context = context;
-            this.notificationManager = notificationManager;
 
-            _userService = userService;            
+            _userService = userService;
 
         }
 
@@ -93,7 +91,7 @@ namespace ERP.Controllers
         }
 
         [HttpPost("request/equipment")]
-        public async Task<ActionResult<List<Purchase>>> RequestEquipment (CreateEquipmentPurchaseDTO purchaseDTO)
+        public async Task<ActionResult<List<Purchase>>> RequestEquipment(CreateEquipmentPurchaseDTO purchaseDTO)
         {
             //if (UserAccount != null && UserAccount.UserRole.CanRequestPurchase != 1) return Forbid();
 

@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs.Item;
 using ERP.Models;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +14,7 @@ namespace ERP.Services.DamageServices
             _context = context;
         }
 
-        public async Task<AssetDamage> AddDamage (AddDamageDTO damageDTO)
+        public async Task<AssetDamage> AddDamage(AddDamageDTO damageDTO)
         {
             AssetDamage damage = new AssetDamage();
             damage.Name = damageDTO.Name;

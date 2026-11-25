@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.Models;
 using ERP.Services.SiteServices;
 using Microsoft.AspNetCore.Authorization;
@@ -34,6 +34,7 @@ namespace ERP.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<Site>>> Get()
         {
@@ -46,7 +47,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<Site>> AddSite(Site request)
         {
             var site = await _siteService.AddSite(request);
-            
+
             return Ok(site);
         }
 

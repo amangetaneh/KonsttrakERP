@@ -1,13 +1,18 @@
-import api from "./api"
+import api from "./api";
 
-export const fetchEmployees = () => api.get("/employee").then((res) => res.data)
+export const fetchEmployees = () =>
+  api.get("/employee").then((res) => res.data);
 
-export const fetchSiteEmployees = () => api.get("/employee/site").then((res) => res.data)
+export const fetchSiteEmployees = () =>
+  api.get("/employee/site").then((res) => res.data);
 
 export const fetchEmployee = (id) =>
-  api.get(`/employee/${id}`).then((res) => res.data)
+  api.get(`/employee/${id}`).then((res) => res.data);
 
-export const updateEmployee = (data) => api.post("/employee/update", data)
+export const updateEmployee = (data) => api.post("/employee/update", data);
 
 export const initializeEmployee = (data) =>
-  api.post("/employee/initialize", data)
+  api.post("/employee/initialize", data);
+
+export const fetchInitializationStatus = () =>
+  api.get("/employee/initialization-status").then((res) => res.data);

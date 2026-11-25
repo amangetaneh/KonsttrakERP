@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
@@ -16,25 +16,26 @@ namespace ERP.Services.AssetNumberServices
             _context = context;
         }
 
-        public async Task<List<string>>GenerateAssetNumbers(int itemId, int count)
+        public async Task<List<string>> GenerateAssetNumbers(int itemId, int count)
         {
+            if (count <= 0) throw new ArgumentOutOfRangeException(nameof(count), "Count must be positive.");
             var assetNumberId = await GetAssetPrefix(itemId);
-            if (assetNumberId == null) 
+            if (assetNumberId == null)
                 throw new InvalidOperationException("Could Not Generate Asset Number Prefix");
 
             string assetPrefix = assetNumberId.Prefix;
             int lastId = assetNumberId.LastId;
             string companyPrefix = await GetCompanyPrefix();
-            
+
             List<string> assetNumbers = new();
 
-            for(int i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
                 lastId++;
 
                 assetNumbers.Add(
                     companyPrefix +
-                    assetPrefix + 
+                    assetPrefix +
                     lastId.ToString().PadLeft(numberOfDigits, '0'));
             }
 
@@ -56,7 +57,7 @@ namespace ERP.Services.AssetNumberServices
             return "XX";
         }
 
-        private async Task<AssetNumberId> GetAssetPrefix (int itemId)
+        private async Task<AssetNumberId?> GetAssetPrefix(int itemId)
         {
             var item = _context.Items
                 .Where(i => i.ItemId == itemId)
@@ -70,12 +71,12 @@ namespace ERP.Services.AssetNumberServices
 
             if (assetNumberId != null) return assetNumberId;
 
-            string itemName = item.Name.ToUpper();
-            itemName = Regex.Replace(itemName, @"(\d|\s)+", "");
+            string itemName = item.Name.ToUpperInvariant();
+            itemName = Regex.Replace(itemName, "[^A-Z]", "");
+            if (itemName.Length == 0) throw new ArgumentException("Item name must contain a letter.", nameof(itemId));
 
             //use combination of letters in the name
             IEnumerable<string> prefixes = PrefixGenerator.GetCombinations(numberOfLetters - 1, itemName.Substring(1));
-            List<string> assets = new List<string>();
             string prefix = "";
 
             foreach (string prefixEnd in prefixes)
@@ -90,7 +91,6 @@ namespace ERP.Services.AssetNumberServices
 
             //if the combination of letters in the name did not return try every letter
             prefixes = PrefixGenerator.GetCombinations(numberOfLetters - 1);
-            assets = new List<string>();
 
             foreach (string prefixEnd in prefixes)
             {
@@ -113,7 +113,7 @@ namespace ERP.Services.AssetNumberServices
 
             assetNumberId.ItemId = itemId;
             assetNumberId.Prefix = prefix;
-            
+
             _context.AssetNumberIds.Add(assetNumberId);
 
             await _context.SaveChangesAsync();
@@ -163,7 +163,7 @@ namespace ERP.Services.AssetNumberServices
             switch (charsetCode)
             {
                 case 'A': return stringA;
-                case 'B': return "ABCEDEFGHIJKLMNOPQRSTUVWXYZ";
+                case 'B': return "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
                 default: throw new InvalidOperationException("Bad charset code: " + charsetCode);
             }

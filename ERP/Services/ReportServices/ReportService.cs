@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.DTOs.Report;
 using ERP.Models;
@@ -74,18 +74,18 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case PURCHASEREPORTGROUPBY.APPROVEDATE:
-                    summary = purchases.GroupBy(transfer => transfer.ApproveDate == null ? DateTime.MinValue.Date : transfer.ApproveDate.Value.Date)
-                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ApproveDate.Value.ToShortDateString() ?? "N/A" });
+                    summary = purchases.GroupBy(transfer => transfer.ApproveDate == null ? DateTime.MinValue.Date : transfer.ApproveDate.GetValueOrDefault().Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ApproveDate.HasValue ? s.First().ApproveDate.GetValueOrDefault().ToShortDateString() : "N/A" });
                     break;
 
                 case PURCHASEREPORTGROUPBY.CHECKDATE:
-                    summary = purchases.GroupBy(transfer => transfer.CheckDate == null ? DateTime.MinValue.Date : transfer.CheckDate.Value.Date)
-                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().CheckDate.Value.ToShortDateString() ?? "N/A" });
+                    summary = purchases.GroupBy(transfer => transfer.CheckDate == null ? DateTime.MinValue.Date : transfer.CheckDate.GetValueOrDefault().Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().CheckDate.HasValue ? s.First().CheckDate.GetValueOrDefault().ToShortDateString() : "N/A" });
                     break;
 
                 case PURCHASEREPORTGROUPBY.PURCHASEDATE:
-                    summary = purchases.GroupBy(transfer => transfer.PurchaseDate == null ? DateTime.MinValue.Date : transfer.PurchaseDate.Value.Date)
-                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().PurchaseDate.Value.ToShortDateString() ?? "N/A" });
+                    summary = purchases.GroupBy(transfer => transfer.PurchaseDate == null ? DateTime.MinValue.Date : transfer.PurchaseDate.GetValueOrDefault().Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().PurchaseDate.HasValue ? s.First().PurchaseDate.GetValueOrDefault().ToShortDateString() : "N/A" });
                     break;
 
                 //week
@@ -98,14 +98,14 @@ namespace ERP.Services.ReportServices
                     summary = purchases.GroupBy(transfer =>
                             new
                             {
-                                Week = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.DayOfYear / 7,
-                                Year = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year
+                                Week = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().DayOfYear / 7,
+                                Year = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().ApproveDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                             value = s.First().ApproveDate == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
                          });
                     break;
 
@@ -113,14 +113,14 @@ namespace ERP.Services.ReportServices
                     summary = purchases.GroupBy(transfer =>
                             new
                             {
-                                Week = transfer.CheckDate.Value == null ? -1 : transfer.CheckDate.Value.DayOfYear / 7,
-                                Year = transfer.CheckDate.Value == null ? -1 : transfer.CheckDate.Value.Year
+                                Week = transfer.CheckDate == null ? -1 : transfer.CheckDate.GetValueOrDefault().DayOfYear / 7,
+                                Year = transfer.CheckDate == null ? -1 : transfer.CheckDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().CheckDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                             value = s.First().CheckDate == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
                          });
                     break;
 
@@ -128,14 +128,14 @@ namespace ERP.Services.ReportServices
                     summary = purchases.GroupBy(transfer =>
                             new
                             {
-                                Week = transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.DayOfYear / 7,
-                                Year = transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.Year
+                                Week = transfer.PurchaseDate == null ? -1 : transfer.PurchaseDate.GetValueOrDefault().DayOfYear / 7,
+                                Year = transfer.PurchaseDate == null ? -1 : transfer.PurchaseDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().PurchaseDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                             value = s.First().PurchaseDate == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
                          });
                     break;
 
@@ -149,14 +149,14 @@ namespace ERP.Services.ReportServices
                     summary = purchases.GroupBy(transfer =>
                             new
                             {
-                                Month = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Month,
-                                Year = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year
+                                Month = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Month,
+                                Year = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().ApproveDate.Value == null ? "N/A" : $"{s.First().ApproveDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                             value = s.First().ApproveDate == null ? "N/A" : $"{s.First().ApproveDate.GetValueOrDefault().ToString("MMMM")}, {s.Key.Year}"
                          });
                     break;
 
@@ -164,14 +164,14 @@ namespace ERP.Services.ReportServices
                     summary = purchases.GroupBy(transfer =>
                             new
                             {
-                                Month = transfer.CheckDate.Value == null ? -1 : transfer.CheckDate.Value.Month,
-                                Year = transfer.CheckDate.Value == null ? -1 : transfer.CheckDate.Value.Year
+                                Month = transfer.CheckDate == null ? -1 : transfer.CheckDate.GetValueOrDefault().Month,
+                                Year = transfer.CheckDate == null ? -1 : transfer.CheckDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().CheckDate.Value == null ? "N/A" : $"{s.First().CheckDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                             value = s.First().CheckDate == null ? "N/A" : $"{s.First().CheckDate.GetValueOrDefault().ToString("MMMM")}, {s.Key.Year}"
                          });
                     break;
 
@@ -179,14 +179,14 @@ namespace ERP.Services.ReportServices
                     summary = purchases.GroupBy(transfer =>
                             new
                             {
-                                Month = transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.Month,
-                                Year = transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.Year
+                                Month = transfer.PurchaseDate == null ? -1 : transfer.PurchaseDate.GetValueOrDefault().Month,
+                                Year = transfer.PurchaseDate == null ? -1 : transfer.PurchaseDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().PurchaseDate.Value == null ? "N/A" : $"{s.First().PurchaseDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                             value = s.First().PurchaseDate == null ? "N/A" : $"{s.First().PurchaseDate.GetValueOrDefault().ToString("MMMM")}, {s.Key.Year}"
                          });
                     break;
 
@@ -197,34 +197,34 @@ namespace ERP.Services.ReportServices
 
                 case PURCHASEREPORTGROUPBY.APPROVEYEAR:
                     summary = purchases.GroupBy(transfer =>
-                            transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year)
+                            transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Year)
                         .Select(s => new
                         {
                             key = s.Key,
                             count = s.Count(),
-                            value = s.First().ApproveDate.Value == null ? "N/A" : $"{s.Key}"
+                            value = s.First().ApproveDate == null ? "N/A" : $"{s.Key}"
                         });
                     break;
 
                 case PURCHASEREPORTGROUPBY.CHECKYEAR:
                     summary = purchases.GroupBy(transfer =>
-                            transfer.CheckDate.Value == null ? -1 : transfer.CheckDate.Value.Year)
+                            transfer.CheckDate == null ? -1 : transfer.CheckDate.GetValueOrDefault().Year)
                         .Select(s => new
                         {
                             key = s.Key,
                             count = s.Count(),
-                            value = s.First().CheckDate.Value == null ? "N/A" : $"{s.Key}"
+                            value = s.First().CheckDate == null ? "N/A" : $"{s.Key}"
                         });
                     break;
 
                 case PURCHASEREPORTGROUPBY.PURCHASEYEAR:
                     summary = purchases.GroupBy(transfer =>
-                            transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.Year)
+                            transfer.PurchaseDate == null ? -1 : transfer.PurchaseDate.GetValueOrDefault().Year)
                         .Select(s => new
                         {
                             key = s.Key,
                             count = s.Count(),
-                            value = s.First().PurchaseDate.Value == null ? "N/A" : $"{s.Key}"
+                            value = s.First().PurchaseDate == null ? "N/A" : $"{s.Key}"
                         });
                     break;
 
@@ -245,7 +245,7 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case PURCHASEREPORTGROUPBY.PURCHASEDBY:
-                    summary = purchases.GroupBy(transfer => transfer.RequestedById == null ? 0 : transfer.RequestedById)//here
+                    summary = purchases.GroupBy(transfer => transfer.RequestedById)//here
                          .Select(s => new { key = s.Key, count = s.Count(), value = s.First().RequestedBy });//here
                     break;
 
@@ -313,18 +313,18 @@ namespace ERP.Services.ReportServices
 
                 //date
                 case RECEIVEREPORTGROUPBY.PURCHASEDATE:
-                    summary = receives.GroupBy(transfer => transfer.PurchaseDate == null ? DateTime.MinValue.Date : transfer.PurchaseDate.Value.Date)
-                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().PurchaseDate.Value.ToShortDateString() ?? "N/A" });
+                    summary = receives.GroupBy(transfer => transfer.PurchaseDate == null ? DateTime.MinValue.Date : transfer.PurchaseDate.GetValueOrDefault().Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().PurchaseDate.HasValue ? s.First().PurchaseDate.GetValueOrDefault().ToShortDateString() : "N/A" });
                     break;
 
                 case RECEIVEREPORTGROUPBY.APPROVEDATE:
-                    summary = receives.GroupBy(transfer => transfer.ApproveDate == null ? DateTime.MinValue.Date : transfer.ApproveDate.Value.Date)
-                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ApproveDate.Value.ToShortDateString() ?? "N/A" });
+                    summary = receives.GroupBy(transfer => transfer.ApproveDate == null ? DateTime.MinValue.Date : transfer.ApproveDate.GetValueOrDefault().Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ApproveDate.HasValue ? s.First().ApproveDate.GetValueOrDefault().ToShortDateString() : "N/A" });
                     break;
 
                 case RECEIVEREPORTGROUPBY.RECEIVEDATE:
-                    summary = receives.GroupBy(transfer => transfer.ReceiveDate == null ? DateTime.MinValue.Date : transfer.ReceiveDate.Value.Date)
-                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ReceiveDate.Value.ToShortDateString() ?? "N/A" });
+                    summary = receives.GroupBy(transfer => transfer.ReceiveDate == null ? DateTime.MinValue.Date : transfer.ReceiveDate.GetValueOrDefault().Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ReceiveDate.HasValue ? s.First().ReceiveDate.GetValueOrDefault().ToShortDateString() : "N/A" });
                     break;
 
                 //week
@@ -332,14 +332,14 @@ namespace ERP.Services.ReportServices
                     summary = receives.GroupBy(transfer =>
                             new
                             {
-                                Week = transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.DayOfYear / 7,
-                                Year = transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.Year
+                                Week = transfer.PurchaseDate == null ? -1 : transfer.PurchaseDate.GetValueOrDefault().DayOfYear / 7,
+                                Year = transfer.PurchaseDate == null ? -1 : transfer.PurchaseDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().PurchaseDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                             value = s.First().PurchaseDate == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
                          });
                     break;
 
@@ -347,14 +347,14 @@ namespace ERP.Services.ReportServices
                     summary = receives.GroupBy(transfer =>
                             new
                             {
-                                Week = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.DayOfYear / 7,
-                                Year = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year
+                                Week = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().DayOfYear / 7,
+                                Year = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().ApproveDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                             value = s.First().ApproveDate == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
                          });
                     break;
 
@@ -362,14 +362,14 @@ namespace ERP.Services.ReportServices
                     summary = receives.GroupBy(transfer =>
                             new
                             {
-                                Week = transfer.ReceiveDate.Value == null ? -1 : transfer.ReceiveDate.Value.DayOfYear / 7,
-                                Year = transfer.ReceiveDate.Value == null ? -1 : transfer.ReceiveDate.Value.Year
+                                Week = transfer.ReceiveDate == null ? -1 : transfer.ReceiveDate.GetValueOrDefault().DayOfYear / 7,
+                                Year = transfer.ReceiveDate == null ? -1 : transfer.ReceiveDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().ReceiveDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                             value = s.First().ReceiveDate == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
                          });
                     break;
 
@@ -378,14 +378,14 @@ namespace ERP.Services.ReportServices
                     summary = receives.GroupBy(transfer =>
                             new
                             {
-                                Month = transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.Month,
-                                Year = transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.Year
+                                Month = transfer.PurchaseDate == null ? -1 : transfer.PurchaseDate.GetValueOrDefault().Month,
+                                Year = transfer.PurchaseDate == null ? -1 : transfer.PurchaseDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().PurchaseDate.Value == null ? "N/A" : $"{s.First().PurchaseDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                             value = s.First().PurchaseDate == null ? "N/A" : $"{s.First().PurchaseDate.GetValueOrDefault().ToString("MMMM")}, {s.Key.Year}"
                          });
                     break;
 
@@ -393,14 +393,14 @@ namespace ERP.Services.ReportServices
                     summary = receives.GroupBy(transfer =>
                             new
                             {
-                                Month = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Month,
-                                Year = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year
+                                Month = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Month,
+                                Year = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().ApproveDate.Value == null ? "N/A" : $"{s.First().ApproveDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                             value = s.First().ApproveDate == null ? "N/A" : $"{s.First().ApproveDate.GetValueOrDefault().ToString("MMMM")}, {s.Key.Year}"
                          });
                     break;
 
@@ -408,47 +408,47 @@ namespace ERP.Services.ReportServices
                     summary = receives.GroupBy(transfer =>
                             new
                             {
-                                Month = transfer.ReceiveDate.Value == null ? -1 : transfer.ReceiveDate.Value.Month,
-                                Year = transfer.ReceiveDate.Value == null ? -1 : transfer.ReceiveDate.Value.Year
+                                Month = transfer.ReceiveDate == null ? -1 : transfer.ReceiveDate.GetValueOrDefault().Month,
+                                Year = transfer.ReceiveDate == null ? -1 : transfer.ReceiveDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().ReceiveDate.Value == null ? "N/A" : $"{s.First().ReceiveDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                             value = s.First().ReceiveDate == null ? "N/A" : $"{s.First().ReceiveDate.GetValueOrDefault().ToString("MMMM")}, {s.Key.Year}"
                          });
                     break;
 
                 case RECEIVEREPORTGROUPBY.PURCHASEYEAR:
                     summary = receives.GroupBy(transfer =>
-                            transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.Year)
+                            transfer.PurchaseDate == null ? -1 : transfer.PurchaseDate.GetValueOrDefault().Year)
                         .Select(s => new
                         {
                             key = s.Key,
                             count = s.Count(),
-                            value = s.First().PurchaseDate.Value == null ? "N/A" : $"{s.Key}"
+                            value = s.First().PurchaseDate == null ? "N/A" : $"{s.Key}"
                         });
                     break;
 
                 case RECEIVEREPORTGROUPBY.APPROVEYEAR:
                     summary = receives.GroupBy(transfer =>
-                            transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year)
+                            transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Year)
                         .Select(s => new
                         {
                             key = s.Key,
                             count = s.Count(),
-                            value = s.First().ApproveDate.Value == null ? "N/A" : $"{s.Key}"
+                            value = s.First().ApproveDate == null ? "N/A" : $"{s.Key}"
                         });
                     break;
 
                 case RECEIVEREPORTGROUPBY.RECEIVEYEAR:
                     summary = receives.GroupBy(transfer =>
-                            transfer.ReceiveDate.Value == null ? -1 : transfer.ReceiveDate.Value.Year)
+                            transfer.ReceiveDate == null ? -1 : transfer.ReceiveDate.GetValueOrDefault().Year)
                         .Select(s => new
                         {
                             key = s.Key,
                             count = s.Count(),
-                            value = s.First().ReceiveDate.Value == null ? "N/A" : $"{s.Key}"
+                            value = s.First().ReceiveDate == null ? "N/A" : $"{s.Key}"
                         });
                     break;
 
@@ -532,13 +532,13 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case ISSUEREPORTGROUPBY.APPROVEDATE:
-                    summary = issues.GroupBy(transfer => transfer.ApproveDate == null ? DateTime.MinValue.Date : transfer.ApproveDate.Value.Date)
-                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ApproveDate.Value.ToShortDateString() ?? "N/A" });
+                    summary = issues.GroupBy(transfer => transfer.ApproveDate == null ? DateTime.MinValue.Date : transfer.ApproveDate.GetValueOrDefault().Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ApproveDate.HasValue ? s.First().ApproveDate.GetValueOrDefault().ToShortDateString() : "N/A" });
                     break;
 
                 case ISSUEREPORTGROUPBY.HANDDATE:
-                    summary = issues.GroupBy(transfer => transfer.HandDate == null ? DateTime.MinValue.Date : transfer.HandDate.Value.Date)
-                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().HandDate.Value.ToShortDateString() ?? "N/A" });
+                    summary = issues.GroupBy(transfer => transfer.HandDate == null ? DateTime.MinValue.Date : transfer.HandDate.GetValueOrDefault().Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().HandDate.HasValue ? s.First().HandDate.GetValueOrDefault().ToShortDateString() : "N/A" });
                     break;
 
                 //week
@@ -551,14 +551,14 @@ namespace ERP.Services.ReportServices
                     summary = issues.GroupBy(transfer =>
                             new
                             {
-                                Week = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.DayOfYear / 7,
-                                Year = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year
+                                Week = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().DayOfYear / 7,
+                                Year = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().ApproveDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                             value = s.First().ApproveDate == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
                          });
                     break;
 
@@ -566,14 +566,14 @@ namespace ERP.Services.ReportServices
                     summary = issues.GroupBy(transfer =>
                             new
                             {
-                                Week = transfer.HandDate.Value == null ? -1 : transfer.HandDate.Value.DayOfYear / 7,
-                                Year = transfer.HandDate.Value == null ? -1 : transfer.HandDate.Value.Year
+                                Week = transfer.HandDate == null ? -1 : transfer.HandDate.GetValueOrDefault().DayOfYear / 7,
+                                Year = transfer.HandDate == null ? -1 : transfer.HandDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().HandDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                             value = s.First().HandDate == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
                          });
                     break;
 
@@ -587,14 +587,14 @@ namespace ERP.Services.ReportServices
                     summary = issues.GroupBy(transfer =>
                             new
                             {
-                                Month = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Month,
-                                Year = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year
+                                Month = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Month,
+                                Year = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().ApproveDate.Value == null ? "N/A" : $"{s.First().ApproveDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                             value = s.First().ApproveDate == null ? "N/A" : $"{s.First().ApproveDate.GetValueOrDefault().ToString("MMMM")}, {s.Key.Year}"
                          });
                     break;
 
@@ -602,14 +602,14 @@ namespace ERP.Services.ReportServices
                     summary = issues.GroupBy(transfer =>
                             new
                             {
-                                Month = transfer.HandDate.Value == null ? -1 : transfer.HandDate.Value.Month,
-                                Year = transfer.HandDate.Value == null ? -1 : transfer.HandDate.Value.Year
+                                Month = transfer.HandDate == null ? -1 : transfer.HandDate.GetValueOrDefault().Month,
+                                Year = transfer.HandDate == null ? -1 : transfer.HandDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().HandDate.Value == null ? "N/A" : $"{s.First().HandDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                             value = s.First().HandDate == null ? "N/A" : $"{s.First().HandDate.GetValueOrDefault().ToString("MMMM")}, {s.Key.Year}"
                          });
                     break;
 
@@ -621,23 +621,23 @@ namespace ERP.Services.ReportServices
 
                 case ISSUEREPORTGROUPBY.APPROVEYEAR:
                     summary = issues.GroupBy(transfer =>
-                            transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year)
+                            transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Year)
                         .Select(s => new
                         {
                             key = s.Key,
                             count = s.Count(),
-                            value = s.First().ApproveDate.Value == null ? "N/A" : $"{s.Key}"
+                            value = s.First().ApproveDate == null ? "N/A" : $"{s.Key}"
                         });
                     break;
 
                 case ISSUEREPORTGROUPBY.HANDYEAR:
                     summary = issues.GroupBy(transfer =>
-                            transfer.HandDate.Value == null ? -1 : transfer.HandDate.Value.Year)
+                            transfer.HandDate == null ? -1 : transfer.HandDate.GetValueOrDefault().Year)
                         .Select(s => new
                         {
                             key = s.Key,
                             count = s.Count(),
-                            value = s.First().HandDate.Value == null ? "N/A" : $"{s.Key}"
+                            value = s.First().HandDate == null ? "N/A" : $"{s.Key}"
                         });
                     break;
 
@@ -732,18 +732,18 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case TRANSFERREPORTGROUPBY.APPROVEDATE:
-                    summary = transfers.GroupBy(transfer => transfer.ApproveDate == null ? DateTime.MinValue.Date : transfer.ApproveDate.Value.Date)
-                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ApproveDate.Value.ToShortDateString() ?? "N/A" });
+                    summary = transfers.GroupBy(transfer => transfer.ApproveDate == null ? DateTime.MinValue.Date : transfer.ApproveDate.GetValueOrDefault().Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ApproveDate.HasValue ? s.First().ApproveDate.GetValueOrDefault().ToShortDateString() : "N/A" });
                     break;
 
                 case TRANSFERREPORTGROUPBY.SENDDATE:
-                    summary = transfers.GroupBy(transfer => transfer.SendDate == null ? DateTime.MinValue.Date : transfer.SendDate.Value.Date)
-                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().SendDate.Value.ToShortDateString() ?? "N/A" });
+                    summary = transfers.GroupBy(transfer => transfer.SendDate == null ? DateTime.MinValue.Date : transfer.SendDate.GetValueOrDefault().Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().SendDate.HasValue ? s.First().SendDate.GetValueOrDefault().ToShortDateString() : "N/A" });
                     break;
 
                 case TRANSFERREPORTGROUPBY.RECEIVEDATE:
-                    summary = transfers.GroupBy(transfer => transfer.ReceiveDate == null ? DateTime.MinValue.Date : transfer.ReceiveDate.Value.Date)
-                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ReceiveDate.Value.ToShortDateString() ?? "N/A" });
+                    summary = transfers.GroupBy(transfer => transfer.ReceiveDate == null ? DateTime.MinValue.Date : transfer.ReceiveDate.GetValueOrDefault().Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ReceiveDate.HasValue ? s.First().ReceiveDate.GetValueOrDefault().ToShortDateString() : "N/A" });
                     break;
 
                 //week
@@ -756,14 +756,14 @@ namespace ERP.Services.ReportServices
                     summary = transfers.GroupBy(transfer =>
                             new
                             {
-                                Week = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.DayOfYear / 7,
-                                Year = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year
+                                Week = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().DayOfYear / 7,
+                                Year = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().ApproveDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                             value = s.First().ApproveDate == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
                          });
                     break;
 
@@ -771,14 +771,14 @@ namespace ERP.Services.ReportServices
                     summary = transfers.GroupBy(transfer =>
                             new
                             {
-                                Week = transfer.SendDate.Value == null ? -1 : transfer.SendDate.Value.DayOfYear / 7,
-                                Year = transfer.SendDate.Value == null ? -1 : transfer.SendDate.Value.Year
+                                Week = transfer.SendDate == null ? -1 : transfer.SendDate.GetValueOrDefault().DayOfYear / 7,
+                                Year = transfer.SendDate == null ? -1 : transfer.SendDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().SendDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                             value = s.First().SendDate == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
                          });
                     break;
 
@@ -786,14 +786,14 @@ namespace ERP.Services.ReportServices
                     summary = transfers.GroupBy(transfer =>
                             new
                             {
-                                Week = transfer.ReceiveDate.Value == null ? -1 : transfer.ReceiveDate.Value.DayOfYear / 7,
-                                Year = transfer.ReceiveDate.Value == null ? -1 : transfer.ReceiveDate.Value.Year
+                                Week = transfer.ReceiveDate == null ? -1 : transfer.ReceiveDate.GetValueOrDefault().DayOfYear / 7,
+                                Year = transfer.ReceiveDate == null ? -1 : transfer.ReceiveDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().ReceiveDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                             value = s.First().ReceiveDate == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
                          });
                     break;
 
@@ -807,14 +807,14 @@ namespace ERP.Services.ReportServices
                     summary = transfers.GroupBy(transfer =>
                             new
                             {
-                                Month = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Month,
-                                Year = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year
+                                Month = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Month,
+                                Year = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().ApproveDate.Value == null ? "N/A" : $"{s.First().ApproveDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                             value = s.First().ApproveDate == null ? "N/A" : $"{s.First().ApproveDate.GetValueOrDefault().ToString("MMMM")}, {s.Key.Year}"
                          });
                     break;
 
@@ -822,14 +822,14 @@ namespace ERP.Services.ReportServices
                     summary = transfers.GroupBy(transfer =>
                             new
                             {
-                                Month = transfer.SendDate.Value == null ? -1 : transfer.SendDate.Value.Month,
-                                Year = transfer.SendDate.Value == null ? -1 : transfer.SendDate.Value.Year
+                                Month = transfer.SendDate == null ? -1 : transfer.SendDate.GetValueOrDefault().Month,
+                                Year = transfer.SendDate == null ? -1 : transfer.SendDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().SendDate.Value == null ? "N/A" : $"{s.First().SendDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                             value = s.First().SendDate == null ? "N/A" : $"{s.First().SendDate.GetValueOrDefault().ToString("MMMM")}, {s.Key.Year}"
                          });
                     break;
 
@@ -837,14 +837,14 @@ namespace ERP.Services.ReportServices
                     summary = transfers.GroupBy(transfer =>
                             new
                             {
-                                Month = transfer.ReceiveDate.Value == null ? -1 : transfer.ReceiveDate.Value.Month,
-                                Year = transfer.ReceiveDate.Value == null ? -1 : transfer.ReceiveDate.Value.Year
+                                Month = transfer.ReceiveDate == null ? -1 : transfer.ReceiveDate.GetValueOrDefault().Month,
+                                Year = transfer.ReceiveDate == null ? -1 : transfer.ReceiveDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().ReceiveDate.Value == null ? "N/A" : $"{s.First().ReceiveDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                             value = s.First().ReceiveDate == null ? "N/A" : $"{s.First().ReceiveDate.GetValueOrDefault().ToString("MMMM")}, {s.Key.Year}"
                          });
                     break;
 
@@ -855,34 +855,34 @@ namespace ERP.Services.ReportServices
 
                 case TRANSFERREPORTGROUPBY.APPROVEYEAR:
                     summary = transfers.GroupBy(transfer =>
-                            transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year)
+                            transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Year)
                         .Select(s => new
                         {
                             key = s.Key,
                             count = s.Count(),
-                            value = s.First().ApproveDate.Value == null ? "N/A" : $"{s.Key}"
+                            value = s.First().ApproveDate == null ? "N/A" : $"{s.Key}"
                         });
                     break;
 
                 case TRANSFERREPORTGROUPBY.SENDYEAR:
                     summary = transfers.GroupBy(transfer =>
-                            transfer.SendDate.Value == null ? -1 : transfer.SendDate.Value.Year)
+                            transfer.SendDate == null ? -1 : transfer.SendDate.GetValueOrDefault().Year)
                         .Select(s => new
                         {
                             key = s.Key,
                             count = s.Count(),
-                            value = s.First().SendDate.Value == null ? "N/A" : $"{s.Key}"
+                            value = s.First().SendDate == null ? "N/A" : $"{s.Key}"
                         });
                     break;
 
                 case TRANSFERREPORTGROUPBY.RECEIVEYEAR:
                     summary = transfers.GroupBy(transfer =>
-                            transfer.ReceiveDate.Value == null ? -1 : transfer.ReceiveDate.Value.Year)
+                            transfer.ReceiveDate == null ? -1 : transfer.ReceiveDate.GetValueOrDefault().Year)
                         .Select(s => new
                         {
                             key = s.Key,
                             count = s.Count(),
-                            value = s.First().ReceiveDate.Value == null ? "N/A" : $"{s.Key}"
+                            value = s.First().ReceiveDate == null ? "N/A" : $"{s.Key}"
                         });
                     break;
 
@@ -978,13 +978,13 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case BORROWREPORTGROUPBY.APPROVEDATE:
-                    summary = borrows.GroupBy(transfer => transfer.ApproveDate == null ? DateTime.MinValue.Date : transfer.ApproveDate.Value.Date)
-                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ApproveDate.Value.ToShortDateString() ?? "N/A" });
+                    summary = borrows.GroupBy(transfer => transfer.ApproveDate == null ? DateTime.MinValue.Date : transfer.ApproveDate.GetValueOrDefault().Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ApproveDate.HasValue ? s.First().ApproveDate.GetValueOrDefault().ToShortDateString() : "N/A" });
                     break;
 
                 case BORROWREPORTGROUPBY.HANDDATE:
-                    summary = borrows.GroupBy(transfer => transfer.HandDate == null ? DateTime.MinValue.Date : transfer.HandDate.Value.Date)
-                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().HandDate.Value.ToShortDateString() ?? "N/A" });
+                    summary = borrows.GroupBy(transfer => transfer.HandDate == null ? DateTime.MinValue.Date : transfer.HandDate.GetValueOrDefault().Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().HandDate.HasValue ? s.First().HandDate.GetValueOrDefault().ToShortDateString() : "N/A" });
                     break;
 
                 //week
@@ -997,14 +997,14 @@ namespace ERP.Services.ReportServices
                     summary = borrows.GroupBy(transfer =>
                             new
                             {
-                                Week = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.DayOfYear / 7,
-                                Year = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year
+                                Week = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().DayOfYear / 7,
+                                Year = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().ApproveDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                             value = s.First().ApproveDate == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
                          });
                     break;
 
@@ -1012,14 +1012,14 @@ namespace ERP.Services.ReportServices
                     summary = borrows.GroupBy(transfer =>
                             new
                             {
-                                Week = transfer.HandDate.Value == null ? -1 : transfer.HandDate.Value.DayOfYear / 7,
-                                Year = transfer.HandDate.Value == null ? -1 : transfer.HandDate.Value.Year
+                                Week = transfer.HandDate == null ? -1 : transfer.HandDate.GetValueOrDefault().DayOfYear / 7,
+                                Year = transfer.HandDate == null ? -1 : transfer.HandDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().HandDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                             value = s.First().HandDate == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
                          });
                     break;
 
@@ -1033,14 +1033,14 @@ namespace ERP.Services.ReportServices
                     summary = borrows.GroupBy(transfer =>
                             new
                             {
-                                Month = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Month,
-                                Year = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year
+                                Month = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Month,
+                                Year = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().ApproveDate.Value == null ? "N/A" : $"{s.First().ApproveDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                             value = s.First().ApproveDate == null ? "N/A" : $"{s.First().ApproveDate.GetValueOrDefault().ToString("MMMM")}, {s.Key.Year}"
                          });
                     break;
 
@@ -1048,14 +1048,14 @@ namespace ERP.Services.ReportServices
                     summary = borrows.GroupBy(transfer =>
                             new
                             {
-                                Month = transfer.HandDate.Value == null ? -1 : transfer.HandDate.Value.Month,
-                                Year = transfer.HandDate.Value == null ? -1 : transfer.HandDate.Value.Year
+                                Month = transfer.HandDate == null ? -1 : transfer.HandDate.GetValueOrDefault().Month,
+                                Year = transfer.HandDate == null ? -1 : transfer.HandDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().HandDate.Value == null ? "N/A" : $"{s.First().HandDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                             value = s.First().HandDate == null ? "N/A" : $"{s.First().HandDate.GetValueOrDefault().ToString("MMMM")}, {s.Key.Year}"
                          });
                     break;
 
@@ -1067,23 +1067,23 @@ namespace ERP.Services.ReportServices
 
                 case BORROWREPORTGROUPBY.APPROVEYEAR:
                     summary = borrows.GroupBy(transfer =>
-                            transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year)
+                            transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Year)
                         .Select(s => new
                         {
                             key = s.Key,
                             count = s.Count(),
-                            value = s.First().ApproveDate.Value == null ? "N/A" : $"{s.Key}"
+                            value = s.First().ApproveDate == null ? "N/A" : $"{s.Key}"
                         });
                     break;
 
                 case BORROWREPORTGROUPBY.HANDYEAR:
                     summary = borrows.GroupBy(transfer =>
-                            transfer.HandDate.Value == null ? -1 : transfer.HandDate.Value.Year)
+                            transfer.HandDate == null ? -1 : transfer.HandDate.GetValueOrDefault().Year)
                         .Select(s => new
                         {
                             key = s.Key,
                             count = s.Count(),
-                            value = s.First().HandDate.Value == null ? "N/A" : $"{s.Key}"
+                            value = s.First().HandDate == null ? "N/A" : $"{s.Key}"
                         });
                     break;
 
@@ -1168,13 +1168,13 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case MAINTENANCEREPORTGROUPBY.APPROVEDATE:
-                    summary = maintenances.GroupBy(transfer => transfer.ApproveDate == null ? DateTime.MinValue.Date : transfer.ApproveDate.Value.Date)
-                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ApproveDate.Value.ToShortDateString() ?? "N/A" });
+                    summary = maintenances.GroupBy(transfer => transfer.ApproveDate == null ? DateTime.MinValue.Date : transfer.ApproveDate.GetValueOrDefault().Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ApproveDate.HasValue ? s.First().ApproveDate.GetValueOrDefault().ToShortDateString() : "N/A" });
                     break;
 
                 case MAINTENANCEREPORTGROUPBY.FIXDATE:
-                    summary = maintenances.GroupBy(transfer => transfer.FixDate == null ? DateTime.MinValue.Date : transfer.FixDate.Value.Date)
-                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().FixDate.Value.ToShortDateString() ?? "N/A" });
+                    summary = maintenances.GroupBy(transfer => transfer.FixDate == null ? DateTime.MinValue.Date : transfer.FixDate.GetValueOrDefault().Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().FixDate.HasValue ? s.First().FixDate.GetValueOrDefault().ToShortDateString() : "N/A" });
                     break;
 
                 //week
@@ -1187,14 +1187,14 @@ namespace ERP.Services.ReportServices
                     summary = maintenances.GroupBy(transfer =>
                             new
                             {
-                                Week = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.DayOfYear / 7,
-                                Year = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year
+                                Week = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().DayOfYear / 7,
+                                Year = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().ApproveDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                             value = s.First().ApproveDate == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
                          });
                     break;
 
@@ -1202,14 +1202,14 @@ namespace ERP.Services.ReportServices
                     summary = maintenances.GroupBy(transfer =>
                             new
                             {
-                                Week = transfer.FixDate.Value == null ? -1 : transfer.FixDate.Value.DayOfYear / 7,
-                                Year = transfer.FixDate.Value == null ? -1 : transfer.FixDate.Value.Year
+                                Week = transfer.FixDate == null ? -1 : transfer.FixDate.GetValueOrDefault().DayOfYear / 7,
+                                Year = transfer.FixDate == null ? -1 : transfer.FixDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().FixDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                             value = s.First().FixDate == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
                          });
                     break;
 
@@ -1223,14 +1223,14 @@ namespace ERP.Services.ReportServices
                     summary = maintenances.GroupBy(transfer =>
                             new
                             {
-                                Month = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Month,
-                                Year = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year
+                                Month = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Month,
+                                Year = transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().ApproveDate.Value == null ? "N/A" : $"{s.First().ApproveDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                             value = s.First().ApproveDate == null ? "N/A" : $"{s.First().ApproveDate.GetValueOrDefault().ToString("MMMM")}, {s.Key.Year}"
                          });
                     break;
 
@@ -1238,14 +1238,14 @@ namespace ERP.Services.ReportServices
                     summary = maintenances.GroupBy(transfer =>
                             new
                             {
-                                Month = transfer.FixDate.Value == null ? -1 : transfer.FixDate.Value.Month,
-                                Year = transfer.FixDate.Value == null ? -1 : transfer.FixDate.Value.Year
+                                Month = transfer.FixDate == null ? -1 : transfer.FixDate.GetValueOrDefault().Month,
+                                Year = transfer.FixDate == null ? -1 : transfer.FixDate.GetValueOrDefault().Year
                             })
                          .Select(s => new
                          {
                              key = s.Key,
                              count = s.Count(),
-                             value = s.First().FixDate.Value == null ? "N/A" : $"{s.First().FixDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                             value = s.First().FixDate == null ? "N/A" : $"{s.First().FixDate.GetValueOrDefault().ToString("MMMM")}, {s.Key.Year}"
                          });
                     break;
 
@@ -1257,23 +1257,23 @@ namespace ERP.Services.ReportServices
 
                 case MAINTENANCEREPORTGROUPBY.APPROVEYEAR:
                     summary = maintenances.GroupBy(transfer =>
-                            transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year)
+                            transfer.ApproveDate == null ? -1 : transfer.ApproveDate.GetValueOrDefault().Year)
                         .Select(s => new
                         {
                             key = s.Key,
                             count = s.Count(),
-                            value = s.First().ApproveDate.Value == null ? "N/A" : $"{s.Key}"
+                            value = s.First().ApproveDate == null ? "N/A" : $"{s.Key}"
                         });
                     break;
 
                 case MAINTENANCEREPORTGROUPBY.FIXYEAR:
                     summary = maintenances.GroupBy(transfer =>
-                            transfer.FixDate.Value == null ? -1 : transfer.FixDate.Value.Year)
+                            transfer.FixDate == null ? -1 : transfer.FixDate.GetValueOrDefault().Year)
                         .Select(s => new
                         {
                             key = s.Key,
                             count = s.Count(),
-                            value = s.First().FixDate.Value == null ? "N/A" : $"{s.Key}"
+                            value = s.First().FixDate == null ? "N/A" : $"{s.Key}"
                         });
                     break;
 
@@ -1340,17 +1340,6 @@ namespace ERP.Services.ReportServices
                 .ThenInclude(asset => asset.Borrow.RequestedBy)
                 .Include(transfer => transfer.ReturnEquipmentAssets)
                 .ThenInclude(asset => asset.BorrowItem.Item.Equipment);
-
-            foreach (var borrow in borrows)
-            {
-                borrow.ReturnedBy.UserRole = null;
-                foreach (var x in borrow.ReturnEquipmentAssets)
-                {
-                    x.Borrow.RequestedBy.UserRole = null;
-                    x.Borrow.ApprovedBy.UserRole = null;
-                    x.Borrow.HandedBy.UserRole = null;
-                }
-            }
 
             IQueryable? summary = null;
 
@@ -1514,7 +1503,7 @@ namespace ERP.Services.ReportServices
             reportDTO.SetDates();
 
             GeneralReportReturnDTO result = new();
-            
+
             if (reportDTO.Include.Contains(GENERALREPORTSELECTION.RECEIVED))
             {
                 var receiveSummary = await _generalReportService.GetReceiveReport(reportDTO);

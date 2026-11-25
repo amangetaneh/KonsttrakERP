@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -9,9 +9,11 @@ namespace ERP.Services.User
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserRole UserRole { get; }
-        public Employee Employee { get; }
-       
+        private readonly UserRole? _userRole;
+        public UserRole UserRole => _userRole ?? throw new UnauthorizedAccessException("An assigned role is required.");
+        private readonly Employee? _employee;
+        public Employee Employee => _employee ?? throw new UnauthorizedAccessException("An employee account is required.");
+
 
         public UserService(DataContext context, IHttpContextAccessor httpContextAccessor)
         {
@@ -25,18 +27,18 @@ namespace ERP.Services.User
                 .ThenInclude(e => e.EmployeeSite)
                 .FirstOrDefault();
 
-            Employee = UserAccount == null ? null : UserAccount.Employee;
-            UserRole = Employee == null ? null : Employee.UserRole;
+            _employee = UserAccount?.Employee;
+            _userRole = _employee?.UserRole;
         }
 
         public string GetMyName()
         {
             var result = string.Empty;
-            
+
             if (_httpContextAccessor.HttpContext != null)
             {
 
-                result = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
+                result = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
             }
 
             return result;
@@ -53,23 +55,13 @@ namespace ERP.Services.User
                 result = Convert.ToInt32(employeeId);
 
             }
-            
+
             return result;
         }
 
         public int GetMySiteId()
         {
-            var result = 0;
-
-            if (_httpContextAccessor.HttpContext != null)
-            {
-                var employeeId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Sid);
-
-                result = Convert.ToInt32(employeeId);
-
-            }
-
-            return result;
+            return Employee.EmployeeSiteId ?? throw new InvalidOperationException("Assign the employee to a site before performing this operation.");
         }
     }
 }

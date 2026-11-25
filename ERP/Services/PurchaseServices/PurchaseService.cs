@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.DTOs.Purchase;
 using ERP.Models;
@@ -53,7 +53,7 @@ namespace ERP.Services.PurchaseServices
             var purchases = await _context.Purchases
                 .Where(purchase => (
                     (getPurchasesDTO.ReceivingSiteId == -1 || purchase.ReceivingSiteId == getPurchasesDTO.ReceivingSiteId) &&
-                    ((userRole.CanViewPurchase == true && (purchase.Status == PURCHASESTATUS.DECLINED || 
+                    ((userRole.CanViewPurchase == true && (purchase.Status == PURCHASESTATUS.DECLINED ||
                     purchase.Status == PURCHASESTATUS.BULKQUEUED || purchase.Status == PURCHASESTATUS.PURCHASED)) ||
                     (userRole.CanRequestPurchase == true && purchase.Status == PURCHASESTATUS.QUEUED) ||
                     (userRole.CanCheckPurchase == true && purchase.Status == PURCHASESTATUS.REQUESTED) ||
@@ -96,7 +96,7 @@ namespace ERP.Services.PurchaseServices
                 purchaseItem.Cost = itemTemp.Material.Cost;
                 purchaseItem.TotalCost = purchaseItem.QtyRequested * purchaseItem.Cost;
                 purchase.TotalPurchaseCost += purchaseItem.TotalCost;
-                
+
                 purchaseItems.Add(purchaseItem);
 
                 PurchaseItemEmployee purchaseItemEmployee = new();
@@ -175,7 +175,7 @@ namespace ERP.Services.PurchaseServices
                 purchaseItemEmployee.RequestedById = _userService.Employee.EmployeeId; ;
                 purchaseItemEmployee.QtyRequested = requestItem.QtyRequested;
                 purchaseItemEmployee.RequestRemark = requestItem.RequestRemark;
-                
+
                 purchaseItemEmployees.Add(purchaseItemEmployee);
 
             }
@@ -272,7 +272,7 @@ namespace ERP.Services.PurchaseServices
 
             return purchase;
         }
-        
+
         public async Task<Purchase> CheckPurchase(CheckPurchaseDTO checkDTO)
         {
             //if (UserAccount != null && UserAccount.UserRole.CanCheckPurchase != 1) return Forbid();
@@ -298,12 +298,15 @@ namespace ERP.Services.PurchaseServices
 
         public async Task<Purchase> QueuePurchase(CheckPurchaseDTO checkDTO)
         {
+            var centralSite = await _context.Sites.OrderBy(site => site.SiteId).FirstOrDefaultAsync()
+                ?? throw new InvalidOperationException("Create a site before processing purchases.");
+
             var purchase = _context.Purchases
                .Where(purchase => purchase.PurchaseId == checkDTO.PurchaseId)
                .Include(purchase => purchase.PurchaseItems)
                .Include(purchase => purchase.PurchaseItemEmployees)
                .FirstOrDefault();
-            
+
             if (purchase == null) throw new KeyNotFoundException("Purchase Not Found");
 
             var bulkPurchase = _context.BulkPurchases
@@ -383,9 +386,7 @@ namespace ERP.Services.PurchaseServices
             purchase.BulkPurchaseId = bulkPurchase.BulkPurchaseId;
 
             await _context.SaveChangesAsync();
-            
-            var centralSite = _context.Sites
-                .FirstOrDefault();
+
 
             await _notificationService.Add(type: NOTIFICATIONTYPE.BULKPURCHASE,
                 status: bulkPurchase.Status,
@@ -446,7 +447,7 @@ namespace ERP.Services.PurchaseServices
 
             purchase.Status = PURCHASESTATUS.PURCHASED;
             purchase.PurchaseDate = DateTime.Now;
-            
+
             await _context.SaveChangesAsync();
 
             //Add receive
@@ -490,10 +491,10 @@ namespace ERP.Services.PurchaseServices
             return purchase;
         }
 
-        private decimal calculateTotalCost (ICollection<PurchaseItem> Items)
+        private decimal calculateTotalCost(ICollection<PurchaseItem> Items)
         {
             var totalCost = (decimal)0;
-            
+
             foreach (var purchaseItem in Items)
             {
                 totalCost += purchaseItem.TotalCost;

@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs.User
+namespace ERP.DTOs.User
 {
     public class ApproveUserDTO
     {

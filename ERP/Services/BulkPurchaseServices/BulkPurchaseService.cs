@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.DTOs.BulkPurchase;
 using ERP.Models;
@@ -42,6 +42,9 @@ namespace ERP.Services.BulkPurchaseServices
 
         public async Task<BulkPurchase> RequestBulkPurchase(RequestBulkPurchaseDTO requestDTO)
         {
+            var centralSite = await _context.Sites.OrderBy(site => site.SiteId).FirstOrDefaultAsync()
+                ?? throw new InvalidOperationException("Create a site before processing purchases.");
+
             //if (UserAccount != null && UserAccount.UserRole.CanCheckPurchase != 1) return Forbid();
 
             var bulkPurchase = await _context.BulkPurchases.FindAsync(requestDTO.BulkPurchaseId);
@@ -52,8 +55,6 @@ namespace ERP.Services.BulkPurchaseServices
 
             await _context.SaveChangesAsync();
 
-            var centralSite = _context.Sites
-                .FirstOrDefault();
 
             await _notificationService.Add(type: NOTIFICATIONTYPE.BULKPURCHASE,
                 status: bulkPurchase.Status,
@@ -66,6 +67,9 @@ namespace ERP.Services.BulkPurchaseServices
 
         public async Task<BulkPurchase> ApproveBulkPurchase(ApproveBulkPurchaseDTO approveDTO)
         {
+            var centralSite = await _context.Sites.OrderBy(site => site.SiteId).FirstOrDefaultAsync()
+                ?? throw new InvalidOperationException("Create a site before processing purchases.");
+
             //if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
 
             var bulkPurchase = _context.BulkPurchases
@@ -97,8 +101,7 @@ namespace ERP.Services.BulkPurchaseServices
             bulkPurchase.Status = BULKPURCHASESTATUS.APPROVED;
 
             await _context.SaveChangesAsync();
-            
-            var centralSite = _context.Sites.FirstOrDefault();
+
 
             await _notificationService.Add(type: NOTIFICATIONTYPE.BULKPURCHASE,
                 status: bulkPurchase.Status,
@@ -111,6 +114,9 @@ namespace ERP.Services.BulkPurchaseServices
 
         public async Task<BulkPurchase> DeclineBulkPurchase(ApproveBulkPurchaseDTO declineDTO)
         {
+            var centralSite = await _context.Sites.OrderBy(site => site.SiteId).FirstOrDefaultAsync()
+                ?? throw new InvalidOperationException("Create a site before processing purchases.");
+
             //if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
 
             var bulkPurchase = _context.BulkPurchases
@@ -135,7 +141,6 @@ namespace ERP.Services.BulkPurchaseServices
 
             await _context.SaveChangesAsync();
 
-            var centralSite = _context.Sites.FirstOrDefault();
 
             await _notificationService.Add(type: NOTIFICATIONTYPE.BULKPURCHASE,
                 status: bulkPurchase.Status,
@@ -148,6 +153,9 @@ namespace ERP.Services.BulkPurchaseServices
 
         public async Task<BulkPurchase> ConfirmBulkPurchase(ConfirmBulkPurchaseDTO confirmDTO)
         {
+            var centralSite = await _context.Sites.OrderBy(site => site.SiteId).FirstOrDefaultAsync()
+                ?? throw new InvalidOperationException("Create a site before processing purchases.");
+
             //if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
 
             var bulkPurchase = _context.BulkPurchases
@@ -156,7 +164,7 @@ namespace ERP.Services.BulkPurchaseServices
                  .FirstOrDefault();
 
             if (bulkPurchase == null) throw new KeyNotFoundException("BulkPurchase Not Found.");
-            
+
             foreach (var requestItem in confirmDTO.BulkPurchaseItems)
             {
                 var bulkPurchaseItem = bulkPurchase.BulkPurchaseItems
@@ -172,8 +180,7 @@ namespace ERP.Services.BulkPurchaseServices
             }
 
             bulkPurchase.TotalPurchaseCost = calculateTotalCost(bulkPurchase.BulkPurchaseItems); ;
-            
-            var centralSite = _context.Sites.FirstOrDefault();
+
 
             bulkPurchase.Status = BULKPURCHASESTATUS.PURCHASED;
 
@@ -190,7 +197,7 @@ namespace ERP.Services.BulkPurchaseServices
                 receive.PurchaseDate = DateTime.Now;
                 receive.ReceivingSiteId = purchase.ReceivingSiteId;
                 ICollection<ReceiveItem> receiveItems = new List<ReceiveItem>();
-                
+
                 foreach (var requestItem in purchase.PurchaseItems)
                 {
                     ReceiveItem receiveItem = new();
@@ -200,16 +207,16 @@ namespace ERP.Services.BulkPurchaseServices
 
                     receiveItems.Add(receiveItem);
                 }
-                
+
                 receive.ReceiveItems = receiveItems;
                 receive.Status = RECEIVESTATUS.PURCHASED;
 
                 _context.Receives.Add(receive);
 
             }
-            
+
             await _context.SaveChangesAsync();
-            
+
             await _notificationService.Add(type: NOTIFICATIONTYPE.BULKPURCHASE,
                 status: bulkPurchase.Status,
                 actionId: bulkPurchase.BulkPurchaseId,

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERP.Models
@@ -16,33 +16,33 @@ namespace ERP.Models
 
         public DateTime? FixDate { get; set; }
 
-        public Site Site { get; set; }
+        public Site Site { get; set; } = null!;
 
         public int SiteId { get; set; }
 
-        public Item Item { get; set; }
+        public Item Item { get; set; } = null!;
 
         public int ItemId { get; set; }
 
         public int EquipmentModelId { get; set; }
 
-        public EquipmentModel EquipmentModel { get; set; }
+        public EquipmentModel EquipmentModel { get; set; } = null!;
 
         public int? EquipmentAssetId { get; set; }
 
-        public EquipmentAsset EquipmentAsset { get; set; }
+        public EquipmentAsset EquipmentAsset { get; set; } = null!;
 
-        public string Reason { get; set; }
+        public string Reason { get; set; } = string.Empty;
 
-        public Employee RequestedBy { get; set; }
+        public Employee RequestedBy { get; set; } = null!;
 
         public int RequestedById { get; set; }
 
-        public Employee ApprovedBy { get; set; }
+        public Employee ApprovedBy { get; set; } = null!;
 
         public int? ApprovedById { get; set; }
 
-        public Employee FixedBy { get; set; }
+        public Employee FixedBy { get; set; } = null!;
 
         public int? FixedById { get; set; }
 

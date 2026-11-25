@@ -1,10 +1,10 @@
-﻿namespace ERP.DTOs.Purchase
+namespace ERP.DTOs.Purchase
 {
     public class ConfirmPurchaseDTO
     {
         public int PurchaseId { get; set; }
 
-        public ICollection<ConfirmPurchaseItem> PurchaseItems { get; set; }
+        public ICollection<ConfirmPurchaseItem> PurchaseItems { get; set; } = [];
 
     }
 

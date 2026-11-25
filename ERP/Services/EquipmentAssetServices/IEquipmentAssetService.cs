@@ -1,4 +1,4 @@
-﻿using ERP.Models;
+using ERP.Models;
 
 namespace ERP.Services.EquipmentAssetServices
 {

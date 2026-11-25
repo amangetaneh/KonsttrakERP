@@ -1,7 +1,15 @@
 import axios from "axios";
 
-axios.defaults.headers.common["Authorization"] = "bearer " + localStorage.getItem("token");
+export const url = (
+  import.meta.env.VITE_API_URL || "http://localhost:5067/api/"
+).replace(/\/?$/, "/");
+const api = axios.create({ baseURL: url });
 
-export const url = "https://localhost:7067/api/";
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  else delete config.headers.Authorization;
+  return config;
+});
 
-export default axios.create({ baseURL: url });
+export default api;

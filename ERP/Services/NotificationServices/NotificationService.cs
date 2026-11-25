@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.Models;
 using ERP.Services.User;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +9,7 @@ namespace ERP.Services.NotificationServices
     {
         private readonly DataContext _context;
         private readonly IUserService _userService;
-        private Notification notification;
+        private Notification notification = new();
 
         public NotificationService(DataContext context, IUserService userService)
         {
@@ -28,7 +28,7 @@ namespace ERP.Services.NotificationServices
             return notifications.OrderByDescending(n => n.Date).ToList();
         }
 
-        public async Task<Notification> GetNotification(int id)
+        public async Task<Notification?> GetNotification(int id)
         {
             var notification = await _context.Notifications
                 .Where(noti => noti.NotificationId == id)
@@ -42,10 +42,10 @@ namespace ERP.Services.NotificationServices
 
             List<Notification> notifications = new();
 
-            if (_userService.UserRole == null || _userService.Employee.EmployeeSite == null) 
+            if (_userService.UserRole == null || _userService.Employee.EmployeeSite == null)
                 return notifications;
 
-            int siteId = (int)_userService.Employee.EmployeeSiteId;
+            int siteId = _userService.GetMySiteId();
             int employeeId = (int)_userService.Employee.EmployeeId;
 
             notifications.AddRange(await GetTransferNotifications(siteId, employeeId));
@@ -76,7 +76,7 @@ namespace ERP.Services.NotificationServices
             return notifications;
 
         }
-        
+
         private async Task<List<Notification>> GetMaintenanceNotifications(int siteId, int employeeId)
         {
 
@@ -93,7 +93,7 @@ namespace ERP.Services.NotificationServices
             if (_userService.UserRole.CanApproveMaintenance)
                 notifications.AddRange(await _context.Notifications
                     .Where(noti => noti.IsCleared == false &&
-                        noti.Type == NOTIFICATIONTYPE.MAINTENANCE&&
+                        noti.Type == NOTIFICATIONTYPE.MAINTENANCE &&
                         noti.Status == MAINTENANCESTATUS.REQUESTED &&
                         noti.SiteId == siteId)
                     .ToListAsync());
@@ -234,11 +234,11 @@ namespace ERP.Services.NotificationServices
                 notifications.AddRange(await _context.Notifications
                     .Where(noti => noti.IsCleared == false &&
                         noti.Type == NOTIFICATIONTYPE.RECEIVE &&
-                        (noti.Status == RECEIVESTATUS.PURCHASED ) &&
+                        (noti.Status == RECEIVESTATUS.PURCHASED) &&
                         noti.SiteId == siteId)
                     .ToListAsync());
 
-             if (_userService.UserRole.CanReceive)
+            if (_userService.UserRole.CanReceive)
                 notifications.AddRange(await _context.Notifications
                     .Where(noti => noti.IsCleared == false &&
                         noti.Type == NOTIFICATIONTYPE.RECEIVE &&
@@ -277,7 +277,7 @@ namespace ERP.Services.NotificationServices
                         noti.Status == BUYSTATUS.REQUESTED &&
                         noti.SiteId == siteId)
                     .ToListAsync());
-            
+
             if (_userService.UserRole.CanApproveBuy)
                 notifications.AddRange(await _context.Notifications
                     .Where(noti => noti.IsCleared == false &&
@@ -408,7 +408,7 @@ namespace ERP.Services.NotificationServices
                 .Where(n => n.Type == type && n.ActionId == actionId)
                 .ToListAsync();
 
-           if (notifications.Count == 0) return;
+            if (notifications.Count == 0) return;
 
             foreach (var notification in notifications)
             {
@@ -517,9 +517,9 @@ namespace ERP.Services.NotificationServices
                 .ThenInclude(e => e.Item)
                 .FirstOrDefaultAsync();
 
-            string itemName = model == null ? "An Equipment Model": $"The {model.Equipment.Item.Name} Model {model.Name}";
+            string itemName = model == null ? "An Equipment Model" : $"The {model.Equipment.Item.Name} Model {model.Name}";
 
-            var site = await _context.Sites.Where(i=> i.SiteId == notification.SiteId).FirstOrDefaultAsync();
+            var site = await _context.Sites.Where(i => i.SiteId == notification.SiteId).FirstOrDefaultAsync();
             string siteName = site == null ? "A Site." : $"The {site.Name} Site.";
 
             notification.Title = "Stock Running Out";
@@ -594,7 +594,7 @@ namespace ERP.Services.NotificationServices
                     notification.Title = "Request Queued Purchase";
                     notification.Content = $"Request Queued Purchase With Request No: {actionId}";
                     break;
-                
+
                 case PURCHASESTATUS.REQUESTED:
                     notification.Title = "Check Purchase Request";
                     notification.Content = $"New Purchase Request With Request No: {actionId}";
@@ -614,12 +614,12 @@ namespace ERP.Services.NotificationServices
                     notification.Title = "Queued Purchase Request";
                     notification.Content = $"Purchase Request {actionId} Has Been Queued For Bulk Purchase";
                     break;
-                
+
                 case PURCHASESTATUS.DECLINED:
                     notification.Title = "Declined Purchase Request";
                     notification.Content = $"Purchase Request {actionId} Has Been Declined";
                     break;
-                
+
                 case PURCHASESTATUS.PURCHASED:
                     notification.Title = "Confirmed Purchase Request";
                     notification.Content = $"Purchase Request {actionId} Has Been Purchased";
@@ -641,7 +641,7 @@ namespace ERP.Services.NotificationServices
                     notification.Title = "Approve Bulk Purchase Request";
                     notification.Content = $"Approve Bulk Purchase Request With Request No: {actionId}";
                     break;
-                
+
                 case BULKPURCHASESTATUS.APPROVED:
                     notification.Title = "Confirm Bulk Purchase Request";
                     notification.Content = $"Confirm Bulk Purchase Request With Request No: {actionId}";
@@ -704,7 +704,7 @@ namespace ERP.Services.NotificationServices
                     notification.Title = "Receive Purchased Items";
                     notification.Content = $"New Receive Order With Request No: {actionId}";
                     break;
-                
+
                 case RECEIVESTATUS.RECEIVED:
                     notification.Title = "Check Received Items";
                     notification.Content = $"Check Received Request With Request No: {actionId}";

@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.DTOs.Report;
 using ERP.Models;
@@ -18,7 +18,7 @@ namespace ERP.Controllers
         private readonly IReportService _reportService;
         private readonly IUserService _userService;
 
-        public ReportController( IReportService reportService, IUserService userService)
+        public ReportController(IReportService reportService, IUserService userService)
         {
             _reportService = reportService;
             _userService = userService;
@@ -113,10 +113,10 @@ namespace ERP.Controllers
         [HttpPost("stock")]
         public async Task<ActionResult<GeneralReportReturnDTO>> GetStockReport(GeneralReportDTO reportDTO)
         {
-             if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanGetStockReport)
-                 return Forbid();
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanGetStockReport)
+                return Forbid();
 
-            reportDTO.SiteId = (int)_userService.Employee.EmployeeSiteId;
+            reportDTO.SiteId = _userService.GetMySiteId();
 
             return Ok(await _reportService.GetGeneralReport(reportDTO));
         }

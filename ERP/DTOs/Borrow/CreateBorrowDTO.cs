@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class CreateBorrowDTO
     {
@@ -7,7 +7,7 @@
 
         public int SiteId { get; set; }
 
-        public ICollection<CreateBorrowItem> BorrowItems { get; set; }
+        public ICollection<CreateBorrowItem> BorrowItems { get; set; } = [];
     }
 
     public class CreateBorrowItem

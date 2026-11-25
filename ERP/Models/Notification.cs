@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace ERP.Models
 {
@@ -11,7 +11,7 @@ namespace ERP.Models
 
         public string Content { get; set; } = string.Empty;
 
-        public string Type { get; set; }
+        public string Type { get; set; } = string.Empty;
 
         public int Status { get; set; }
 
@@ -23,7 +23,7 @@ namespace ERP.Models
 
         public int SiteId { get; set; }
 
-        public Site Site { get; set; }
+        public Site Site { get; set; } = null!;
 
         public bool IsCleared { get; set; } = false;
 

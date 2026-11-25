@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -27,10 +27,10 @@ namespace ERP.Models
 
         [JsonIgnore]
         [ForeignKey("IssueId")]
-        public Issue Issue { get; set; }
+        public Issue Issue { get; set; } = null!;
 
         [ForeignKey("ItemId")]
-        public Item Item { get; set; }
+        public Item Item { get; set; } = null!;
 
     }
 }

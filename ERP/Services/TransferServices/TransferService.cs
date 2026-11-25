@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services.ItemSiteQtyServices;
@@ -46,7 +46,7 @@ namespace ERP.Services.TransferServices
 
             return transfer;
         }
-       
+
 
         public async Task<List<Transfer>> GetByCondition(GetTransfersDTO getTransfersDTO)
         {
@@ -54,7 +54,7 @@ namespace ERP.Services.TransferServices
             int employeeId = _userService.Employee.EmployeeId;
 
             var transfers = await _context.Transfers
-                .Where(transfer =>(
+                .Where(transfer => (
                     (getTransfersDTO.SendSiteId == -1 || transfer.SendSiteId == getTransfersDTO.SendSiteId) &&
                     (getTransfersDTO.ReceiveSiteId == -1 || transfer.ReceiveSiteId == getTransfersDTO.ReceiveSiteId) &&
                     ((userRole.CanRequestTransfer == true && transfer.RequestedById == employeeId) ||
@@ -74,13 +74,13 @@ namespace ERP.Services.TransferServices
                 throw new InvalidOperationException("Borrowing Employee Does Not Have A Site");
         }
 
-        public async Task<Transfer> RequestEquipment (CreateEquipmentTransferDTO transferDTO)
+        public async Task<Transfer> RequestEquipment(CreateEquipmentTransferDTO transferDTO)
         {
             checkEmployeeSiteIsAvailable();
 
             Transfer transfer = new();
             transfer.SendSiteId = transferDTO.SendSiteId;
-            transfer.ReceiveSiteId = (int)_userService.Employee.EmployeeSiteId;
+            transfer.ReceiveSiteId = _userService.GetMySiteId();
             transfer.RequestedById = _userService.Employee.EmployeeId;
 
             ICollection<TransferItem> transferItems = new List<TransferItem>();
@@ -128,13 +128,13 @@ namespace ERP.Services.TransferServices
             return transfer;
         }
 
-        public async Task<Transfer> RequestMaterial (CreateMaterialTransferDTO transferDTO)
+        public async Task<Transfer> RequestMaterial(CreateMaterialTransferDTO transferDTO)
         {
             checkEmployeeSiteIsAvailable();
 
             Transfer transfer = new();
             transfer.SendSiteId = transferDTO.SendSiteId;
-            transfer.ReceiveSiteId = (int)_userService.Employee.EmployeeSiteId;
+            transfer.ReceiveSiteId = _userService.GetMySiteId();
             transfer.RequestedById = _userService.Employee.EmployeeId;
 
             ICollection<TransferItem> transferItems = new List<TransferItem>();
@@ -269,9 +269,9 @@ namespace ERP.Services.TransferServices
                 transferItem.SendRemark = requestItem.SendRemark;
 
                 if (transferItem.Item.Type == ITEMTYPE.EQUIPMENT)
-                    await _itemSiteQtyService.SubtractEquipmentModel(transferItem.EquipmentModelId, transfer.SendSiteId, (int)transferItem.QtyApproved);
+                    await _itemSiteQtyService.SubtractEquipmentModel(transferItem.EquipmentModelId, transfer.SendSiteId, (transferItem.QtyApproved ?? throw new InvalidOperationException("The item must have an approved quantity before stock can be moved.")));
                 else
-                    await _itemSiteQtyService.SubtractMaterial(transferItem.ItemId, transfer.SendSiteId, (int)transferItem.QtyApproved);
+                    await _itemSiteQtyService.SubtractMaterial(transferItem.ItemId, transfer.SendSiteId, (transferItem.QtyApproved ?? throw new InvalidOperationException("The item must have an approved quantity before stock can be moved.")));
 
 
                 if (transferItem.Item.Type == ITEMTYPE.EQUIPMENT && requestItem.EquipmentAssetIds != null)
@@ -326,9 +326,9 @@ namespace ERP.Services.TransferServices
                 transferItem.ReceiveRemark = requestItem.ReceiveRemark;
 
                 if (transferItem.Item.Type == ITEMTYPE.EQUIPMENT)
-                    await _itemSiteQtyService.AddEquipmentModel(transferItem.EquipmentModelId, transfer.ReceiveSiteId, (int)transferItem.QtyApproved);
+                    await _itemSiteQtyService.AddEquipmentModel(transferItem.EquipmentModelId, transfer.ReceiveSiteId, (transferItem.QtyApproved ?? throw new InvalidOperationException("The item must have an approved quantity before stock can be moved.")));
                 else
-                    await _itemSiteQtyService.AddMaterial(transferItem.ItemId, transfer.ReceiveSiteId, (int)transferItem.QtyApproved);
+                    await _itemSiteQtyService.AddMaterial(transferItem.ItemId, transfer.ReceiveSiteId, (transferItem.QtyApproved ?? throw new InvalidOperationException("The item must have an approved quantity before stock can be moved.")));
             }
 
             transfer.Status = TRANSFERSTATUS.RECEIVED;

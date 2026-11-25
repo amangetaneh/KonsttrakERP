@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,7 +23,7 @@ namespace ERP.Services.SiteServices
             return site;
 
         }
-        
+
         public async Task<List<Site>> GetAll()
         {
             var sites = await _context.Sites.ToListAsync();
@@ -45,12 +45,12 @@ namespace ERP.Services.SiteServices
 
             return site;
         }
-        
+
         public async Task<Site> EditSite(Site request)
         {
             var site = _context.Sites.Where(s => s.SiteId == request.SiteId)
                .FirstOrDefault();
-            
+
             if (site == null) throw new KeyNotFoundException("Site Not Found.");
 
             site.Name = request.Name;

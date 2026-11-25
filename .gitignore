@@ -361,3 +361,53 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Local environment and secrets (only safe examples are committed)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
+appsettings.Local.json
+appsettings.*.Local.json
+
+# Local data and tooling
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.sqlite-*
+*.bak
+*.log
+.cache/
+coverage/
+TestResults/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+dist/
+node_modules/
+*.tsbuildinfo
+.npm/
+.venv/
+
+# Additional private keys and tool caches
+*.p8
+*.p12
+*.jks
+*.keystore
+.eslintcache
+.prettiercache
+.vite/
+.parcel-cache/
+.pytest_cache/
+*.sqlite3-*
+
+# Private working notes and tool-local settings
+private/
+.private/
+session-recordings/
+.claude/settings.local.json

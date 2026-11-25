@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace ERP.Models
 {
@@ -15,22 +15,22 @@ namespace ERP.Models
 
         public DateTime? HandDate { get; set; }
 
-        public Site Site { get; set; }
+        public Site Site { get; set; } = null!;
 
         public int SiteId { get; set; }
 
-        public Employee RequestedBy { get; set; }
+        public Employee RequestedBy { get; set; } = null!;
 
         public int RequestedById { get; set; }
 
-        public Employee HandedBy { get; set; }
+        public Employee HandedBy { get; set; } = null!;
 
         public int? HandedById { get; set; }
 
-        public Employee ApprovedBy { get; set; }
+        public Employee ApprovedBy { get; set; } = null!;
 
         public int? ApprovedById { get; set; }
 
-        public ICollection<BorrowItem> BorrowItems { get; set; }
+        public ICollection<BorrowItem> BorrowItems { get; set; } = [];
     }
 }

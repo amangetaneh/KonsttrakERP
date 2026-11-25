@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace ERP.Models
 {
@@ -20,11 +20,11 @@ namespace ERP.Models
         public bool CanApprovePurchase { get; set; } = false;
 
         public bool CanCheckPurchase { get; set; } = false;
-        
+
         public bool CanViewPurchase { get; set; } = false;
 
         public bool CanConfirmPurchase { get; set; } = false;
-         
+
         public bool CanViewBulkPurchase { get; set; } = false;
 
         public bool CanRequestBulkPurchase { get; set; } = false;
@@ -46,23 +46,23 @@ namespace ERP.Models
         public bool CanReceive { get; set; } = false;
 
         public bool CanApproveReceive { get; set; } = false;
-        
+
         public bool CanViewReceive { get; set; } = false;
 
         public bool CanRequestIssue { get; set; } = false;
 
         public bool CanApproveIssue { get; set; } = false;
-        
-        public bool CanHandIssue { get; set; } = false; 
-        
-        public bool CanViewIssue { get; set; } = false; 
-        
+
+        public bool CanHandIssue { get; set; } = false;
+
+        public bool CanViewIssue { get; set; } = false;
+
         public bool CanRequestBorrow { get; set; } = false;
 
         public bool CanApproveBorrow { get; set; } = false;
-        
+
         public bool CanHandBorrow { get; set; } = false;
-        
+
         public bool CanViewBorrow { get; set; } = false;
 
         public bool CanReturnBorrow { get; set; } = false;
@@ -72,7 +72,7 @@ namespace ERP.Models
         public bool CanApproveTransfer { get; set; } = false;
 
         public bool CanSendTransfer { get; set; } = false;
-        
+
         public bool CanReceiveTransfer { get; set; } = false;
 
         public bool CanViewTransfer { get; set; } = false;
@@ -80,9 +80,9 @@ namespace ERP.Models
         public bool CanRequestMaintenance { get; set; } = false;
 
         public bool CanApproveMaintenance { get; set; } = false;
-       
+
         public bool CanFixMaintenance { get; set; } = false;
-       
+
         public bool CanViewMaintenance { get; set; } = false;
 
         public bool CanGetStockNotification { get; set; } = false;

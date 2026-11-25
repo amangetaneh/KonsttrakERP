@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace ERP.Models
 {
@@ -9,15 +9,15 @@ namespace ERP.Models
 
         public int EquipmentModelId { get; set; }
 
-        public EquipmentModel EquipmentModel { get; set; }
+        public EquipmentModel EquipmentModel { get; set; } = null!;
 
-        public string AssetNo { get; set; }
+        public string AssetNo { get; set; } = string.Empty;
 
         public string? SerialNo { get; set; }
 
         public int? CurrentSiteId { get; set; }
 
-        public Site CurrentSite { get; set; }
+        public Site CurrentSite { get; set; } = null!;
 
         public int? AssetDamageId { get; set; }
 

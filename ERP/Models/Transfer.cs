@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace ERP.Models
 {
@@ -17,34 +17,34 @@ namespace ERP.Models
 
         public DateTime? ReceiveDate { get; set; }
 
-        public Site SendSite { get; set; }
+        public Site SendSite { get; set; } = null!;
 
         public int SendSiteId { get; set; }
 
-        public Site ReceiveSite { get; set; }
+        public Site ReceiveSite { get; set; } = null!;
 
         public int ReceiveSiteId { get; set; }
 
-        public Employee RequestedBy { get; set; }
+        public Employee RequestedBy { get; set; } = null!;
 
         public int RequestedById { get; set; }
 
-        public Employee ReceivedBy { get; set; }
+        public Employee ReceivedBy { get; set; } = null!;
 
         public int? ReceivedById { get; set; }
 
         public string? DeliveredBy { get; set; }
 
-        public Employee SentBy { get; set; }
+        public Employee SentBy { get; set; } = null!;
 
         public int? SentById { get; set; }
 
         public string? VehiclePlateNo { get; set; }
 
-        public virtual Employee ApprovedBy { get; set; }
+        public virtual Employee ApprovedBy { get; set; } = null!;
 
         public int? ApprovedById { get; set; }
 
-        public ICollection<TransferItem> TransferItems { get; set; }
+        public ICollection<TransferItem> TransferItems { get; set; } = [];
     }
 }

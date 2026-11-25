@@ -1,4 +1,4 @@
-﻿using ERP.DTOs.BulkPurchase;
+using ERP.DTOs.BulkPurchase;
 using ERP.DTOs.Purchase;
 using ERP.Models;
 

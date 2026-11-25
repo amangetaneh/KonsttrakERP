@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services.MaintenanceServices;
@@ -20,7 +20,7 @@ namespace ERP.Controllers
         private readonly IUserService _userService;
 
 
-        public MaintenanceController( IMaintenanceService maintenanceService, IUserService userService)
+        public MaintenanceController(IMaintenanceService maintenanceService, IUserService userService)
         {
             _maintenanceService = maintenanceService;
             _userService = userService;
@@ -33,10 +33,10 @@ namespace ERP.Controllers
             {
                 var maintenance = await _maintenanceService.GetById(id);
 
-                if (_userService.UserRole.IsAdmin || _userService.UserRole.IsFinance || 
+                if (_userService.UserRole.IsAdmin || _userService.UserRole.IsFinance ||
                     (_userService.UserRole.CanViewMaintenance && _userService.Employee.EmployeeSiteId == maintenance.SiteId) ||
                     _userService.Employee.EmployeeId == maintenance.RequestedById)
-                return Ok(maintenance);
+                    return Ok(maintenance);
 
                 return Forbid();
             }

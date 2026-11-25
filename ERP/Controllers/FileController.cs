@@ -1,17 +1,12 @@
-﻿using ERP.Context;
-using ERP.Models;
 using ERP.Services.FileServices;
-using ERP.Services.SiteServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ERP.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Employee")]
-    public class FileController : Controller
+    public class FileController : ControllerBase
     {
         private readonly IFileService _fileService;
 
@@ -20,31 +15,33 @@ namespace ERP.Controllers
             _fileService = fileService;
         }
 
+        [AllowAnonymous]
         [HttpGet("{fileName}")]
-        public async Task<FileContentResult> Get(string fileName)
+        public async Task<IActionResult> Get(string fileName)
         {
-            var file = await _fileService.GetFile(fileName, this);
-
-            return file;
+            if (User.Identity?.IsAuthenticated != true && !IsPublicTemplate(fileName)) return Challenge();
+            try { return await _fileService.GetFile(fileName, this); }
+            catch (ArgumentException) { return BadRequest("Invalid file name."); }
+            catch (FileNotFoundException) { return NotFound(); }
         }
 
         [HttpPost("upload")]
         public async Task<ActionResult<string>> Upload(IFormFile file)
         {
-            var name = await _fileService.SaveFile(file);
-            return Ok(name);
+            try { return Ok(await _fileService.SaveFile(file)); }
+            catch (ArgumentException) { return BadRequest("Invalid file name."); }
         }
 
+        [AllowAnonymous]
         [HttpGet("download/{fileName}")]
-        public async Task<FileContentResult> Download(string fileName)
+        public async Task<IActionResult> Download(string fileName)
         {
-            var file =await  _fileService.DownloadFile(fileName, this);
-
-            return file;
+            if (User.Identity?.IsAuthenticated != true && !IsPublicTemplate(fileName)) return Challenge();
+            try { return await _fileService.DownloadFile(fileName, this); }
+            catch (ArgumentException) { return BadRequest("Invalid file name."); }
+            catch (FileNotFoundException) { return NotFound(); }
         }
 
-
-
-        
+        private static bool IsPublicTemplate(string fileName) => fileName is "blank_forms.pdf" or "blank_forms.docx";
     }
 }

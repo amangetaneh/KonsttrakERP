@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services.NotificationServices;
@@ -48,6 +48,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<bool>> Clear(int notificationId)
         {
             var notification = await _notificationService.GetNotification(notificationId);
+            if (notification == null) return NotFound();
 
             if (_userService.UserRole.IsAdmin ||
                     _userService.Employee.EmployeeSiteId == notification.SiteId ||

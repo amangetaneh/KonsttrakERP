@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class GeneralReportDTO
     {
@@ -34,7 +34,7 @@
                 DateTo = DateTime.Parse(ToDate).AddDays(1);
 
         }
-               
+
     }
 
 }

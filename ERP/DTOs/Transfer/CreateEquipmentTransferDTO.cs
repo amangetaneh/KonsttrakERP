@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class CreateEquipmentTransferDTO
     {
@@ -7,7 +7,7 @@
 
         public int ReceiveSiteId { get; set; }
 
-        public ICollection<CreateEquipmentTransferItem> TransferItems { get; set; }
+        public ICollection<CreateEquipmentTransferItem> TransferItems { get; set; } = [];
 
     }
 

@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs.BulkPurchase
+namespace ERP.DTOs.BulkPurchase
 {
     public class RequestBulkPurchaseDTO
     {

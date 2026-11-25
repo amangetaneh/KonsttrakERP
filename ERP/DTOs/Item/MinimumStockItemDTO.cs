@@ -1,9 +1,9 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class MinimumStockItemDTO
     {
 
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         public int ItemType { get; set; } = -1;
 

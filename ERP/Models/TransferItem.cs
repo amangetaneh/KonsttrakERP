@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -32,12 +32,12 @@ namespace ERP.Models
 
         [JsonIgnore]
         [ForeignKey("TransferId")]
-        public Transfer Transfer { get; set; }
+        public Transfer Transfer { get; set; } = null!;
 
         [ForeignKey("ItemId")]
-        public Item Item { get; set; }
+        public Item Item { get; set; } = null!;
 
-        public ICollection<TransferItemEquipmentAsset> TransferEquipmentAssets { get; set; }
+        public ICollection<TransferItemEquipmentAsset> TransferEquipmentAssets { get; set; } = [];
 
 
     }

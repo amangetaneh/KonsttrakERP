@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class ApproveMaintenanceDTO
     {
@@ -6,6 +6,6 @@
 
         public int ApprovedById { get; set; }
 
-        public string ApproveRemark { get; set; }
+        public string ApproveRemark { get; set; } = string.Empty;
     }
 }

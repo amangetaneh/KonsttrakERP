@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs.Receive
+namespace ERP.DTOs.Receive
 {
     public class GetReceivesDTO
     {

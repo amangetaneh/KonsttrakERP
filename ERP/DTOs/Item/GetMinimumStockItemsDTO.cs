@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class GetMinimumStockItemsDTO
     {
@@ -8,8 +8,8 @@
         public int EquipmentCategoryId { get; set; } = -1;
 
         public int ItemId { get; set; } = -1;
-               
-               
+
+
     }
 
 }

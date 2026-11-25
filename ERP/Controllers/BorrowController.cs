@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services.BorrowServices;
@@ -69,11 +69,11 @@ namespace ERP.Controllers
                 var borrow = await _borrowService.RequestBorrow(borrowDTO);
                 return Ok(borrow.BorrowId);
             }
-            catch(KeyNotFoundException ex)
+            catch (KeyNotFoundException ex)
             {
                 return NotFound(ex.Message);
             }
-            catch(InvalidOperationException ex)
+            catch (InvalidOperationException ex)
             {
                 return BadRequest(ex.Message);
             }

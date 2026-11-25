@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.DTOs.Item;
 using ERP.Models;
@@ -34,7 +34,7 @@ namespace ERP.Services.ItemServices
 
         public async Task<int> ImportAssetNumbers(ImportAssetNoDTO importDTO)
         {
-            if(importDTO.SiteId == -1 || importDTO.EquipmentModelId == -1)
+            if (importDTO.SiteId == -1 || importDTO.EquipmentModelId == -1)
                 return 0;
 
             int count = 0;
@@ -43,12 +43,12 @@ namespace ERP.Services.ItemServices
             {
                 var asset = new EquipmentAsset();
 
-                if(importAsset.AssetNo != null && importAsset.AssetNo.Trim() != String.Empty)
+                if (importAsset.AssetNo != null && importAsset.AssetNo.Trim() != String.Empty)
                 {
                     asset.AssetNo = importAsset.AssetNo.Trim();
                     count++;
 
-                    if(importAsset.SerialNo != null && importAsset.SerialNo.Trim() != String.Empty)
+                    if (importAsset.SerialNo != null && importAsset.SerialNo.Trim() != String.Empty)
                         asset.SerialNo = importAsset.SerialNo.Trim();
 
                     asset.EquipmentModelId = importDTO.EquipmentModelId;
@@ -66,16 +66,16 @@ namespace ERP.Services.ItemServices
         public async Task<bool> UpdateMinimumStockItems(List<MinimumStockItemDTO> requestDTO)
         {
 
-            int siteId = (int)_userService.Employee.EmployeeSiteId;
+            int siteId = _userService.GetMySiteId();
 
             foreach (var item in requestDTO)
             {
-                if(item.ItemType == ITEMTYPE.MATERIAL)
+                if (item.ItemType == ITEMTYPE.MATERIAL)
                 {
                     var materialSiteQty = await _context.MaterialSiteQties
                         .Where(msq => msq.ItemId == item.ItemId && msq.SiteId == item.SiteId)
                         .FirstOrDefaultAsync();
-                    
+
                     if (materialSiteQty == null)
                         throw new KeyNotFoundException($"Material with Item Id {item.ItemId} and Site Id {item.SiteId} Not Found.");
 
@@ -102,9 +102,9 @@ namespace ERP.Services.ItemServices
         public async Task<List<MinimumStockItemDTO>> GetMinimumStockItems(GetMinimumStockItemsDTO requestDTO)
         {
             List<MinimumStockItemDTO> minimumStockItems = new();
-            int siteId = (int)_userService.Employee.EmployeeSiteId;
+            int siteId = _userService.GetMySiteId();
 
-            if(requestDTO.ItemType != ITEMTYPE.EQUIPMENT)
+            if (requestDTO.ItemType != ITEMTYPE.EQUIPMENT)
             {
                 var items = await _context.MaterialSiteQties
                     .Where(msq => msq.SiteId == siteId &&
@@ -159,7 +159,7 @@ namespace ERP.Services.ItemServices
 
             return categories;
         }
-        
+
         public async Task<List<Item>> GetMaterials()
         {
             var items = await _context.Items.Where(item => item.Type == ITEMTYPE.MATERIAL)
@@ -262,10 +262,10 @@ namespace ERP.Services.ItemServices
 
             if (qtyDTO.EquipmentModelId != -1)
             {
-                var temp  = await _context.EquipmentSiteQties
+                var temp = await _context.EquipmentSiteQties
                        .Where(esq => esq.EquipmentModelId == qtyDTO.EquipmentModelId && esq.SiteId == siteId)
                        .FirstOrDefaultAsync();
-                
+
                 if (temp != null) qty = temp.Qty;
 
             }

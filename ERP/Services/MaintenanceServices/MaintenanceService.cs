@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services.NotificationServices;
@@ -41,7 +41,7 @@ namespace ERP.Services.MaintenanceServices
         {
             checkEmployeeSiteIsAvailable();
             UserRole userRole = _userService.UserRole;
-            int siteId = (int)_userService.Employee.EmployeeSiteId;
+            int siteId = _userService.GetMySiteId();
 
             var items = await _context.EquipmentAssets
                 .Where(ea => ea.EquipmentModelId == modelId && ea.AssetDamageId != null && ea.CurrentSiteId == siteId)
@@ -55,11 +55,11 @@ namespace ERP.Services.MaintenanceServices
             checkEmployeeSiteIsAvailable();
             UserRole userRole = _userService.UserRole;
             int employeeId = _userService.Employee.EmployeeId;
-            int siteId = (int)_userService.Employee.EmployeeSiteId;
+            int siteId = _userService.GetMySiteId();
 
             var borrows = await _context.Maintenances
                 .Where(maintenance => (
-                    ( maintenance.SiteId == siteId) &&
+                    (maintenance.SiteId == siteId) &&
                     ((userRole.CanRequestMaintenance == true && maintenance.RequestedById == employeeId) ||
                     (userRole.CanApproveMaintenance == true && maintenance.Status == MAINTENANCESTATUS.REQUESTED) ||
                     (userRole.CanFixMaintenance == true && maintenance.Status == MAINTENANCESTATUS.APPROVED))))
@@ -82,7 +82,7 @@ namespace ERP.Services.MaintenanceServices
 
             Maintenance maintenance = new();
             maintenance.RequestedById = _userService.Employee.EmployeeId;
-            maintenance.SiteId = (int)_userService.Employee.EmployeeSiteId;
+            maintenance.SiteId = _userService.GetMySiteId();
             maintenance.Reason = maintenanceDTO.Reason;
 
             var itemTemp = _context.Items.Where(item => item.ItemId == maintenanceDTO.ItemId).FirstOrDefault();
@@ -181,7 +181,7 @@ namespace ERP.Services.MaintenanceServices
         {
             var maintenance = await _context.Maintenances
                 .Where(m => m.MaintenanceId == fixDTO.MaintenanceId)
-                .Include(m=>m.EquipmentAsset)
+                .Include(m => m.EquipmentAsset)
                 .FirstOrDefaultAsync();
             if (maintenance == null) throw new KeyNotFoundException("Maintenance Request Not Found.");
 

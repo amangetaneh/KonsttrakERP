@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs.Purchase
+namespace ERP.DTOs.Purchase
 {
     public class GetPurchasesDTO
     {

@@ -1,10 +1,10 @@
-﻿namespace ERP.DTOs.BulkPurchase
+namespace ERP.DTOs.BulkPurchase
 {
     public class ApproveBulkPurchaseDTO
     {
         public int BulkPurchaseId { get; set; }
 
-        public ICollection<ApproveBulkPurchaseItem> BulkPurchaseItems { get; set; }
+        public ICollection<ApproveBulkPurchaseItem> BulkPurchaseItems { get; set; } = [];
 
     }
 

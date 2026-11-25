@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs.Item
+namespace ERP.DTOs.Item
 {
     public class GetQtyDTO
     {

@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class ApproveTransferDTO
     {
@@ -6,7 +6,7 @@
 
         public int ApprovedById { get; set; }
 
-        public ICollection<ApproveTransferItems> TransferItems { get; set; }
+        public ICollection<ApproveTransferItems> TransferItems { get; set; } = [];
     }
 
     public class ApproveTransferItems
@@ -17,6 +17,6 @@
 
         public int QtyApproved { get; set; }
 
-        public string ApproveRemark { get; set; }
+        public string ApproveRemark { get; set; } = string.Empty;
     }
 }

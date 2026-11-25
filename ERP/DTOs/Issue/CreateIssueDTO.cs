@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class CreateIssueDTO
     {
@@ -7,7 +7,7 @@
 
         public int SiteId { get; set; }
 
-        public ICollection<CreateIssueItem> IssueItems { get; set; }
+        public ICollection<CreateIssueItem> IssueItems { get; set; } = [];
     }
 
     public class CreateIssueItem

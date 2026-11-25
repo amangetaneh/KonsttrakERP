@@ -1,4 +1,4 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class CreateMaintenanceDTO
     {
@@ -11,7 +11,7 @@
 
         public int SiteId { get; set; }
 
-        public string Reason { get; set; }
+        public string Reason { get; set; } = string.Empty;
 
         public int ItemId { get; set; }
 

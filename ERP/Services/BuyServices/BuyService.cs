@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.DTOs.Buy;
 using ERP.DTOs.Purchase;
@@ -50,7 +50,7 @@ namespace ERP.Services.BuyServices
         {
             UserRole userRole = _userService.UserRole;
             int employeeId = _userService.Employee.EmployeeId;
-            int employeeSiteId = (int)_userService.Employee.EmployeeSiteId;
+            int employeeSiteId = _userService.GetMySiteId();
 
             var buys = await _context.Buys
                 .Where(buy => (
@@ -73,7 +73,7 @@ namespace ERP.Services.BuyServices
 
             Buy buy = new();
             buy.RequestedById = _userService.Employee.EmployeeId;
-            buy.BuySiteId = (int)_userService.Employee.EmployeeSiteId;
+            buy.BuySiteId = _userService.GetMySiteId();
 
             ICollection<BuyItem> buyItems = new List<BuyItem>();
 
@@ -104,7 +104,7 @@ namespace ERP.Services.BuyServices
             buy.BuyItems = buyItems;
 
             _context.Buys.Add(buy);
-            
+
             await _context.SaveChangesAsync();
 
             await _notificationService.Add(type: NOTIFICATIONTYPE.BUY,
@@ -151,7 +151,7 @@ namespace ERP.Services.BuyServices
             if (buy == null) throw new KeyNotFoundException("Buy Not Found.");
 
             var purchase = _context.Purchases
-               .Where(purchase => purchase.Status == PURCHASESTATUS.QUEUED && purchase.ReceivingSiteId == (int)_userService.Employee.EmployeeSiteId)
+               .Where(purchase => purchase.Status == PURCHASESTATUS.QUEUED && purchase.ReceivingSiteId == _userService.GetMySiteId())
                .Include(purchase => purchase.PurchaseItems)
                .Include(purchase => purchase.PurchaseItemEmployees)
                .FirstOrDefault();
@@ -165,7 +165,7 @@ namespace ERP.Services.BuyServices
                 {
                     Status = PURCHASESTATUS.QUEUED,
                     RequestedById = _userService.Employee.EmployeeId,
-                    ReceivingSiteId = (int)_userService.Employee.EmployeeSiteId
+                    ReceivingSiteId = _userService.GetMySiteId()
                 };
 
                 purchaseItems = new List<PurchaseItem>();

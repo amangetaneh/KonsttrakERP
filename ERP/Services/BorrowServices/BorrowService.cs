@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services.EquipmentAssetServices;
@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERP.Services.BorrowServices
 {
-    public class BorrowService: IBorrowService
+    public class BorrowService : IBorrowService
     {
         private readonly DataContext _context;
         private readonly INotificationService _notificationService;
@@ -52,7 +52,7 @@ namespace ERP.Services.BorrowServices
             checkEmployeeSiteIsAvailable();
             UserRole userRole = _userService.UserRole;
             int employeeId = _userService.Employee.EmployeeId;
-            int siteId = (int)_userService.Employee.EmployeeSiteId;
+            int siteId = _userService.GetMySiteId();
 
             var borrows = await _context.Borrows
                 .Where(borrow => (
@@ -79,7 +79,7 @@ namespace ERP.Services.BorrowServices
 
             Borrow borrow = new();
             borrow.RequestedById = _userService.Employee.EmployeeId;
-            borrow.SiteId = (int)_userService.Employee.EmployeeSiteId;
+            borrow.SiteId = _userService.GetMySiteId();
 
             ICollection<BorrowItem> borrowItems = new List<BorrowItem>();
 
@@ -122,7 +122,7 @@ namespace ERP.Services.BorrowServices
                 siteId: borrow.SiteId,
                 employeeId: borrow.RequestedById);
 
-            return borrow; 
+            return borrow;
         }
 
         public async Task<Borrow> ApproveBorrow(ApproveBorrowDTO approveDTO)
@@ -238,7 +238,7 @@ namespace ERP.Services.BorrowServices
                 }
 
 
-                await _itemSiteQtyService.SubtractEquipmentModel(borrowItem.EquipmentModelId, borrow.SiteId, (int)borrowItem.QtyApproved);
+                await _itemSiteQtyService.SubtractEquipmentModel(borrowItem.EquipmentModelId, borrow.SiteId, (borrowItem.QtyApproved ?? throw new InvalidOperationException("The item must have an approved quantity before stock can be moved.")));
             }
 
             borrow.Status = BORROWSTATUS.HANDED;

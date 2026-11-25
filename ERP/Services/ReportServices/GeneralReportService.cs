@@ -1,10 +1,10 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERP.Services.ReportServices
 {
-    public class GeneralReportService: IGeneralReportService
+    public class GeneralReportService : IGeneralReportService
     {
         private readonly DataContext _context;
 
@@ -93,11 +93,11 @@ namespace ERP.Services.ReportServices
 
 
                 case GENERALREPORTGROUPBY.DATE:
-                    groupedPurchase = purchaseItems.GroupBy(ii => ii.Purchase.PurchaseDate.Value.Date)
+                    groupedPurchase = purchaseItems.GroupBy(ii => ii.Purchase.PurchaseDate.GetValueOrDefault().Date)
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Purchase.PurchaseDate.Value.Date,
-                           Label = s.Key.ToShortDateString(),
+                           Key = s.First().Purchase.PurchaseDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Day(s.Key),
                            Qty = s.Sum(ii => ii.QtyPurchased),
                            Cost = s.Sum(ii => ii.QtyPurchased * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -112,13 +112,13 @@ namespace ERP.Services.ReportServices
                     groupedPurchase = purchaseItems.GroupBy(ii =>
                     new
                     {
-                        Week = ii.Purchase.PurchaseDate.Value.DayOfYear / 7,
-                        Year = ii.Purchase.PurchaseDate.Value.Year
+                        Week = ii.Purchase.PurchaseDate.GetValueOrDefault().DayOfYear / 7,
+                        Year = ii.Purchase.PurchaseDate.GetValueOrDefault().Year
                     })
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Purchase.PurchaseDate.Value.Date,
-                           Label = $"Week{s.Key.Week}, {s.Key.Year}",
+                           Key = s.First().Purchase.PurchaseDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Week(s.Key.Week, s.Key.Year),
                            Qty = s.Sum(ii => ii.QtyPurchased),
                            Cost = s.Sum(ii => ii.QtyPurchased * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -133,13 +133,13 @@ namespace ERP.Services.ReportServices
                     groupedPurchase = purchaseItems.GroupBy(ii =>
                     new
                     {
-                        Month = ii.Purchase.PurchaseDate.Value.Month,
-                        Year = ii.Purchase.PurchaseDate.Value.Year
+                        Month = ii.Purchase.PurchaseDate.GetValueOrDefault().Month,
+                        Year = ii.Purchase.PurchaseDate.GetValueOrDefault().Year
                     })
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Purchase.PurchaseDate.Value.Date,
-                           Label = $"{s.First().Purchase.PurchaseDate.Value.ToString("MMMM")}, {s.Key.Year}",
+                           Key = s.First().Purchase.PurchaseDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Month(s.First().Purchase.PurchaseDate.GetValueOrDefault()),
                            Qty = s.Sum(ii => ii.QtyPurchased),
                            Cost = s.Sum(ii => ii.QtyPurchased * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -151,11 +151,11 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case GENERALREPORTGROUPBY.YEAR:
-                    groupedPurchase = purchaseItems.GroupBy(ii => ii.Purchase.PurchaseDate.Value.Year)
+                    groupedPurchase = purchaseItems.GroupBy(ii => ii.Purchase.PurchaseDate.GetValueOrDefault().Year)
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Purchase.PurchaseDate.Value.Date,
-                           Label = $"{s.Key}",
+                           Key = s.First().Purchase.PurchaseDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Year(s.Key),
                            Qty = s.Sum(ii => ii.QtyPurchased),
                            Cost = s.Sum(ii => ii.QtyPurchased * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -281,11 +281,11 @@ namespace ERP.Services.ReportServices
 
 
                 case GENERALREPORTGROUPBY.DATE:
-                    groupedReceive = receiveItems.GroupBy(ii => ii.Receive.ReceiveDate.Value.Date)
+                    groupedReceive = receiveItems.GroupBy(ii => ii.Receive.ReceiveDate.GetValueOrDefault().Date)
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Receive.ReceiveDate.Value.Date,
-                           Label = s.Key.ToShortDateString(),
+                           Key = s.First().Receive.ReceiveDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Day(s.Key),
                            Qty = s.Sum(ii => ii.QtyReceived),
                            Cost = s.Sum(ii => ii.QtyReceived * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -300,13 +300,13 @@ namespace ERP.Services.ReportServices
                     groupedReceive = receiveItems.GroupBy(ii =>
                     new
                     {
-                        Week = ii.Receive.ReceiveDate.Value.DayOfYear / 7,
-                        Year = ii.Receive.ReceiveDate.Value.Year
+                        Week = ii.Receive.ReceiveDate.GetValueOrDefault().DayOfYear / 7,
+                        Year = ii.Receive.ReceiveDate.GetValueOrDefault().Year
                     })
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Receive.ReceiveDate.Value.Date,
-                           Label = $"Week{s.Key.Week}, {s.Key.Year}",
+                           Key = s.First().Receive.ReceiveDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Week(s.Key.Week, s.Key.Year),
                            Qty = s.Sum(ii => ii.QtyReceived),
                            Cost = s.Sum(ii => ii.QtyReceived * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -321,13 +321,13 @@ namespace ERP.Services.ReportServices
                     groupedReceive = receiveItems.GroupBy(ii =>
                     new
                     {
-                        Month = ii.Receive.ReceiveDate.Value.Month,
-                        Year = ii.Receive.ReceiveDate.Value.Year
+                        Month = ii.Receive.ReceiveDate.GetValueOrDefault().Month,
+                        Year = ii.Receive.ReceiveDate.GetValueOrDefault().Year
                     })
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Receive.ReceiveDate.Value.Date,
-                           Label = $"{s.First().Receive.ReceiveDate.Value.ToString("MMMM")}, {s.Key.Year}",
+                           Key = s.First().Receive.ReceiveDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Month(s.First().Receive.ReceiveDate.GetValueOrDefault()),
                            Qty = s.Sum(ii => ii.QtyReceived),
                            Cost = s.Sum(ii => ii.QtyReceived * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -339,11 +339,11 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case GENERALREPORTGROUPBY.YEAR:
-                    groupedReceive = receiveItems.GroupBy(ii => ii.Receive.ReceiveDate.Value.Year)
+                    groupedReceive = receiveItems.GroupBy(ii => ii.Receive.ReceiveDate.GetValueOrDefault().Year)
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Receive.ReceiveDate.Value.Date,
-                           Label = $"{s.Key}",
+                           Key = s.First().Receive.ReceiveDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Year(s.Key),
                            Qty = s.Sum(ii => ii.QtyReceived),
                            Cost = s.Sum(ii => ii.QtyReceived * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -599,7 +599,7 @@ namespace ERP.Services.ReportServices
                        .Select(s => new ReportSingleItem
                        {
                            Key = s.First().Return.ReturnDate.Date,
-                           Label = s.Key.ToShortDateString(),
+                           Label = ReportDates.Day(s.Key),
                            Qty = s.Sum(ii => 1),
                            Cost = s.Sum(ii => ii.BorrowItem.Cost * ii.AssetDamage.PenalityPercentage),
                            CurrentValue = s.Sum(ii => ii.BorrowItem.Item.Equipment.EquipmentModels
@@ -618,7 +618,7 @@ namespace ERP.Services.ReportServices
                        .Select(s => new ReportSingleItem
                        {
                            Key = s.First().Return.ReturnDate.Date,
-                           Label = $"Week{s.Key.Week}, {s.Key.Year}",
+                           Label = ReportDates.Week(s.Key.Week, s.Key.Year),
                            Qty = s.Sum(ii => 1),
                            Cost = s.Sum(ii => ii.BorrowItem.Cost * ii.AssetDamage.PenalityPercentage),
                            CurrentValue = s.Sum(ii => ii.BorrowItem.Item.Equipment.EquipmentModels
@@ -651,7 +651,7 @@ namespace ERP.Services.ReportServices
                        .Select(s => new ReportSingleItem
                        {
                            Key = s.First().Return.ReturnDate.Date,
-                           Label = $"{s.Key}",
+                           Label = ReportDates.Year(s.Key),
                            Qty = s.Sum(ii => 1),
                            Cost = s.Sum(ii => ii.BorrowItem.Cost * ii.AssetDamage.PenalityPercentage),
                            CurrentValue = s.Sum(ii => ii.BorrowItem.Item.Equipment.EquipmentModels
@@ -694,13 +694,13 @@ namespace ERP.Services.ReportServices
         public async Task<IEnumerable<ReportSingleItem>> GetStockReport(GeneralReportDTO reportDTO)
         {
             var materialItems = await _context.MaterialSiteQties
-                .Where(ii => 
+                .Where(ii =>
                 //site
                 (reportDTO.SiteId == -1 || ii.SiteId == reportDTO.SiteId) &&
                 //item type
                 (reportDTO.ItemType == -1 || ii.Item.Type == reportDTO.ItemType) &&
                 //item
-                (reportDTO.ItemId == -1 || ii.ItemId == reportDTO.ItemId) 
+                (reportDTO.ItemId == -1 || ii.ItemId == reportDTO.ItemId)
                 )
                 .Include(ii => ii.Item.Material)
                 .Include(ii => ii.Site)
@@ -750,13 +750,13 @@ namespace ERP.Services.ReportServices
 
             /////////////////////////////////////////////////////////////////////////////Equipments
             var transferOutItems = await _context.EquipmentSiteQties
-               .Where(ii => 
+               .Where(ii =>
                //site
                (reportDTO.SiteId == -1 || ii.SiteId == reportDTO.SiteId) &&
                //item type
                (reportDTO.ItemType == -1 || ii.EquipmentModel.Equipment.Item.Type == reportDTO.ItemType) &&
                //equipment category
-               (reportDTO.ItemType != ITEMTYPE.EQUIPMENT || reportDTO.EquipmentCategoryId == -1 || ii.EquipmentModel.Equipment.Item.Type != ITEMTYPE.EQUIPMENT || 
+               (reportDTO.ItemType != ITEMTYPE.EQUIPMENT || reportDTO.EquipmentCategoryId == -1 || ii.EquipmentModel.Equipment.Item.Type != ITEMTYPE.EQUIPMENT ||
                     ii.EquipmentModel.Equipment.EquipmentCategoryId == reportDTO.EquipmentCategoryId) &&
                //item
                (reportDTO.ItemId == -1 || ii.EquipmentModel.ItemId == reportDTO.ItemId)
@@ -804,7 +804,7 @@ namespace ERP.Services.ReportServices
                             CurrentValue = s.Sum(ii => ii.Qty * ii.EquipmentModel.Cost)
                         });
                     break;
-                                   
+
 
                 case GENERALREPORTGROUPBY.SITE:
                     groupedEquipment = transferOutItems.GroupBy(ii => ii.SiteId)
@@ -872,7 +872,7 @@ namespace ERP.Services.ReportServices
                         .Select(s => new ReportSingleItem
                         {
                             Key = s.Key,
-                            Label =  s.First().BorrowItem.Item.Equipment.EquipmentCategory.Name,
+                            Label = s.First().BorrowItem.Item.Equipment.EquipmentCategory.Name,
                             Qty = s.Sum(ii => 1),
                             Cost = s.Sum(ii => ii.BorrowItem.Cost),
                             CurrentValue = s.Sum(ii => ii.BorrowItem.Item.Equipment.EquipmentModels
@@ -900,7 +900,7 @@ namespace ERP.Services.ReportServices
                        .Select(s => new ReportSingleItem
                        {
                            Key = s.First().Return.ReturnDate.Date,
-                           Label = s.Key.ToShortDateString(),
+                           Label = ReportDates.Day(s.Key),
                            Qty = s.Sum(ii => 1),
                            Cost = s.Sum(ii => ii.BorrowItem.Cost),
                            CurrentValue = s.Sum(ii => ii.BorrowItem.Item.Equipment.EquipmentModels
@@ -919,7 +919,7 @@ namespace ERP.Services.ReportServices
                        .Select(s => new ReportSingleItem
                        {
                            Key = s.First().Return.ReturnDate.Date,
-                           Label = $"Week{s.Key.Week}, {s.Key.Year}",
+                           Label = ReportDates.Week(s.Key.Week, s.Key.Year),
                            Qty = s.Sum(ii => 1),
                            Cost = s.Sum(ii => ii.BorrowItem.Cost),
                            CurrentValue = s.Sum(ii => ii.BorrowItem.Item.Equipment.EquipmentModels
@@ -952,7 +952,7 @@ namespace ERP.Services.ReportServices
                        .Select(s => new ReportSingleItem
                        {
                            Key = s.First().Return.ReturnDate.Date,
-                           Label = $"{s.Key}",
+                           Label = ReportDates.Year(s.Key),
                            Qty = s.Sum(ii => 1),
                            Cost = s.Sum(ii => ii.BorrowItem.Cost),
                            CurrentValue = s.Sum(ii => ii.BorrowItem.Item.Equipment.EquipmentModels
@@ -1035,7 +1035,7 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case GENERALREPORTGROUPBY.CATEGORY:
-                    groupedTransfer = transferOutItems.GroupBy(ii =>  ii.Item.Equipment.EquipmentCategoryId )
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Item.Equipment.EquipmentCategoryId)
                         .Select(s => new ReportSingleItem
                         {
                             Key = s.Key,
@@ -1069,11 +1069,11 @@ namespace ERP.Services.ReportServices
 
 
                 case GENERALREPORTGROUPBY.DATE:
-                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Borrow.HandDate.Value.Date)
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Borrow.HandDate.GetValueOrDefault().Date)
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Borrow.HandDate.Value.Date,
-                           Label = s.Key.ToShortDateString(),
+                           Key = s.First().Borrow.HandDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Day(s.Key),
                            Qty = s.Sum(ii => ii.QtyApproved),
                            Cost = s.Sum(ii => ii.QtyApproved * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -1088,13 +1088,13 @@ namespace ERP.Services.ReportServices
                     groupedTransfer = transferOutItems.GroupBy(ii =>
                     new
                     {
-                        Week = ii.Borrow.HandDate.Value.DayOfYear / 7,
-                        Year = ii.Borrow.HandDate.Value.Year
+                        Week = ii.Borrow.HandDate.GetValueOrDefault().DayOfYear / 7,
+                        Year = ii.Borrow.HandDate.GetValueOrDefault().Year
                     })
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Borrow.HandDate.Value.Date,
-                           Label = $"Week{s.Key.Week}, {s.Key.Year}",
+                           Key = s.First().Borrow.HandDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Week(s.Key.Week, s.Key.Year),
                            Qty = s.Sum(ii => ii.QtyApproved),
                            Cost = s.Sum(ii => ii.QtyApproved * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -1109,13 +1109,13 @@ namespace ERP.Services.ReportServices
                     groupedTransfer = transferOutItems.GroupBy(ii =>
                     new
                     {
-                        Month = ii.Borrow.HandDate.Value.Month,
-                        Year = ii.Borrow.HandDate.Value.Year
+                        Month = ii.Borrow.HandDate.GetValueOrDefault().Month,
+                        Year = ii.Borrow.HandDate.GetValueOrDefault().Year
                     })
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Borrow.HandDate.Value.Date,
-                           Label = $"{s.First().Borrow.HandDate.Value.ToString("MMMM")}, {s.Key.Year}",
+                           Key = s.First().Borrow.HandDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Month(s.First().Borrow.HandDate.GetValueOrDefault()),
                            Qty = s.Sum(ii => ii.QtyApproved),
                            Cost = s.Sum(ii => ii.QtyApproved * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -1127,11 +1127,11 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case GENERALREPORTGROUPBY.YEAR:
-                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Borrow.HandDate.Value.Year)
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Borrow.HandDate.GetValueOrDefault().Year)
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Borrow.HandDate.Value.Date,
-                           Label = $"{s.Key}",
+                           Key = s.First().Borrow.HandDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Year(s.Key),
                            Qty = s.Sum(ii => ii.QtyApproved),
                            Cost = s.Sum(ii => ii.QtyApproved * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -1240,11 +1240,11 @@ namespace ERP.Services.ReportServices
 
 
                 case GENERALREPORTGROUPBY.DATE:
-                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Issue.HandDate.Value.Date)
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Issue.HandDate.GetValueOrDefault().Date)
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Issue.HandDate.Value.Date,
-                           Label = s.Key.ToShortDateString(),
+                           Key = s.First().Issue.HandDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Day(s.Key),
                            Qty = s.Sum(ii => ii.QtyApproved),
                            Cost = s.Sum(ii => ii.QtyApproved * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.QtyApproved * ii.Item.Material.Cost)
@@ -1256,13 +1256,13 @@ namespace ERP.Services.ReportServices
                     groupedTransfer = transferOutItems.GroupBy(ii =>
                     new
                     {
-                        Week = ii.Issue.HandDate.Value.DayOfYear / 7,
-                        Year = ii.Issue.HandDate.Value.Year
+                        Week = ii.Issue.HandDate.GetValueOrDefault().DayOfYear / 7,
+                        Year = ii.Issue.HandDate.GetValueOrDefault().Year
                     })
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Issue.HandDate.Value.Date,
-                           Label = $"Week{s.Key.Week}, {s.Key.Year}",
+                           Key = s.First().Issue.HandDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Week(s.Key.Week, s.Key.Year),
                            Qty = s.Sum(ii => ii.QtyApproved),
                            Cost = s.Sum(ii => ii.QtyApproved * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.QtyApproved * ii.Item.Material.Cost)
@@ -1274,13 +1274,13 @@ namespace ERP.Services.ReportServices
                     groupedTransfer = transferOutItems.GroupBy(ii =>
                     new
                     {
-                        Month = ii.Issue.HandDate.Value.Month,
-                        Year = ii.Issue.HandDate.Value.Year
+                        Month = ii.Issue.HandDate.GetValueOrDefault().Month,
+                        Year = ii.Issue.HandDate.GetValueOrDefault().Year
                     })
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Issue.HandDate.Value.Date,
-                           Label = $"{s.First().Issue.HandDate.Value.ToString("MMMM")}, {s.Key.Year}",
+                           Key = s.First().Issue.HandDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Month(s.First().Issue.HandDate.GetValueOrDefault()),
                            Qty = s.Sum(ii => ii.QtyApproved),
                            Cost = s.Sum(ii => ii.QtyApproved * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.QtyApproved * ii.Item.Material.Cost)
@@ -1289,11 +1289,11 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case GENERALREPORTGROUPBY.YEAR:
-                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Issue.HandDate.Value.Year)
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Issue.HandDate.GetValueOrDefault().Year)
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Issue.HandDate.Value.Date,
-                           Label = $"{s.Key}",
+                           Key = s.First().Issue.HandDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Year(s.Key),
                            Qty = s.Sum(ii => ii.QtyApproved),
                            Cost = s.Sum(ii => ii.QtyApproved * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.QtyApproved * ii.Item.Material.Cost)
@@ -1410,11 +1410,11 @@ namespace ERP.Services.ReportServices
 
 
                 case GENERALREPORTGROUPBY.DATE:
-                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Transfer.SendDate.Value.Date)
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Transfer.SendDate.GetValueOrDefault().Date)
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Transfer.SendDate.Value.Date,
-                           Label = s.Key.ToShortDateString(),
+                           Key = s.First().Transfer.SendDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Day(s.Key),
                            Qty = s.Sum(ii => ii.QtyApproved),
                            Cost = s.Sum(ii => ii.QtyApproved * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -1429,13 +1429,13 @@ namespace ERP.Services.ReportServices
                     groupedTransfer = transferOutItems.GroupBy(ii =>
                     new
                     {
-                        Week = ii.Transfer.SendDate.Value.DayOfYear / 7,
-                        Year = ii.Transfer.SendDate.Value.Year
+                        Week = ii.Transfer.SendDate.GetValueOrDefault().DayOfYear / 7,
+                        Year = ii.Transfer.SendDate.GetValueOrDefault().Year
                     })
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Transfer.SendDate.Value.Date,
-                           Label = $"Week{s.Key.Week}, {s.Key.Year}",
+                           Key = s.First().Transfer.SendDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Week(s.Key.Week, s.Key.Year),
                            Qty = s.Sum(ii => ii.QtyApproved),
                            Cost = s.Sum(ii => ii.QtyApproved * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -1450,13 +1450,13 @@ namespace ERP.Services.ReportServices
                     groupedTransfer = transferOutItems.GroupBy(ii =>
                     new
                     {
-                        Month = ii.Transfer.SendDate.Value.Month,
-                        Year = ii.Transfer.SendDate.Value.Year
+                        Month = ii.Transfer.SendDate.GetValueOrDefault().Month,
+                        Year = ii.Transfer.SendDate.GetValueOrDefault().Year
                     })
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Transfer.SendDate.Value.Date,
-                           Label = $"{s.First().Transfer.SendDate.Value.ToString("MMMM")}, {s.Key.Year}",
+                           Key = s.First().Transfer.SendDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Month(s.First().Transfer.SendDate.GetValueOrDefault()),
                            Qty = s.Sum(ii => ii.QtyApproved),
                            Cost = s.Sum(ii => ii.QtyApproved * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -1468,11 +1468,11 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case GENERALREPORTGROUPBY.YEAR:
-                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Transfer.SendDate.Value.Year)
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Transfer.SendDate.GetValueOrDefault().Year)
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Transfer.SendDate.Value.Date,
-                           Label = $"{s.Key}",
+                           Key = s.First().Transfer.SendDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Year(s.Key),
                            Qty = s.Sum(ii => ii.QtyApproved),
                            Cost = s.Sum(ii => ii.QtyApproved * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -1598,11 +1598,11 @@ namespace ERP.Services.ReportServices
 
 
                 case GENERALREPORTGROUPBY.DATE:
-                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Transfer.ReceiveDate.Value.Date)
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Transfer.ReceiveDate.GetValueOrDefault().Date)
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Transfer.ReceiveDate.Value.Date,
-                           Label = s.Key.ToShortDateString(),
+                           Key = s.First().Transfer.ReceiveDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Day(s.Key),
                            Qty = s.Sum(ii => ii.QtyApproved),
                            Cost = s.Sum(ii => ii.QtyApproved * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -1617,13 +1617,13 @@ namespace ERP.Services.ReportServices
                     groupedTransfer = transferOutItems.GroupBy(ii =>
                     new
                     {
-                        Week = ii.Transfer.ReceiveDate.Value.DayOfYear / 7,
-                        Year = ii.Transfer.ReceiveDate.Value.Year
+                        Week = ii.Transfer.ReceiveDate.GetValueOrDefault().DayOfYear / 7,
+                        Year = ii.Transfer.ReceiveDate.GetValueOrDefault().Year
                     })
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Transfer.ReceiveDate.Value.Date,
-                           Label = $"Week{s.Key.Week}, {s.Key.Year}",
+                           Key = s.First().Transfer.ReceiveDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Week(s.Key.Week, s.Key.Year),
                            Qty = s.Sum(ii => ii.QtyApproved),
                            Cost = s.Sum(ii => ii.QtyApproved * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -1638,13 +1638,13 @@ namespace ERP.Services.ReportServices
                     groupedTransfer = transferOutItems.GroupBy(ii =>
                     new
                     {
-                        Month = ii.Transfer.ReceiveDate.Value.Month,
-                        Year = ii.Transfer.ReceiveDate.Value.Year
+                        Month = ii.Transfer.ReceiveDate.GetValueOrDefault().Month,
+                        Year = ii.Transfer.ReceiveDate.GetValueOrDefault().Year
                     })
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Transfer.ReceiveDate.Value.Date,
-                           Label = $"{s.First().Transfer.ReceiveDate.Value.ToString("MMMM")}, {s.Key.Year}",
+                           Key = s.First().Transfer.ReceiveDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Month(s.First().Transfer.ReceiveDate.GetValueOrDefault()),
                            Qty = s.Sum(ii => ii.QtyApproved),
                            Cost = s.Sum(ii => ii.QtyApproved * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
@@ -1656,11 +1656,11 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case GENERALREPORTGROUPBY.YEAR:
-                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Transfer.ReceiveDate.Value.Year)
+                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Transfer.ReceiveDate.GetValueOrDefault().Year)
                        .Select(s => new ReportSingleItem
                        {
-                           Key = s.First().Transfer.ReceiveDate.Value.Date,
-                           Label = $"{s.Key}",
+                           Key = s.First().Transfer.ReceiveDate.GetValueOrDefault().Date,
+                           Label = ReportDates.Year(s.Key),
                            Qty = s.Sum(ii => ii.QtyApproved),
                            Cost = s.Sum(ii => ii.QtyApproved * ii.Cost),
                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?

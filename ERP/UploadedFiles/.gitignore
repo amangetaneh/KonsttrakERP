@@ -1,5 +1,4 @@
 *
-*/
 !.gitignore
-!blank_forms*
-!screenshot*
+!blank_forms.pdf
+!blank_forms.docx

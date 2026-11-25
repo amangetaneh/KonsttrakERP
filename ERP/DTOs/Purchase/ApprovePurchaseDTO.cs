@@ -1,10 +1,10 @@
-﻿namespace ERP.DTOs
+namespace ERP.DTOs
 {
     public class ApprovePurchaseDTO
     {
         public int PurchaseId { get; set; }
 
-        public ICollection<ApprovePurchaseItem> PurchaseItems { get; set; }
+        public ICollection<ApprovePurchaseItem> PurchaseItems { get; set; } = [];
 
     }
 

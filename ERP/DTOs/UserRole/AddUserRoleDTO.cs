@@ -1,8 +1,8 @@
-﻿namespace ERP.DTOs.UserRole
+namespace ERP.DTOs.UserRole
 {
     public class AddUserRoleDTO
     {
-        public string RoleName { get; set; }
+        public string RoleName { get; set; } = string.Empty;
 
     }
 }

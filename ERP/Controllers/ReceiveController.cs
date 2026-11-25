@@ -1,4 +1,4 @@
-﻿using ERP.Context;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services.User;
@@ -22,7 +22,6 @@ namespace ERP.Controllers
         private readonly IReceiveService _receiveService;
         private readonly DataContext context;
         private readonly IItemSiteQtyService _itemSiteQtyService;
-        private readonly INotificationService notificationManager;
 
         private readonly IUserService _userService;
 
@@ -31,7 +30,6 @@ namespace ERP.Controllers
             _receiveService = receiveService;
             _itemSiteQtyService = itemSiteQtyService;
             this.context = context;
-            this.notificationManager = notificationManager;
 
             _userService = userService;
         }
